@@ -102,3 +102,15 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Custom
+functions/dist
+functions/package-lock.json
+functions/firebase-debug.log
+
+.DS_Store
+.vscode
+*.env
+yarn.lock
+tmp/
+dist/

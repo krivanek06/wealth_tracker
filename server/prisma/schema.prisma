@@ -1,0 +1,153 @@
+datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+// Collection Tags
+model User {
+    id             String   @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt      DateTime @default(now())
+    imageUrl       String
+    username       String   @unique
+    email          String   @unique
+    lastSingInDate DateTime
+
+    // 1 - 1 relationship with user tags
+    tagsUser TagsUser?
+
+    // N - 1 relationship with default tags
+    tagsDefault   TagsDefault @relation(fields: [tagsDefaultId], references: [id])
+    tagsDefaultId String      @db.ObjectId
+
+    // 1 - N relationship with multiple investment accounts
+    InvestmentAccounts InvestmentAccount[]
+
+    // 1 - N relationship with multiple personal accounts
+    personalAccounts PersonalAccount[]
+}
+
+// ---------------- TAGS ------------------
+
+// Collection of default tags
+// Only admin can modify this collection
+model TagsDefault {
+    id         String    @id @default(auto()) @map("_id") @db.ObjectId
+    modifiedAt DateTime  @updatedAt
+    total      Int // de/increment based on data[]
+    data       TagData[]
+
+    // 1 - N relationship with user 
+    User User[]
+}
+
+// Collection of User's tags
+// Only owerner and admin can modify this collection
+model TagsUser {
+    id         String    @id @default(auto()) @map("_id") @db.ObjectId
+    modifiedAt DateTime  @updatedAt
+    total      Int // de/increment based on data[]
+    data       TagData[]
+
+    // 1 - 1 relationship with user 
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @unique
+}
+
+type TagData {
+    id              String // timestamp as ID
+    name            String // 'Pets' | 'Shoping'
+    createdAt       DateTime    @default(now())
+    modifiedAt      DateTime
+    type            TagDataType
+    accountSpecific String?     @default("") // Id of Personal or Investment accoutn to only show
+}
+
+enum TagDataType {
+    INCOME
+    EXPENSE
+}
+
+// ---------------- Personal account ------------------
+
+model PersonalAccount {
+    id           String                    @id @default(auto()) @map("_id") @db.ObjectId
+    order        Int // 8 == 'September', 0 == 'Januar',
+    year         Int // 2022
+    start        DateTime // '01.9.2022',
+    end          DateTime //  '31.9.2022',
+    totalEntries Int
+    data         PersonalAccountDataWeekly
+
+    // 1 - N relationship with user
+    user   User   @relation(fields: [userId], references: [id])
+    userId String @db.ObjectId
+}
+
+type PersonalAccountDataWeekly {
+    id           String // WEEK_37
+    order        Int // 36 == Week 36
+    year         Int // 2022
+    start        DateTime // '01.9.2022',
+    end          DateTime //  '7.9.2022',
+    totalEntries Int
+    data         PersonalAccountDataDaily
+}
+
+type PersonalAccountDataDaily {
+    id    String // random
+    value Float // $ how much I paid / received
+    date  DateTime
+    tagId String // ID of TagData -> Can be modified, resolved on the FE!
+}
+
+// ---------------- Investment account ------------------
+model InvestmentAccount {
+    id                    String                             @id @default(auto()) @map("_id") @db.ObjectId
+    cash                  Float // how much cash on hand user has in the trading platform
+    holdings              InvestmentAccountHoldings[]
+    lastPortfolioSnapshot InvestmentAccountPortfolioSnapshot // last inserted value in InvestmentAccountSnapshots[-1]
+
+    // 1 - N relationship with user
+    user   User   @relation(fields: [userId], references: [id])
+    userId String @db.ObjectId
+
+    // 1 - N relationship with InvestmentAccountSnapshots
+    portfolioSnapshot   InvestmentAccountSnapshots @relation(fields: [portfolioSnapshotId], references: [id], onDelete: Cascade)
+    portfolioSnapshotId String                     @unique
+}
+
+model InvestmentAccountSnapshots {
+    id    String                               @id @default(auto()) @map("_id") @db.ObjectId
+    total Int
+    data  InvestmentAccountPortfolioSnapshot[]
+
+    // 1 - N relationship with InvestmentAccount
+    InvestmentAccount InvestmentAccount?
+}
+
+type InvestmentAccountHoldings {
+    symbol         String // ID of symbol in DB in Firestore -> AAPL, MSFT
+    type           InvestmentAccountHoldingsType
+    units          Float // how many units of asset the user have
+    investedAmount Float // $ how much user invested into a specific asset
+}
+
+enum InvestmentAccountHoldingsType {
+    STOCK
+    CRYPTO
+}
+
+type InvestmentAccountPortfolioSnapshot {
+    id                    String // random
+    date                  DateTime
+    portfolioCurrentValue Float // cash + investmentCurrent
+    cash                  Float // user input
+    investmentStareted    Float // invested price in assets * units
+    investmentCurrent     Float // current price of assets * units
+    investedGains         Float // $ difference of investmentCurrent & investmentStareted
+    investedReturn        Float // % difference of investmentCurrent & investmentStareted
+}

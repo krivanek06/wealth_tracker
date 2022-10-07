@@ -14,14 +14,10 @@ model User {
     imageUrl       String
     username       String   @unique
     email          String   @unique
-    lastSingInDate DateTime
+    lastSingInDate DateTime @default(now())
 
     // 1 - 1 relationship with user tags
-    tagsUser TagsUser?
-
-    // N - 1 relationship with default tags
-    tagsDefault   TagsDefault @relation(fields: [tagsDefaultId], references: [id])
-    tagsDefaultId String      @db.ObjectId
+    tagsUser PersonalAccountTag?
 
     // 1 - N relationship with multiple investment accounts
     InvestmentAccounts InvestmentAccount[]
@@ -30,48 +26,35 @@ model User {
     personalAccounts PersonalAccount[]
 }
 
-// ---------------- TAGS ------------------
-
-// Collection of default tags
-// Only admin can modify this collection
-model TagsDefault {
-    id         String    @id @default(auto()) @map("_id") @db.ObjectId
-    modifiedAt DateTime  @updatedAt
-    total      Int // de/increment based on data[]
-    data       TagData[]
-
-    // 1 - N relationship with user 
-    User User[]
-}
+// ---------------- Personal account ------------------
 
 // Collection of User's tags
 // Only owerner and admin can modify this collection
-model TagsUser {
-    id         String    @id @default(auto()) @map("_id") @db.ObjectId
-    modifiedAt DateTime  @updatedAt
+model PersonalAccountTag {
+    id         String                   @id @default(auto()) @map("_id") @db.ObjectId
+    modifiedAt DateTime                 @updatedAt
     total      Int // de/increment based on data[]
-    data       TagData[]
+    data       PersonalAccountTagData[]
+    isDefault  Boolean                  @default(false) // True only for default Tags which is shared
 
     // 1 - 1 relationship with user 
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @unique
+    user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String? @unique
 }
 
-type TagData {
+type PersonalAccountTagData {
     id              String // timestamp as ID
     name            String // 'Pets' | 'Shoping'
-    createdAt       DateTime    @default(now())
-    modifiedAt      DateTime
-    type            TagDataType
-    accountSpecific String?     @default("") // Id of Personal or Investment accoutn to only show
+    createdAt       DateTime                   @default(now())
+    modifiedAt      DateTime                   @default(now())
+    type            PersonalAccountTagDataType
+    accountSpecific String? // Id of Personal or Investment account to only show
 }
 
-enum TagDataType {
+enum PersonalAccountTagDataType {
     INCOME
     EXPENSE
 }
-
-// ---------------- Personal account ------------------
 
 model PersonalAccount {
     id           String                    @id @default(auto()) @map("_id") @db.ObjectId

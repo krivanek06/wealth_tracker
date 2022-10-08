@@ -21,6 +21,11 @@ export class PersonalAccountWeeklyAggregation implements PersonalAccountWeeklyAg
 	})
 	value: number;
 
+	@Field(() => Int, {
+		description: 'How many entries per personalAccountTagId per week there were',
+	})
+	entries: number;
+
 	@Field(() => String, {
 		description: 'Reference to PersonalAccountMonthlyData.id',
 	})

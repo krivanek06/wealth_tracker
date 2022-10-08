@@ -12,6 +12,11 @@ export class PersonalAccountTag implements PersonalAccountTagClient {
 	@Field(() => String)
 	modifiedAt: Date;
 
+	@Field(() => String, {
+		description: 'Name of the tag',
+	})
+	name: string;
+
 	@Field(() => PersonalAccountTagDataType)
 	type: PersonalAccountTagDataType;
 

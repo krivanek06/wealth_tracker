@@ -1,7 +1,13 @@
 import { ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { PersonalAccountTagModule, UserModule } from '../modules';
+import {
+	PersonalAccountModule,
+	PersonalAccountMonthlyModule,
+	PersonalAccountTagModule,
+	PersonalAccountWeeklyAggregationModule,
+	UserModule,
+} from '../modules';
 
 import { GraphQLModule } from '@nestjs/graphql';
 
@@ -14,7 +20,10 @@ import { GraphQLResolver } from './graphql.resolver';
 		GraphQLModule.forRoot<ApolloDriverConfig>(GraphQLHelper.getApolloDriverConfig()),
 		// modules
 		UserModule,
+		PersonalAccountModule,
 		PersonalAccountTagModule,
+		PersonalAccountMonthlyModule,
+		PersonalAccountWeeklyAggregationModule,
 	],
 	providers: [GraphQLResolver],
 })

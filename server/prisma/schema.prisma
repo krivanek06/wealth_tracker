@@ -50,6 +50,7 @@ model PersonalAccountTag {
     id         String                     @id @default(auto()) @map("_id") @db.ObjectId
     createdAt  DateTime                   @default(now())
     modifiedAt DateTime                   @updatedAt
+    name       String
     type       PersonalAccountTagDataType
 
     // True only for default Tags - by admin
@@ -62,8 +63,10 @@ model PersonalAccountTag {
 
     // N - 1 relationship with PersonalAccount
     // Used to display this Tag only for one specific account 
-    PersonalAccounSpecific               PersonalAccount?                   @relation(fields: [personalAccountId], references: [id])
-    personalAccountId                    String?                            @unique
+    PersonalAccounSpecific PersonalAccount? @relation(fields: [personalAccountId], references: [id])
+    personalAccountId      String?          @unique
+
+    // N - 1 relationship with PersonalAccountWeeklyAggregation
     PersonalAccountDataWeeklyAggregation PersonalAccountWeeklyAggregation[]
 }
 
@@ -101,6 +104,9 @@ model PersonalAccountWeeklyAggregation {
     // Total amount for a tag/week, non-negative value even if it is an expense
     value Float
 
+    // how many entries per personalAccountTagId per week there were
+    entries Int
+
     // N - 1 reference to PersonalAccountMonthlyData
     PersonalAccountMonthlyData   PersonalAccountMonthlyData? @relation(fields: [personalAccountMonthlyDataId], references: [id], onDelete: Cascade)
     personalAccountMonthlyDataId String?                     @db.ObjectId
@@ -112,9 +118,9 @@ model PersonalAccountWeeklyAggregation {
 
 type PersonalAccountDailyData {
     id    String   @default(uuid()) // random
+    tagId String // ID of TagData -> Can be modified, resolved on the FE!
     value Float // $ how much I paid / received
     date  DateTime @default(now())
-    tagId String // ID of TagData -> Can be modified, resolved on the FE!
     week  Int // Week 37 <- calculate on DB update
 }
 
@@ -131,14 +137,15 @@ model InvestmentAccount {
     userId String @db.ObjectId
 
     // 1 - N relationship with InvestmentAccountSnapshots
-    portfolioSnapshot   InvestmentAccountSnapshots @relation(fields: [portfolioSnapshotId], references: [id], onDelete: Cascade)
-    portfolioSnapshotId String                     @unique
+    InvestmentAccountHistory   InvestmentAccountHistory @relation(fields: [investmentAccountHistoryId], references: [id], onDelete: Cascade)
+    investmentAccountHistoryId String                   @unique
 }
 
-model InvestmentAccountSnapshots {
-    id    String                               @id @default(auto()) @map("_id") @db.ObjectId
-    total Int
-    data  InvestmentAccountPortfolioSnapshot[]
+model InvestmentAccountHistory {
+    id String @id @default(auto()) @map("_id") @db.ObjectId
+
+    portfolioSnapshotTotal Int
+    portfolioSnapshots     InvestmentAccountPortfolioSnapshot[]
 
     // 1 - N relationship with InvestmentAccount
     InvestmentAccount InvestmentAccount?

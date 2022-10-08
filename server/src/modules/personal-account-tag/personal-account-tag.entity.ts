@@ -1,17 +1,10 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
-import {
-	PersonalAccountTag as PersonalAccountTagClient,
-	PersonalAccountTagData as PersonalAccountTagDataClient,
-	PersonalAccountTagDataType,
-} from '@prisma/client';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { PersonalAccountTag as PersonalAccountTagClient, PersonalAccountTagDataType } from '@prisma/client';
 
 @ObjectType()
-class PersonalAccountTagData implements PersonalAccountTagDataClient {
+export class PersonalAccountTag implements PersonalAccountTagClient {
 	@Field(() => String)
 	id: string;
-
-	@Field(() => String)
-	name: string;
 
 	@Field(() => String)
 	createdAt: Date;
@@ -23,32 +16,22 @@ class PersonalAccountTagData implements PersonalAccountTagDataClient {
 	type: PersonalAccountTagDataType;
 
 	@Field(() => String, {
-		nullable: true,
-	})
-	accountSpecific: string | null;
-}
-
-@ObjectType()
-export class PersonalAccountTag implements PersonalAccountTagClient {
-	@Field(() => String)
-	id: string;
-
-	@Field(() => String)
-	modifiedAt: Date;
-
-	@Field(() => Int)
-	total: number;
-
-	@Field(() => [PersonalAccountTagData])
-	data: PersonalAccountTagData[];
-
-	@Field(() => Boolean, {
 		defaultValue: false,
+		description: 'True only for default Tags, shared accross every user',
 	})
 	isDefault: boolean;
 
 	@Field(() => String, {
-		defaultValue: null,
+		description:
+			'Reference to User.id, person who has created this personcal account tag. For detault tags this is null',
+		nullable: true,
 	})
 	userId: string | null;
+
+	@Field(() => String, {
+		nullable: true,
+		description:
+			'Reference to PersonalAccount.id, if this tag is specific for some personal account. For detault tags this is null',
+	})
+	personalAccountId: string | null;
 }

@@ -1,1 +1,1 @@
-export * from './tag-data-create-input';
+export * from './tag-data-create.input';

@@ -57,40 +57,43 @@ enum PersonalAccountTagDataType {
 }
 
 model PersonalAccount {
-    id           String                    @id @default(auto()) @map("_id") @db.ObjectId
-    order        Int // 8 == 'September', 0 == 'Januar',
-    year         Int // 2022
-    start        DateTime // '01.9.2022',
-    end          DateTime //  '31.9.2022',
-    totalEntries Int
-    data         PersonalAccountDataWeekly
+    id    String   @id @default(auto()) @map("_id") @db.ObjectId
+    order Int // 8 == 'September', 0 == 'Januar',
+    year  Int // 2022
+    start DateTime // '01.9.2022',
+    end   DateTime //  '31.9.2022',
+
+    // daily entries of user's expenses / incomes
+    dataDaily PersonalAccountDataDaily
 
     // 1 - N relationship with user
     user   User   @relation(fields: [userId], references: [id])
     userId String @db.ObjectId
 }
 
-type PersonalAccountDataWeekly {
-    id           String // WEEK_37
-    order        Int // 36 == Week 36
-    year         Int // 2022
-    start        DateTime // '01.9.2022',
-    end          DateTime //  '7.9.2022',
-    totalEntries Int
-    data         PersonalAccountDataDaily
-}
+// type PersonalAccountDataWeekly {
+//     id           String // WEEK_37
+//     order        Int // 36 == Week 36
+//     year         Int // 2022
+//     start        DateTime // '01.9.2022',
+//     end          DateTime //  '7.9.2022',
+//     totalEntries Int
+//     data         PersonalAccountDataDaily
+// }
 
 type PersonalAccountDataDaily {
-    id    String // random
-    value Float // $ how much I paid / received
-    date  DateTime
-    tagId String // ID of TagData -> Can be modified, resolved on the FE!
+    id        String // random
+    value     Float // $ how much I paid / received
+    date      DateTime @default(now())
+    tagId     String // ID of TagData -> Can be modified, resolved on the FE!
+    orderWeek Int // Week 37 <- calculate on DB update
 }
 
 // ---------------- Investment account ------------------
 model InvestmentAccount {
-    id                    String                             @id @default(auto()) @map("_id") @db.ObjectId
-    cash                  Float // how much cash on hand user has in the trading platform
+    id          String @id @default(auto()) @map("_id") @db.ObjectId
+    cashCurrent Float // how much cash on hand user has in the trading platform
+
     holdings              InvestmentAccountHoldings[]
     lastPortfolioSnapshot InvestmentAccountPortfolioSnapshot // last inserted value in InvestmentAccountSnapshots[-1]
 
@@ -113,10 +116,10 @@ model InvestmentAccountSnapshots {
 }
 
 type InvestmentAccountHoldings {
-    symbol         String // ID of symbol in DB in Firestore -> AAPL, MSFT
-    type           InvestmentAccountHoldingsType
-    units          Float // how many units of asset the user have
-    investedAmount Float // $ how much user invested into a specific asset
+    symbol            String // ID of symbol in DB in Firestore -> AAPL, MSFT
+    type              InvestmentAccountHoldingsType
+    units             Float // how many units of asset the user have
+    investmentStarted Float // $ how much user invested into a specific asset
 }
 
 enum InvestmentAccountHoldingsType {
@@ -125,12 +128,8 @@ enum InvestmentAccountHoldingsType {
 }
 
 type InvestmentAccountPortfolioSnapshot {
-    id                    String // random
-    date                  DateTime
-    portfolioCurrentValue Float // cash + investmentCurrent
-    cash                  Float // user input
-    investmentStareted    Float // invested price in assets * units
-    investmentCurrent     Float // current price of assets * units
-    investedGains         Float // $ difference of investmentCurrent & investmentStareted
-    investedReturn        Float // % difference of investmentCurrent & investmentStareted
+    id                String // random
+    date              DateTime
+    cash              Float // user input
+    investmentCurrent Float // current price of assets * units
 }

@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { LodashService } from './../../../utils/';
-import {
-	PersonalAccountDailyDataExtended,
-	PersonalAccountWeeklyAggregation,
-} from './entity/personal-account-weekly-aggregation.entity';
+import { PersonalAccountDailyDataExtended, PersonalAccountWeeklyAggregation } from './entity';
 
 @Injectable()
 export class PersonalAccountMonthlyService {

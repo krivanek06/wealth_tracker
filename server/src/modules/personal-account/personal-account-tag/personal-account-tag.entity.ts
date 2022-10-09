@@ -1,9 +1,9 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { PersonalAccountTag as PersonalAccountTagClient, PersonalAccountTagDataType } from '@prisma/client';
 
 @ObjectType()
 export class PersonalAccountTag implements PersonalAccountTagClient {
-	@Field(() => String)
+	@Field(() => ID)
 	id: string;
 
 	@Field(() => String)

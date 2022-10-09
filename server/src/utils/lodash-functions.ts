@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { Dictionary, List, ValueIteratee } from 'lodash';
 import cloneDeep from 'lodash/cloneDeep';
 import flatten from 'lodash/flatten';
@@ -7,7 +6,6 @@ import isEqual from 'lodash/isEqual';
 import takeRight from 'lodash/takeRight';
 import zip from 'lodash/zip';
 
-@Injectable()
 export class LodashService {
 	static groupBy<T>(collection: List<T> | null | undefined, iteratee?: ValueIteratee<T>): Dictionary<T[]> {
 		return groupBy(collection, iteratee);

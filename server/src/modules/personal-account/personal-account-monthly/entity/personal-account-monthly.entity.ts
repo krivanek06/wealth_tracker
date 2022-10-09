@@ -20,6 +20,11 @@ export class PersonalAccountDailyData implements PersonalAccountDailyDataClient 
 	date: Date;
 
 	@Field(() => String, {
+		description: 'Reference to User.id, person who has created the entry',
+	})
+	userId: string;
+
+	@Field(() => String, {
 		description: 'Reference to PersonalAccountTag.id',
 	})
 	tagId: string;

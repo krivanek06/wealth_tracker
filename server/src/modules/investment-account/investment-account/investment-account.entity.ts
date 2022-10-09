@@ -7,6 +7,11 @@ export class InvestmentAccount implements InvestmentAccountClient {
 	@Field(() => String)
 	id: string;
 
+	@Field(() => String, {
+		description: 'custom name for personal account',
+	})
+	name: string;
+
 	@Field(() => Float, {
 		description: 'How much cash on hand is on this investment account',
 	})

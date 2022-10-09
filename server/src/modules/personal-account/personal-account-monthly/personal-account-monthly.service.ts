@@ -16,7 +16,7 @@ export class PersonalAccountMonthlyService {
 	 * @returns aggregated daily data (from personalAccountMonthlyData) by how much money was spent/earned
 	 * by each distinct tag in a distinct [year, month, week] period.
 	 * */
-	async getAllWeeklyAggregatedData(personalAccountId = ''): Promise<PersonalAccountDailyDataExtended[]> {
+	async getAllWeeklyAggregatedData(personalAccountId = ''): Promise<PersonalAccountWeeklyAggregation[]> {
 		// TODO: this will be received from token
 		const testUser = await this.prisma.user.findFirst();
 		const testUserPersonalAccount = await this.prisma.personalAccount.findFirst();
@@ -65,10 +65,7 @@ export class PersonalAccountMonthlyService {
 
 		const weeklyDataArray = monthlyDataGroupByWeek.map((d) => d[Object.keys(d)[0]]);
 
-		// helper
-
 		/**
-		 *
 		 * Construct an array of objects where weekly data (weeklyDataArray) will aggregated
 		 * value (previousData.value + curr.value) for a distinct tag in a distics [year, month, week]
 		 *  */
@@ -86,10 +83,23 @@ export class PersonalAccountMonthlyService {
 					  } as PersonalAccountWeeklyAggregation);
 
 				return { ...acc, [KEY]: data };
-			}, {} as any)
+			}, {} as { [key: string]: PersonalAccountWeeklyAggregation })
 		);
 
-		return weeklyDataArrayGroupByTag;
+		// format array of objects into one big object
+		// it is fine because KEY is always different
+		const weeklyDataArrayGroupByTagObject = weeklyDataArrayGroupByTag.reduce((a, b) => {
+			return { ...a, ...b };
+		});
+
+		/**
+		 * mapping {'2023-9-37-6342667e47b98948ce6e0836': PersonalAccountWeeklyAggregation} ->[PersonalAccountWeeklyAggregation]
+		 *  */
+		const weeklyDataArrayGroupByTagArray = Object.keys(weeklyDataArrayGroupByTagObject).map(
+			(key) => weeklyDataArrayGroupByTagObject[key]
+		);
+
+		return weeklyDataArrayGroupByTagArray;
 	}
 
 	private convertAccountDailyDataToAccountWeeklyDataAggregation(

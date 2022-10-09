@@ -1,7 +1,12 @@
 import * as faker from '@faker-js/faker';
 import { PersonalAccountTagDataType, PrismaClient } from '@prisma/client';
-import { AccountCreateInput, AccountType } from '../src/models';
-import { PersonalAccountDailyDataCreate, PersonalAccountTagDataCreate, UserCreate } from '../src/modules';
+import {
+	AccountType,
+	PersonalAccountCreateInput,
+	PersonalAccountDailyDataCreate,
+	PersonalAccountTagDataCreate,
+	UserCreate,
+} from '../src/modules';
 
 const prisma = new PrismaClient();
 
@@ -89,7 +94,7 @@ const createPersonalAccount = async (): Promise<void> => {
 		},
 	});
 
-	const personalAccountInput: AccountCreateInput = {
+	const personalAccountInput: PersonalAccountCreateInput = {
 		name: 'Personal account 11',
 		type: AccountType.PERSONAL,
 	};

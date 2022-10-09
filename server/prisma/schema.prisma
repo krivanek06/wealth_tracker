@@ -50,7 +50,7 @@ model PersonalAccountTag {
     id         String                     @id @default(auto()) @map("_id") @db.ObjectId
     createdAt  DateTime                   @default(now())
     modifiedAt DateTime                   @updatedAt
-    name       String
+    name       String // custom name for personal account
     type       PersonalAccountTagDataType
 
     // True only for default Tags - by admin
@@ -65,9 +65,6 @@ model PersonalAccountTag {
     // Used to display this Tag only for one specific account 
     PersonalAccounSpecific PersonalAccount? @relation(fields: [personalAccountId], references: [id])
     personalAccountId      String?          @unique
-
-    // N - 1 relationship with PersonalAccountWeeklyAggregation
-    PersonalAccountDataWeeklyAggregation PersonalAccountWeeklyAggregation[]
 }
 
 enum PersonalAccountTagDataType {
@@ -81,11 +78,6 @@ model PersonalAccountMonthlyData {
     month Int // 8 == 'September', 0 == 'Januar',
     year  Int // 2022
 
-    // always adjusting based on new/modified entry in PersonalAccountDataDaily
-    // load PersonalAccountTagData based on PersonalAccountDataDaily.tagId to calculate these
-    // not using resolvers because of the Account-overview & accunt growth charts
-    WeeklyAggregation PersonalAccountWeeklyAggregation[]
-
     // daily entries of user's expenses / incomes - changed on user's input
     dailyData PersonalAccountDailyData[]
 
@@ -94,39 +86,19 @@ model PersonalAccountMonthlyData {
     personalAccountId String          @db.ObjectId
 }
 
-model PersonalAccountWeeklyAggregation {
-    id String @id @default(auto()) @map("_id") @db.ObjectId
-
-    // values to easily find document if PersonalAccountDataDaily change
-    year Int // 2022
-    week Int // Week 37 <- calculate on DB update
-
-    // Total amount for a tag/week, non-negative value even if it is an expense
-    value Float
-
-    // how many entries per personalAccountTagId per week there were
-    entries Int
-
-    // N - 1 reference to PersonalAccountMonthlyData
-    PersonalAccountMonthlyData   PersonalAccountMonthlyData? @relation(fields: [personalAccountMonthlyDataId], references: [id], onDelete: Cascade)
-    personalAccountMonthlyDataId String?                     @db.ObjectId
-
-    // N - 1 reference to PersonalAccountTag
-    personalAccountTag   PersonalAccountTag @relation(fields: [personalAccountTagId], references: [id])
-    personalAccountTagId String             @db.ObjectId
-}
-
 type PersonalAccountDailyData {
-    id    String   @default(uuid()) // random
-    tagId String // ID of TagData -> Can be modified, resolved on the FE!
-    value Float // $ how much I paid / received
-    date  DateTime @default(now())
-    week  Int // Week 37 <- calculate on DB update
+    id     String   @default(uuid()) // random
+    tagId  String // ID of TagData -> Can be modified, resolved on the FE!
+    value  Float // $ how much I paid / received
+    date   DateTime @default(now())
+    week   Int // Week 37 <- calculate on DB update
+    userId String // user who created the daily entry
 }
 
 // ---------------- Investment account ------------------
 model InvestmentAccount {
     id          String @id @default(auto()) @map("_id") @db.ObjectId
+    name        String // custom name for personal account
     cashCurrent Float // how much cash on hand user has in the trading platform
 
     holdings              InvestmentAccountHoldings[]

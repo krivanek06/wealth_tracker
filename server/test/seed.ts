@@ -1,6 +1,7 @@
 import * as faker from '@faker-js/faker';
 import { PersonalAccountTagDataType, PrismaClient } from '@prisma/client';
-import { PersonalAccountTagDataCreate, UserCreate } from './../src/modules';
+import { AccountCreateInput, AccountType } from '../src/models';
+import { PersonalAccountDailyDataCreate, PersonalAccountTagDataCreate, UserCreate } from '../src/modules';
 
 const prisma = new PrismaClient();
 
@@ -31,66 +32,178 @@ const createManyUsers = async (): Promise<void> => {
 };
 
 const createDefaultTags = async (): Promise<void> => {
-	if ((await prisma.personalAccountTag.count()) !== 0) {
-		return;
-	}
-
-	// create collection
-	const collection = await prisma.personalAccountTag.create({
-		data: {
-			total: 0,
-			data: [],
-			isDefault: true,
-		},
-	});
-	const TAG_DEFAULT_ID = collection.id;
+	await prisma.personalAccountTag.deleteMany();
 
 	// Default expense tags
 	for (let i = 0; i < 10; i++) {
-		const tagDefaultExpense: PersonalAccountTagDataCreate & { id: string } = {
-			id: new Date().toISOString() + getRandomInt(1, 40),
+		const tagDefaultExpense: PersonalAccountTagDataCreate = {
 			name: `Spending_${1}`,
 			type: PersonalAccountTagDataType.EXPENSE,
 		};
 
-		await prisma.personalAccountTag.update({
+		await prisma.personalAccountTag.create({
 			data: {
-				total: {
-					increment: 1,
-				},
-				data: {
-					push: tagDefaultExpense,
-				},
-			},
-			where: {
-				id: TAG_DEFAULT_ID,
+				...tagDefaultExpense,
+				isDefault: true,
 			},
 		});
 	}
 
 	// Default income tags
 	for (let i = 0; i < 3; i++) {
-		const tagDefaultIncome: PersonalAccountTagDataCreate & { id: string } = {
-			id: new Date().toISOString() + getRandomInt(1, 40),
+		const tagDefaultIncome: PersonalAccountTagDataCreate = {
 			name: `Income_${1}`,
 			type: PersonalAccountTagDataType.INCOME,
 		};
 
-		await prisma.personalAccountTag.update({
+		await prisma.personalAccountTag.create({
 			data: {
-				total: {
-					increment: 1,
-				},
-				data: {
-					push: tagDefaultIncome,
-				},
-			},
-			where: {
-				id: TAG_DEFAULT_ID,
+				...tagDefaultIncome,
+				isDefault: true,
 			},
 		});
 	}
 };
+
+const createPersonalAccount = async (): Promise<void> => {
+	// remove previous data
+	await prisma.personalAccount.deleteMany();
+	await prisma.personalAccountMonthlyData.deleteMany();
+
+	// prepare objects
+	const testUser = await prisma.user.findFirst();
+	const expenseTag1 = await prisma.personalAccountTag.findFirst({
+		where: {
+			type: 'EXPENSE',
+		},
+	});
+	const expenseTag2 = await prisma.personalAccountTag.findFirst({
+		where: {
+			type: 'EXPENSE',
+		},
+		skip: 2,
+	});
+	const incomeTag1 = await prisma.personalAccountTag.findFirst({
+		where: {
+			type: 'INCOME',
+		},
+	});
+
+	const personalAccountInput: AccountCreateInput = {
+		name: 'Personal account 11',
+		type: AccountType.PERSONAL,
+	};
+
+	// create personal account
+	const personalAccount = await prisma.personalAccount.create({
+		data: {
+			name: personalAccountInput.name,
+			userId: testUser.id,
+		},
+	});
+
+	// create new month -> will be done by cloud funtions
+	const MONTH_8_2022 = await prisma.personalAccountMonthlyData.create({
+		data: {
+			year: 2022,
+			month: 8,
+			dailyData: [],
+			personalAccountId: personalAccount.id,
+		},
+	});
+	const MONTH_9_2022 = await prisma.personalAccountMonthlyData.create({
+		data: {
+			year: 2022,
+			month: 9,
+			dailyData: [],
+			personalAccountId: personalAccount.id,
+		},
+	});
+	const MONTH_9_2023 = await prisma.personalAccountMonthlyData.create({
+		data: {
+			year: 2023,
+			month: 9,
+			dailyData: [],
+			personalAccountId: personalAccount.id,
+		},
+	});
+
+	const CURRENT_WEEK_TEST = 37;
+	const dailyData1: PersonalAccountDailyDataCreate & { week: number; userId: string } = {
+		value: 15.5,
+		userId: testUser.id,
+		tagId: expenseTag1.id,
+		week: CURRENT_WEEK_TEST,
+	};
+	const dailyData2: PersonalAccountDailyDataCreate & { week: number; userId: string } = {
+		value: 12.5,
+		tagId: expenseTag1.id,
+		week: CURRENT_WEEK_TEST,
+		userId: testUser.id,
+	};
+	const dailyData3: PersonalAccountDailyDataCreate & { week: number; userId: string } = {
+		value: 10.5,
+		tagId: expenseTag2.id,
+		week: CURRENT_WEEK_TEST,
+		userId: testUser.id,
+	};
+	const dailyData1Income: PersonalAccountDailyDataCreate & { week: number; userId: string } = {
+		value: 100,
+		tagId: incomeTag1.id,
+		week: CURRENT_WEEK_TEST,
+		userId: testUser.id,
+	};
+
+	// persis expenses & incomes
+	await prisma.personalAccountMonthlyData.update({
+		data: {
+			dailyData: {
+				push: [dailyData1, dailyData2, dailyData3, dailyData1Income],
+			},
+		},
+		where: {
+			id: MONTH_8_2022.id,
+		},
+	});
+	await prisma.personalAccountMonthlyData.update({
+		data: {
+			dailyData: {
+				push: [dailyData1, dailyData2],
+			},
+		},
+		where: {
+			id: MONTH_9_2022.id,
+		},
+	});
+	await prisma.personalAccountMonthlyData.update({
+		data: {
+			dailyData: {
+				push: [dailyData1, dailyData2, dailyData1Income],
+			},
+		},
+		where: {
+			id: MONTH_9_2023.id,
+		},
+	});
+
+	// TODO calculate PersonalAccountWeeklyAggregation based on each dailyData entry
+	// const data = await prisma.personalAccountMonthlyData.groupBy({
+	// 	by: ['year', 'month'],
+	// });
+	// data.
+};
+
+// const createInvestmentAccount = async (): Promise<void> => {
+// 	if ((await prisma.investmentAccount.count()) !== 0) {
+// 		return;
+// 	}
+
+// 	const testUser = await prisma.user.findFirst();
+// 	const investmentAccount: AccountCreateInput = {
+// 		name: 'Investment account 222',
+// 		type: AccountType.INVESTTMENT,
+// 	};
+// };
 
 const run = async () => {
 	const prisma = new PrismaClient();
@@ -104,6 +217,12 @@ const run = async () => {
 		console.log('creating default tags () -> start');
 		await createDefaultTags();
 		console.log('creating default tags () -> done');
+
+		console.log('====');
+
+		console.log('creating personal account () -> start');
+		await createPersonalAccount();
+		console.log('creating personal account () -> done');
 	} finally {
 		await prisma.$disconnect();
 	}

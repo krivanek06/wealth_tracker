@@ -7,7 +7,6 @@ import {
 	PersonalAccountModule,
 	PersonalAccountMonthlyModule,
 	PersonalAccountTagModule,
-	PersonalAccountWeeklyAggregationModule,
 	UserModule,
 } from '../modules';
 
@@ -25,7 +24,7 @@ import { GraphQLResolver } from './graphql.resolver';
 		PersonalAccountModule,
 		PersonalAccountTagModule,
 		PersonalAccountMonthlyModule,
-		PersonalAccountWeeklyAggregationModule,
+
 		InvestmentAccountModule,
 		InvestmentAccountHistoryModule,
 	],

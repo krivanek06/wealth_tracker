@@ -3,7 +3,7 @@ import { MaxLength } from 'class-validator';
 
 @InputType()
 @ArgsType()
-export class AccountCreateInput {
+export class PersonalAccountCreateInput {
 	@Field(() => String)
 	@MaxLength(50)
 	name: string;

@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import * as jwt from 'jsonwebtoken';
-import { REQ_USER_PROPERTY } from '../authorization.constants';
+import { REQ_USER_PROPERTY } from '../authentication.constants';
 
 export class AuthorizationGuard implements CanActivate {
 	canActivate(context: ExecutionContext): boolean | Promise<boolean> {

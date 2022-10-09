@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { User as UserClient } from '@prisma/client';
+import { User as UserClient, UserAuthentication } from '@prisma/client';
 
 @ObjectType()
 export class User implements UserClient {
@@ -9,8 +9,10 @@ export class User implements UserClient {
 	@Field(() => String)
 	createdAt: Date;
 
-	@Field(() => String)
-	imageUrl: string;
+	@Field(() => String, {
+		nullable: true,
+	})
+	imageUrl: string | null;
 
 	@Field(() => String)
 	username: string;
@@ -20,4 +22,6 @@ export class User implements UserClient {
 
 	@Field(() => String)
 	lastSingInDate: Date;
+
+	authentication: UserAuthentication;
 }

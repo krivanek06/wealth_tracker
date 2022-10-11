@@ -1,20 +1,21 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
 import * as jwt from 'jsonwebtoken';
-import { REQ_USER_PROPERTY } from '../authentication.constants';
 
+// TODO: dont use guard on endpoing /auth/
 export class AuthorizationGuard implements CanActivate {
 	canActivate(context: ExecutionContext): boolean | Promise<boolean> {
-		const ctx = GqlExecutionContext.create(context).getContext();
+		//const ctx = GqlExecutionContext.create(context).getContext();
 		//console.log('ctx', ctx.req?.headers);
-		const authorization = ctx.req?.headers?.authorization;
-		if (!authorization) {
-			throw new HttpException('Header information not found in the request', HttpStatus.BAD_GATEWAY);
-		}
+		// const authorization = ctx.req?.headers?.authorization;
+		// if (!authorization) {
+		// 	throw new HttpException('Header information not found in the request', HttpStatus.BAD_GATEWAY);
+		// }
 
-		const data = this.validateToken(authorization);
-		console.log(data);
-		ctx[REQ_USER_PROPERTY] = data;
+		// const data = this.validateToken(authorization);
+
+		// // TODO check if data is RequestUser object
+		// console.log(data);
+		// ctx[REQ_USER_PROPERTY] = data;
 		return true;
 	}
 

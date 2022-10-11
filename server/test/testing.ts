@@ -1,9 +1,13 @@
 import { PrismaClient } from '@prisma/client';
 import { groupBy } from 'lodash';
-import { PersonalAccountDailyData } from 'src/modules';
-import { PersonalAccountWeeklyAggregation } from './../src/modules/personal-account/personal-account-monthly/entity/personal-account-weekly-aggregation.entity';
+import {
+	PersonalAccountDailyData,
+	PersonalAccountWeeklyAggregation,
+} from '../src/modules/personal-account/personal-account-monthly/entity';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+	log: ['query', 'info', 'warn', 'error'],
+});
 
 type PersonalAccountDailyDataExtended = PersonalAccountDailyData & { year: number; month: number };
 
@@ -116,4 +120,31 @@ const getAllWeeklyAggregatedData = async (personalAccountId = ''): Promise<any> 
 	return weeklyDataArrayGroupByTagArray;
 };
 
-getAllWeeklyAggregatedData('');
+//getAllWeeklyAggregatedData('');
+
+const test = async (): Promise<any> => {
+	prisma.$on('beforeExit', async () => {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		console.log('Prisma shutting down');
+	});
+
+	console.log('Simple user creste');
+	await prisma.user.create({
+		data: {
+			email: 'test1@gm.sk',
+			authentication: {
+				authenticationType: 'BASIC_AUTH',
+				password: 'asddassd',
+			},
+			username: 'Test',
+		},
+	});
+
+	// await prisma.$connect();
+
+	const tags = await prisma.personalAccountTag.findMany();
+	console.log(tags);
+};
+
+test();

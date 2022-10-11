@@ -19,4 +19,15 @@ export class AuthenticationService {
 
 	// TODO: implement authentiocation -> return token
 	//async providerAuthentication(basicAuth: ??): Promise<void> {}
+
+	googleLogin(req) {
+		if (!req.user) {
+			return 'No user from google';
+		}
+
+		return {
+			message: 'User information from google',
+			user: req.user,
+		};
+	}
 }

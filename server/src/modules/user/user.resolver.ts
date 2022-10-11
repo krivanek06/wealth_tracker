@@ -9,5 +9,12 @@ export class UserResolver {
 	//async basicAuthentication(basicAuth: ??): Promise<void> {}
 
 	// TODO: implement authentiocation -> return token
+	//async basicAuthenticationRegistration(basicAuth: ??): Promise<void> {}
+
+	// TODO: implement authentiocation -> return token
 	//async providerAuthentication(basicAuth: ??): Promise<void> {}
+
+	// TODO: change password
+
+	// TODO: reset password
 }

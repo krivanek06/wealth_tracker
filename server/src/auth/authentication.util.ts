@@ -1,6 +1,6 @@
 import { ExecutionContext, InternalServerErrorException } from '@nestjs/common';
-import { REQ_USER_PROPERTY } from './authentication.constants';
-import { RequestUser } from './request-user.dto';
+
+import { RequestUser, REQ_USER_PROPERTY } from './authentication.dto';
 
 export class AuthenticationUtil {
 	static getRequestUserFromContext(executionContext: ExecutionContext): RequestUser {

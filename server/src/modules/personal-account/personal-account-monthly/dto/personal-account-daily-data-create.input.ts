@@ -1,6 +1,8 @@
-import { Field, Float } from '@nestjs/graphql';
+import { ArgsType, Field, Float, InputType } from '@nestjs/graphql';
 import { MaxLength, Min } from 'class-validator';
 
+@InputType()
+@ArgsType()
 export class PersonalAccountDailyDataCreate {
 	@Field(() => String)
 	@MaxLength(50)

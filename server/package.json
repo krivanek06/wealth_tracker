@@ -19,10 +19,11 @@
 		"test:cov": "jest --coverage",
 		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
 		"test:e2e": "jest --config ./test/jest-e2e.json",
-		"test-db": "npx nodemon test/testing-db-file.ts "
+		"test-file": "npx nodemon test/testing.ts"
 	},
 	"prisma": {
-		"seed": "ts-node test/seed.ts"
+		"seed": "ts-node test/seed.ts",
+		"schema": "prisma/schema.prisma"
 	},
 	"lint-staged": {
 		"**/*": "prettier --write --ignore-unknown"
@@ -34,14 +35,17 @@
 		"@nestjs/core": "^9.0.0",
 		"@nestjs/graphql": "^10.1.3",
 		"@nestjs/jwt": "^9.0.0",
+		"@nestjs/passport": "^9.0.0",
 		"@nestjs/platform-express": "^9.0.0",
-		"@prisma/client": "^4.4.0",
+		"@prisma/client": "4.2.0",
 		"@types/lodash": "^4.14.186",
 		"apollo-server-express": "^3.10.2",
 		"apollo-server-fastify": "^3.10.2",
 		"class-validator": "^0.13.2",
 		"graphql": "^16.6.0",
 		"lodash": "^4.17.21",
+		"passport": "^0.6.0",
+		"passport-google-oauth20": "^2.0.0",
 		"reflect-metadata": "^0.1.13",
 		"rimraf": "^3.0.2",
 		"rxjs": "^7.2.0",
@@ -55,6 +59,7 @@
 		"@types/express": "^4.17.13",
 		"@types/jest": "28.1.4",
 		"@types/node": "^16.0.0",
+		"@types/passport-google-oauth20": "^2.0.11",
 		"@types/supertest": "^2.0.11",
 		"@typescript-eslint/eslint-plugin": "^5.0.0",
 		"@typescript-eslint/parser": "^5.0.0",
@@ -66,7 +71,7 @@
 		"lint-staged": "^13.0.3",
 		"nodemon": "^2.0.20",
 		"prettier": "^2.7.1",
-		"prisma": "^4.4.0",
+		"prisma": "4.2.0",
 		"source-map-support": "^0.5.20",
 		"supertest": "^6.1.3",
 		"ts-jest": "28.0.5",

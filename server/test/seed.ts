@@ -26,10 +26,13 @@ const createManyUsers = async (): Promise<void> => {
 	for (let i = 0; i < 10; i++) {
 		await prisma.user.create({
 			data: {
-				email: faker.faker.internet.email(),
+				email: i % 4 ? null : faker.faker.internet.email(),
 				imageUrl: faker.faker.internet.avatar(),
 				username: faker.faker.internet.userName(),
-				authentication: {},
+				authentication: {
+					authenticationType: 'BASIC_AUTH',
+					password: 'abc123',
+				},
 			},
 		});
 	}
@@ -228,20 +231,6 @@ const run = async () => {
 	try {
 		console.log('Prisma: connecting');
 		await prisma.$connect();
-
-		console.log('Simple user count ');
-		await prisma.user.create({
-			data: {
-				email: 'asda@gm.sk',
-				authentication: {
-					authenticationType: 'BASIC_AUTH',
-					password: '123312',
-				},
-				username: 'Test',
-			},
-		});
-		const totalUsers = await prisma.user.count();
-		console.log(`Total users: ${totalUsers}`);
 
 		console.log('creating users () -> start');
 		await createManyUsers();

@@ -1,7 +1,10 @@
 import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { validate } from 'class-validator';
-import { AuthenticationUtil } from './authentication.util';
+import { AuthenticationUtil } from '../authentication.util';
 
+/**
+ * used as method(@ReqUser() autheUSer: RequestUser)
+ */
 export const ReqUser = createParamDecorator(async (_data: unknown, ctx: ExecutionContext) => {
 	const reqUser = AuthenticationUtil.getRequestUserFromContext(ctx);
 

@@ -129,7 +129,11 @@ const test = async (): Promise<any> => {
 		console.log('Prisma shutting down');
 	});
 
-	const testUser = await prisma.user.findFirst();
+	const testUser = await prisma.user.findFirst({
+		where: {
+			email: 'asddas@gasd.sk',
+		},
+	});
 	console.log(testUser);
 };
 

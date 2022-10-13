@@ -1,5 +1,5 @@
 import { ExecutionContext, InternalServerErrorException } from '@nestjs/common';
-
+import { User as UserClient } from '@prisma/client';
 import { RequestUser, REQ_USER_PROPERTY } from './authentication.dto';
 
 export class AuthenticationUtil {
@@ -14,5 +14,13 @@ export class AuthenticationUtil {
 		}
 
 		return reqUser;
+	}
+
+	static convertUserClientToRequestUser(userClient: UserClient): RequestUser {
+		return {
+			id: userClient.id,
+			email: userClient.email,
+			username: userClient.username,
+		};
 	}
 }

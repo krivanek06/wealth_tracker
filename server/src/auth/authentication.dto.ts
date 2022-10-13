@@ -1,18 +1,12 @@
-import { IsString, IsUUID } from 'class-validator';
+import { IsString } from 'class-validator';
 
 /**
  * execution context property name
  */
 export const REQ_USER_PROPERTY = 'REQ_USER';
 
-export enum AUTHENTICATION_PROVIDERS {
-	BASIC_AUTH = 'BASIC_AUTH',
-	/** gmail authentication  */
-	GOOGLE = 'GOOGLE',
-}
-
 export class RequestUser {
-	@IsUUID()
+	@IsString()
 	id: string;
 
 	@IsString()
@@ -21,6 +15,9 @@ export class RequestUser {
 	@IsString()
 	email: string;
 
-	@IsString()
-	authenticationType: AUTHENTICATION_PROVIDERS;
+	constructor(data: { id: string; username: string; email: string }) {
+		this.id = data.id;
+		this.username = data.username;
+		this.email = data.email;
+	}
 }

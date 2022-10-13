@@ -129,22 +129,8 @@ const test = async (): Promise<any> => {
 		console.log('Prisma shutting down');
 	});
 
-	console.log('Simple user creste');
-	await prisma.user.create({
-		data: {
-			email: 'test1@gm.sk',
-			authentication: {
-				authenticationType: 'BASIC_AUTH',
-				password: 'asddassd',
-			},
-			username: 'Test',
-		},
-	});
-
-	// await prisma.$connect();
-
-	const tags = await prisma.personalAccountTag.findMany();
-	console.log(tags);
+	const testUser = await prisma.user.findFirst();
+	console.log(testUser);
 };
 
 test();

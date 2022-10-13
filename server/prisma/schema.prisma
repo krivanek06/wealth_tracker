@@ -34,8 +34,10 @@ model User {
 type UserAuthentication {
     authenticationType AuthenticationType
 
-    // token or password must be set
-    token    String?
+    // Used for social media atuehntication
+    token String?
+
+    // used for basic authentication 
     password String?
 }
 

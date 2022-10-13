@@ -1,33 +1,46 @@
-import { Req, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
-import { AuthGuard } from '@nestjs/passport';
-import { Void } from './../graphql/graphql.types';
+import { Profile } from 'passport';
+import { Input } from './../graphql/args/';
 import { AuthenticationService } from './authentication.service';
+import { SocialProfile } from './decorators';
+import { AuthenticationGoogleGuard } from './guards';
+import { LoginSocialInput, LoginUserInput, RegisterUserInput } from './inputs';
+import { LoggedUserOutput } from './outputs';
 
 @Resolver()
 export class AuthenticationResolver {
 	constructor(private authenticationService: AuthenticationService) {}
 
-	// TODO: implement authentiocation -> return token
-	//async basicAuthentication(basicAuth: ??): Promise<void> {}
-
-	// TODO: implement authentiocation -> return token
-	//async basicAuthenticationRegistration(basicAuth: ??): Promise<void> {}
-
-	// TODO: implement authentiocation -> return token
-	//async providerAuthentication(basicAuth: ??): Promise<void> {}
-
 	// TODO: change password
 
 	// TODO: reset password
 
-	@Mutation(() => Void, { nullable: true })
-	@UseGuards(AuthGuard('google'))
-	async googleAuth(@Req() req) {}
+	@Mutation(() => LoggedUserOutput)
+	async registerBasic(@Input() registerUserInput: RegisterUserInput): Promise<LoggedUserOutput> {
+		const newUser = await this.authenticationService.registerBasic(registerUserInput);
+		const accessToken = this.authenticationService.generateJwt(newUser);
+		return { accessToken };
+	}
 
-	@Mutation(() => Void, { nullable: true })
-	@UseGuards(AuthGuard('google'))
-	googleAuthRedirect(@Req() req) {
-		return this.authenticationService.googleLogin(req);
+	@Mutation(() => LoggedUserOutput)
+	async loginBasic(@Input() loginUserInput: LoginUserInput): Promise<LoggedUserOutput> {
+		const loginUser = await this.authenticationService.loginBasic(loginUserInput);
+		const accessToken = this.authenticationService.generateJwt(loginUser);
+		return { accessToken };
+	}
+
+	/**
+	 *
+	 * @param profile
+	 * @param input
+	 * @returns - Authentication user access token
+	 */
+	@UseGuards(AuthenticationGoogleGuard)
+	@Mutation(() => LoggedUserOutput)
+	async loginSocial(@SocialProfile() profile: Profile, @Input() input: LoginSocialInput): Promise<LoggedUserOutput> {
+		const loginUser = await this.authenticationService.loginSocial(profile, input);
+		const accessToken = this.authenticationService.generateJwt(loginUser);
+		return { accessToken };
 	}
 }

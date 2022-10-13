@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { User as UserClient } from '@prisma/client';
+import { Profile } from 'passport';
 import { PrismaService } from 'prisma/prisma.service';
+import { LoginSocialInput, LoginUserInput, RegisterUserInput } from './inputs';
 
 /**
  * Calling the public methods, check if user already exists in the DB
@@ -9,25 +13,50 @@ import { PrismaService } from 'prisma/prisma.service';
  */
 @Injectable()
 export class AuthenticationService {
-	constructor(private prismaService: PrismaService) {}
+	constructor(private prismaService: PrismaService, private jwtService: JwtService) {}
 
-	// TODO: implement authentiocation -> return token
-	//async basicAuthentication(basicAuth: ??): Promise<void> {}
+	async registerBasic(registerUserInput: RegisterUserInput): Promise<UserClient> {
+		// check if passwords match
 
-	// TODO: implement authentiocation -> return token
-	//async basicAuthenticationRegistration(basicAuth: ??): Promise<void> {}
+		// load user from DB
 
-	// TODO: implement authentiocation -> return token
-	//async providerAuthentication(basicAuth: ??): Promise<void> {}
+		// if user email throw error
 
-	googleLogin(req) {
-		if (!req.user) {
-			return 'No user from google';
-		}
+		// register user
 
-		return {
-			message: 'User information from google',
-			user: req.user,
-		};
+		// return user
+		return {} as UserClient;
+	}
+
+	async loginBasic(loginUserInput: LoginUserInput): Promise<UserClient> {
+		// load user from DB
+
+		// if not exists - throw error
+
+		// update login time in DB
+
+		return {} as UserClient;
+	}
+
+	async loginSocial(profile: Profile, input: LoginSocialInput): Promise<UserClient> {
+		// load user from DB
+
+		// if not exists - create one
+
+		// update login time in DB
+
+		return {} as UserClient;
+	}
+
+	generateJwt(userClient: UserClient): string {
+		return this.jwtService.sign(userClient);
+	}
+
+	private async getUserByEmail(email: string): Promise<UserClient> {
+		return this.prismaService.user.findUnique({
+			where: {
+				email,
+			},
+		});
 	}
 }

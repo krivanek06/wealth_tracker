@@ -1,12 +1,8 @@
 import * as faker from '@faker-js/faker';
 import { PersonalAccountTagDataType, PrismaClient } from '@prisma/client';
-import {
-	AccountType,
-	PersonalAccountCreateInput,
-	PersonalAccountDailyDataCreate,
-	PersonalAccountTagDataCreate,
-	UserCreate,
-} from '../src/modules';
+import { PersonalAccountDailyDataCreate } from './../src/modules/personal-account/personal-account-monthly/dto/';
+import { PersonalAccountTagDataCreate } from './../src/modules/personal-account/personal-account-tag/dto/';
+import { AccountType, PersonalAccountCreateInput } from './../src/modules/personal-account/personal-account/dto/';
 
 const prisma = new PrismaClient();
 
@@ -17,27 +13,40 @@ const getRandomInt = (min: number, max: number) => {
 };
 
 const createManyUsers = async (): Promise<void> => {
-	if ((await prisma.user.count()) !== 0) {
+	// remove previous users
+	try {
+		if ((await prisma.user.count()) > 0) {
+			await prisma.user.deleteMany();
+		}
+	} catch (err) {
+		console.log('Users: Unable to remove previous data, stopping operation');
 		return;
 	}
 
 	for (let i = 0; i < 10; i++) {
-		const user: UserCreate = {
-			email: faker.faker.internet.email(),
-			imageUrl: faker.faker.internet.avatar(),
-			username: faker.faker.internet.userName(),
-		};
-
 		await prisma.user.create({
 			data: {
-				...user,
+				email: i % 4 ? null : faker.faker.internet.email(),
+				imageUrl: faker.faker.internet.avatar(),
+				username: faker.faker.internet.userName(),
+				authentication: {
+					authenticationType: 'BASIC_AUTH',
+					password: 'abc123',
+				},
 			},
 		});
 	}
 };
 
 const createDefaultTags = async (): Promise<void> => {
-	await prisma.personalAccountTag.deleteMany();
+	try {
+		if ((await prisma.personalAccountTag.count()) > 0) {
+			await prisma.personalAccountTag.deleteMany();
+		}
+	} catch (err) {
+		console.log('Tags: Unable to remove previous data, stopping operation');
+		return;
+	}
 
 	// Default expense tags
 	for (let i = 0; i < 10; i++) {
@@ -72,8 +81,15 @@ const createDefaultTags = async (): Promise<void> => {
 
 const createPersonalAccount = async (): Promise<void> => {
 	// remove previous data
-	await prisma.personalAccount.deleteMany();
-	await prisma.personalAccountMonthlyData.deleteMany();
+	try {
+		if ((await prisma.personalAccount.count()) > 0) {
+			await prisma.personalAccount.deleteMany();
+			await prisma.personalAccountMonthlyData.deleteMany();
+		}
+	} catch (err) {
+		console.log('Personal account: Unable to remove previous data, stopping operation');
+		return;
+	}
 
 	// prepare objects
 	const testUser = await prisma.user.findFirst();
@@ -213,6 +229,9 @@ const createPersonalAccount = async (): Promise<void> => {
 const run = async () => {
 	const prisma = new PrismaClient();
 	try {
+		console.log('Prisma: connecting');
+		await prisma.$connect();
+
 		console.log('creating users () -> start');
 		await createManyUsers();
 		console.log('creating users () -> done');
@@ -228,6 +247,8 @@ const run = async () => {
 		console.log('creating personal account () -> start');
 		await createPersonalAccount();
 		console.log('creating personal account () -> done');
+	} catch (err) {
+		console.log(err);
 	} finally {
 		await prisma.$disconnect();
 	}

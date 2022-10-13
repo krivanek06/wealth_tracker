@@ -35,6 +35,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			// console.log(`${e.query} ${e.params} [${e.duration}ms]`);
+			// console.log('Query: ' + e.query)
+			// console.log('Params: ' + e.params)
+			// console.log('Duration: ' + e.duration + 'ms')
 		});
 	}
 

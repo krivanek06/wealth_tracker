@@ -20,20 +20,6 @@ export class PersonalAccountMonthlyService {
 		});
 	}
 
-	async getMonthlyDataByAccountIdFirst(
-		personalAccountId: string,
-		year?: number,
-		month?: number
-	): Promise<PersonalAccountMonthlyData> {
-		return this.prisma.personalAccountMonthlyData.findFirst({
-			where: {
-				personalAccountId,
-				year,
-				month,
-			},
-		});
-	}
-
 	async getMonthlyDataDailyEntries({ id }: PersonalAccountMonthlyData): Promise<number> {
 		// TODO can it be done better, only selecting the length of the array?
 		const personalAccount = await this.prisma.personalAccountMonthlyData.findFirst({

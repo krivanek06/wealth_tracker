@@ -7,6 +7,24 @@ import { PersonalAccount } from './entity';
 export class PersonalAccountService {
 	constructor(private prisma: PrismaService) {}
 
+	/* Queries */
+	getPersonalAccountById(personalAccountId: string): Promise<PersonalAccount> {
+		return this.prisma.personalAccount.findFirst({
+			where: {
+				id: personalAccountId,
+			},
+		});
+	}
+
+	getPersonalAccounts(userId: string): Promise<PersonalAccount[]> {
+		return this.prisma.personalAccount.findMany({
+			where: {
+				userId,
+			},
+		});
+	}
+
+	/* Mutations */
 	createPersonalAccount({ name }: PersonalAccountCreateInput, userId: string): Promise<PersonalAccount> {
 		return this.prisma.personalAccount.create({
 			data: {
@@ -24,14 +42,6 @@ export class PersonalAccountService {
 			},
 			where: {
 				id,
-			},
-		});
-	}
-
-	getPersonalAccounts(userId: string): Promise<PersonalAccount[]> {
-		return this.prisma.personalAccount.findMany({
-			where: {
-				userId,
 			},
 		});
 	}

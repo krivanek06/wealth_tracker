@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { LodashService } from '../../../utils';
+import { LodashServiceUtil } from '../../../utils';
 import {
 	PersonalAccount,
 	PersonalAccountDailyDataExtended,
@@ -12,10 +12,24 @@ import {
 export class PersonalAccountMonthlyService {
 	constructor(private prisma: PrismaService) {}
 
-	async getMonthlyData({ id }: PersonalAccount): Promise<PersonalAccountMonthlyData[]> {
+	async getMonthlyDataByAccountId(personalAccountId: string): Promise<PersonalAccountMonthlyData[]> {
 		return this.prisma.personalAccountMonthlyData.findMany({
 			where: {
-				personalAccountId: id,
+				personalAccountId,
+			},
+		});
+	}
+
+	async getMonthlyDataByAccountIdFirst(
+		personalAccountId: string,
+		year?: number,
+		month?: number
+	): Promise<PersonalAccountMonthlyData> {
+		return this.prisma.personalAccountMonthlyData.findFirst({
+			where: {
+				personalAccountId,
+				year,
+				month,
 			},
 		});
 	}
@@ -71,7 +85,7 @@ export class PersonalAccountMonthlyService {
     	*/
 		const monthlyDataGroupByWeek = monthlyDataModified.map(
 			(monthly) =>
-				LodashService.groupBy(monthly.dailyData, 'week') as { [key: string]: PersonalAccountDailyDataExtended[] }
+				LodashServiceUtil.groupBy(monthly.dailyData, 'week') as { [key: string]: PersonalAccountDailyDataExtended[] }
 		);
 
 		/**

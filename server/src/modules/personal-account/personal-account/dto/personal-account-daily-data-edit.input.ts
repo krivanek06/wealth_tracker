@@ -1,6 +1,8 @@
-import { Field, Float } from '@nestjs/graphql';
-import { MaxLength, Min } from 'class-validator';
+import { ArgsType, Field, Float, InputType } from '@nestjs/graphql';
+import { IsDate, MaxLength, Min } from 'class-validator';
 
+@InputType()
+@ArgsType()
 export class PersonalAccountDailyDataEdit {
 	@Field(() => String)
 	@MaxLength(300)
@@ -13,4 +15,11 @@ export class PersonalAccountDailyDataEdit {
 	@Field(() => Float)
 	@Min(0)
 	value: number;
+
+	@Field(() => String, {
+		nullable: true,
+		description: 'Date (past, current, future) to which assign this entry. If not provided, keep old date',
+	})
+	@IsDate()
+	date?: string | null;
 }

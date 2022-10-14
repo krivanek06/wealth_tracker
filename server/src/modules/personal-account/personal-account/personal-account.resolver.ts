@@ -42,11 +42,13 @@ export class PersonalAccountResolver {
 		return this.personalAccountService.editPersonalAccount(input, authUser.id);
 	}
 
+	// TODO delete personal account
+
 	/* Resolvers */
 
 	@ResolveField('monthlyData', () => [PersonalAccountMonthlyData])
 	getMonthlyData(@Parent() personalAccount: PersonalAccount): Promise<PersonalAccountMonthlyData[]> {
-		return this.personalAccountMonthlyService.getMonthlyData(personalAccount);
+		return this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount.id);
 	}
 
 	@ResolveField('weeklyAggregatonByTag', () => [PersonalAccountWeeklyAggregation])

@@ -6,7 +6,7 @@ import isEqual from 'lodash/isEqual';
 import takeRight from 'lodash/takeRight';
 import zip from 'lodash/zip';
 
-export class LodashService {
+export class LodashServiceUtil {
 	static groupBy<T>(collection: List<T> | null | undefined, iteratee?: ValueIteratee<T>): Dictionary<T[]> {
 		return groupBy(collection, iteratee);
 	}

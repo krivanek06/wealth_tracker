@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { PersonalAccountCreateInput } from './dto';
+import { PersonalAccountCreateInput, PersonalAccountEditInput } from './dto';
 import { PersonalAccount } from './entity';
 
 @Injectable()
@@ -12,6 +12,18 @@ export class PersonalAccountService {
 			data: {
 				name,
 				userId,
+			},
+		});
+	}
+
+	editPersonalAccount({ id, name }: PersonalAccountEditInput, userId: string): Promise<PersonalAccount> {
+		// TODO: should also check if perosnal account belongs to the userId
+		return this.prisma.personalAccount.update({
+			data: {
+				name,
+			},
+			where: {
+				id,
 			},
 		});
 	}

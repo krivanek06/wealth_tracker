@@ -6,7 +6,7 @@ import { MaxLength } from 'class-validator';
 export class PersonalAccountEditInput {
 	@Field(() => String)
 	@MaxLength(100)
-	accountId: string;
+	id: string;
 
 	@Field(() => String)
 	@MaxLength(50)

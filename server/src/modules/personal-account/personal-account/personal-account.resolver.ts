@@ -1,6 +1,8 @@
 import { UseGuards } from '@nestjs/common';
-import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth';
+import { Input } from './../../../graphql/args';
+import { PersonalAccountCreateInput } from './dto';
 import { PersonalAccount, PersonalAccountMonthlyData, PersonalAccountWeeklyAggregation } from './entity';
 import { PersonalAccountMonthlyService } from './personal-account-monthly.service';
 import { PersonalAccountService } from './personal-account.service';
@@ -23,17 +25,24 @@ export class PersonalAccountResolver {
 		return this.personalAccountService.getPersonalAccounts(authUser.id);
 	}
 
+	/* Mutation */
+	@Mutation(() => PersonalAccount)
+	createPersonalAccount(
+		@ReqUser() authUser: RequestUser,
+		@Input() input: PersonalAccountCreateInput
+	): Promise<PersonalAccount> {
+		return this.personalAccountService.createPersonalAccount(input, authUser.id);
+	}
+
 	/* Resolvers */
 
 	@ResolveField('monthlyData', () => [PersonalAccountMonthlyData])
-	async getMonthlyData(@Parent() personalAccount: PersonalAccount): Promise<PersonalAccountMonthlyData[]> {
+	getMonthlyData(@Parent() personalAccount: PersonalAccount): Promise<PersonalAccountMonthlyData[]> {
 		return this.personalAccountMonthlyService.getMonthlyData(personalAccount);
 	}
 
 	@ResolveField('weeklyAggregatonByTag', () => [PersonalAccountWeeklyAggregation])
-	async getAllWeeklyAggregatedData(
-		@Parent() personalAccount: PersonalAccount
-	): Promise<PersonalAccountWeeklyAggregation[]> {
+	getAllWeeklyAggregatedData(@Parent() personalAccount: PersonalAccount): Promise<PersonalAccountWeeklyAggregation[]> {
 		return this.personalAccountMonthlyService.getAllWeeklyAggregatedData(personalAccount);
 	}
 }

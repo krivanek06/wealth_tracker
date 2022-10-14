@@ -20,6 +20,16 @@ export class PersonalAccountMonthlyService {
 		});
 	}
 
+	async getMonthlyDataDailyEntries({ id }: PersonalAccountMonthlyData): Promise<number> {
+		// TODO can it be done better, only selecting the length of the array?
+		const personalAccount = await this.prisma.personalAccountMonthlyData.findFirst({
+			where: {
+				id,
+			},
+		});
+		return personalAccount.dailyData.length ?? 0;
+	}
+
 	/**
 	 * method used to format daily data for a easier managable data to display them on weekly/monthly chart
 	 *
@@ -98,7 +108,7 @@ export class PersonalAccountMonthlyService {
 		// it is fine because KEY is always different
 		const weeklyDataArrayGroupByTagObject = weeklyDataArrayGroupByTag.reduce((a, b) => {
 			return { ...a, ...b };
-		});
+		}, {});
 
 		/**
 		 * mapping {'2023-9-37-6342667e47b98948ce6e0836': PersonalAccountWeeklyAggregation} ->[PersonalAccountWeeklyAggregation]

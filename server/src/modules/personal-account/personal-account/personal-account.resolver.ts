@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth';
 import { Input } from './../../../graphql/args';
-import { PersonalAccountCreateInput } from './dto';
+import { PersonalAccountCreateInput, PersonalAccountEditInput } from './dto';
 import { PersonalAccount, PersonalAccountMonthlyData, PersonalAccountWeeklyAggregation } from './entity';
 import { PersonalAccountMonthlyService } from './personal-account-monthly.service';
 import { PersonalAccountService } from './personal-account.service';
@@ -32,6 +32,14 @@ export class PersonalAccountResolver {
 		@Input() input: PersonalAccountCreateInput
 	): Promise<PersonalAccount> {
 		return this.personalAccountService.createPersonalAccount(input, authUser.id);
+	}
+
+	@Mutation(() => PersonalAccount)
+	editPersonalAccount(
+		@ReqUser() authUser: RequestUser,
+		@Input() input: PersonalAccountEditInput
+	): Promise<PersonalAccount> {
+		return this.personalAccountService.editPersonalAccount(input, authUser.id);
 	}
 
 	/* Resolvers */

@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth';
 import { Input } from './../../../graphql';
-import { PersonalAccountDailyDataCreate } from './dto';
+import { PersonalAccountDailyDataCreate, PersonalAccountDailyDataDelete } from './dto';
 import { PersonalAccountDailyData } from './entity';
 import { PersonalAccountDailyService } from './personal-account-daily-data.service';
 
@@ -19,5 +19,21 @@ export class PersonalAccountDailyResolver {
 		@Input() input: PersonalAccountDailyDataCreate
 	): Promise<PersonalAccountDailyData> {
 		return this.personalAccountDailyService.createPersonalAccountDailyEntry(input, authUser.id);
+	}
+
+	// @Mutation(() => PersonalAccountDailyData)
+	// async editPersonalAccountDailyEntry(
+	// 	@ReqUser() authUser: RequestUser,
+	// 	@Input() input: PersonalAccountDailyDataEdit
+	// ): Promise<PersonalAccountDailyData> {
+	// 	return this.personalAccountDailyService.createPersonalAccountDailyEntry(input, authUser.id);
+	// }
+
+	@Mutation(() => PersonalAccountDailyData)
+	async deletePersonalAccountDailyEntry(
+		@ReqUser() authUser: RequestUser,
+		@Input() input: PersonalAccountDailyDataDelete
+	): Promise<PersonalAccountDailyData> {
+		return this.personalAccountDailyService.deletePersonalAccountDailyEntry(input, authUser.id);
 	}
 }

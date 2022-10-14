@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
+import { MomentServiceUtil } from './../../../utils';
 import { PersonalAccountCreateInput, PersonalAccountEditInput } from './dto';
 import { PersonalAccount } from './entity';
+import { PersonalAccountMonthlyService } from './personal-account-monthly.service';
 
 @Injectable()
 export class PersonalAccountService {
-	constructor(private prisma: PrismaService) {}
+	constructor(private prisma: PrismaService, private personalAccountMonthlyService: PersonalAccountMonthlyService) {}
 
 	/* Queries */
 	getPersonalAccountById(personalAccountId: string): Promise<PersonalAccount> {
@@ -25,13 +27,22 @@ export class PersonalAccountService {
 	}
 
 	/* Mutations */
-	createPersonalAccount({ name }: PersonalAccountCreateInput, userId: string): Promise<PersonalAccount> {
-		return this.prisma.personalAccount.create({
+	async createPersonalAccount({ name }: PersonalAccountCreateInput, userId: string): Promise<PersonalAccount> {
+		// create personal account
+		const personalAccount = await this.prisma.personalAccount.create({
 			data: {
 				name,
 				userId,
 			},
 		});
+
+		// created date details
+		const { year, month } = MomentServiceUtil.getDetailsInformationFromDate(personalAccount.createdAt);
+
+		// create monthly data for the new personal account
+		await this.personalAccountMonthlyService.createMonthlyData(personalAccount.id, year, month);
+
+		return personalAccount;
 	}
 
 	editPersonalAccount({ id, name }: PersonalAccountEditInput, userId: string): Promise<PersonalAccount> {
@@ -42,6 +53,14 @@ export class PersonalAccountService {
 			},
 			where: {
 				id,
+			},
+		});
+	}
+
+	deletePersonalAccount(personalAccountId: string): Promise<PersonalAccount> {
+		return this.prisma.personalAccount.delete({
+			where: {
+				id: personalAccountId,
 			},
 		});
 	}

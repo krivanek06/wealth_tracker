@@ -44,6 +44,17 @@ export class PersonalAccountMonthlyService {
 		return personalAccount.dailyData.length ?? 0;
 	}
 
+	async createMonthlyData(personalAccountId: string, year, month): Promise<PersonalAccountMonthlyData> {
+		return this.prisma.personalAccountMonthlyData.create({
+			data: {
+				personalAccountId,
+				year,
+				month,
+				dailyData: [],
+			},
+		});
+	}
+
 	/**
 	 * method used to format daily data for a easier managable data to display them on weekly/monthly chart
 	 *
@@ -51,8 +62,7 @@ export class PersonalAccountMonthlyService {
 	 * by each distinct tag in a distinct [year, month, week] period.
 	 * */
 	async getAllWeeklyAggregatedData({ id }: PersonalAccount): Promise<PersonalAccountWeeklyAggregation[]> {
-		// load user all monthly data
-		// already grouped by YEAR and MONTH
+		// load user all monthly data - already grouped by YEAR and MONTH
 		const monthlyData = await this.prisma.personalAccountMonthlyData.findMany({
 			where: {
 				personalAccountId: id,
@@ -83,10 +93,14 @@ export class PersonalAccountMonthlyService {
 				userId: '634263587b936b70bef186ff'
 			}
     	*/
-		const monthlyDataGroupByWeek = monthlyDataModified.map(
-			(monthly) =>
-				LodashServiceUtil.groupBy(monthly.dailyData, 'week') as { [key: string]: PersonalAccountDailyDataExtended[] }
-		);
+		const monthlyDataGroupByWeek = monthlyDataModified
+			// if array is we end up with a '0: {}' that will result an undefined value in weeklyDataArray
+			.filter((monthly) => monthly.dailyData.length > 0)
+			// group daily data by week
+			.map(
+				(monthly) =>
+					LodashServiceUtil.groupBy(monthly.dailyData, 'week') as { [key: string]: PersonalAccountDailyDataExtended[] }
+			);
 
 		/**
 		 * converting { '37': [ [Object], [Object]} => [ [ [Object], [Object] ], [ [Object], [Object] ] ]

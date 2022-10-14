@@ -42,7 +42,13 @@ export class PersonalAccountResolver {
 		return this.personalAccountService.editPersonalAccount(input, authUser.id);
 	}
 
-	// TODO delete personal account
+	@Mutation(() => PersonalAccount)
+	deletePersonalAccount(
+		@ReqUser() authUser: RequestUser,
+		@Input() personalAccountId: string
+	): Promise<PersonalAccount> {
+		return this.personalAccountService.deletePersonalAccount(personalAccountId);
+	}
 
 	/* Resolvers */
 

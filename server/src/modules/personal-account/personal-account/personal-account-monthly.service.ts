@@ -1,11 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { LodashService } from './../../../utils/';
-import { PersonalAccountDailyDataExtended, PersonalAccountWeeklyAggregation } from './entity';
+import { LodashService } from '../../../utils';
+import {
+	PersonalAccount,
+	PersonalAccountDailyDataExtended,
+	PersonalAccountMonthlyData,
+	PersonalAccountWeeklyAggregation,
+} from './entity';
 
 @Injectable()
 export class PersonalAccountMonthlyService {
 	constructor(private prisma: PrismaService) {}
+
+	async getMonthlyData({ id }: PersonalAccount): Promise<PersonalAccountMonthlyData[]> {
+		return this.prisma.personalAccountMonthlyData.findMany({
+			where: {
+				personalAccountId: id,
+			},
+		});
+	}
 
 	/**
 	 * method used to format daily data for a easier managable data to display them on weekly/monthly chart
@@ -13,16 +26,12 @@ export class PersonalAccountMonthlyService {
 	 * @returns aggregated daily data (from personalAccountMonthlyData) by how much money was spent/earned
 	 * by each distinct tag in a distinct [year, month, week] period.
 	 * */
-	async getAllWeeklyAggregatedData(personalAccountId = ''): Promise<PersonalAccountWeeklyAggregation[]> {
-		// TODO: this will be received from token
-		const testUser = await this.prisma.user.findFirst();
-		const testUserPersonalAccount = await this.prisma.personalAccount.findFirst();
-
+	async getAllWeeklyAggregatedData({ id }: PersonalAccount): Promise<PersonalAccountWeeklyAggregation[]> {
 		// load user all monthly data
 		// already grouped by YEAR and MONTH
 		const monthlyData = await this.prisma.personalAccountMonthlyData.findMany({
 			where: {
-				personalAccountId: testUserPersonalAccount.id,
+				personalAccountId: id,
 			},
 		});
 
@@ -37,9 +46,11 @@ export class PersonalAccountMonthlyService {
 		});
 
 		/** 
-     	* { '37': [ [Object], [Object], [Object], [Object] ] }
-		* 
-		* {
+		 * group each daily data from a monthly by a specific week
+		 * 
+     	 * { '37': [ [Object], [Object], [Object], [Object] ] }
+		 * 
+		 * {
 				id: '47d29fc2-c4de-4bb4-a777-000f9081894b',
 				tagId: '6342667c47b98948ce6e082c',
 				value: 15.5,

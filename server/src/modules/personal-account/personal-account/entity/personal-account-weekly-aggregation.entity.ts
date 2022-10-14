@@ -1,5 +1,7 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
-import { PersonalAccountDailyData } from './personal-account-monthly.entity';
+import { PersonalAccountDailyData } from './personal-account-daily-data.entity';
+
+export type PersonalAccountDailyDataExtended = PersonalAccountDailyData & { year: number; month: number };
 
 @ObjectType()
 export class PersonalAccountWeeklyAggregation {
@@ -33,15 +35,8 @@ export class PersonalAccountWeeklyAggregation {
 	})
 	entries: number;
 
-	// @Field(() => String, {
-	// 	description: 'Reference to PersonalAccountMonthlyData.id',
-	// })
-	// personalAccountMonthlyDataId: string;
-
 	@Field(() => String, {
 		description: 'Reference to PersonalAccount.id',
 	})
 	personalAccountTagId: string;
 }
-
-export type PersonalAccountDailyDataExtended = PersonalAccountDailyData & { year: number; month: number };

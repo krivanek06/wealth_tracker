@@ -105,12 +105,14 @@ model PersonalAccountMonthlyData {
 }
 
 type PersonalAccountDailyData {
-    id     String   @default(uuid()) // random
-    tagId  String // ID of TagData -> Can be modified, resolved on the FE!
-    value  Float // $ how much I paid / received
-    date   DateTime @default(now())
-    week   Int // Week 37 <- calculate on DB update
-    userId String // user who created the daily entry
+    id            String // random UUID 
+    tagId         String // ID of TagData -> Can be modified, resolved on the FE!
+    userId        String // user who created the daily entry
+    monthlyDataId String // PersonalAccountMonthlyData.id
+
+    value Float // $ how much I paid / received
+    date  DateTime // what date this entry is associated
+    week  Int // Week 37 <- calculate on DB update
 }
 
 // ---------------- Investment account ------------------

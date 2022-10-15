@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '../../../../prisma';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
 import { PersonalAccountDailyData } from '../entities';
 import {

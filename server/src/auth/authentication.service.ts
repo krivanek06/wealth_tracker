@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthenticationType, User as UserClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { Profile } from 'passport';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '../../prisma';
 import { RequestUser } from './authentication.dto';
 import { LoginSocialInput, LoginUserInput, RegisterUserInput } from './inputs';
 

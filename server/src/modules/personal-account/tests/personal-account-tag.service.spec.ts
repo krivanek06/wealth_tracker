@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PersonalAccountTagService } from './personal-account-tag.service';
+import { PersonalAccountTagService } from '../personal-account/services/personal-account-tag.service';
 
 describe('PersonalAccountTagService', () => {
 	let service: PersonalAccountTagService;

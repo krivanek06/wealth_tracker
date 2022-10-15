@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PersonalAccountTagResolver } from './personal-account-tag.resolver';
+import { PersonalAccountTagResolver } from '../resolvers/personal-account-tag.resolver';
 
 describe('PersonalAccountTagResolver', () => {
 	let resolver: PersonalAccountTagResolver;

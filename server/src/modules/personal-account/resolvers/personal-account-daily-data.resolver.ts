@@ -1,11 +1,15 @@
 import { UseGuards } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
+import { PersonalAccountDailyData } from '../entities';
+import {
+	PersonalAccountDailyDataCreate,
+	PersonalAccountDailyDataDelete,
+	PersonalAccountDailyDataEdit,
+} from '../inputs';
+import { PersonalAccountDailyDataEditOutput } from '../outputs';
+import { PersonalAccountDailyService } from '../services';
 import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth';
 import { Input } from './../../../graphql';
-import { PersonalAccountDailyData } from './entities';
-import { PersonalAccountDailyDataCreate, PersonalAccountDailyDataDelete, PersonalAccountDailyDataEdit } from './inputs';
-import { PersonalAccountDailyDataEditOutput } from './outputs';
-import { PersonalAccountDailyService } from './personal-account-daily-data.service';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => PersonalAccountDailyData)

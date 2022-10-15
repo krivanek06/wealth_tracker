@@ -1,11 +1,10 @@
 import { UseGuards } from '@nestjs/common';
 import { Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth';
-import { Input } from './../../../graphql/args';
-import { PersonalAccount, PersonalAccountMonthlyData, PersonalAccountWeeklyAggregation } from './entities';
-import { PersonalAccountCreateInput, PersonalAccountEditInput } from './inputs';
-import { PersonalAccountMonthlyService } from './personal-account-monthly.service';
-import { PersonalAccountService } from './personal-account.service';
+import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
+import { Input } from '../../../graphql/args';
+import { PersonalAccount, PersonalAccountMonthlyData, PersonalAccountWeeklyAggregation } from '../entities';
+import { PersonalAccountCreateInput, PersonalAccountEditInput } from '../inputs';
+import { PersonalAccountMonthlyService, PersonalAccountService } from '../services';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => PersonalAccount)

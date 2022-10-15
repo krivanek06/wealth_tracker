@@ -8,14 +8,6 @@ export class PersonalAccountDailyData implements PersonalAccountDailyDataClient 
 	})
 	id: string;
 
-	@Field(() => Float, {
-		description: 'Money amount change for a tagId',
-	})
-	value: number;
-
-	@Field(() => String)
-	date: Date;
-
 	@Field(() => String, {
 		description: 'Reference to User.id, person who has created the entry',
 	})
@@ -25,6 +17,19 @@ export class PersonalAccountDailyData implements PersonalAccountDailyDataClient 
 		description: 'Reference to PersonalAccountTag.id',
 	})
 	tagId: string;
+
+	@Field(() => String, {
+		description: 'Reference to PersonalAccountMonthlyData.id',
+	})
+	monthlyDataId: string;
+
+	@Field(() => Float, {
+		description: 'Money amount change for a tagId',
+	})
+	value: number;
+
+	@Field(() => String)
+	date: Date;
 
 	@Field(() => Int, {
 		description: 'To which week in a year is this account change associated. Like 37 for "Week 37"',

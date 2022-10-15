@@ -1,5 +1,5 @@
 import { PersonalAccountTagDataType } from '@prisma/client';
-import { PersonalAccountTagDataCreate } from '../input';
+import { PersonalAccountTagDataCreate } from '../inputs';
 
 export const PERSONAL_ACCOUNT_DEFAULT_TAGS: PersonalAccountTagDataCreate[] = [
 	{ name: 'Shoping', type: PersonalAccountTagDataType.EXPENSE },

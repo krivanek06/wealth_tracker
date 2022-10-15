@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { PERSONAL_ACCOUNT_DEFAULT_TAGS } from './dto';
-import { PersonalAccountTag } from './personal-account-tag.entity';
+import { PERSONAL_ACCOUNT_DEFAULT_TAGS } from '../dto';
+import { PersonalAccountTag } from '../entities/personal-account-tag.entity';
 
 @Injectable()
 export class PersonalAccountTagService {

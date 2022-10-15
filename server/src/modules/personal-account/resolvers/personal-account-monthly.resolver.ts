@@ -1,8 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Int, Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import { PersonalAccountMonthlyData } from '../entities';
+import { PersonalAccountMonthlyService } from '../services';
 import { AuthorizationGuard } from './../../../auth';
-import { PersonalAccountMonthlyData } from './entities';
-import { PersonalAccountMonthlyService } from './personal-account-monthly.service';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => PersonalAccountMonthlyData)

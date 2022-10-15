@@ -1,7 +1,7 @@
 import { ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { PersonalAccountModule, PersonalAccountTagModule } from './../modules/personal-account';
+import { PersonalAccountModule } from './../modules/personal-account';
 
 import { GraphQLModule } from '@nestjs/graphql';
 import { UserModule } from '../modules/user';
@@ -16,7 +16,6 @@ import { GraphQLResolver } from './graphql.resolver';
 		// modules
 		UserModule,
 		PersonalAccountModule,
-		PersonalAccountTagModule,
 
 		// InvestmentAccountModule,
 		// InvestmentAccountHistoryModule,

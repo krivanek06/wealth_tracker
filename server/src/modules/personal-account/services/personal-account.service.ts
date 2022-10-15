@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
+import { PersonalAccount } from '../entities';
+import { PersonalAccountCreateInput, PersonalAccountEditInput } from '../inputs';
 import { MomentServiceUtil } from './../../../utils';
-import { PersonalAccount } from './entities';
-import { PersonalAccountCreateInput, PersonalAccountEditInput } from './inputs';
 import { PersonalAccountMonthlyService } from './personal-account-monthly.service';
 
 @Injectable()

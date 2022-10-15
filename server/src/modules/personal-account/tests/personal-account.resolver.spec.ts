@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PersonalAccountResolver } from './personal-account.resolver';
+import { PersonalAccountResolver } from '../resolvers/personal-account.resolver';
 
 describe('PersonalAccountResolver', () => {
 	let resolver: PersonalAccountResolver;

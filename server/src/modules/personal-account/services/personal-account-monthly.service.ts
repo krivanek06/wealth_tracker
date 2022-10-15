@@ -6,7 +6,7 @@ import {
 	PersonalAccountDailyDataExtended,
 	PersonalAccountMonthlyData,
 	PersonalAccountWeeklyAggregation,
-} from './entities';
+} from '../entities';
 
 @Injectable()
 export class PersonalAccountMonthlyService {

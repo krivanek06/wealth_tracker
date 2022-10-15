@@ -1,8 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Query, Resolver } from '@nestjs/graphql';
-import { AuthorizationGuard } from './../../../auth';
-import { PersonalAccountTag } from './personal-account-tag.entity';
-import { PersonalAccountTagService } from './personal-account-tag.service';
+import { AuthorizationGuard } from '../../../auth';
+import { PersonalAccountTag } from '../entities/personal-account-tag.entity';
+import { PersonalAccountTagService } from '../services/personal-account-tag.service';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => PersonalAccountTag)

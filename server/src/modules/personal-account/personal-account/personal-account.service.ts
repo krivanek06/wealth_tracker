@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { MomentServiceUtil } from './../../../utils';
-import { PersonalAccountCreateInput, PersonalAccountEditInput } from './dto';
-import { PersonalAccount } from './entity';
+import { PersonalAccount } from './entities';
+import { PersonalAccountCreateInput, PersonalAccountEditInput } from './inputs';
 import { PersonalAccountMonthlyService } from './personal-account-monthly.service';
 
 @Injectable()
@@ -45,7 +45,14 @@ export class PersonalAccountService {
 		return personalAccount;
 	}
 
-	editPersonalAccount({ id, name }: PersonalAccountEditInput, userId: string): Promise<PersonalAccount> {
+	async editPersonalAccount({ id, name }: PersonalAccountEditInput, userId: string): Promise<PersonalAccount> {
+		const isPersonalAccountExists = await this.isPersonalAccountExists(id);
+
+		// no account found to be deleted
+		if (!isPersonalAccountExists) {
+			throw new HttpException(`Personal account not found, can not be removed`, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 		// TODO: should also check if perosnal account belongs to the userId
 		return this.prisma.personalAccount.update({
 			data: {
@@ -57,11 +64,28 @@ export class PersonalAccountService {
 		});
 	}
 
-	deletePersonalAccount(personalAccountId: string): Promise<PersonalAccount> {
+	async deletePersonalAccount(personalAccountId: string): Promise<PersonalAccount> {
+		const isPersonalAccountExists = await this.isPersonalAccountExists(personalAccountId);
+
+		// no account found to be deleted
+		if (!isPersonalAccountExists) {
+			throw new HttpException(`Personal account not found, can not be removed`, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 		return this.prisma.personalAccount.delete({
 			where: {
 				id: personalAccountId,
 			},
 		});
+	}
+
+	private async isPersonalAccountExists(personalAccountId: string): Promise<boolean> {
+		const accountCount = await this.prisma.personalAccount.count({
+			where: {
+				id: personalAccountId,
+			},
+		});
+
+		return accountCount > 0;
 	}
 }

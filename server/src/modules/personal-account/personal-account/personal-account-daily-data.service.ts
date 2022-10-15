@@ -1,8 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { MomentServiceUtil, SharedServiceUtil } from './../../../utils';
-import { PersonalAccountDailyDataCreate, PersonalAccountDailyDataDelete } from './dto';
-import { PersonalAccountDailyData } from './entity';
+import { PersonalAccountDailyData } from './entities';
+import { PersonalAccountDailyDataCreate, PersonalAccountDailyDataDelete, PersonalAccountDailyDataEdit } from './inputs';
+import { PersonalAccountDailyDataEditOutput } from './outputs';
 
 @Injectable()
 export class PersonalAccountDailyService {
@@ -27,11 +28,20 @@ export class PersonalAccountDailyService {
 				},
 			});
 
+			// month not found, adding too soon or too in the future
+			if (!monthlyData) {
+				throw new HttpException(
+					`Unable to found associated month. Can not add daily entry before you used the service, or in the future months`,
+					HttpStatus.NOT_FOUND
+				);
+			}
+
 			// create entry
 			const dailyData: PersonalAccountDailyData = {
 				id: uuid,
 				userId: userId,
 				tagId: input.tagId,
+				monthlyDataId: monthlyData.id,
 				value: input.value,
 				week: week,
 				date: inputDate,
@@ -56,12 +66,32 @@ export class PersonalAccountDailyService {
 		}
 	}
 
-	// TODO
-	// async editPersonalAccountDailyEntry(input: PersonalAccountDailyDataEdit): Promise<PersonalAccountDailyData> {
-	// 	// TODO load monthly data
-	// 	// TODO check if PersonalAccountDailyData.date exists, if not keep old date
-	// 	// TODO update daily data in array
-	// }
+	// TODO test functionality to pass on different month
+	/**
+	 * Using approach of deleting and creating a new daily data, because we may have a situation where
+	 * we want to change PersonalAccountDailyData.date to a different month than we are in
+	 *
+	 * Because we store in the DB an array of daily data for each PersonalAccountMonthlyData, when
+	 * date change to a different month, we need to remove the dailyData from the current month
+	 * and save it to the different one
+	 *
+	 * @param input
+	 * @param userId
+	 * @returns
+	 */
+	async editPersonalAccountDailyEntry(
+		input: PersonalAccountDailyDataEdit,
+		userId: string
+	): Promise<PersonalAccountDailyDataEditOutput> {
+		// remove old daily data
+		const deletedDailyData = await this.deletePersonalAccountDailyEntry(input.originalDailyData, userId);
+
+		// new daily data
+		const newDailyData = await this.createPersonalAccountDailyEntry(input.modifiedDailyData, userId);
+
+		// return edited entry
+		return { originalDailyData: deletedDailyData, modifiedDailyData: newDailyData };
+	}
 
 	async deletePersonalAccountDailyEntry(
 		{ dailyDataId, monthlyDataId }: PersonalAccountDailyDataDelete,
@@ -105,6 +135,7 @@ export class PersonalAccountDailyService {
 			},
 		});
 
+		// return removed entry
 		return dailyData;
 	}
 }

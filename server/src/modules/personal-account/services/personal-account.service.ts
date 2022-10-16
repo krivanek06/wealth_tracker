@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '../../../prisma';
+import { PERSONAL_ACCOUNT_ERROR } from '../dto';
 import { PersonalAccount } from '../entities';
 import { PersonalAccountCreateInput, PersonalAccountEditInput } from '../inputs';
 import { MomentServiceUtil } from './../../../utils';
@@ -69,7 +70,7 @@ export class PersonalAccountService {
 
 		// no account found to be deleted
 		if (!isPersonalAccountExists) {
-			throw new HttpException(`Personal account not found, can not be removed`, HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		return this.prisma.personalAccount.delete({
@@ -79,6 +80,11 @@ export class PersonalAccountService {
 		});
 	}
 
+	/**
+	 *
+	 * @param personalAccountId {string} id of the personal account we want to load
+	 * @returns whether a personal account exists by the personalAccountId
+	 */
 	private async isPersonalAccountExists(personalAccountId: string): Promise<boolean> {
 		const accountCount = await this.prisma.personalAccount.count({
 			where: {

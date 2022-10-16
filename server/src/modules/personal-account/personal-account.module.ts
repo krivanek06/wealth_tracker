@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '../../prisma';
 import {
 	PersonalAccountDailyResolver,
 	PersonalAccountMonthlyResolver,
@@ -11,6 +11,7 @@ import {
 	PersonalAccountMonthlyService,
 	PersonalAccountService,
 	PersonalAccountTagService,
+	PersonalAccountWeeklyService,
 } from './services';
 
 @Module({
@@ -24,6 +25,7 @@ import {
 		PersonalAccountDailyResolver,
 		PersonalAccountTagService,
 		PersonalAccountTagResolver,
+		PersonalAccountWeeklyService,
 	],
 	exports: [
 		PersonalAccountResolver,

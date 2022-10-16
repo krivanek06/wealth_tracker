@@ -54,7 +54,7 @@ export class PersonalAccountResolver {
 
 	@ResolveField('monthlyData', () => [PersonalAccountMonthlyData])
 	getMonthlyData(@Parent() personalAccount: PersonalAccount): Promise<PersonalAccountMonthlyData[]> {
-		return this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount.id);
+		return this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount);
 	}
 
 	@ResolveField('weeklyAggregatonByTag', () => [PersonalAccountWeeklyAggregation])

@@ -1,4 +1,10 @@
+import { UseGuards } from '@nestjs/common';
 import { Resolver } from '@nestjs/graphql';
+import { InvestmentAccountHistory } from '../entities';
+import { AuthorizationGuard } from './../../../auth';
 
-@Resolver()
-export class InvestmentAccountHistoryResolver {}
+@UseGuards(AuthorizationGuard)
+@Resolver(() => InvestmentAccountHistory)
+export class InvestmentAccountHistoryResolver {
+	//constructor() {}
+}

@@ -1,8 +1,12 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ObjectType, registerEnumType } from '@nestjs/graphql';
 import {
 	InvestmentAccountHoldings as InvestmentAccountHoldingsClient,
 	InvestmentAccountHoldingsType,
 } from '@prisma/client';
+
+registerEnumType(InvestmentAccountHoldingsType, {
+	name: 'InvestmentAccountHoldingsType',
+});
 
 @ObjectType()
 export class InvestmentAccountHoldings implements InvestmentAccountHoldingsClient {

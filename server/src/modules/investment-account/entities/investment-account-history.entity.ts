@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { InvestmentAccountHistory as InvestmentAccountHistoryClient } from '@prisma/client';
-import { InvestmentAccountPortfolioSnapshot } from './../dto/';
+import { InvestmentAccountPortfolioSnapshot } from '../outputs';
 
 @ObjectType()
 export class InvestmentAccountHistory implements InvestmentAccountHistoryClient {

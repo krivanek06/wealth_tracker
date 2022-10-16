@@ -1,2 +1,3 @@
-export * from './investment-account';
-export * from './investment-account-history';
+export * from './investment-account.module';
+export * from './resolvers';
+export * from './services';

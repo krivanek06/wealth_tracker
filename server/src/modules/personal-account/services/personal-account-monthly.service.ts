@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma';
-import { PersonalAccountMonthlyData } from '../entities';
+import { PersonalAccount, PersonalAccountMonthlyData } from '../entities';
 
 @Injectable()
 export class PersonalAccountMonthlyService {
 	constructor(private prisma: PrismaService) {}
 
-	async getMonthlyDataByAccountId(personalAccountId: string): Promise<PersonalAccountMonthlyData[]> {
+	async getMonthlyDataByAccountId({ id }: PersonalAccount): Promise<PersonalAccountMonthlyData[]> {
 		return this.prisma.personalAccountMonthlyData.findMany({
 			where: {
-				personalAccountId,
+				personalAccountId: id,
 			},
 		});
 	}
@@ -24,10 +24,10 @@ export class PersonalAccountMonthlyService {
 		return personalAccount.dailyData.length ?? 0;
 	}
 
-	async createMonthlyData(personalAccountId: string, year, month): Promise<PersonalAccountMonthlyData> {
+	async createMonthlyData({ id }: PersonalAccount, year, month): Promise<PersonalAccountMonthlyData> {
 		return this.prisma.personalAccountMonthlyData.create({
 			data: {
-				personalAccountId,
+				personalAccountId: id,
 				year,
 				month,
 				dailyData: [],

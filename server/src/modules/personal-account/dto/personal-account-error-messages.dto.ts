@@ -9,4 +9,5 @@ export enum PERSONAL_ACCOUNT_ERROR_DAILY_DATA {
 
 export enum PERSONAL_ACCOUNT_ERROR {
 	NOT_FOUND = 'Personal account not found, can not be removed',
+	NOT_ALLOWED_TO_CTEATE = 'You reacted you limit of creating personal accounts, no additional personal account is allowed',
 }

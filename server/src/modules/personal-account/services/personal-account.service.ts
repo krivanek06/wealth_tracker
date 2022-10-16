@@ -29,6 +29,17 @@ export class PersonalAccountService {
 
 	/* Mutations */
 	async createPersonalAccount({ name }: PersonalAccountCreateInput, userId: string): Promise<PersonalAccount> {
+		const personalAccountCount = await this.prisma.personalAccount.count({
+			where: {
+				userId,
+			},
+		});
+
+		// prevent creating more than 5 personal accounts per user
+		if (personalAccountCount > 4) {
+			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_ALLOWED_TO_CTEATE, HttpStatus.FORBIDDEN);
+		}
+
 		// create personal account
 		const personalAccount = await this.prisma.personalAccount.create({
 			data: {
@@ -41,7 +52,7 @@ export class PersonalAccountService {
 		const { year, month } = MomentServiceUtil.getDetailsInformationFromDate(personalAccount.createdAt);
 
 		// create monthly data for the new personal account
-		await this.personalAccountMonthlyService.createMonthlyData(personalAccount.id, year, month);
+		await this.personalAccountMonthlyService.createMonthlyData(personalAccount, year, month);
 
 		return personalAccount;
 	}
@@ -51,7 +62,7 @@ export class PersonalAccountService {
 
 		// no account found to be deleted
 		if (!isPersonalAccountExists) {
-			throw new HttpException(`Personal account not found, can not be removed`, HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		// TODO: should also check if perosnal account belongs to the userId

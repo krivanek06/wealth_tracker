@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { InvestmentAccountHistoryService } from './investment-account-history.service';
+import { InvestmentAccountHistoryService } from '../services/investment-account-history.service';
 
 describe('InvestmentAccountHistoryService', () => {
 	let service: InvestmentAccountHistoryService;

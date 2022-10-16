@@ -17,11 +17,11 @@ export class PersonalAccountDailyDataEdit {
 		description: 'Original daily data we want to edit',
 	})
 	@IsObject()
-	originalDailyData: PersonalAccountDailyDataDelete;
+	dailyDataDelete: PersonalAccountDailyDataDelete;
 
 	@Field(() => PersonalAccountDailyDataCreate, {
 		description: 'New daily data we want to save',
 	})
 	@IsObject()
-	modifiedDailyData: PersonalAccountDailyDataCreate;
+	dailyDataCreate: PersonalAccountDailyDataCreate;
 }

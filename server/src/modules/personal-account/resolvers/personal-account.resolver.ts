@@ -4,14 +4,15 @@ import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql/args';
 import { PersonalAccount, PersonalAccountMonthlyData, PersonalAccountWeeklyAggregation } from '../entities';
 import { PersonalAccountCreateInput, PersonalAccountEditInput } from '../inputs';
-import { PersonalAccountMonthlyService, PersonalAccountService } from '../services';
+import { PersonalAccountMonthlyService, PersonalAccountService, PersonalAccountWeeklyService } from '../services';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => PersonalAccount)
 export class PersonalAccountResolver {
 	constructor(
 		private personalAccountService: PersonalAccountService,
-		private personalAccountMonthlyService: PersonalAccountMonthlyService
+		private personalAccountMonthlyService: PersonalAccountMonthlyService,
+		private personalAccountWeeklyService: PersonalAccountWeeklyService
 	) {}
 
 	/* Queries */
@@ -58,6 +59,6 @@ export class PersonalAccountResolver {
 
 	@ResolveField('weeklyAggregatonByTag', () => [PersonalAccountWeeklyAggregation])
 	getAllWeeklyAggregatedData(@Parent() personalAccount: PersonalAccount): Promise<PersonalAccountWeeklyAggregation[]> {
-		return this.personalAccountMonthlyService.getAllWeeklyAggregatedData(personalAccount);
+		return this.personalAccountWeeklyService.getAllWeeklyAggregatedData(personalAccount);
 	}
 }

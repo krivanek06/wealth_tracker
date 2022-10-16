@@ -1,8 +1,8 @@
 import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaService } from '../../../prisma';
 import { PERSONAL_ACCOUNT_DEFAULT_TAGS } from '../dto';
 import { PersonalAccountTagService } from '../services';
-import { PrismaService } from './../../../../prisma';
 
 describe('PersonalAccountTagService', () => {
 	let service: PersonalAccountTagService;

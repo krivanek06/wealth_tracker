@@ -1,6 +1,7 @@
 import { Field, Float, ObjectType } from '@nestjs/graphql';
 import { InvestmentAccount as InvestmentAccountClient } from '@prisma/client';
-import { InvestmentAccountHoldings, InvestmentAccountPortfolioSnapshot } from './../dto/';
+import { InvestmentAccountHolding } from './investment-account-holding.entity';
+import { InvestmentAccountPortfolioSnapshot } from './investment-account-portfolio-snapshot.entity';
 
 @ObjectType()
 export class InvestmentAccount implements InvestmentAccountClient {
@@ -17,21 +18,20 @@ export class InvestmentAccount implements InvestmentAccountClient {
 	})
 	cashCurrent: number;
 
-	@Field(() => [InvestmentAccountHoldings])
-	holdings: InvestmentAccountHoldings[];
+	@Field(() => [InvestmentAccountHolding], {
+		description: 'All assets user hold in his InvestmentAccount',
+		defaultValue: [],
+	})
+	holdings: InvestmentAccountHolding[];
 
 	@Field(() => InvestmentAccountPortfolioSnapshot, {
+		nullable: true,
 		description: 'Last inserted data in InvestmentAccountHistory.portfolioSnapshots',
 	})
-	lastPortfolioSnapshot: InvestmentAccountPortfolioSnapshot;
+	lastPortfolioSnapshot: InvestmentAccountPortfolioSnapshot | null;
 
 	@Field(() => String, {
 		description: 'Reference to User.ID who created this investment account',
 	})
 	userId: string;
-
-	@Field(() => String, {
-		description: 'Reference to InvestmentAccountHistory.ID who for 1-o-1 relashion',
-	})
-	investmentAccountHistoryId: string;
 }

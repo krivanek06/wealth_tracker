@@ -2,17 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { InvestmentAccountResolver } from './investment-account.resolver';
 
 describe('InvestmentAccountResolver', () => {
-  let resolver: InvestmentAccountResolver;
+	let resolver: InvestmentAccountResolver;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [InvestmentAccountResolver],
-    }).compile();
+	beforeEach(async () => {
+		const module: TestingModule = await Test.createTestingModule({
+			providers: [InvestmentAccountResolver],
+		}).compile();
 
-    resolver = module.get<InvestmentAccountResolver>(InvestmentAccountResolver);
-  });
+		resolver = module.get<InvestmentAccountResolver>(InvestmentAccountResolver);
+	});
 
-  it('should be defined', () => {
-    expect(resolver).toBeDefined();
-  });
+	it('should be defined', () => {
+		expect(resolver).toBeDefined();
+	});
 });

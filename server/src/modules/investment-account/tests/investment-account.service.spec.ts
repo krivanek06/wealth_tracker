@@ -34,37 +34,6 @@ describe('InvestmentAccountService', () => {
 		},
 	});
 
-	when(prismaServiceMock.investmentAccount.count)
-		.calledWith({
-			where: {
-				userId: mockUserId,
-			},
-		})
-		.mockResolvedValue(4)
-		.calledWith({
-			where: {
-				userId: mockUserId2,
-			},
-		})
-		.mockResolvedValue(5);
-
-	when(prismaServiceMock.investmentAccount.findMany)
-		.calledWith({
-			where: {
-				userId: mockUserId,
-			},
-		})
-		.mockResolvedValue([investmentAccountMock]);
-
-	when(prismaServiceMock.investmentAccount.findFirst)
-		.calledWith({
-			where: {
-				id: mockInvestmentAccountId,
-				userId: mockUserId,
-			},
-		})
-		.mockResolvedValue(investmentAccountMock);
-
 	const investmentAccountHistoryServiceMock = createMock<InvestmentAccountHistoryService>();
 
 	beforeEach(async () => {
@@ -77,6 +46,37 @@ describe('InvestmentAccountService', () => {
 		}).compile();
 
 		service = module.get<InvestmentAccountService>(InvestmentAccountService);
+
+		when(prismaServiceMock.investmentAccount.count)
+			.calledWith({
+				where: {
+					userId: mockUserId,
+				},
+			})
+			.mockResolvedValue(4)
+			.calledWith({
+				where: {
+					userId: mockUserId2,
+				},
+			})
+			.mockResolvedValue(5);
+
+		when(prismaServiceMock.investmentAccount.findMany)
+			.calledWith({
+				where: {
+					userId: mockUserId,
+				},
+			})
+			.mockResolvedValue([investmentAccountMock]);
+
+		when(prismaServiceMock.investmentAccount.findFirst)
+			.calledWith({
+				where: {
+					id: mockInvestmentAccountId,
+					userId: mockUserId,
+				},
+			})
+			.mockResolvedValue(investmentAccountMock);
 	});
 
 	afterEach(() => {

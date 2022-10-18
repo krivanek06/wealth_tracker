@@ -118,25 +118,6 @@ describe('PersonalAccountWeeklyService', () => {
 			findMany: jest.fn(),
 		},
 	});
-	when(prismaServiceMock.personalAccountMonthlyData.findMany)
-		.calledWith({
-			where: {
-				personalAccountId: PERSONAL_ACCOUNT_ID_SINGLE_MONTH.id,
-			},
-		})
-		.mockResolvedValue([PERSONAL_ACCOUNT_MONTHLY_DATA_SINGLE_MONTHL])
-		.calledWith({
-			where: {
-				personalAccountId: PERSONAL_ACCOUNT_ID_EMPTY.id,
-			},
-		})
-		.mockResolvedValue([PERSONAL_ACCOUNT_MONTHLY_DATA_EMPTY])
-		.calledWith({
-			where: {
-				personalAccountId: PERSONAL_ACCOUNT_ID_MULTIPLE_MONTHS.id,
-			},
-		})
-		.mockResolvedValue(PERSONAL_ACCOUNT_MONTHLY_DATA_MULTIPLE_MONTHS);
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -144,6 +125,30 @@ describe('PersonalAccountWeeklyService', () => {
 		}).compile();
 
 		service = module.get<PersonalAccountWeeklyService>(PersonalAccountWeeklyService);
+
+		when(prismaServiceMock.personalAccountMonthlyData.findMany)
+			.calledWith({
+				where: {
+					personalAccountId: PERSONAL_ACCOUNT_ID_SINGLE_MONTH.id,
+				},
+			})
+			.mockResolvedValue([PERSONAL_ACCOUNT_MONTHLY_DATA_SINGLE_MONTHL])
+			.calledWith({
+				where: {
+					personalAccountId: PERSONAL_ACCOUNT_ID_EMPTY.id,
+				},
+			})
+			.mockResolvedValue([PERSONAL_ACCOUNT_MONTHLY_DATA_EMPTY])
+			.calledWith({
+				where: {
+					personalAccountId: PERSONAL_ACCOUNT_ID_MULTIPLE_MONTHS.id,
+				},
+			})
+			.mockResolvedValue(PERSONAL_ACCOUNT_MONTHLY_DATA_MULTIPLE_MONTHS);
+	});
+
+	afterEach(() => {
+		jest.clearAllMocks();
 	});
 
 	it('should be defined', () => {

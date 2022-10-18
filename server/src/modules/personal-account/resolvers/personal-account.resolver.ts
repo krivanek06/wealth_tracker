@@ -47,7 +47,7 @@ export class PersonalAccountResolver {
 		@ReqUser() authUser: RequestUser,
 		@Input() personalAccountId: string
 	): Promise<PersonalAccount> {
-		return this.personalAccountService.deletePersonalAccount(personalAccountId);
+		return this.personalAccountService.deletePersonalAccount(personalAccountId, authUser.id);
 	}
 
 	/* Resolvers */

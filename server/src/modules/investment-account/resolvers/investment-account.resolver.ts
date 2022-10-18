@@ -1,7 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { InvestmentAccount, InvestmentAccountHistory } from '../entities';
-import { InvestmentAccountCreateInput } from '../inputs';
+import { InvestmentAccountCreateInput, InvestmentAccountEditInput } from '../inputs';
+import { InvestmentAccountDeleteOutput } from '../outputs';
 import { InvestmentAccountHistoryService, InvestmentAccountService } from '../services';
 import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth/';
 import { Input } from './../../../graphql';
@@ -34,13 +35,23 @@ export class InvestmentAccountResolver {
 		return this.investmentAccountService.createInvestmentAccount(input, authUser.id);
 	}
 
-	// @Mutation(() => PersonalAccount)
-	// editPersonalAccount(
-	// 	@ReqUser() authUser: RequestUser,
-	// 	@Input() input: PersonalAccountEditInput
-	// ): Promise<PersonalAccount> {
-	// 	return this.personalAccountService.editPersonalAccount(input, authUser.id);
-	// }
+	@Mutation(() => InvestmentAccount)
+	editInvestmentAccount(
+		@ReqUser() authUser: RequestUser,
+		@Input() input: InvestmentAccountEditInput
+	): Promise<InvestmentAccount> {
+		return this.investmentAccountService.editInvestmentAccount(input, authUser.id);
+	}
+
+	@Mutation(() => InvestmentAccountDeleteOutput, {
+		description: 'Returns the ID of the removed investment account',
+	})
+	deleteInvestmentAccount(
+		@ReqUser() authUser: RequestUser,
+		@Input() investmentAccountId: string
+	): Promise<InvestmentAccountDeleteOutput> {
+		return this.investmentAccountService.deleteInvestmentAccount(investmentAccountId, authUser.id);
+	}
 
 	/* Resolvers */
 

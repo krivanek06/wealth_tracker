@@ -1,7 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { INVESTMENT_ACCOUNT_ERROR } from '../dto';
 import { InvestmentAccount } from '../entities';
-import { InvestmentAccountCreateInput } from '../inputs';
+import { InvestmentAccountCreateInput, InvestmentAccountEditInput } from '../inputs';
+import { InvestmentAccountDeleteOutput } from '../outputs';
 import { PrismaService } from './../../../prisma';
 import { InvestmentAccountHistoryService } from './investment-account-history.service';
 
@@ -16,7 +17,6 @@ export class InvestmentAccountService {
 		return this.prisma.investmentAccount.findMany({
 			where: {
 				userId,
-				cashCurrent: 0,
 			},
 		});
 	}
@@ -40,6 +40,7 @@ export class InvestmentAccountService {
 				userId,
 				holdings: [],
 				lastPortfolioSnapshot: null,
+				cashCurrent: 0,
 			},
 		});
 
@@ -47,5 +48,64 @@ export class InvestmentAccountService {
 		await this.investmentAccountHistoryService.createInvestmentAccountHistory(investmentAccount);
 
 		return investmentAccount;
+	}
+
+	async editInvestmentAccount(input: InvestmentAccountEditInput, userId: string): Promise<InvestmentAccount> {
+		const isInvestmentAccountExist = await this.isInvestmentAccountExist(input.investmentAccountId, userId);
+
+		// no account found to be deleted
+		if (!isInvestmentAccountExist) {
+			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return this.prisma.investmentAccount.update({
+			data: {
+				name: input.name,
+				cashCurrent: input.cashCurrent,
+			},
+			where: {
+				id: input.investmentAccountId,
+			},
+		});
+	}
+
+	async deleteInvestmentAccount(investmentAccountId: string, userId: string): Promise<InvestmentAccountDeleteOutput> {
+		const isInvestmentAccountExist = await this.isInvestmentAccountExist(investmentAccountId, userId);
+
+		// no account found to be deleted
+		if (!isInvestmentAccountExist) {
+			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		const removedItem = await this.prisma.investmentAccount.delete({
+			where: {
+				id: investmentAccountId,
+			},
+		});
+
+		const output: InvestmentAccountDeleteOutput = {
+			id: removedItem.id,
+			cashCurrent: removedItem.cashCurrent,
+			lastPortfolioSnapshot: removedItem.lastPortfolioSnapshot,
+			name: removedItem.name,
+			userId: removedItem.userId,
+		};
+		return output;
+	}
+
+	/**
+	 *
+	 * @param investmentAccountId {string} id of the investment account we want to load
+	 * @returns whether a investment account exists by the investmentAccountId
+	 */
+	private async isInvestmentAccountExist(investmentAccountId: string, userId: string): Promise<boolean> {
+		const accountCount = await this.prisma.investmentAccount.count({
+			where: {
+				id: investmentAccountId,
+				userId,
+			},
+		});
+
+		return accountCount > 0;
 	}
 }

@@ -1,6 +1,6 @@
 import { Field, Float, ObjectType } from '@nestjs/graphql';
 import { InvestmentAccount as InvestmentAccountClient } from '@prisma/client';
-import { InvestmentAccountHoldings } from './investment-account-holdings.entity';
+import { InvestmentAccountHolding } from './investment-account-holding.entity';
 import { InvestmentAccountPortfolioSnapshot } from './investment-account-portfolio-snapshot.entity';
 
 @ObjectType()
@@ -18,11 +18,11 @@ export class InvestmentAccount implements InvestmentAccountClient {
 	})
 	cashCurrent: number;
 
-	@Field(() => [InvestmentAccountHoldings], {
+	@Field(() => [InvestmentAccountHolding], {
 		description: 'All assets user hold in his InvestmentAccount',
 		defaultValue: [],
 	})
-	holdings: InvestmentAccountHoldings[];
+	holdings: InvestmentAccountHolding[];
 
 	@Field(() => InvestmentAccountPortfolioSnapshot, {
 		nullable: true,

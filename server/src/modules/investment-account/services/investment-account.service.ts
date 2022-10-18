@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { INVESTMENT_ACCOUNT_ERROR } from '../dto';
 import { InvestmentAccount } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput } from '../inputs';
-import { InvestmentAccountDeleteOutput } from '../outputs';
 import { PrismaService } from './../../../prisma';
 import { InvestmentAccountHistoryService } from './investment-account-history.service';
 
@@ -69,7 +68,7 @@ export class InvestmentAccountService {
 		});
 	}
 
-	async deleteInvestmentAccount(investmentAccountId: string, userId: string): Promise<InvestmentAccountDeleteOutput> {
+	async deleteInvestmentAccount(investmentAccountId: string, userId: string): Promise<InvestmentAccount> {
 		const isInvestmentAccountExist = await this.isInvestmentAccountExist(investmentAccountId, userId);
 
 		// no account found to be deleted
@@ -77,20 +76,12 @@ export class InvestmentAccountService {
 			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		const removedItem = await this.prisma.investmentAccount.delete({
+		// remove investment account
+		return this.prisma.investmentAccount.delete({
 			where: {
 				id: investmentAccountId,
 			},
 		});
-
-		const output: InvestmentAccountDeleteOutput = {
-			id: removedItem.id,
-			cashCurrent: removedItem.cashCurrent,
-			lastPortfolioSnapshot: removedItem.lastPortfolioSnapshot,
-			name: removedItem.name,
-			userId: removedItem.userId,
-		};
-		return output;
 	}
 
 	/**

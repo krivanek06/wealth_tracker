@@ -3,10 +3,15 @@ import cloneDeep from 'lodash/cloneDeep';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 import isEqual from 'lodash/isEqual';
+import round from 'lodash/round';
 import takeRight from 'lodash/takeRight';
 import zip from 'lodash/zip';
 
 export class LodashServiceUtil {
+	static round(n: number, precision?: number): number {
+		return round(n, precision);
+	}
+
 	static groupBy<T>(collection: List<T> | null | undefined, iteratee?: ValueIteratee<T>): Dictionary<T[]> {
 		return groupBy(collection, iteratee);
 	}

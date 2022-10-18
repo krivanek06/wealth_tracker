@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Float, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { InvestmentAccount, InvestmentAccountHistory } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput } from '../inputs';
 import { InvestmentAccountHistoryService, InvestmentAccountService } from '../services';
@@ -57,5 +57,17 @@ export class InvestmentAccountResolver {
 	@ResolveField('accountHistory', () => InvestmentAccountHistory)
 	getInvestmentAccountHistory(@Parent() investmentAccount: InvestmentAccount): Promise<InvestmentAccountHistory> {
 		return this.investmentAccountHistoryService.getInvestmentAccountHistoryInvestmentAccount(investmentAccount);
+	}
+
+	@ResolveField('investedAlreadyTotal', () => Float)
+	getInvestedAlreadyTotal(@Parent() investmentAccount: InvestmentAccount): number {
+		const holdingsInvestedAlready = investmentAccount.holdings.reduce((acc, curr) => acc + curr.investedAlready, 0);
+		return holdingsInvestedAlready;
+	}
+
+	@ResolveField('portfolioBalanceTotal', () => Float)
+	getPortfolioTotal(@Parent() investmentAccount: InvestmentAccount): number {
+		const holdingsInvestedAlready = investmentAccount.holdings.reduce((acc, curr) => acc + curr.investedAlready, 0);
+		return investmentAccount.cashCurrent + holdingsInvestedAlready;
 	}
 }

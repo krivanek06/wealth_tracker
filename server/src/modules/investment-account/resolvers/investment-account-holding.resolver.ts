@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Mutation, Resolver } from '@nestjs/graphql';
+import { Float, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { InvestmentAccountHolding } from '../entities';
 import {
@@ -9,6 +9,7 @@ import {
 } from '../inputs';
 import { InvestmentAccountHoldingService } from '../services';
 import { Input } from './../../../graphql/args';
+import { LodashServiceUtil } from './../../../utils';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccountHolding)
@@ -37,5 +38,13 @@ export class InvestmentAccountHoldingResolver {
 		@ReqUser() authUser: RequestUser
 	): Promise<InvestmentAccountHolding> {
 		return this.investmentAccountHoldingService.deleteInvestmentAccountHolding(input, authUser.id);
+	}
+
+	/* Resolvers */
+
+	@ResolveField('breakEvenPrice', () => Float)
+	getPortfolioTotal(@Parent() holding: InvestmentAccountHolding): number {
+		const result = holding.investedAlready / holding.units;
+		return LodashServiceUtil.round(result, 2);
 	}
 }

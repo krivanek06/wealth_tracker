@@ -6,5 +6,5 @@ import { AuthorizationGuard } from './../../../auth';
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccountHistory)
 export class InvestmentAccountHistoryResolver {
-	//constructor() {}
+	constructor() {}
 }

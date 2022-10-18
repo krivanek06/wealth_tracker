@@ -40,6 +40,10 @@ describe('PersonalAccountTagService', () => {
 		service = module.get<PersonalAccountTagService>(PersonalAccountTagService);
 	});
 
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
+
 	it('should be defined', () => {
 		expect(service).toBeDefined();
 	});

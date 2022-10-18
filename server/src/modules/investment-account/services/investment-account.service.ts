@@ -67,12 +67,7 @@ export class InvestmentAccountService {
 	}
 
 	async editInvestmentAccount(input: InvestmentAccountEditInput, userId: string): Promise<InvestmentAccount> {
-		const isInvestmentAccountExist = await this.isInvestmentAccountExist(input.investmentAccountId, userId);
-
-		// no account found to be deleted
-		if (!isInvestmentAccountExist) {
-			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		await this.isInvestmentAccountExist(input.investmentAccountId, userId);
 
 		return this.prisma.investmentAccount.update({
 			data: {
@@ -86,12 +81,7 @@ export class InvestmentAccountService {
 	}
 
 	async deleteInvestmentAccount(investmentAccountId: string, userId: string): Promise<InvestmentAccount> {
-		const isInvestmentAccountExist = await this.isInvestmentAccountExist(investmentAccountId, userId);
-
-		// no account found to be deleted
-		if (!isInvestmentAccountExist) {
-			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		await this.isInvestmentAccountExist(investmentAccountId, userId);
 
 		// remove investment account
 		return this.prisma.investmentAccount.delete({
@@ -113,6 +103,11 @@ export class InvestmentAccountService {
 				userId,
 			},
 		});
+
+		// no account found to be deleted
+		if (!accountCount || accountCount === 0) {
+			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
 		return accountCount > 0;
 	}

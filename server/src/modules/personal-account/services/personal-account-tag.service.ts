@@ -18,7 +18,7 @@ export class PersonalAccountTagService {
 					isDefault: true,
 				},
 			});
-			console.log(`PersonalAccountTagService: loaded ${this.defaultTags.length} default tags`);
+			// console.log(`PersonalAccountTagService: loaded ${this.defaultTags.length} default tags`);
 		}
 		return this.defaultTags;
 	}
@@ -47,7 +47,7 @@ export class PersonalAccountTagService {
 				},
 			});
 
-			console.log(`PersonalAccountTagService: created default tag, name: ${defaultTag.name}, type: ${defaultTag.type}`);
+			// console.log(`PersonalAccountTagService: created default tag, name: ${defaultTag.name}, type: ${defaultTag.type}`);
 		}
 	}
 }

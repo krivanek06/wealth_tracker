@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma';
-import { INVESTMENT_ACCOUNT_HOLDING_ERROR } from '../dto';
-import { InvestmentAccountHolding } from '../entities';
+import { PrismaService } from '../../../prisma';
+import { INVESTMENT_ACCOUNT_HOLDING_ERROR, INVESTMENT_ACOUNT_HOLDING_LIMIT } from '../dto';
+import { InvestmentAccount, InvestmentAccountHolding } from '../entities';
 import {
 	InvestmentAccounHoldingCreateInput,
 	InvestmentAccounHoldingDeleteInput,
@@ -26,7 +26,7 @@ export class InvestmentAccountHoldingService {
 		);
 
 		// maximum 100 per account
-		if (investmentAccount.holdings.length >= 100) {
+		if (investmentAccount.holdings.length >= INVESTMENT_ACOUNT_HOLDING_LIMIT) {
 			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.MAXIMUM_REACHED, HttpStatus.NOT_FOUND);
 		}
 
@@ -46,16 +46,8 @@ export class InvestmentAccountHoldingService {
 		};
 
 		// save entity
-		await this.prisma.investmentAccount.update({
-			data: {
-				holdings: {
-					push: [holding],
-				},
-			},
-			where: {
-				id: holding.investmentAccountId,
-			},
-		});
+		const newHoldings = [...investmentAccount.holdings, holding];
+		await this.updateInvestmentAccountHolding(holding.investmentAccountId, newHoldings);
 
 		return holding;
 	}
@@ -87,14 +79,7 @@ export class InvestmentAccountHoldingService {
 		const newHoldings = investmentAccount.holdings.map((x) => (x.id === input.symbol ? modifiedHolding : x));
 
 		// save data
-		await this.prisma.investmentAccount.update({
-			data: {
-				holdings: newHoldings,
-			},
-			where: {
-				id: input.investmentAccountId,
-			},
-		});
+		await this.updateInvestmentAccountHolding(input.investmentAccountId, newHoldings);
 
 		return modifiedHolding;
 	}
@@ -119,15 +104,22 @@ export class InvestmentAccountHoldingService {
 		const newHoldings = investmentAccount.holdings.filter((x) => x.id !== input.symbol);
 
 		// save data
-		await this.prisma.investmentAccount.update({
+		await this.updateInvestmentAccountHolding(input.investmentAccountId, newHoldings);
+
+		return isExistsSymbol;
+	}
+
+	private updateInvestmentAccountHolding(
+		investmentAccountId: string,
+		newHoldings: InvestmentAccountHolding[]
+	): Promise<InvestmentAccount> {
+		return this.prisma.investmentAccount.update({
 			data: {
 				holdings: newHoldings,
 			},
 			where: {
-				id: input.investmentAccountId,
+				id: investmentAccountId,
 			},
 		});
-
-		return isExistsSymbol;
 	}
 }

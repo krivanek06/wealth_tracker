@@ -20,6 +20,23 @@ export class InvestmentAccountService {
 		});
 	}
 
+	async getInvestmentAccountById(investmentAccountId: string, userId: string): Promise<InvestmentAccount> {
+		// load investment account
+		const investmentAccount = await this.prisma.investmentAccount.findFirst({
+			where: {
+				id: investmentAccountId,
+				userId,
+			},
+		});
+
+		// not found investment account
+		if (!investmentAccount) {
+			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+		}
+
+		return investmentAccount;
+	}
+
 	async createInvestmentAccount(input: InvestmentAccountCreateInput, userId: string): Promise<InvestmentAccount> {
 		const investmentAccountCount = await this.prisma.investmentAccount.count({
 			where: {

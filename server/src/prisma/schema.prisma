@@ -119,18 +119,20 @@ type PersonalAccountDailyData {
 model InvestmentAccount {
     id          String @id @default(auto()) @map("_id") @db.ObjectId
     name        String // custom name for personal account
-    cashCurrent Float // how much cash on hand user has in the trading platform
+    cashCurrent Float  @default(0) // how much cash on hand user has in the trading platform
 
-    holdings              InvestmentAccountHoldings[]
-    lastPortfolioSnapshot InvestmentAccountPortfolioSnapshot // last inserted value in InvestmentAccountSnapshots[-1]
+    // all assets user hold in his InvestmentAccount
+    holdings InvestmentAccountHolding[]
+
+    // last inserted value in InvestmentAccountSnapshots[-1], new accounts the first day is null
+    lastPortfolioSnapshot InvestmentAccountPortfolioSnapshot?
 
     // 1 - N relationship with user
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String @db.ObjectId
 
-    // 1 - N relationship with InvestmentAccountSnapshots
-    InvestmentAccountHistory   InvestmentAccountHistory @relation(fields: [investmentAccountHistoryId], references: [id], onDelete: Cascade)
-    investmentAccountHistoryId String                   @unique
+    // 1 - 1 relationship with InvestmentAccountSnapshots
+    investmentAccountHistory InvestmentAccountHistory?
 }
 
 model InvestmentAccountHistory {
@@ -139,25 +141,27 @@ model InvestmentAccountHistory {
     portfolioSnapshotTotal Int
     portfolioSnapshots     InvestmentAccountPortfolioSnapshot[]
 
-    // 1 - N relationship with InvestmentAccount
-    InvestmentAccount InvestmentAccount?
+    // 1 - 1 relationship with InvestmentAccount
+    InvestmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
+    investmentAccountId String            @unique
 }
 
-type InvestmentAccountHoldings {
-    symbol            String // ID of symbol in DB in Firestore -> AAPL, MSFT
-    type              InvestmentAccountHoldingsType
-    units             Float // how many units of asset the user have
-    investmentStarted Float // $ how much user invested into a specific asset
+type InvestmentAccountHolding {
+    id                  String // ID of symbol in DB -> AAPL, MSFT
+    investmentAccountId String // InvestmentAccount.id
+    type                InvestmentAccountHoldingType
+    units               Float // how many units of asset the user have
+    investedAlready     Float // $ how much user invested into a specific asset
 }
 
-enum InvestmentAccountHoldingsType {
+enum InvestmentAccountHoldingType {
     STOCK
     CRYPTO
 }
 
 type InvestmentAccountPortfolioSnapshot {
-    id                String   @default(uuid()) // random
-    date              DateTime
+    id                String // random UUID 
+    date              DateTime @default(now())
     cash              Float // user input
-    investmentCurrent Float // current price of assets * units
+    investmentCurrent Float // current investment of all (assets * units)
 }

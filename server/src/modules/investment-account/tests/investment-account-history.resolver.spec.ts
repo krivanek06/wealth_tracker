@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { InvestmentAccountHistoryResolver } from './investment-account-history.resolver';
+import { InvestmentAccountHistoryResolver } from '../resolvers/investment-account-history.resolver';
 
 describe('InvestmentAccountHistoryResolver', () => {
 	let resolver: InvestmentAccountHistoryResolver;

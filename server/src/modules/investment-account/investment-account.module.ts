@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
 import { PrismaService } from './../../prisma';
-import { InvestmentAccountHistoryResolver, InvestmentAccountResolver } from './resolvers';
-import { InvestmentAccountHistoryService, InvestmentAccountService } from './services';
+import {
+	InvestmentAccountHistoryResolver,
+	InvestmentAccountHoldingResolver,
+	InvestmentAccountResolver,
+} from './resolvers';
+import { InvestmentAccountHistoryService, InvestmentAccountHoldingService, InvestmentAccountService } from './services';
 
 @Module({
 	providers: [
@@ -10,7 +14,9 @@ import { InvestmentAccountHistoryService, InvestmentAccountService } from './ser
 		InvestmentAccountResolver,
 		InvestmentAccountHistoryService,
 		InvestmentAccountHistoryResolver,
+		InvestmentAccountHoldingService,
+		InvestmentAccountHoldingResolver,
 	],
-	exports: [InvestmentAccountHistoryResolver, InvestmentAccountResolver],
+	exports: [InvestmentAccountHistoryResolver, InvestmentAccountResolver, InvestmentAccountHoldingResolver],
 })
 export class InvestmentAccountModule {}

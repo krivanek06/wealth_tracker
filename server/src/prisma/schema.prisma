@@ -122,7 +122,7 @@ model InvestmentAccount {
     cashCurrent Float  @default(0) // how much cash on hand user has in the trading platform
 
     // all assets user hold in his InvestmentAccount
-    holdings InvestmentAccountHoldings[]
+    holdings InvestmentAccountHolding[]
 
     // last inserted value in InvestmentAccountSnapshots[-1], new accounts the first day is null
     lastPortfolioSnapshot InvestmentAccountPortfolioSnapshot?
@@ -146,15 +146,15 @@ model InvestmentAccountHistory {
     investmentAccountId String            @unique
 }
 
-type InvestmentAccountHoldings {
-    id                String // ID of symbol in DB in Firestore -> AAPL, MSFT
-    symbol            String // ID of symbol in DB in Firestore -> AAPL, MSFT
-    type              InvestmentAccountHoldingsType
-    units             Float // how many units of asset the user have
-    investmentStarted Float // $ how much user invested into a specific asset
+type InvestmentAccountHolding {
+    id                  String // ID of symbol in DB -> AAPL, MSFT
+    investmentAccountId String // InvestmentAccount.id
+    type                InvestmentAccountHoldingType
+    units               Float // how many units of asset the user have
+    investedAlready     Float // $ how much user invested into a specific asset
 }
 
-enum InvestmentAccountHoldingsType {
+enum InvestmentAccountHoldingType {
     STOCK
     CRYPTO
 }

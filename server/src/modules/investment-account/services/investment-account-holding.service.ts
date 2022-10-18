@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma';
+import { PrismaService } from '../../../prisma';
 import { INVESTMENT_ACCOUNT_HOLDING_ERROR } from '../dto';
 import { InvestmentAccountHolding } from '../entities';
 import {

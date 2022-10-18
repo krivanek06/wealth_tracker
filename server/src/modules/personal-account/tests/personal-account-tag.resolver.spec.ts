@@ -38,6 +38,10 @@ describe('PersonalAccountTagResolver', () => {
 		expect(resolver).toBeDefined();
 	});
 
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
+
 	describe('Test: getDefaultTags()', () => {
 		it('should return tags from the service', async () => {
 			const returnData = await resolver.getDefaultTags();

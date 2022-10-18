@@ -85,42 +85,46 @@ describe('PersonalAccountDailyService', () => {
 	});
 	SharedServiceUtil.getUUID = jest.fn().mockReturnValue(MOCK_UUID);
 
-	when(prismaServiceMock.personalAccountMonthlyData.findFirst)
-		// mock november
-		.calledWith({
-			where: {
-				personalAccountId: TEST_PERSONAL_ACCOUNT_ID,
-				year: TEST_MONTHLY_OCT.year,
-				month: TEST_MONTHLY_OCT.month,
-			},
-		})
-		.mockResolvedValue(TEST_MONTHLY_OCT)
-		.calledWith({
-			where: {
-				id: TEST_MONTHLY_OCT.id,
-			},
-		})
-		.mockResolvedValue(TEST_MONTHLY_OCT)
-		// mock september
-		.calledWith({
-			where: {
-				personalAccountId: TEST_PERSONAL_ACCOUNT_ID,
-				year: TEST_MONTHLY_SEP.year,
-				month: TEST_MONTHLY_SEP.month,
-			},
-		})
-		.mockResolvedValue(TEST_MONTHLY_SEP);
-
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [PersonalAccountDailyService, { provide: PrismaService, useValue: prismaServiceMock }],
 		}).compile();
 
 		service = module.get<PersonalAccountDailyService>(PersonalAccountDailyService);
+
+		when(prismaServiceMock.personalAccountMonthlyData.findFirst)
+			// mock november
+			.calledWith({
+				where: {
+					personalAccountId: TEST_PERSONAL_ACCOUNT_ID,
+					year: TEST_MONTHLY_OCT.year,
+					month: TEST_MONTHLY_OCT.month,
+				},
+			})
+			.mockResolvedValue(TEST_MONTHLY_OCT)
+			.calledWith({
+				where: {
+					id: TEST_MONTHLY_OCT.id,
+				},
+			})
+			.mockResolvedValue(TEST_MONTHLY_OCT)
+			// mock september
+			.calledWith({
+				where: {
+					personalAccountId: TEST_PERSONAL_ACCOUNT_ID,
+					year: TEST_MONTHLY_SEP.year,
+					month: TEST_MONTHLY_SEP.month,
+				},
+			})
+			.mockResolvedValue(TEST_MONTHLY_SEP);
 	});
 
 	it('should be defined', () => {
 		expect(service).toBeDefined();
+	});
+
+	afterEach(() => {
+		jest.clearAllMocks();
 	});
 
 	describe('Test: createPersonalAccountDailyEntry()', () => {

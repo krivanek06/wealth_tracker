@@ -168,8 +168,16 @@ type InvestmentAccountPortfolioSnapshot {
 
 // ---------------- Asset manager stock ------------------
 model AssetStock {
-    id                   String    @id @map("_id") @db.ObjectId
-    symbol               String    @unique
+    symbol    String @id @map("_id")
+    timestamp Float
+
+    // additional data for a stock
+    assetStockQuote   AssetStockQuote
+    assetStockProfile AssetStockProfile
+}
+
+type AssetStockQuote {
+    symbol               String
     price                Float
     volume               Float
     name                 String
@@ -188,12 +196,11 @@ model AssetStock {
     previousClose        Float
     eps                  Float?
     pe                   Float?
-    earningsAnnouncement DateTime?
+    earningsAnnouncement String?
     sharesOutstanding    Float
-    timestamp            Float
 
-    // additional data for a stock
-    assetStockProfile AssetStockProfile
+    // tells when this was updates
+    timestamp Float
 }
 
 type AssetStockProfile {

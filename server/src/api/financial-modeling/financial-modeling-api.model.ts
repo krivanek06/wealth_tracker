@@ -77,7 +77,7 @@ export interface FMQuote {
 	previousClose: number;
 	eps: number | null;
 	pe: number | null;
-	earningsAnnouncement: Date | null;
+	earningsAnnouncement: string | null;
 	sharesOutstanding: number;
 	timestamp: number;
 }

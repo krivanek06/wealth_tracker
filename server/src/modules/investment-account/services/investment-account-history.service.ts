@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InvestmentAccountHistory } from '@prisma/client';
 import { PrismaService } from '../../../prisma';
-import { InvestmentAccount } from '../entities';
+import { InvestmentAccount, InvestmentAccountHistory } from '../entities';
 
 @Injectable()
 export class InvestmentAccountHistoryService {

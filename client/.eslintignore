@@ -1,0 +1,6 @@
+/node_modules
+/www
+/e2e
+/.idea
+/package-lock.json
+

@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AppService } from './app.service';
 import { Authenticationodule } from './auth';
 import { GraphQLBackendModule } from './graphql';
+import { AssetStockModule, InvestmentAccountModule, PersonalAccountModule, UserModule } from './modules';
 
 @Module({
 	imports: [
@@ -11,6 +12,12 @@ import { GraphQLBackendModule } from './graphql';
 		Authenticationodule,
 		ConfigModule.forRoot(),
 		JwtModule.register({ secret: process.env.JWT_SECRET }),
+
+		// modules
+		UserModule,
+		PersonalAccountModule,
+		InvestmentAccountModule,
+		AssetStockModule,
 	],
 	controllers: [],
 	providers: [AppService],

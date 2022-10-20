@@ -165,3 +165,74 @@ type InvestmentAccountPortfolioSnapshot {
     cash              Float // user input
     investmentCurrent Float // current investment of all (assets * units)
 }
+
+// ---------------- Asset manager stock ------------------
+model AssetStock {
+    symbol String @id @map("_id")
+
+    // when price was lastly updated - usually end of each day by cloud function
+    priceUpdateTimestamp Float
+
+    // when additional information were lastly updated 
+    infoUpdateTimestamp Float
+
+    // additional data for a stock
+    assetStockQuote   AssetStockQuote
+    assetStockProfile AssetStockProfile
+}
+
+type AssetStockQuote {
+    symbol               String
+    price                Float
+    volume               Float
+    name                 String
+    changesPercentage    Float
+    change               Float
+    dayLow               Float
+    dayHigh              Float
+    yearHigh             Float
+    yearLow              Float
+    marketCap            Float
+    priceAvg50           Float
+    priceAvg200          Float
+    avgVolume            Float
+    exchange             String
+    open                 Float
+    previousClose        Float
+    eps                  Float?
+    pe                   Float?
+    earningsAnnouncement String?
+    sharesOutstanding    Float
+
+    // tells when this was updates
+    timestamp Float
+}
+
+type AssetStockProfile {
+    companyName       String
+    currency          String
+    cik               String
+    isin              String
+    cusip             String
+    exchange          String
+    exchangeShortName String
+    industry          String
+    website           String
+    description       String
+    ceo               String
+    sector            String
+    country           String
+    fullTimeEmployees String
+    phone             String
+    address           String
+    city              String
+    state             String
+    zip               String
+    image             String
+    ipoDate           String
+    defaultImage      Boolean
+    isEtf             Boolean
+    isActivelyTrading Boolean
+    isAdr             Boolean
+    isFund            Boolean
+}

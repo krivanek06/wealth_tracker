@@ -24,7 +24,7 @@ export class InvestmentAccountHoldingService {
 	): Promise<InvestmentAccountHolding> {
 		// load and save assets data into the DB
 		if (input.type === 'STOCK') {
-			await this.assetStockService.saveStockIntoDatabase(input.symbol);
+			await this.assetStockService.refreshStockIntoDatabase(input.symbol);
 		}
 
 		// load investment account to which we want to create the holding

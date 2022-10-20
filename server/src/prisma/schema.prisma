@@ -168,8 +168,13 @@ type InvestmentAccountPortfolioSnapshot {
 
 // ---------------- Asset manager stock ------------------
 model AssetStock {
-    symbol    String @id @map("_id")
-    timestamp Float
+    symbol String @id @map("_id")
+
+    // when price was lastly updated - usually end of each day by cloud function
+    priceUpdateTimestamp Float
+
+    // when additional information were lastly updated 
+    infoUpdateTimestamp Float
 
     // additional data for a stock
     assetStockQuote   AssetStockQuote

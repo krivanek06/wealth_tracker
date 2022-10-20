@@ -4,7 +4,7 @@ import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql';
 import { InvestmentAccount, InvestmentAccountHistory } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput } from '../inputs';
-import { InvestmentAccountHoldingStock } from '../outputs';
+import { InvestmentAccountHoldingCrypto, InvestmentAccountHoldingStock } from '../outputs';
 import { InvestmentAccountHistoryService, InvestmentAccountService } from '../services';
 
 @UseGuards(AuthorizationGuard)
@@ -73,8 +73,14 @@ export class InvestmentAccountResolver {
 	}
 
 	@ResolveField('holdingStocks', () => [InvestmentAccountHoldingStock])
-	getStockHoldings(@Parent() investmentAccount: InvestmentAccount): InvestmentAccountHoldingStock[] {
+	getHoldingStocks(@Parent() investmentAccount: InvestmentAccount): InvestmentAccountHoldingStock[] {
 		const stocks = investmentAccount.holdings.filter((x) => x.type === 'STOCK');
 		return stocks;
+	}
+
+	@ResolveField('holdingCrypto', () => [InvestmentAccountHoldingCrypto])
+	getHoldingCrypto(@Parent() investmentAccount: InvestmentAccount): InvestmentAccountHoldingCrypto[] {
+		const crypto = investmentAccount.holdings.filter((x) => x.type === 'CRYPTO');
+		return crypto;
 	}
 }

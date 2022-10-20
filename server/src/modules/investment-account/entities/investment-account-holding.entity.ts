@@ -9,7 +9,7 @@ registerEnumType(InvestmentAccountHoldingType, {
 });
 
 @ObjectType()
-export class InvestmentAccountHolding implements InvestmentAccountHoldingClient {
+export abstract class InvestmentAccountHolding implements InvestmentAccountHoldingClient {
 	@Field(() => String, {
 		description: 'Symbol ID -> AAPL, MSFT, BTC',
 	})

@@ -1,11 +1,11 @@
 import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
+import { PrismaService } from '../../../prisma';
 import { INVESTMENT_ACCOUNT_ERROR } from '../dto';
+import { InvestmentAccount } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput } from '../inputs';
 import { InvestmentAccountHistoryService, InvestmentAccountService } from '../services';
-import { PrismaService } from './../../../prisma';
-import { InvestmentAccount } from './../entities';
 import { investmentAccountMock, INVESTMENT_ACCOUNT_ID, USER_ID_MOCK } from './mocks';
 
 describe('InvestmentAccountService', () => {

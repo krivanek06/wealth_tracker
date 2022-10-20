@@ -1,6 +1,7 @@
 import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
+import { PrismaService } from '../../../prisma';
 import { INVESTMENT_ACCOUNT_HOLDING_ERROR, INVESTMENT_ACOUNT_HOLDING_LIMIT } from '../dto';
 import { InvestmentAccountHolding } from '../entities';
 import {
@@ -9,7 +10,6 @@ import {
 	InvestmentAccounHoldingEditInput,
 } from '../inputs';
 import { InvestmentAccountHoldingService, InvestmentAccountService } from '../services';
-import { PrismaService } from './../../../prisma';
 import { holdingMSFTMock, investmentAccountMock as IAM } from './mocks';
 
 describe('InvestmentAccountHoldingService', () => {

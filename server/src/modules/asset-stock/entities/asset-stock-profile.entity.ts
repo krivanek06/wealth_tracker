@@ -32,6 +32,7 @@ export class AssetStockProfile implements AssetStockProfileClient {
 
 	@Field(() => String)
 	description: string;
+
 	@Field(() => String)
 	ceo: string;
 

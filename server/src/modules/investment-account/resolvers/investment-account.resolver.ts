@@ -1,10 +1,10 @@
 import { UseGuards } from '@nestjs/common';
 import { Float, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
+import { Input } from '../../../graphql';
 import { InvestmentAccount, InvestmentAccountHistory } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput } from '../inputs';
 import { InvestmentAccountHistoryService, InvestmentAccountService } from '../services';
-import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth/';
-import { Input } from './../../../graphql';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccount)

@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
-import { PrismaService } from './../../prisma';
+import { forwardRef, Module } from '@nestjs/common';
+import { PrismaService } from '../../prisma';
+import { AssetStockModule } from '../asset-stock';
 import {
 	InvestmentAccountHistoryResolver,
 	InvestmentAccountHoldingResolver,
@@ -8,6 +9,7 @@ import {
 import { InvestmentAccountHistoryService, InvestmentAccountHoldingService, InvestmentAccountService } from './services';
 
 @Module({
+	imports: [forwardRef(() => AssetStockModule)],
 	providers: [
 		PrismaService,
 		InvestmentAccountService,

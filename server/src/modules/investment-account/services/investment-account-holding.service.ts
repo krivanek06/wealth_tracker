@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma';
+import { AssetStockService } from '../../asset-stock';
 import { INVESTMENT_ACCOUNT_HOLDING_ERROR, INVESTMENT_ACOUNT_HOLDING_LIMIT } from '../dto';
 import { InvestmentAccount, InvestmentAccountHolding } from '../entities';
 import {
@@ -11,13 +12,20 @@ import { InvestmentAccountService } from './investment-account.service';
 
 @Injectable()
 export class InvestmentAccountHoldingService {
-	constructor(private prisma: PrismaService, private investmentAccountService: InvestmentAccountService) {}
+	constructor(
+		private prisma: PrismaService,
+		private investmentAccountService: InvestmentAccountService,
+		private assetStockService: AssetStockService
+	) {}
 
 	async createInvestmentAccountHolding(
 		input: InvestmentAccounHoldingCreateInput,
 		userId: string
 	): Promise<InvestmentAccountHolding> {
-		// TODO: check if input.symbol is really a symbol -> load data from some API
+		// load and save assets data into the DB
+		if (input.type === 'STOCK') {
+			await this.assetStockService.saveStockIntoDatabase(input.symbol);
+		}
 
 		// load investment account to which we want to create the holding
 		const investmentAccount = await this.investmentAccountService.getInvestmentAccountById(

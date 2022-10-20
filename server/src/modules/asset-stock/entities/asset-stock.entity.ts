@@ -61,15 +61,17 @@ export class AssetStock implements AssetStockClient {
 	@Field(() => Float, {
 		nullable: true,
 	})
-	eps: number;
+	eps: number | null;
 
 	@Field(() => Float, {
 		nullable: true,
 	})
-	pe: number;
+	pe: number | null;
 
-	@Field(() => String)
-	earningsAnnouncement: Date;
+	@Field(() => String, {
+		nullable: true,
+	})
+	earningsAnnouncement: Date | null;
 
 	@Field(() => Float)
 	sharesOutstanding: number;
@@ -81,5 +83,5 @@ export class AssetStock implements AssetStockClient {
 	assetStockProfile: AssetStockProfile;
 
 	// relashional data
-	investmentAccounts: string[];
+	investmentAccountIds: string[];
 }

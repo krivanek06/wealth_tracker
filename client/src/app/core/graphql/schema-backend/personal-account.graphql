@@ -1,0 +1,65 @@
+### Personal account
+query getPersonalAccounts {
+	getPersonalAccounts {
+		...PersonalAccountOverview
+	}
+}
+
+mutation CreatePersonalAccount($name: String!) {
+	createPersonalAccount(input: { name: $name }) {
+		...PersonalAccountOverview
+	}
+}
+
+mutation EditPersonalAccount($input: PersonalAccountEditInput!) {
+	editPersonalAccount(input: $input) {
+		...PersonalAccountOverview
+	}
+}
+
+mutation DeletePersonalAccount($accountId: String!) {
+	deletePersonalAccount(input: $accountId) {
+		...PersonalAccountOverview
+	}
+}
+
+### TAGS
+query getDefaultTags {
+	getDefaultTags {
+		...PersonalAccountTag
+	}
+}
+
+### Monthly data
+query getPersonalAccountMonthlyDataById($input: PersonalAccountMonthlyDataSeach!) {
+	getPersonalAccountMonthlyDataById(input: $input) {
+		...PersonalAccountMonthlyDataOverview
+		dailyData {
+			...PersonalAccountDailyData
+		}
+	}
+}
+
+### Daily data
+mutation CreatePersonalAccountDailyEntry($input: PersonalAccountDailyDataCreate!) {
+	createPersonalAccountDailyEntry(input: $input) {
+		...PersonalAccountDailyData
+	}
+}
+
+mutation DeletePersonalAccountDailyEntry($input: PersonalAccountDailyDataDelete!) {
+	deletePersonalAccountDailyEntry(input: $input) {
+		...PersonalAccountDailyData
+	}
+}
+
+mutation EditPersonalAccountDailyEntry($input: PersonalAccountDailyDataEdit!) {
+	editPersonalAccountDailyEntry(input: $input) {
+		originalDailyData {
+			...PersonalAccountDailyData
+		}
+		modifiedDailyData {
+			...PersonalAccountDailyData
+		}
+	}
+}

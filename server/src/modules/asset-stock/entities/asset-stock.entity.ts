@@ -8,8 +8,15 @@ export class AssetStock implements AssetStockClient {
 	@Field(() => String)
 	symbol: string;
 
-	@Field(() => Float)
-	timestamp: number;
+	@Field(() => Float, {
+		description: 'Last time the price was updated for this stock',
+	})
+	priceUpdateTimestamp: number;
+
+	@Field(() => Float, {
+		description: 'Last time the information was updated for this stock',
+	})
+	infoUpdateTimestamp: number;
 
 	@Field(() => AssetStockQuote)
 	assetStockQuote: AssetStockQuote;

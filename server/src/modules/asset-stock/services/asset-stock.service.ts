@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AssetStock } from '../entities';
-import { createAssetStock } from '../utils';
+import { CreateAssetStockUtil } from '../utils';
 import { FinancialModelingAPIService } from './../../../api';
 import { PrismaService } from './../../../prisma';
 
@@ -17,14 +17,16 @@ export class AssetStockService {
 	}
 
 	/**
-	 * Load and persist stock symbol data to the DB if not already saved
+	 * Load and persist stock symbol data to the DB if not already saved,
+	 * or if its data is older than 2 weeks
 	 *
 	 * @param symbol stock symbol
 	 */
-	async saveStockIntoDatabase(symbol: string): Promise<AssetStock> {
+	async refreshStockIntoDatabase(symbol: string): Promise<AssetStock> {
 		// if symbol already saved, skip
 		const stock = await this.getStockBySymbol(symbol);
-		// TODO check stock.timestamp if not too old record
+
+		// record exists
 		if (!!stock) {
 			return stock;
 		}
@@ -46,7 +48,7 @@ export class AssetStockService {
 		const stockProfile = await this.financialModelingAPIService.getStockProfile(symbol);
 
 		// create entity
-		const result: AssetStock = createAssetStock(stockQuote, stockProfile);
+		const result: AssetStock = CreateAssetStockUtil.createAssetStock(stockQuote, stockProfile);
 
 		return result;
 	}

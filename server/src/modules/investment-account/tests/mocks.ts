@@ -42,5 +42,4 @@ export const investmentAccountMock: InvestmentAccount = {
 	// 	portfolioSnapshotTotal: 0,
 	// 	portfolioSnapshots: [],
 	// },
-	assetStocks: [],
 };

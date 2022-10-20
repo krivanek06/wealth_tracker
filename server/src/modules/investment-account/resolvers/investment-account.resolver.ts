@@ -4,6 +4,7 @@ import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql';
 import { InvestmentAccount, InvestmentAccountHistory } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput } from '../inputs';
+import { InvestmentAccountHoldingStock } from '../outputs';
 import { InvestmentAccountHistoryService, InvestmentAccountService } from '../services';
 
 @UseGuards(AuthorizationGuard)
@@ -69,5 +70,11 @@ export class InvestmentAccountResolver {
 	getPortfolioTotal(@Parent() investmentAccount: InvestmentAccount): number {
 		const holdingsInvestedAlready = investmentAccount.holdings.reduce((acc, curr) => acc + curr.investedAlready, 0);
 		return investmentAccount.cashCurrent + holdingsInvestedAlready;
+	}
+
+	@ResolveField('holdingStocks', () => [InvestmentAccountHoldingStock])
+	getStockHoldings(@Parent() investmentAccount: InvestmentAccount): InvestmentAccountHoldingStock[] {
+		const stocks = investmentAccount.holdings.filter((x) => x.type === 'STOCK');
+		return stocks;
 	}
 }

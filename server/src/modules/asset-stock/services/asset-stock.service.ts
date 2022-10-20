@@ -50,7 +50,6 @@ export class AssetStockService {
 			assetStockProfile: {
 				...stockProfile,
 			},
-			investmentAccountIds: [],
 		};
 
 		return result;

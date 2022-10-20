@@ -133,10 +133,6 @@ model InvestmentAccount {
 
     // 1 - 1 relationship with InvestmentAccountSnapshots
     investmentAccountHistory InvestmentAccountHistory?
-
-    // N - N relationship with AssetStock
-    assetStocks String[]     @default([]) @db.ObjectId
-    assetStock  AssetStock[] @relation(fields: [assetStocks], references: [id])
 }
 
 model InvestmentAccountHistory {
@@ -195,10 +191,6 @@ model AssetStock {
     earningsAnnouncement DateTime?
     sharesOutstanding    Float
     timestamp            Float
-
-    // relashtions
-    investmentAccountIds String[]            @db.ObjectId
-    investmentAccount    InvestmentAccount[] @relation(fields: [investmentAccountIds], references: [id])
 
     // additional data for a stock
     assetStockProfile AssetStockProfile

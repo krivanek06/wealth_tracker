@@ -114,3 +114,4 @@ functions/firebase-debug.log
 yarn.lock
 tmp/
 dist/
+package-lock.json

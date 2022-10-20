@@ -8,7 +8,8 @@
 		"watch": "ng build --watch --configuration development",
 		"test": "jest",
 		"test:coverage": "jest --coverage",
-		"lint": "ng lint"
+		"lint": "ng lint",
+		"generate-types": "graphql-codegen --config codegen.yml"
 	},
 	"private": true,
 	"dependencies": {
@@ -22,7 +23,12 @@
 		"@angular/platform-browser": "^14.1.0",
 		"@angular/platform-browser-dynamic": "^14.1.0",
 		"@angular/router": "^14.1.0",
+		"@apollo/client": "^3.6.9",
+		"@swimlane/ngx-charts": "^20.1.0",
+		"apollo-angular": "4.1.0",
+		"graphql": "^16",
 		"rxjs": "~7.5.0",
+		"subscriptions-transport-ws": "^0.11.0",
 		"tslib": "^2.3.0",
 		"zone.js": "~0.11.4"
 	},
@@ -35,6 +41,10 @@
 		"@angular-eslint/template-parser": "14.1.2",
 		"@angular/cli": "~14.1.0",
 		"@angular/compiler-cli": "^14.1.0",
+		"@graphql-codegen/cli": "^2.13.7",
+		"@graphql-codegen/typescript": "^2.7.5",
+		"@graphql-codegen/typescript-apollo-angular": "^3.5.5",
+		"@graphql-codegen/typescript-operations": "^2.5.5",
 		"@types/jest": "^29.2.0",
 		"@typescript-eslint/eslint-plugin": "5.37.0",
 		"@typescript-eslint/parser": "5.37.0",

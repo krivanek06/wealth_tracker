@@ -1,0 +1,14 @@
+fragment PersonalAccountTag on PersonalAccountTag {
+	id
+	createdAt
+	modifiedAt
+	name
+	type
+	isDefault
+}
+
+query getDefaultTags {
+	getDefaultTags {
+		...PersonalAccountTag
+	}
+}

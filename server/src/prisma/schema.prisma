@@ -197,8 +197,8 @@ model AssetStock {
     timestamp            Float
 
     // relashtions
-    investmentAccounts String[]            @db.ObjectId
-    investmentAccount  InvestmentAccount[] @relation(fields: [investmentAccounts], references: [id])
+    investmentAccountIds String[]            @db.ObjectId
+    investmentAccount    InvestmentAccount[] @relation(fields: [investmentAccountIds], references: [id])
 
     // additional data for a stock
     assetStockProfile AssetStockProfile

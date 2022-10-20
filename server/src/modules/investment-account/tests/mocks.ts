@@ -1,4 +1,4 @@
-import { InvestmentAccount, InvestmentAccountHolding } from './../entities';
+import { InvestmentAccount, InvestmentAccountHolding } from '../entities';
 export const USER_ID_MOCK = 'USER_1234';
 export const INVESTMENT_ACCOUNT_ID = '634c267f000a7f0c6434b2ba';
 export const holdingMSFTMock: InvestmentAccountHolding = {

@@ -1,6 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Float, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
+import { Input } from '../../../graphql/args';
+import { LodashServiceUtil } from '../../../utils';
 import { InvestmentAccountHolding } from '../entities';
 import {
 	InvestmentAccounHoldingCreateInput,
@@ -8,8 +10,6 @@ import {
 	InvestmentAccounHoldingEditInput,
 } from '../inputs';
 import { InvestmentAccountHoldingService } from '../services';
-import { Input } from './../../../graphql/args';
-import { LodashServiceUtil } from './../../../utils';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccountHolding)

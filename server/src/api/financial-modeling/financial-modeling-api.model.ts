@@ -75,9 +75,9 @@ export interface FMQuote {
 	exchange: string;
 	open: number;
 	previousClose: number;
-	eps?: number;
-	pe?: number;
-	earningsAnnouncement?: Date;
+	eps: number | null;
+	pe: number | null;
+	earningsAnnouncement: Date | null;
 	sharesOutstanding: number;
 	timestamp: number;
 }

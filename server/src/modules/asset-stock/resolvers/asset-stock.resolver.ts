@@ -18,6 +18,4 @@ export class AssetStockResolver {
 	searchAssetStockSymbol(@Input() symbolPrefix: string): Promise<AssetStockSearch[]> {
 		return this.financialModelingAPIService.searchStockBySymbolPrefix(symbolPrefix);
 	}
-
-	// TODO: RESOLVER: resolve profile
 }

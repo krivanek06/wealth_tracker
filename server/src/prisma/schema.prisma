@@ -133,6 +133,10 @@ model InvestmentAccount {
 
     // 1 - 1 relationship with InvestmentAccountSnapshots
     investmentAccountHistory InvestmentAccountHistory?
+
+    // N - N relationship with AssetStock
+    assetStocks String[]     @default([]) @db.ObjectId
+    assetStock  AssetStock[] @relation(fields: [assetStocks], references: [id])
 }
 
 model InvestmentAccountHistory {
@@ -164,4 +168,67 @@ type InvestmentAccountPortfolioSnapshot {
     date              DateTime @default(now())
     cash              Float // user input
     investmentCurrent Float // current investment of all (assets * units)
+}
+
+// ---------------- Asset manager stock ------------------
+model AssetStock {
+    id                   String    @id @map("_id") @db.ObjectId
+    symbol               String    @unique
+    price                Float
+    volume               Float
+    name                 String
+    changesPercentage    Float
+    change               Float
+    dayLow               Float
+    dayHigh              Float
+    yearHigh             Float
+    yearLow              Float
+    marketCap            Float
+    priceAvg50           Float
+    priceAvg200          Float
+    avgVolume            Float
+    exchange             String
+    open                 Float
+    previousClose        Float
+    eps                  Float?
+    pe                   Float?
+    earningsAnnouncement DateTime?
+    sharesOutstanding    Float
+    timestamp            Float
+
+    // relashtions
+    investmentAccounts String[]            @db.ObjectId
+    investmentAccount  InvestmentAccount[] @relation(fields: [investmentAccounts], references: [id])
+
+    // additional data for a stock
+    assetStockProfile AssetStockProfile
+}
+
+type AssetStockProfile {
+    companyName       String
+    currency          String
+    cik               String
+    isin              String
+    cusip             String
+    exchange          String
+    exchangeShortName String
+    industry          String
+    website           String
+    description       String
+    ceo               String
+    sector            String
+    country           String
+    fullTimeEmployees String
+    phone             String
+    address           String
+    city              String
+    state             String
+    zip               String
+    image             String
+    ipoDate           String
+    defaultImage      Boolean
+    isEtf             Boolean
+    isActivelyTrading Boolean
+    isAdr             Boolean
+    isFund            Boolean
 }

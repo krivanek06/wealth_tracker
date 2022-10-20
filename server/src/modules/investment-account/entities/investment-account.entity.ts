@@ -34,4 +34,9 @@ export class InvestmentAccount implements InvestmentAccountClient {
 		description: 'Reference to User.ID who created this investment account',
 	})
 	userId: string;
+
+	@Field(() => [String], {
+		description: 'ID of stocks that is in this investment account',
+	})
+	assetStocks: string[];
 }

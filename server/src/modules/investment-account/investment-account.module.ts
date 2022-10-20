@@ -4,6 +4,7 @@ import { AssetStockModule } from '../asset-stock';
 import {
 	InvestmentAccountHistoryResolver,
 	InvestmentAccountHoldingResolver,
+	InvestmentAccountHoldingStockResolver,
 	InvestmentAccountResolver,
 } from './resolvers';
 import { InvestmentAccountHistoryService, InvestmentAccountHoldingService, InvestmentAccountService } from './services';
@@ -18,7 +19,13 @@ import { InvestmentAccountHistoryService, InvestmentAccountHoldingService, Inves
 		InvestmentAccountHistoryResolver,
 		InvestmentAccountHoldingService,
 		InvestmentAccountHoldingResolver,
+		InvestmentAccountHoldingStockResolver,
 	],
-	exports: [InvestmentAccountHistoryResolver, InvestmentAccountResolver, InvestmentAccountHoldingResolver],
+	exports: [
+		InvestmentAccountHistoryResolver,
+		InvestmentAccountResolver,
+		InvestmentAccountHoldingResolver,
+		InvestmentAccountHoldingStockResolver,
+	],
 })
 export class InvestmentAccountModule {}

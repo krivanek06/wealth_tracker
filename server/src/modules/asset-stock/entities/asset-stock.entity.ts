@@ -81,7 +81,4 @@ export class AssetStock implements AssetStockClient {
 
 	@Field(() => AssetStockProfile)
 	assetStockProfile: AssetStockProfile;
-
-	// relashional data
-	investmentAccountIds: string[];
 }

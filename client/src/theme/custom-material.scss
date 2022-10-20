@@ -1,0 +1,121 @@
+@use '@angular/material' as mat;
+@import '@angular/material/theming';
+
+// COLOR PALETTE GENERATOR - http://mcg.mbitson.com/
+
+$custom-success: (
+	50: #eaf5ea,
+	100: #c9e7cb,
+	200: #a6d7a8,
+	300: #82c785,
+	400: #67bb6a,
+	500: #4caf50,
+	600: #45a849,
+	700: #3c9f40,
+	800: #339637,
+	900: #248627,
+	A100: #c5ffc7,
+	A200: #92ff95,
+	A400: #5fff64,
+	A700: #46ff4b,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #000000,
+		400: #000000,
+		500: #ffffff,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
+		A100: #000000,
+		A200: #000000,
+		A400: #000000,
+		A700: #000000,
+	),
+);
+
+$custom-primary: (
+	50: #e5f5fb,
+	100: #bee7f5,
+	200: #92d7ee,
+	300: #66c6e7,
+	400: #46bae2,
+	500: #25aedd,
+	600: #21a7d9,
+	700: #1b9dd4,
+	800: #1694cf,
+	900: #0d84c7,
+	A100: #f3faff,
+	A200: #c0e6ff,
+	A400: #8dd2ff,
+	A700: #74c8ff,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #000000,
+		400: #000000,
+		500: #ffffff,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
+		A100: #000000,
+		A200: #000000,
+		A400: #000000,
+		A700: #000000,
+	),
+);
+
+$custom-warn: (
+	50: #fae3e3,
+	100: #f2b9b9,
+	200: #e98a8a,
+	300: #e05b5b,
+	400: #d93737,
+	500: #d21414,
+	600: #cd1212,
+	700: #c70e0e,
+	800: #c10b0b,
+	900: #b60606,
+	A100: #ffe0e0,
+	A200: #ffadad,
+	A400: #ff7a7a,
+	A700: #ff6060,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #000000,
+		400: #ffffff,
+		500: #ffffff,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
+		A100: #000000,
+		A200: #000000,
+		A400: #000000,
+		A700: #000000,
+	),
+);
+
+// define colors
+$light-primary: mat.define-palette($custom-primary);
+$light-accent: mat.define-palette($custom-success);
+$light-warn: mat.define-palette($custom-warn);
+
+// define theme
+$mat-theming-light: mat.define-light-theme(
+	(
+		color: (
+			primary: $light-primary,
+			accent: $light-accent,
+			warn: $light-warn,
+		),
+	)
+);
+
+@include mat.all-component-themes($mat-theming-light);

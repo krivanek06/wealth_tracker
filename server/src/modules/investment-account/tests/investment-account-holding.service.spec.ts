@@ -10,6 +10,7 @@ import {
 	InvestmentAccounHoldingEditInput,
 } from '../inputs';
 import { InvestmentAccountHoldingService, InvestmentAccountService } from '../services';
+import { AssetStockService } from './../../asset-stock/';
 import { holdingMSFTMock, investmentAccountMock as IAM } from './mocks';
 
 describe('InvestmentAccountHoldingService', () => {
@@ -22,9 +23,8 @@ describe('InvestmentAccountHoldingService', () => {
 			update: jest.fn(),
 		},
 	});
-	const investmentAccountServiceMock: InvestmentAccountService = createMock<InvestmentAccountService>({
-		getInvestmentAccountById: jest.fn(),
-	});
+	const investmentAccountServiceMock: InvestmentAccountService = createMock<InvestmentAccountService>({});
+	const assetStockServiceMock: AssetStockService = createMock<AssetStockService>({});
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -32,6 +32,7 @@ describe('InvestmentAccountHoldingService', () => {
 				InvestmentAccountHoldingService,
 				{ provide: PrismaService, useValue: prismaServiceMock },
 				{ provide: InvestmentAccountService, useValue: investmentAccountServiceMock },
+				{ provide: AssetStockService, useValue: assetStockServiceMock },
 			],
 		}).compile();
 

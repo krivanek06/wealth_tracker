@@ -1,0 +1,63 @@
+fragment PersonalAccountTag on PersonalAccountTag {
+	id
+	createdAt
+	modifiedAt
+	name
+	type
+	isDefault
+}
+
+fragment PersonalAccountDailyData on PersonalAccountDailyData {
+	id
+	value
+	date
+	tagId
+	monthlyDataId
+	week
+}
+
+fragment PersonalAccountMonthlyDataOverview on PersonalAccountMonthlyData {
+	id
+	month
+	year
+	dailyEntries
+	monthlyIncome
+	monthlyExpense
+}
+
+fragment PersonalAccountOverview on PersonalAccount {
+	id
+	name
+	createdAt
+	userId
+
+	yearlyAggregaton {
+		...PersonalAccountAggregationData
+	}
+
+	weeklyAggregaton {
+		...PersonalAccountWeeklyAggregation
+	}
+
+	monthlyData {
+		...PersonalAccountMonthlyDataOverview
+	}
+}
+
+fragment PersonalAccountAggregationData on PersonalAccountAggregationDataOutput {
+	value
+	entries
+	tagId
+	tagName
+	tagType
+}
+
+fragment PersonalAccountWeeklyAggregation on PersonalAccountWeeklyAggregationOutput {
+	id
+	year
+	month
+	week
+	data {
+		...PersonalAccountAggregationData
+	}
+}

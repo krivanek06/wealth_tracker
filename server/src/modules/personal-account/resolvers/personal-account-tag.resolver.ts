@@ -13,7 +13,7 @@ export class PersonalAccountTagResolver {
 		description: 'Returns default tags that are shared cross every user',
 		defaultValue: [],
 	})
-	getDefaultTags(): Promise<PersonalAccountTag[]> {
+	getDefaultTags(): PersonalAccountTag[] {
 		return this.personalAccountTagService.getDefaultTags();
 	}
 }

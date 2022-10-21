@@ -341,7 +341,22 @@ export type PersonalAccount = {
   monthlyData: Array<PersonalAccountMonthlyData>;
   name: Scalars['String'];
   userId: Scalars['String'];
-  weeklyAggregatonByTag: Array<PersonalAccountWeeklyAggregation>;
+  weeklyAggregaton: Array<PersonalAccountWeeklyAggregationOutput>;
+  yearlyAggregaton: Array<PersonalAccountAggregationDataOutput>;
+};
+
+export type PersonalAccountAggregationDataOutput = {
+  __typename?: 'PersonalAccountAggregationDataOutput';
+  /** How many entries per personalAccountTagId per week there were */
+  entries: Scalars['Int'];
+  /** Reference to PersonalAccountTag.id */
+  tagId: Scalars['String'];
+  /** Name of the tag */
+  tagName: Scalars['String'];
+  /** Type of the tag */
+  tagType: PersonalAccountTagDataType;
+  /** Sum of values for a specific personalAccountTagId */
+  value: Scalars['Float'];
 };
 
 export type PersonalAccountCreateInput = {
@@ -406,14 +421,23 @@ export type PersonalAccountMonthlyData = {
   __typename?: 'PersonalAccountMonthlyData';
   /** List of daily expenses user has made during this month period */
   dailyData: Array<PersonalAccountDailyData>;
+  dailyEntries: Scalars['Int'];
   id: Scalars['String'];
   /** To which month in a year is this account change associated. Like 8 for September */
   month: Scalars['Int'];
+  monthlyExpense: Scalars['Float'];
+  monthlyIncome: Scalars['Float'];
   /** Reference to PersonalAccount.id */
   personalAccountId: Scalars['String'];
-  totalDaily: Scalars['Int'];
   /** To which year is this account change associated. */
   year: Scalars['Int'];
+};
+
+export type PersonalAccountMonthlyDataSeach = {
+  /** Monthly data Id */
+  id: Scalars['String'];
+  /** Personal account Id */
+  personalAccountId: Scalars['String'];
 };
 
 export type PersonalAccountTag = {
@@ -437,18 +461,13 @@ export enum PersonalAccountTagDataType {
   Income = 'INCOME'
 }
 
-export type PersonalAccountWeeklyAggregation = {
-  __typename?: 'PersonalAccountWeeklyAggregation';
-  /** How many entries per personalAccountTagId per week there were */
-  entries: Scalars['Int'];
-  /** Randomly generated ID, not associated with DB entry */
+export type PersonalAccountWeeklyAggregationOutput = {
+  __typename?: 'PersonalAccountWeeklyAggregationOutput';
+  data: Array<PersonalAccountAggregationDataOutput>;
+  /** Id = Year-Month-Week */
   id: Scalars['String'];
   /** To which month in a year is this account change associated. Like 8 for September */
   month: Scalars['Int'];
-  /** Reference to PersonalAccount.id */
-  personalAccountTagId: Scalars['String'];
-  /** Sum of values for a specific personalAccountTagId */
-  value: Scalars['Float'];
   /** To which week in a year is this account change associated. Like 37 for "Week 37" */
   week: Scalars['Int'];
   /** To which month in a year is this account change associated */
@@ -461,11 +480,18 @@ export type Query = {
   getDefaultTags: Array<PersonalAccountTag>;
   /** Returns all personal accounts for the requester */
   getInvestmentAccounts: Array<InvestmentAccount>;
+  /** Returns monthly data by id */
+  getPersonalAccountMonthlyDataById: PersonalAccountMonthlyData;
   /** Returns all personal accounts for the requester */
   getPersonalAccounts: Array<PersonalAccount>;
   healthCheck: Scalars['String'];
   /** Search stock based on ticker symbol */
   searchAssetStockSymbol: Array<AssetStockSearch>;
+};
+
+
+export type QueryGetPersonalAccountMonthlyDataByIdArgs = {
+  input: PersonalAccountMonthlyDataSeach;
 };
 
 
@@ -491,10 +517,74 @@ export type User = {
 
 export type PersonalAccountTagFragment = { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: PersonalAccountTagDataType, isDefault: string };
 
+export type PersonalAccountDailyDataFragment = { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number };
+
+export type PersonalAccountMonthlyDataOverviewFragment = { __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number };
+
+export type PersonalAccountOverviewFragment = { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> };
+
+export type PersonalAccountAggregationDataFragment = { __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType };
+
+export type PersonalAccountWeeklyAggregationFragment = { __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }> };
+
+export type GetPersonalAccountsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPersonalAccountsQuery = { __typename?: 'Query', getPersonalAccounts: Array<{ __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> }> };
+
+export type CreatePersonalAccountMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreatePersonalAccountMutation = { __typename?: 'Mutation', createPersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> } };
+
+export type EditPersonalAccountMutationVariables = Exact<{
+  input: PersonalAccountEditInput;
+}>;
+
+
+export type EditPersonalAccountMutation = { __typename?: 'Mutation', editPersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> } };
+
+export type DeletePersonalAccountMutationVariables = Exact<{
+  accountId: Scalars['String'];
+}>;
+
+
+export type DeletePersonalAccountMutation = { __typename?: 'Mutation', deletePersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> } };
+
 export type GetDefaultTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetDefaultTagsQuery = { __typename?: 'Query', getDefaultTags: Array<{ __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: PersonalAccountTagDataType, isDefault: string }> };
+
+export type GetPersonalAccountMonthlyDataByIdQueryVariables = Exact<{
+  input: PersonalAccountMonthlyDataSeach;
+}>;
+
+
+export type GetPersonalAccountMonthlyDataByIdQuery = { __typename?: 'Query', getPersonalAccountMonthlyDataById: { __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number, dailyData: Array<{ __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number }> } };
+
+export type CreatePersonalAccountDailyEntryMutationVariables = Exact<{
+  input: PersonalAccountDailyDataCreate;
+}>;
+
+
+export type CreatePersonalAccountDailyEntryMutation = { __typename?: 'Mutation', createPersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number } };
+
+export type DeletePersonalAccountDailyEntryMutationVariables = Exact<{
+  input: PersonalAccountDailyDataDelete;
+}>;
+
+
+export type DeletePersonalAccountDailyEntryMutation = { __typename?: 'Mutation', deletePersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number } };
+
+export type EditPersonalAccountDailyEntryMutationVariables = Exact<{
+  input: PersonalAccountDailyDataEdit;
+}>;
+
+
+export type EditPersonalAccountDailyEntryMutation = { __typename?: 'Mutation', editPersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyDataEditOutput', originalDailyData: { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number }, modifiedDailyData: { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number } } };
 
 export const PersonalAccountTagFragmentDoc = gql`
     fragment PersonalAccountTag on PersonalAccountTag {
@@ -506,6 +596,137 @@ export const PersonalAccountTagFragmentDoc = gql`
   isDefault
 }
     `;
+export const PersonalAccountDailyDataFragmentDoc = gql`
+    fragment PersonalAccountDailyData on PersonalAccountDailyData {
+  id
+  value
+  date
+  tagId
+  monthlyDataId
+  week
+}
+    `;
+export const PersonalAccountAggregationDataFragmentDoc = gql`
+    fragment PersonalAccountAggregationData on PersonalAccountAggregationDataOutput {
+  value
+  entries
+  tagId
+  tagName
+  tagType
+}
+    `;
+export const PersonalAccountWeeklyAggregationFragmentDoc = gql`
+    fragment PersonalAccountWeeklyAggregation on PersonalAccountWeeklyAggregationOutput {
+  id
+  year
+  month
+  week
+  data {
+    ...PersonalAccountAggregationData
+  }
+}
+    ${PersonalAccountAggregationDataFragmentDoc}`;
+export const PersonalAccountMonthlyDataOverviewFragmentDoc = gql`
+    fragment PersonalAccountMonthlyDataOverview on PersonalAccountMonthlyData {
+  id
+  month
+  year
+  dailyEntries
+  monthlyIncome
+  monthlyExpense
+}
+    `;
+export const PersonalAccountOverviewFragmentDoc = gql`
+    fragment PersonalAccountOverview on PersonalAccount {
+  id
+  name
+  createdAt
+  userId
+  yearlyAggregaton {
+    ...PersonalAccountAggregationData
+  }
+  weeklyAggregaton {
+    ...PersonalAccountWeeklyAggregation
+  }
+  monthlyData {
+    ...PersonalAccountMonthlyDataOverview
+  }
+}
+    ${PersonalAccountAggregationDataFragmentDoc}
+${PersonalAccountWeeklyAggregationFragmentDoc}
+${PersonalAccountMonthlyDataOverviewFragmentDoc}`;
+export const GetPersonalAccountsDocument = gql`
+    query getPersonalAccounts {
+  getPersonalAccounts {
+    ...PersonalAccountOverview
+  }
+}
+    ${PersonalAccountOverviewFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetPersonalAccountsGQL extends Apollo.Query<GetPersonalAccountsQuery, GetPersonalAccountsQueryVariables> {
+    override document = GetPersonalAccountsDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const CreatePersonalAccountDocument = gql`
+    mutation CreatePersonalAccount($name: String!) {
+  createPersonalAccount(input: {name: $name}) {
+    ...PersonalAccountOverview
+  }
+}
+    ${PersonalAccountOverviewFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CreatePersonalAccountGQL extends Apollo.Mutation<CreatePersonalAccountMutation, CreatePersonalAccountMutationVariables> {
+    override document = CreatePersonalAccountDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const EditPersonalAccountDocument = gql`
+    mutation EditPersonalAccount($input: PersonalAccountEditInput!) {
+  editPersonalAccount(input: $input) {
+    ...PersonalAccountOverview
+  }
+}
+    ${PersonalAccountOverviewFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class EditPersonalAccountGQL extends Apollo.Mutation<EditPersonalAccountMutation, EditPersonalAccountMutationVariables> {
+    override document = EditPersonalAccountDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const DeletePersonalAccountDocument = gql`
+    mutation DeletePersonalAccount($accountId: String!) {
+  deletePersonalAccount(input: $accountId) {
+    ...PersonalAccountOverview
+  }
+}
+    ${PersonalAccountOverviewFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DeletePersonalAccountGQL extends Apollo.Mutation<DeletePersonalAccountMutation, DeletePersonalAccountMutationVariables> {
+    override document = DeletePersonalAccountDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const GetDefaultTagsDocument = gql`
     query getDefaultTags {
   getDefaultTags {
@@ -519,6 +740,87 @@ export const GetDefaultTagsDocument = gql`
   })
   export class GetDefaultTagsGQL extends Apollo.Query<GetDefaultTagsQuery, GetDefaultTagsQueryVariables> {
     override document = GetDefaultTagsDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetPersonalAccountMonthlyDataByIdDocument = gql`
+    query getPersonalAccountMonthlyDataById($input: PersonalAccountMonthlyDataSeach!) {
+  getPersonalAccountMonthlyDataById(input: $input) {
+    ...PersonalAccountMonthlyDataOverview
+    dailyData {
+      ...PersonalAccountDailyData
+    }
+  }
+}
+    ${PersonalAccountMonthlyDataOverviewFragmentDoc}
+${PersonalAccountDailyDataFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetPersonalAccountMonthlyDataByIdGQL extends Apollo.Query<GetPersonalAccountMonthlyDataByIdQuery, GetPersonalAccountMonthlyDataByIdQueryVariables> {
+    override document = GetPersonalAccountMonthlyDataByIdDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const CreatePersonalAccountDailyEntryDocument = gql`
+    mutation CreatePersonalAccountDailyEntry($input: PersonalAccountDailyDataCreate!) {
+  createPersonalAccountDailyEntry(input: $input) {
+    ...PersonalAccountDailyData
+  }
+}
+    ${PersonalAccountDailyDataFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CreatePersonalAccountDailyEntryGQL extends Apollo.Mutation<CreatePersonalAccountDailyEntryMutation, CreatePersonalAccountDailyEntryMutationVariables> {
+    override document = CreatePersonalAccountDailyEntryDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const DeletePersonalAccountDailyEntryDocument = gql`
+    mutation DeletePersonalAccountDailyEntry($input: PersonalAccountDailyDataDelete!) {
+  deletePersonalAccountDailyEntry(input: $input) {
+    ...PersonalAccountDailyData
+  }
+}
+    ${PersonalAccountDailyDataFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DeletePersonalAccountDailyEntryGQL extends Apollo.Mutation<DeletePersonalAccountDailyEntryMutation, DeletePersonalAccountDailyEntryMutationVariables> {
+    override document = DeletePersonalAccountDailyEntryDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const EditPersonalAccountDailyEntryDocument = gql`
+    mutation EditPersonalAccountDailyEntry($input: PersonalAccountDailyDataEdit!) {
+  editPersonalAccountDailyEntry(input: $input) {
+    originalDailyData {
+      ...PersonalAccountDailyData
+    }
+    modifiedDailyData {
+      ...PersonalAccountDailyData
+    }
+  }
+}
+    ${PersonalAccountDailyDataFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class EditPersonalAccountDailyEntryGQL extends Apollo.Mutation<EditPersonalAccountDailyEntryMutation, EditPersonalAccountDailyEntryMutationVariables> {
+    override document = EditPersonalAccountDailyEntryDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma';
 import { PersonalAccount } from '../entities';
-import { PersonalAccountDailyDataExtended, PersonalAccountWeeklyAggregationOutput } from '../outputs';
+import {
+	PersonalAccountDailyDataExtended,
+	PersonalAccountWeeklyAggregationDataOutput,
+	PersonalAccountWeeklyAggregationOutput,
+} from '../outputs';
 import { LodashServiceUtil } from './../../../utils';
 
 @Injectable()
@@ -53,7 +57,7 @@ export class PersonalAccountWeeklyService {
 			.map(
 				(monthly) =>
 					LodashServiceUtil.groupBy(monthly.dailyData, 'week') as { [key: string]: PersonalAccountDailyDataExtended[] }
-			);
+			) as [{ [key: string]: PersonalAccountDailyDataExtended[] }];
 
 		/**
 		 * converting { '37': [ [Object], [Object], '38': [ [Object], [Object]} => [ [ [Object], [Object] ], [ [Object], [Object] ] ]
@@ -67,7 +71,7 @@ export class PersonalAccountWeeklyService {
 				.reduce((acc, currKey) => [...acc, d[currKey]], [])
 				// group together monthly weekly data, convert { '37': [ {Object}], '38': [{Object}}  => [{Object}, {Object}]
 				.reduce((acc, curr) => [...acc, ...curr], [])
-		);
+		) as [PersonalAccountDailyDataExtended[]];
 
 		/**
 		 * Construct an array of objects where weekly data (weeklyDataArray) will aggregated
@@ -75,18 +79,24 @@ export class PersonalAccountWeeklyService {
 		 *  */
 		const weeklyDataArrayGroupByTag = weeklyDataArray.map((weeklyData) =>
 			weeklyData.reduce((acc, curr) => {
-				const KEY = `${curr.year}-${curr.month}-${curr.week}-${curr.tagId}`;
+				const KEY = `${curr.year}-${curr.month}-${curr.week}`;
 				// returning the previous PersonalAccountWeeklyAggregationOutput or creating a dummy one if not exists
-				const previousData = acc[KEY] as PersonalAccountWeeklyAggregationOutput;
-				const data = !previousData
-					? this.convertAccountDailyDataToAccountWeeklyDataAggregation(curr)
-					: ({
-							...previousData,
-							entries: previousData.entries + 1,
-							value: previousData.value + curr.value,
-					  } as PersonalAccountWeeklyAggregationOutput);
+				const weeklyAggregation =
+					(acc[KEY] as PersonalAccountWeeklyAggregationOutput) ?? this.createAccountWeeklyDataAggregation(curr);
 
-				return { ...acc, [KEY]: data };
+				// get index of the data which value we want to increment or -1 if new value
+				const index = weeklyAggregation.data.findIndex((d) => d.tagId === curr.tagId);
+				if (index > -1) {
+					// increment existing
+					weeklyAggregation.data[index].entries += 1;
+					weeklyAggregation.data[index].value += curr.value;
+				} else {
+					// add new data
+					const data: PersonalAccountWeeklyAggregationDataOutput = { entries: 1, tagId: curr.tagId, value: curr.value };
+					weeklyAggregation.data = [...weeklyAggregation.data, data];
+				}
+
+				return { ...acc, [KEY]: weeklyAggregation };
 			}, {} as { [key: string]: PersonalAccountWeeklyAggregationOutput })
 		);
 
@@ -106,18 +116,16 @@ export class PersonalAccountWeeklyService {
 		return weeklyDataArrayGroupByTagArray;
 	}
 
-	private convertAccountDailyDataToAccountWeeklyDataAggregation(
+	private createAccountWeeklyDataAggregation(
 		dailyExtend: PersonalAccountDailyDataExtended
 	): PersonalAccountWeeklyAggregationOutput {
-		const KEY = `${dailyExtend.year}-${dailyExtend.month}-${dailyExtend.week}-${dailyExtend.tagId}`;
+		const KEY = `${dailyExtend.year}-${dailyExtend.month}-${dailyExtend.week}`;
 		const data: PersonalAccountWeeklyAggregationOutput = {
 			id: KEY,
-			entries: 1,
 			year: dailyExtend.year,
 			month: dailyExtend.month,
 			week: dailyExtend.week,
-			value: dailyExtend.value,
-			personalAccountTagId: dailyExtend.tagId,
+			data: [],
 		};
 
 		return data;

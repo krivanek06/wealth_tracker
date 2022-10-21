@@ -40,24 +40,14 @@ fragment PersonalAccountOverview on PersonalAccount {
 	}
 }
 
-fragment PersonalAccountWeeklyAggregation on PersonalAccountWeeklyAggregation {
+fragment PersonalAccountWeeklyAggregation on PersonalAccountWeeklyAggregationOutput {
 	id
 	year
 	month
 	week
-	value
-	personalAccountTagId
-	entries
+	data {
+		value
+		entries
+		tagId
+	}
 }
-
-# fragment PersonalAccountDetail on PersonalAccount {
-# 	...PersonalAccountOverview
-# 	monthlyData {
-# 		dailyData {
-# 			...PersonalAccountDailyData
-# 		}
-# 	}
-# 	weeklyAggregatonByTag {
-# 		...PersonalAccountWeeklyAggregation
-# 	}
-# }

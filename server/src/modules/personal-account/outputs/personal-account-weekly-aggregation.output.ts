@@ -6,7 +6,7 @@ export type PersonalAccountDailyDataExtended = PersonalAccountDailyData & { year
 @ObjectType()
 export class PersonalAccountWeeklyAggregationOutput {
 	@Field(() => String, {
-		description: 'Randomly generated ID, not associated with DB entry',
+		description: 'Id = Year-Month-Week',
 	})
 	id: string;
 
@@ -25,6 +25,14 @@ export class PersonalAccountWeeklyAggregationOutput {
 	})
 	week: number;
 
+	@Field(() => [PersonalAccountWeeklyAggregationDataOutput], {
+		defaultValue: [],
+	})
+	data: PersonalAccountWeeklyAggregationDataOutput[];
+}
+
+@ObjectType()
+export class PersonalAccountWeeklyAggregationDataOutput {
 	@Field(() => Float, {
 		description: 'Sum of values for a specific personalAccountTagId',
 	})
@@ -38,5 +46,5 @@ export class PersonalAccountWeeklyAggregationOutput {
 	@Field(() => String, {
 		description: 'Reference to PersonalAccountTag.id',
 	})
-	personalAccountTagId: string;
+	tagId: string;
 }

@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import { PrismaService } from '../../../prisma';
 import { PersonalAccount } from '../entities';
+import { PersonalAccountWeeklyAggregationOutput } from '../outputs';
 import { PersonalAccountWeeklyService } from '../services';
 import { PersonalAccountMonthlyData } from './../entities/';
 
@@ -16,61 +17,6 @@ describe('PersonalAccountWeeklyService', () => {
 		month: 9,
 		year: 2022,
 		dailyData: [],
-	};
-
-	const PERSONAL_ACCOUNT_ID_SINGLE_MONTH = { id: 'SINGLE_MONTH' } as PersonalAccount;
-	const PERSONAL_ACCOUNT_MONTHLY_DATA_SINGLE_MONTHL: PersonalAccountMonthlyData = {
-		personalAccountId: PERSONAL_ACCOUNT_ID_SINGLE_MONTH.id,
-		id: '634a522ff8c911d565a41f1a',
-		month: 9,
-		year: 2022,
-		dailyData: [
-			{
-				id: '94ac4e64-4ac2-4773-bcb6-46d8269bafa0',
-				value: 10,
-				date: new Date(1665733206000),
-				tagId: '634a55e83d5f2180e336af5a',
-				monthlyDataId: '634a522ff8c911d565a41f1a',
-				week: 42,
-				userId: '1234',
-			},
-			{
-				id: '017321af-ae2e-4aac-a536-322d173fb48d',
-				value: 10,
-				date: new Date(1665733206000),
-				tagId: '634a55e83d5f2180e336af5a',
-				monthlyDataId: '634a522ff8c911d565a41f1a',
-				week: 42,
-				userId: '1234',
-			},
-			{
-				id: 'da107f69-382c-4a42-b22f-162691aa0935',
-				value: 10,
-				date: new Date(1665733206000),
-				tagId: '634a55e93d5f2180e336af5c',
-				monthlyDataId: '634a522ff8c911d565a41f1a',
-				week: 42,
-				userId: '1234',
-			},
-			{
-				id: '3f4ffcdc-9d60-4461-85d2-ca411c68b845',
-				value: 10,
-				date: new Date(1665733206000),
-				tagId: '634a55e93d5f2180e336af5c',
-				monthlyDataId: '634a522ff8c911d565a41f1a',
-				week: 42,
-				userId: '1234',
-			},
-			{
-				id: 'cd1a9003-22c3-4643-8b6c-e261ff690bc6',
-				value: 10,
-				date: new Date(1665733206000),
-				tagId: '634a55e93d5f2180e336af5f',
-				monthlyDataId: '634a522ff8c911d565a41f1a',
-				week: 42,
-				userId: '1234',
-			},
-		],
 	};
 
 	const PERSONAL_ACCOUNT_ID_MULTIPLE_MONTHS = { id: 'MULTIPLE_MONTHS' } as PersonalAccount;
@@ -200,12 +146,6 @@ describe('PersonalAccountWeeklyService', () => {
 		when(prismaServiceMock.personalAccountMonthlyData.findMany)
 			.calledWith({
 				where: {
-					personalAccountId: PERSONAL_ACCOUNT_ID_SINGLE_MONTH.id,
-				},
-			})
-			.mockResolvedValue([PERSONAL_ACCOUNT_MONTHLY_DATA_SINGLE_MONTHL])
-			.calledWith({
-				where: {
 					personalAccountId: PERSONAL_ACCOUNT_ID_EMPTY.id,
 				},
 			})
@@ -233,113 +173,66 @@ describe('PersonalAccountWeeklyService', () => {
 			expect(result).toHaveLength(0);
 		});
 
-		it('should return aggregated weekly data for single month', async () => {
-			const aggregatedResult = [
-				{
-					id: '2022-9-42-634a55e83d5f2180e336af5a',
-					year: 2022,
-					month: 9,
-					week: 42,
-					value: 20,
-					personalAccountTagId: '634a55e83d5f2180e336af5a',
-					entries: 2,
-				},
-				{
-					id: '2022-9-42-634a55e93d5f2180e336af5c',
-					year: 2022,
-					month: 9,
-					week: 42,
-					value: 20,
-					personalAccountTagId: '634a55e93d5f2180e336af5c',
-					entries: 2,
-				},
-				{
-					id: '2022-9-42-634a55e93d5f2180e336af5f',
-					year: 2022,
-					month: 9,
-					week: 42,
-					value: 10,
-					personalAccountTagId: '634a55e93d5f2180e336af5f',
-					entries: 1,
-				},
-			];
-
-			const result = await service.getAllWeeklyAggregatedData(PERSONAL_ACCOUNT_ID_SINGLE_MONTH);
-
-			// test loading monthly data
-			expect(prismaServiceMock.personalAccountMonthlyData.findMany).toHaveBeenCalledWith({
-				where: {
-					personalAccountId: PERSONAL_ACCOUNT_ID_SINGLE_MONTH.id,
-				},
-			});
-
-			expect(result).toStrictEqual(aggregatedResult);
-		});
-
 		it('should return aggregated weekly data for multiple months', async () => {
-			const aggregatedResult = [
+			const aggregatedResult: PersonalAccountWeeklyAggregationOutput[] = [
 				{
-					id: '2022-9-42-634a55e83d5f2180e336af5a',
+					id: '2022-9-42',
 					year: 2022,
 					month: 9,
 					week: 42,
-					value: 20,
-					entries: 2,
-					personalAccountTagId: '634a55e83d5f2180e336af5a',
+					data: [
+						{
+							value: 20,
+							entries: 2,
+							tagId: '634a55e83d5f2180e336af5a',
+						},
+						{
+							value: 20,
+							entries: 2,
+							tagId: '634a55e93d5f2180e336af5c',
+						},
+						{
+							value: 10,
+							entries: 1,
+							tagId: '634a55e93d5f2180e336af5f',
+						},
+					],
 				},
 				{
-					id: '2022-9-42-634a55e93d5f2180e336af5c',
-					year: 2022,
-					month: 9,
-					week: 42,
-					value: 20,
-					entries: 2,
-					personalAccountTagId: '634a55e93d5f2180e336af5c',
-				},
-				{
-					id: '2022-9-42-634a55e93d5f2180e336af5f',
-					year: 2022,
-					month: 9,
-					week: 42,
-					value: 10,
-					entries: 1,
-					personalAccountTagId: '634a55e93d5f2180e336af5f',
-				},
-				{
-					id: '2022-8-37-634a55ea3d5f2180e336af60',
+					id: '2022-8-37',
 					year: 2022,
 					month: 8,
 					week: 37,
-					value: 14,
-					entries: 1,
-					personalAccountTagId: '634a55ea3d5f2180e336af60',
+					data: [
+						{
+							value: 14,
+							entries: 1,
+							tagId: '634a55ea3d5f2180e336af60',
+						},
+					],
 				},
 				{
-					id: '2022-8-38-634a55ea3d5f2180e336af60',
+					id: '2022-8-38',
 					year: 2022,
 					month: 8,
 					week: 38,
-					value: 14,
-					entries: 1,
-					personalAccountTagId: '634a55ea3d5f2180e336af60',
-				},
-				{
-					id: '2022-8-38-634a55ea3d5f2180e336af61',
-					year: 2022,
-					month: 8,
-					week: 38,
-					value: 12,
-					entries: 1,
-					personalAccountTagId: '634a55ea3d5f2180e336af61',
-				},
-				{
-					id: '2022-8-38-634a55e83d5f2180e336af5a',
-					year: 2022,
-					month: 8,
-					week: 38,
-					value: 23,
-					entries: 2,
-					personalAccountTagId: '634a55e83d5f2180e336af5a',
+					data: [
+						{
+							value: 14,
+							entries: 1,
+							tagId: '634a55ea3d5f2180e336af60',
+						},
+						{
+							value: 12,
+							entries: 1,
+							tagId: '634a55ea3d5f2180e336af61',
+						},
+						{
+							value: 23,
+							entries: 2,
+							tagId: '634a55e83d5f2180e336af5a',
+						},
+					],
 				},
 			];
 

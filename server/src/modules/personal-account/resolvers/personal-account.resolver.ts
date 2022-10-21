@@ -4,8 +4,12 @@ import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql/args';
 import { PersonalAccount, PersonalAccountMonthlyData } from '../entities';
 import { PersonalAccountCreateInput, PersonalAccountEditInput } from '../inputs';
-import { PersonalAccountWeeklyAggregationOutput } from '../outputs';
-import { PersonalAccountMonthlyService, PersonalAccountService, PersonalAccountWeeklyService } from '../services';
+import { PersonalAccountAggregationDataOutput, PersonalAccountWeeklyAggregationOutput } from '../outputs';
+import {
+	PersonalAccounDataAggregatorService,
+	PersonalAccountMonthlyService,
+	PersonalAccountService,
+} from '../services';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => PersonalAccount)
@@ -13,7 +17,7 @@ export class PersonalAccountResolver {
 	constructor(
 		private personalAccountService: PersonalAccountService,
 		private personalAccountMonthlyService: PersonalAccountMonthlyService,
-		private personalAccountWeeklyService: PersonalAccountWeeklyService
+		private personalAccounDataAggregatorService: PersonalAccounDataAggregatorService
 	) {}
 
 	/* Queries */
@@ -58,10 +62,17 @@ export class PersonalAccountResolver {
 		return this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount);
 	}
 
-	@ResolveField('weeklyAggregatonByTag', () => [PersonalAccountWeeklyAggregationOutput])
+	@ResolveField('weeklyAggregaton', () => [PersonalAccountWeeklyAggregationOutput])
 	getAllWeeklyAggregatedData(
 		@Parent() personalAccount: PersonalAccount
 	): Promise<PersonalAccountWeeklyAggregationOutput[]> {
-		return this.personalAccountWeeklyService.getAllWeeklyAggregatedData(personalAccount);
+		return this.personalAccounDataAggregatorService.getAllWeeklyAggregatedData(personalAccount);
+	}
+
+	@ResolveField('yearlyAggregaton', () => [PersonalAccountAggregationDataOutput])
+	getAllYearlyAggregatedData(
+		@Parent() personalAccount: PersonalAccount
+	): Promise<PersonalAccountAggregationDataOutput[]> {
+		return this.personalAccounDataAggregatorService.getAllYearlyAggregatedData(personalAccount);
 	}
 }

@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PersonalAccountTagDataType } from '@prisma/client';
 import { PrismaService } from '../../../prisma';
-import { PERSONAL_ACCOUNT_DEFAULT_TAGS } from '../dto';
+import { PERSONAL_ACCOUNT_DEFAULT_TAGS, PERSONAL_ACCOUNT_TAG_ERROR } from '../dto';
 import { PersonalAccountTag } from '../entities/personal-account-tag.entity';
 
 @Injectable()
@@ -10,23 +10,32 @@ export class PersonalAccountTagService {
 	private defaultTags: PersonalAccountTag[] = [];
 	constructor(private readonly prisma: PrismaService) {
 		this.registerDefaultTags();
+		this.loadDefaultTags();
 	}
 
-	async getDefaultTags(): Promise<PersonalAccountTag[]> {
+	getDefaultTags(): PersonalAccountTag[] {
 		if (this.defaultTags.length === 0) {
-			this.defaultTags = await this.prisma.personalAccountTag.findMany({
-				where: {
-					isDefault: true,
-				},
-			});
-			// console.log(`PersonalAccountTagService: loaded ${this.defaultTags.length} default tags`);
+			throw new HttpException(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
 		}
 		return this.defaultTags;
 	}
 
-	async getDefaultTagsByTypes(tagType: PersonalAccountTagDataType): Promise<PersonalAccountTag[]> {
-		const allTags = await this.getDefaultTags();
+	getDefaultTagById(tagId: string): PersonalAccountTag {
+		const allTags = this.getDefaultTags();
+		return allTags.find((t) => t.id === tagId);
+	}
+
+	getDefaultTagsByTypes(tagType: PersonalAccountTagDataType): PersonalAccountTag[] {
+		const allTags = this.getDefaultTags();
 		return allTags.filter((t) => t.type === tagType);
+	}
+
+	private async loadDefaultTags(): Promise<void> {
+		this.defaultTags = await this.prisma.personalAccountTag.findMany({
+			where: {
+				isDefault: true,
+			},
+		});
 	}
 
 	private async registerDefaultTags(): Promise<void> {

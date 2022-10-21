@@ -41,11 +41,11 @@ export class PersonalAccountMonthlyService {
 	 * @param personalAccountMonthlyData
 	 * @returns the sum of PersonalAccountMonthlyData.dailyData that has an income tag associated with it
 	 */
-	async getMonthlyIncomeOrExpense(
+	getMonthlyIncomeOrExpense(
 		personalAccountMonthlyData: PersonalAccountMonthlyData,
 		tagType: PersonalAccountTagDataType
-	): Promise<number> {
-		const defaultTagTypes = await this.personalAccountTagService.getDefaultTagsByTypes(tagType);
+	): number {
+		const defaultTagTypes = this.personalAccountTagService.getDefaultTagsByTypes(tagType);
 		const defaultTagTypesIds = defaultTagTypes.map((x) => x.id);
 
 		// filter out daily data

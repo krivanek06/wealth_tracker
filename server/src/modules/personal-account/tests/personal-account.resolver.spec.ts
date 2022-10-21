@@ -1,14 +1,18 @@
 import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PersonalAccountResolver } from '../resolvers/personal-account.resolver';
-import { PersonalAccountMonthlyService, PersonalAccountService, PersonalAccountWeeklyService } from '../services';
+import {
+	PersonalAccounDataAggregatorService,
+	PersonalAccountMonthlyService,
+	PersonalAccountService,
+} from '../services';
 
 describe('PersonalAccountResolver', () => {
 	let resolver: PersonalAccountResolver;
 
 	const personalAccountServiceMock = createMock<PersonalAccountService>();
 	const personalAccountMonthlyServiceMock = createMock<PersonalAccountMonthlyService>();
-	const personalAccountWeeklyServiceMock = createMock<PersonalAccountWeeklyService>();
+	const personalAccountWeeklyServiceMock = createMock<PersonalAccounDataAggregatorService>();
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -16,7 +20,7 @@ describe('PersonalAccountResolver', () => {
 				PersonalAccountResolver,
 				{ provide: PersonalAccountService, useValue: personalAccountServiceMock },
 				{ provide: PersonalAccountMonthlyService, useValue: personalAccountMonthlyServiceMock },
-				{ provide: PersonalAccountWeeklyService, useValue: personalAccountWeeklyServiceMock },
+				{ provide: PersonalAccounDataAggregatorService, useValue: personalAccountWeeklyServiceMock },
 			],
 		}).compile();
 

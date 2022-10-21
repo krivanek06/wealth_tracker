@@ -341,7 +341,22 @@ export type PersonalAccount = {
   monthlyData: Array<PersonalAccountMonthlyData>;
   name: Scalars['String'];
   userId: Scalars['String'];
-  weeklyAggregatonByTag: Array<PersonalAccountWeeklyAggregationOutput>;
+  weeklyAggregaton: Array<PersonalAccountWeeklyAggregationOutput>;
+  yearlyAggregaton: Array<PersonalAccountAggregationDataOutput>;
+};
+
+export type PersonalAccountAggregationDataOutput = {
+  __typename?: 'PersonalAccountAggregationDataOutput';
+  /** How many entries per personalAccountTagId per week there were */
+  entries: Scalars['Int'];
+  /** Reference to PersonalAccountTag.id */
+  tagId: Scalars['String'];
+  /** Name of the tag */
+  tagName: Scalars['String'];
+  /** Type of the tag */
+  tagType: PersonalAccountTagDataType;
+  /** Sum of values for a specific personalAccountTagId */
+  value: Scalars['Float'];
 };
 
 export type PersonalAccountCreateInput = {
@@ -446,19 +461,9 @@ export enum PersonalAccountTagDataType {
   Income = 'INCOME'
 }
 
-export type PersonalAccountWeeklyAggregationDataOutput = {
-  __typename?: 'PersonalAccountWeeklyAggregationDataOutput';
-  /** How many entries per personalAccountTagId per week there were */
-  entries: Scalars['Int'];
-  /** Reference to PersonalAccountTag.id */
-  tagId: Scalars['String'];
-  /** Sum of values for a specific personalAccountTagId */
-  value: Scalars['Float'];
-};
-
 export type PersonalAccountWeeklyAggregationOutput = {
   __typename?: 'PersonalAccountWeeklyAggregationOutput';
-  data: Array<PersonalAccountWeeklyAggregationDataOutput>;
+  data: Array<PersonalAccountAggregationDataOutput>;
   /** Id = Year-Month-Week */
   id: Scalars['String'];
   /** To which month in a year is this account change associated. Like 8 for September */
@@ -516,35 +521,37 @@ export type PersonalAccountDailyDataFragment = { __typename?: 'PersonalAccountDa
 
 export type PersonalAccountMonthlyDataOverviewFragment = { __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number };
 
-export type PersonalAccountOverviewFragment = { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }>, weeklyAggregatonByTag: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountWeeklyAggregationDataOutput', value: number, entries: number, tagId: string }> }> };
+export type PersonalAccountOverviewFragment = { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> };
 
-export type PersonalAccountWeeklyAggregationFragment = { __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountWeeklyAggregationDataOutput', value: number, entries: number, tagId: string }> };
+export type PersonalAccountAggregationDataFragment = { __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType };
+
+export type PersonalAccountWeeklyAggregationFragment = { __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }> };
 
 export type GetPersonalAccountsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPersonalAccountsQuery = { __typename?: 'Query', getPersonalAccounts: Array<{ __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }>, weeklyAggregatonByTag: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountWeeklyAggregationDataOutput', value: number, entries: number, tagId: string }> }> }> };
+export type GetPersonalAccountsQuery = { __typename?: 'Query', getPersonalAccounts: Array<{ __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> }> };
 
 export type CreatePersonalAccountMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type CreatePersonalAccountMutation = { __typename?: 'Mutation', createPersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }>, weeklyAggregatonByTag: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountWeeklyAggregationDataOutput', value: number, entries: number, tagId: string }> }> } };
+export type CreatePersonalAccountMutation = { __typename?: 'Mutation', createPersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> } };
 
 export type EditPersonalAccountMutationVariables = Exact<{
   input: PersonalAccountEditInput;
 }>;
 
 
-export type EditPersonalAccountMutation = { __typename?: 'Mutation', editPersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }>, weeklyAggregatonByTag: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountWeeklyAggregationDataOutput', value: number, entries: number, tagId: string }> }> } };
+export type EditPersonalAccountMutation = { __typename?: 'Mutation', editPersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> } };
 
 export type DeletePersonalAccountMutationVariables = Exact<{
   accountId: Scalars['String'];
 }>;
 
 
-export type DeletePersonalAccountMutation = { __typename?: 'Mutation', deletePersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }>, weeklyAggregatonByTag: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountWeeklyAggregationDataOutput', value: number, entries: number, tagId: string }> }> } };
+export type DeletePersonalAccountMutation = { __typename?: 'Mutation', deletePersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tagId: string, tagName: string, tagType: PersonalAccountTagDataType }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> } };
 
 export type GetDefaultTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -599,6 +606,26 @@ export const PersonalAccountDailyDataFragmentDoc = gql`
   week
 }
     `;
+export const PersonalAccountAggregationDataFragmentDoc = gql`
+    fragment PersonalAccountAggregationData on PersonalAccountAggregationDataOutput {
+  value
+  entries
+  tagId
+  tagName
+  tagType
+}
+    `;
+export const PersonalAccountWeeklyAggregationFragmentDoc = gql`
+    fragment PersonalAccountWeeklyAggregation on PersonalAccountWeeklyAggregationOutput {
+  id
+  year
+  month
+  week
+  data {
+    ...PersonalAccountAggregationData
+  }
+}
+    ${PersonalAccountAggregationDataFragmentDoc}`;
 export const PersonalAccountMonthlyDataOverviewFragmentDoc = gql`
     fragment PersonalAccountMonthlyDataOverview on PersonalAccountMonthlyData {
   id
@@ -609,34 +636,25 @@ export const PersonalAccountMonthlyDataOverviewFragmentDoc = gql`
   monthlyExpense
 }
     `;
-export const PersonalAccountWeeklyAggregationFragmentDoc = gql`
-    fragment PersonalAccountWeeklyAggregation on PersonalAccountWeeklyAggregationOutput {
-  id
-  year
-  month
-  week
-  data {
-    value
-    entries
-    tagId
-  }
-}
-    `;
 export const PersonalAccountOverviewFragmentDoc = gql`
     fragment PersonalAccountOverview on PersonalAccount {
   id
   name
   createdAt
   userId
+  yearlyAggregaton {
+    ...PersonalAccountAggregationData
+  }
+  weeklyAggregaton {
+    ...PersonalAccountWeeklyAggregation
+  }
   monthlyData {
     ...PersonalAccountMonthlyDataOverview
   }
-  weeklyAggregatonByTag {
-    ...PersonalAccountWeeklyAggregation
-  }
 }
-    ${PersonalAccountMonthlyDataOverviewFragmentDoc}
-${PersonalAccountWeeklyAggregationFragmentDoc}`;
+    ${PersonalAccountAggregationDataFragmentDoc}
+${PersonalAccountWeeklyAggregationFragmentDoc}
+${PersonalAccountMonthlyDataOverviewFragmentDoc}`;
 export const GetPersonalAccountsDocument = gql`
     query getPersonalAccounts {
   getPersonalAccounts {

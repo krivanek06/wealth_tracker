@@ -11,3 +11,7 @@ export enum PERSONAL_ACCOUNT_ERROR {
 	NOT_FOUND = 'Personal account not found',
 	NOT_ALLOWED_TO_CTEATE = 'You reacted you limit of creating personal accounts, no additional personal account is allowed',
 }
+
+export enum PERSONAL_ACCOUNT_TAG_ERROR {
+	NOT_FOUND = 'Tags were not loaded for the personal account, please contact administartor',
+}

@@ -1,4 +1,5 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+import { PersonalAccountTagDataType } from '@prisma/client';
 import { PersonalAccountDailyData } from '../entities/personal-account-daily-data.entity';
 
 export type PersonalAccountDailyDataExtended = PersonalAccountDailyData & { year: number; month: number };
@@ -25,14 +26,14 @@ export class PersonalAccountWeeklyAggregationOutput {
 	})
 	week: number;
 
-	@Field(() => [PersonalAccountWeeklyAggregationDataOutput], {
+	@Field(() => [PersonalAccountAggregationDataOutput], {
 		defaultValue: [],
 	})
-	data: PersonalAccountWeeklyAggregationDataOutput[];
+	data: PersonalAccountAggregationDataOutput[];
 }
 
 @ObjectType()
-export class PersonalAccountWeeklyAggregationDataOutput {
+export class PersonalAccountAggregationDataOutput {
 	@Field(() => Float, {
 		description: 'Sum of values for a specific personalAccountTagId',
 	})
@@ -47,4 +48,14 @@ export class PersonalAccountWeeklyAggregationDataOutput {
 		description: 'Reference to PersonalAccountTag.id',
 	})
 	tagId: string;
+
+	@Field(() => String, {
+		description: 'Name of the tag',
+	})
+	tagName: string;
+
+	@Field(() => PersonalAccountTagDataType, {
+		description: 'Type of the tag',
+	})
+	tagType: PersonalAccountTagDataType;
 }

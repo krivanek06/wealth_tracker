@@ -2,13 +2,12 @@ import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import { PrismaService } from '../../../prisma';
-import { PersonalAccount } from '../entities';
-import { PersonalAccountWeeklyAggregationOutput } from '../outputs';
-import { PersonalAccountWeeklyService } from '../services';
-import { PersonalAccountMonthlyData } from './../entities/';
+import { PersonalAccount, PersonalAccountMonthlyData, PersonalAccountTag } from '../entities';
+import { PersonalAccountAggregationDataOutput, PersonalAccountWeeklyAggregationOutput } from '../outputs';
+import { PersonalAccounDataAggregatorService, PersonalAccountTagService } from '../services';
 
-describe('PersonalAccountWeeklyService', () => {
-	let service: PersonalAccountWeeklyService;
+describe('PersonalAccounDataAggregatorService', () => {
+	let service: PersonalAccounDataAggregatorService;
 
 	const PERSONAL_ACCOUNT_ID_EMPTY = { id: 'EMPTY' } as PersonalAccount;
 	const PERSONAL_ACCOUNT_MONTHLY_DATA_EMPTY: PersonalAccountMonthlyData = {
@@ -135,13 +134,24 @@ describe('PersonalAccountWeeklyService', () => {
 			findMany: jest.fn(),
 		},
 	});
+	const mockTag: PersonalAccountTag = {
+		name: 'Test tag',
+		type: 'EXPENSE',
+	} as PersonalAccountTag;
+	const personalAccountTagServiceMock: PersonalAccountTagService = createMock<PersonalAccountTagService>({
+		getDefaultTagById: jest.fn().mockReturnValue(mockTag),
+	});
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [PersonalAccountWeeklyService, { provide: PrismaService, useValue: prismaServiceMock }],
+			providers: [
+				PersonalAccounDataAggregatorService,
+				{ provide: PrismaService, useValue: prismaServiceMock },
+				{ provide: PersonalAccountTagService, useValue: personalAccountTagServiceMock },
+			],
 		}).compile();
 
-		service = module.get<PersonalAccountWeeklyService>(PersonalAccountWeeklyService);
+		service = module.get<PersonalAccounDataAggregatorService>(PersonalAccounDataAggregatorService);
 
 		when(prismaServiceMock.personalAccountMonthlyData.findMany)
 			.calledWith({
@@ -185,16 +195,22 @@ describe('PersonalAccountWeeklyService', () => {
 							value: 20,
 							entries: 2,
 							tagId: '634a55e83d5f2180e336af5a',
+							tagName: mockTag.name,
+							tagType: mockTag.type,
 						},
 						{
 							value: 20,
 							entries: 2,
 							tagId: '634a55e93d5f2180e336af5c',
+							tagName: mockTag.name,
+							tagType: mockTag.type,
 						},
 						{
 							value: 10,
 							entries: 1,
 							tagId: '634a55e93d5f2180e336af5f',
+							tagName: mockTag.name,
+							tagType: mockTag.type,
 						},
 					],
 				},
@@ -208,6 +224,8 @@ describe('PersonalAccountWeeklyService', () => {
 							value: 14,
 							entries: 1,
 							tagId: '634a55ea3d5f2180e336af60',
+							tagName: mockTag.name,
+							tagType: mockTag.type,
 						},
 					],
 				},
@@ -221,20 +239,26 @@ describe('PersonalAccountWeeklyService', () => {
 							value: 14,
 							entries: 1,
 							tagId: '634a55ea3d5f2180e336af60',
+							tagName: mockTag.name,
+							tagType: mockTag.type,
 						},
 						{
 							value: 12,
 							entries: 1,
 							tagId: '634a55ea3d5f2180e336af61',
+							tagName: mockTag.name,
+							tagType: mockTag.type,
 						},
 						{
 							value: 23,
 							entries: 2,
 							tagId: '634a55e83d5f2180e336af5a',
+							tagName: mockTag.name,
+							tagType: mockTag.type,
 						},
 					],
 				},
-			];
+			] as PersonalAccountWeeklyAggregationOutput[];
 
 			const result = await service.getAllWeeklyAggregatedData(PERSONAL_ACCOUNT_ID_MULTIPLE_MONTHS);
 
@@ -246,6 +270,52 @@ describe('PersonalAccountWeeklyService', () => {
 			});
 
 			expect(result).toStrictEqual(aggregatedResult);
+		});
+	});
+
+	describe('Test: getAllYearlyAggregatedData()', () => {
+		it('should return yearly weekly data for multiple months', async () => {
+			const expectedResult: PersonalAccountAggregationDataOutput[] = [
+				{
+					value: 43,
+					entries: 4,
+					tagId: '634a55e83d5f2180e336af5a',
+					tagName: mockTag.name,
+					tagType: mockTag.type,
+				},
+				{
+					value: 20,
+					entries: 2,
+					tagId: '634a55e93d5f2180e336af5c',
+					tagName: mockTag.name,
+					tagType: mockTag.type,
+				},
+				{
+					value: 10,
+					entries: 1,
+					tagId: '634a55e93d5f2180e336af5f',
+					tagName: mockTag.name,
+					tagType: mockTag.type,
+				},
+				{
+					value: 28,
+					entries: 2,
+					tagId: '634a55ea3d5f2180e336af60',
+					tagName: mockTag.name,
+					tagType: mockTag.type,
+				},
+				{
+					value: 12,
+					entries: 1,
+					tagId: '634a55ea3d5f2180e336af61',
+					tagName: mockTag.name,
+					tagType: mockTag.type,
+				},
+			];
+
+			const result = await service.getAllYearlyAggregatedData(PERSONAL_ACCOUNT_ID_MULTIPLE_MONTHS);
+
+			expect(result).toStrictEqual(expectedResult);
 		});
 	});
 });

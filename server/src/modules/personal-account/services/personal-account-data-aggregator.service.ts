@@ -1,16 +1,52 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma';
-import { PersonalAccount } from '../entities';
+import { LodashServiceUtil } from '../../../utils';
+import { PersonalAccount, PersonalAccountDailyData } from '../entities';
 import {
+	PersonalAccountAggregationDataOutput,
 	PersonalAccountDailyDataExtended,
-	PersonalAccountWeeklyAggregationDataOutput,
 	PersonalAccountWeeklyAggregationOutput,
 } from '../outputs';
-import { LodashServiceUtil } from './../../../utils';
+import { PersonalAccountTagService } from './personal-account-tag.service';
 
 @Injectable()
-export class PersonalAccountWeeklyService {
-	constructor(private prisma: PrismaService) {}
+export class PersonalAccounDataAggregatorService {
+	constructor(private prisma: PrismaService, private personalAccountTagService: PersonalAccountTagService) {}
+
+	async getAllYearlyAggregatedData({ id }: PersonalAccount): Promise<PersonalAccountAggregationDataOutput[]> {
+		// load user all monthly data - already grouped by YEAR and MONTH
+		const monthlyData = await this.prisma.personalAccountMonthlyData.findMany({
+			where: {
+				personalAccountId: id,
+			},
+		});
+
+		// merge together all daily data for each month
+		const allDailyData = monthlyData.reduce(
+			(acc, curr) => [...acc, ...curr.dailyData],
+			[] as PersonalAccountDailyData[]
+		);
+
+		const aggregationDataByTagId = allDailyData.reduce((acc, curr) => {
+			const previousAggregation = acc[curr.tagId];
+
+			// create new or increate previous PersonalAccountAggregationDataOutput
+			const data = !previousAggregation
+				? this.createPersonalAccountAggregationDataOutput(curr.tagId, curr.value)
+				: ({
+						...previousAggregation,
+						entries: previousAggregation.entries + 1,
+						value: previousAggregation.value + curr.value,
+				  } as PersonalAccountAggregationDataOutput);
+
+			return { ...acc, [curr.tagId]: data };
+		}, {} as { [key: string]: PersonalAccountAggregationDataOutput });
+
+		// format {key: value} to [value]
+		const aggreagtionDataOutput = Object.keys(aggregationDataByTagId).map((k) => aggregationDataByTagId[k]);
+
+		return aggreagtionDataOutput;
+	}
 
 	/**
 	 * method used to format daily data for a easier managable data to display them on weekly/monthly chart
@@ -92,7 +128,7 @@ export class PersonalAccountWeeklyService {
 					weeklyAggregation.data[index].value += curr.value;
 				} else {
 					// add new data
-					const data: PersonalAccountWeeklyAggregationDataOutput = { entries: 1, tagId: curr.tagId, value: curr.value };
+					const data = this.createPersonalAccountAggregationDataOutput(curr.tagId, curr.value);
 					weeklyAggregation.data = [...weeklyAggregation.data, data];
 				}
 
@@ -129,5 +165,13 @@ export class PersonalAccountWeeklyService {
 		};
 
 		return data;
+	}
+
+	private createPersonalAccountAggregationDataOutput(
+		tagId: string,
+		value: number
+	): PersonalAccountAggregationDataOutput {
+		const defaultTag = this.personalAccountTagService.getDefaultTagById(tagId);
+		return { entries: 1, tagId, value, tagName: defaultTag.name, tagType: defaultTag.type };
 	}
 }

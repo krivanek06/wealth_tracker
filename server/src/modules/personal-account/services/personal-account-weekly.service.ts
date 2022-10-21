@@ -56,13 +56,18 @@ export class PersonalAccountWeeklyService {
 			);
 
 		/**
-		 * converting { '37': [ [Object], [Object]} => [ [ [Object], [Object] ], [ [Object], [Object] ] ]
+		 * converting { '37': [ [Object], [Object], '38': [ [Object], [Object]} => [ [ [Object], [Object] ], [ [Object], [Object] ] ]
 		 * creating 2D array, where each nested array represent a distinct [year, month, week]
 		 * used for easier data manipulation when grouping by tags
 		 *
 		 *  */
-
-		const weeklyDataArray = monthlyDataGroupByWeek.map((d) => d[Object.keys(d)[0]]);
+		const weeklyDataArray = monthlyDataGroupByWeek.map((d) =>
+			Object.keys(d)
+				// creates 2D array by divided by 'week' key => { '37': [ {Object}], '38': [{Object}}
+				.reduce((acc, currKey) => [...acc, d[currKey]], [])
+				// group together monthly weekly data, convert { '37': [ {Object}], '38': [{Object}}  => [{Object}, {Object}]
+				.reduce((acc, curr) => [...acc, ...curr], [])
+		);
 
 		/**
 		 * Construct an array of objects where weekly data (weeklyDataArray) will aggregated

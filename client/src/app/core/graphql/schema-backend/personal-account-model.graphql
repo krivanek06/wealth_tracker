@@ -31,13 +31,25 @@ fragment PersonalAccountOverview on PersonalAccount {
 	createdAt
 	userId
 
+	yearlyAggregaton {
+		...PersonalAccountAggregationData
+	}
+
+	weeklyAggregaton {
+		...PersonalAccountWeeklyAggregation
+	}
+
 	monthlyData {
 		...PersonalAccountMonthlyDataOverview
 	}
+}
 
-	weeklyAggregatonByTag {
-		...PersonalAccountWeeklyAggregation
-	}
+fragment PersonalAccountAggregationData on PersonalAccountAggregationDataOutput {
+	value
+	entries
+	tagId
+	tagName
+	tagType
 }
 
 fragment PersonalAccountWeeklyAggregation on PersonalAccountWeeklyAggregationOutput {
@@ -46,8 +58,6 @@ fragment PersonalAccountWeeklyAggregation on PersonalAccountWeeklyAggregationOut
 	month
 	week
 	data {
-		value
-		entries
-		tagId
+		...PersonalAccountAggregationData
 	}
 }

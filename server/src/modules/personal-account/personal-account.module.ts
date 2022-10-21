@@ -7,11 +7,11 @@ import {
 	PersonalAccountTagResolver,
 } from './resolvers';
 import {
+	PersonalAccounDataAggregatorService,
 	PersonalAccountDailyService,
 	PersonalAccountMonthlyService,
 	PersonalAccountService,
 	PersonalAccountTagService,
-	PersonalAccountWeeklyService,
 } from './services';
 
 @Module({
@@ -25,7 +25,7 @@ import {
 		PersonalAccountDailyResolver,
 		PersonalAccountTagService,
 		PersonalAccountTagResolver,
-		PersonalAccountWeeklyService,
+		PersonalAccounDataAggregatorService,
 	],
 	exports: [
 		PersonalAccountResolver,

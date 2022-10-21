@@ -17,7 +17,7 @@ describe('PersonalAccountTagResolver', () => {
 
 	beforeEach(async () => {
 		personalAccountTagServiceMock = createMock<PersonalAccountTagService>({
-			getDefaultTags: () => new Promise((res, rej) => res(TEST_TAGS)),
+			getDefaultTags: () => TEST_TAGS,
 		});
 		const mockAuthorizationGuard: CanActivate = { canActivate: jest.fn(() => true) };
 

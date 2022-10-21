@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma';
-import { PersonalAccount, PersonalAccountDailyDataExtended, PersonalAccountWeeklyAggregation } from '../entities';
+import { PersonalAccount } from '../entities';
+import { PersonalAccountDailyDataExtended, PersonalAccountWeeklyAggregationOutput } from '../outputs';
 import { LodashServiceUtil } from './../../../utils';
 
 @Injectable()
@@ -13,7 +14,7 @@ export class PersonalAccountWeeklyService {
 	 * @returns aggregated daily data (from personalAccountMonthlyData) by how much money was spent/earned
 	 * by each distinct tag in a distinct [year, month, week] period.
 	 * */
-	async getAllWeeklyAggregatedData({ id }: PersonalAccount): Promise<PersonalAccountWeeklyAggregation[]> {
+	async getAllWeeklyAggregatedData({ id }: PersonalAccount): Promise<PersonalAccountWeeklyAggregationOutput[]> {
 		// load user all monthly data - already grouped by YEAR and MONTH
 		const monthlyData = await this.prisma.personalAccountMonthlyData.findMany({
 			where: {
@@ -70,18 +71,18 @@ export class PersonalAccountWeeklyService {
 		const weeklyDataArrayGroupByTag = weeklyDataArray.map((weeklyData) =>
 			weeklyData.reduce((acc, curr) => {
 				const KEY = `${curr.year}-${curr.month}-${curr.week}-${curr.tagId}`;
-				// returning the previous PersonalAccountWeeklyAggregation or creating a dummy one if not exists
-				const previousData = acc[KEY] as PersonalAccountWeeklyAggregation;
+				// returning the previous PersonalAccountWeeklyAggregationOutput or creating a dummy one if not exists
+				const previousData = acc[KEY] as PersonalAccountWeeklyAggregationOutput;
 				const data = !previousData
 					? this.convertAccountDailyDataToAccountWeeklyDataAggregation(curr)
 					: ({
 							...previousData,
 							entries: previousData.entries + 1,
 							value: previousData.value + curr.value,
-					  } as PersonalAccountWeeklyAggregation);
+					  } as PersonalAccountWeeklyAggregationOutput);
 
 				return { ...acc, [KEY]: data };
-			}, {} as { [key: string]: PersonalAccountWeeklyAggregation })
+			}, {} as { [key: string]: PersonalAccountWeeklyAggregationOutput })
 		);
 
 		// format array of objects into one big object
@@ -102,9 +103,9 @@ export class PersonalAccountWeeklyService {
 
 	private convertAccountDailyDataToAccountWeeklyDataAggregation(
 		dailyExtend: PersonalAccountDailyDataExtended
-	): PersonalAccountWeeklyAggregation {
+	): PersonalAccountWeeklyAggregationOutput {
 		const KEY = `${dailyExtend.year}-${dailyExtend.month}-${dailyExtend.week}-${dailyExtend.tagId}`;
-		const data: PersonalAccountWeeklyAggregation = {
+		const data: PersonalAccountWeeklyAggregationOutput = {
 			id: KEY,
 			entries: 1,
 			year: dailyExtend.year,

@@ -1,10 +1,10 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
-import { PersonalAccountDailyData } from './personal-account-daily-data.entity';
+import { PersonalAccountDailyData } from '../entities/personal-account-daily-data.entity';
 
 export type PersonalAccountDailyDataExtended = PersonalAccountDailyData & { year: number; month: number };
 
 @ObjectType()
-export class PersonalAccountWeeklyAggregation {
+export class PersonalAccountWeeklyAggregationOutput {
 	@Field(() => String, {
 		description: 'Randomly generated ID, not associated with DB entry',
 	})

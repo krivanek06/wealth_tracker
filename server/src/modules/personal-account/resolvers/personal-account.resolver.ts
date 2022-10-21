@@ -2,8 +2,9 @@ import { UseGuards } from '@nestjs/common';
 import { Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql/args';
-import { PersonalAccount, PersonalAccountMonthlyData, PersonalAccountWeeklyAggregation } from '../entities';
+import { PersonalAccount, PersonalAccountMonthlyData } from '../entities';
 import { PersonalAccountCreateInput, PersonalAccountEditInput } from '../inputs';
+import { PersonalAccountWeeklyAggregationOutput } from '../outputs';
 import { PersonalAccountMonthlyService, PersonalAccountService, PersonalAccountWeeklyService } from '../services';
 
 @UseGuards(AuthorizationGuard)
@@ -57,8 +58,10 @@ export class PersonalAccountResolver {
 		return this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount);
 	}
 
-	@ResolveField('weeklyAggregatonByTag', () => [PersonalAccountWeeklyAggregation])
-	getAllWeeklyAggregatedData(@Parent() personalAccount: PersonalAccount): Promise<PersonalAccountWeeklyAggregation[]> {
+	@ResolveField('weeklyAggregatonByTag', () => [PersonalAccountWeeklyAggregationOutput])
+	getAllWeeklyAggregatedData(
+		@Parent() personalAccount: PersonalAccount
+	): Promise<PersonalAccountWeeklyAggregationOutput[]> {
 		return this.personalAccountWeeklyService.getAllWeeklyAggregatedData(personalAccount);
 	}
 }

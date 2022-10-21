@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { PersonalAccountTagDataType } from '@prisma/client';
 import { PrismaService } from '../../../prisma';
 import { PERSONAL_ACCOUNT_DEFAULT_TAGS } from '../dto';
 import { PersonalAccountTag } from '../entities/personal-account-tag.entity';
@@ -21,6 +22,11 @@ export class PersonalAccountTagService {
 			// console.log(`PersonalAccountTagService: loaded ${this.defaultTags.length} default tags`);
 		}
 		return this.defaultTags;
+	}
+
+	async getDefaultTagsByTypes(tagType: PersonalAccountTagDataType): Promise<PersonalAccountTag[]> {
+		const allTags = await this.getDefaultTags();
+		return allTags.filter((t) => t.type === tagType);
 	}
 
 	private async registerDefaultTags(): Promise<void> {

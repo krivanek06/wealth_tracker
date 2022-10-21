@@ -36,7 +36,7 @@ export class PersonalAccountWeeklyAggregationOutput {
 	entries: number;
 
 	@Field(() => String, {
-		description: 'Reference to PersonalAccount.id',
+		description: 'Reference to PersonalAccountTag.id',
 	})
 	personalAccountTagId: string;
 }

@@ -7,6 +7,16 @@ export class PersonalAccountMonthlyData implements PersonalAccountMonthlyDataCli
 	@Field(() => String)
 	id: string;
 
+	@Field(() => String, {
+		description: 'Id of user whose to belong this personal monthly data',
+	})
+	userId: string;
+
+	@Field(() => String, {
+		description: 'Reference to PersonalAccount.id',
+	})
+	personalAccountId: string;
+
 	@Field(() => Int, {
 		description: 'To which month in a year is this account change associated. Like 8 for September',
 	})
@@ -21,9 +31,4 @@ export class PersonalAccountMonthlyData implements PersonalAccountMonthlyDataCli
 		description: 'List of daily expenses user has made during this month period',
 	})
 	dailyData: PersonalAccountDailyData[];
-
-	@Field(() => String, {
-		description: 'Reference to PersonalAccount.id',
-	})
-	personalAccountId: string;
 }

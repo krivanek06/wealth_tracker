@@ -16,19 +16,20 @@ export class PersonalAccountMonthlyService {
 		});
 	}
 
-	getMonthlyDataById(id: string, personalAccountId: string): Promise<PersonalAccountMonthlyData> {
+	getMonthlyDataById(monthlyDataId: string, userId: string): Promise<PersonalAccountMonthlyData> {
 		return this.prisma.personalAccountMonthlyData.findFirst({
 			where: {
-				id,
-				personalAccountId: personalAccountId,
+				id: monthlyDataId,
+				userId,
 			},
 		});
 	}
 
-	createMonthlyData({ id }: PersonalAccount, year, month): Promise<PersonalAccountMonthlyData> {
+	createMonthlyData({ id }: PersonalAccount, userId: string, year, month): Promise<PersonalAccountMonthlyData> {
 		return this.prisma.personalAccountMonthlyData.create({
 			data: {
 				personalAccountId: id,
+				userId,
 				year,
 				month,
 				dailyData: [],

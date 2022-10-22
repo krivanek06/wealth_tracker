@@ -1,20 +1,23 @@
 import { UseGuards } from '@nestjs/common';
-import { Mutation, Resolver } from '@nestjs/graphql';
-import { PersonalAccountDailyData } from '../entities';
+import { Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import { PersonalAccountDailyData, PersonalAccountTag } from '../entities';
 import {
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
 } from '../inputs';
 import { PersonalAccountDailyDataEditOutput } from '../outputs';
-import { PersonalAccountDailyService } from '../services';
+import { PersonalAccountDailyService, PersonalAccountTagService } from '../services';
 import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth';
 import { Input } from './../../../graphql';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => PersonalAccountDailyData)
 export class PersonalAccountDailyResolver {
-	constructor(private personalAccountDailyService: PersonalAccountDailyService) {}
+	constructor(
+		private personalAccountDailyService: PersonalAccountDailyService,
+		private personalAccountTagService: PersonalAccountTagService
+	) {}
 
 	/* Mutations */
 
@@ -40,5 +43,11 @@ export class PersonalAccountDailyResolver {
 		@Input() input: PersonalAccountDailyDataDelete
 	): Promise<PersonalAccountDailyData> {
 		return this.personalAccountDailyService.deletePersonalAccountDailyEntry(input, authUser.id);
+	}
+
+	/* Resolvers */
+	@ResolveField('tag', () => PersonalAccountTag)
+	getMonthlyDataDailyEntries(@Parent() dailyData: PersonalAccountDailyData): PersonalAccountTag {
+		return this.personalAccountTagService.getDefaultTagById(dailyData.tagId);
 	}
 }

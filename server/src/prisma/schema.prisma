@@ -27,8 +27,9 @@ model User {
     InvestmentAccounts InvestmentAccount[]
 
     // 1 - N relationship with multiple personal accounts
-    // one user can craete multiple personal accounts
-    PersonalAccounts PersonalAccount[]
+    // one user can craete multiple personal accounts & monthly data
+    PersonalAccounts           PersonalAccount[]
+    PersonalAccountMonthlyData PersonalAccountMonthlyData[]
 }
 
 type UserAuthentication {
@@ -102,6 +103,10 @@ model PersonalAccountMonthlyData {
     // N - 1 reference to PersonalAccount
     PersonalAccount   PersonalAccount @relation(fields: [personalAccountId], references: [id], onDelete: Cascade)
     personalAccountId String          @db.ObjectId
+
+    // N - 1 reference to User
+    User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @db.ObjectId
 }
 
 type PersonalAccountDailyData {

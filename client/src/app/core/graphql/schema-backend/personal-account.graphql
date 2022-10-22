@@ -31,12 +31,9 @@ query getDefaultTags {
 }
 
 ### Monthly data
-query getPersonalAccountMonthlyDataById($input: PersonalAccountMonthlyDataSeach!) {
+query getPersonalAccountMonthlyDataById($input: String!) {
 	getPersonalAccountMonthlyDataById(input: $input) {
-		...PersonalAccountMonthlyDataOverview
-		dailyData {
-			...PersonalAccountDailyData
-		}
+		...PersonalAccountMonthlyDataDetail
 	}
 }
 

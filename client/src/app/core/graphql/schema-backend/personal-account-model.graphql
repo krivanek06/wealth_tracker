@@ -14,6 +14,9 @@ fragment PersonalAccountDailyData on PersonalAccountDailyData {
 	tagId
 	monthlyDataId
 	week
+	tag {
+		...PersonalAccountTag
+	}
 }
 
 fragment PersonalAccountMonthlyDataOverview on PersonalAccountMonthlyData {
@@ -23,6 +26,13 @@ fragment PersonalAccountMonthlyDataOverview on PersonalAccountMonthlyData {
 	dailyEntries
 	monthlyIncome
 	monthlyExpense
+}
+
+fragment PersonalAccountMonthlyDataDetail on PersonalAccountMonthlyData {
+	...PersonalAccountMonthlyDataOverview
+	dailyData {
+		...PersonalAccountDailyData
+	}
 }
 
 fragment PersonalAccountOverview on PersonalAccount {

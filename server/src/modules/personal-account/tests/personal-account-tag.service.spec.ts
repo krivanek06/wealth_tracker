@@ -74,10 +74,10 @@ describe('PersonalAccountTagService', () => {
 	describe('Test: getDefaultTags()', () => {
 		it('should load data by prisma', async () => {
 			// test initial values
-			expect(prismaServiceMock.personalAccountTag.findMany).not.toHaveBeenCalled();
-			expect(service['defaultTags']).toEqual([]);
+			expect(prismaServiceMock.personalAccountTag.findMany).toHaveBeenCalled();
+			expect(service['defaultTags']).not.toEqual([]);
 
-			await service.getDefaultTags();
+			service.getDefaultTags();
 
 			// test after calling method
 			expect(prismaServiceMock.personalAccountTag.findMany).toHaveBeenCalledTimes(1);
@@ -91,9 +91,9 @@ describe('PersonalAccountTagService', () => {
 		});
 
 		it('should execute loading data from server only once', async () => {
-			await service.getDefaultTags();
-			await service.getDefaultTags();
-			await service.getDefaultTags();
+			service.getDefaultTags();
+			service.getDefaultTags();
+			service.getDefaultTags();
 			expect(prismaServiceMock.personalAccountTag.findMany).toHaveBeenCalledTimes(1);
 		});
 	});

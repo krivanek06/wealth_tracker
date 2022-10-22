@@ -1,5 +1,22 @@
+@use 'variables' as variables;
+
 .g-custom-snack-bar {
 	background-color: #232439 !important;
 	color: #f6f6f7 !important;
 	border-radius: 10px !important;
+}
+
+/* mat tooltip */
+.cdk-overlay-pane {
+	&.mat-tooltip-panel {
+		.mat-tooltip {
+			color: variables.$color-gray-200;
+			background-color: variables.$color-gray-800;
+			border: 1px solid variables.$color-gray-900;
+			border-radius: 8px;
+			font-size: 14px;
+			padding: 14px;
+			white-space: pre-line;
+		}
+	}
 }

@@ -2,7 +2,7 @@ import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { PersonalAccountTag as PersonalAccountTagClient, PersonalAccountTagDataType } from '@prisma/client';
 
 registerEnumType(PersonalAccountTagDataType, {
-	name: 'PersonalAccountTagDataType',
+	name: 'TagDataType',
 });
 
 @ObjectType()

@@ -9,32 +9,34 @@ import {
 	CreatePersonalAccountGQL,
 	CreatePersonalAccountMutation,
 	DeletePersonalAccountDailyEntryGQL,
+	DeletePersonalAccountDailyEntryMutation,
 	DeletePersonalAccountGQL,
 	DeletePersonalAccountMutation,
 	EditPersonalAccountDailyEntryGQL,
+	EditPersonalAccountDailyEntryMutation,
 	EditPersonalAccountGQL,
 	EditPersonalAccountMutation,
 	GetDefaultTagsDocument,
 	GetDefaultTagsGQL,
 	GetDefaultTagsQuery,
+	GetPersonalAccountMonthlyDataByIdDocument,
 	GetPersonalAccountMonthlyDataByIdGQL,
 	GetPersonalAccountMonthlyDataByIdQuery,
 	GetPersonalAccountsDocument,
 	GetPersonalAccountsGQL,
 	GetPersonalAccountsQuery,
 	PersonalAccountDailyDataCreate,
+	PersonalAccountDailyDataDelete,
+	PersonalAccountDailyDataEdit,
 	PersonalAccountDailyDataFragment,
 	PersonalAccountEditInput,
 	PersonalAccountMonthlyDataDetailFragment,
 	PersonalAccountMonthlyDataOverviewFragment,
+	PersonalAccountMonthlyDataOverviewFragmentDoc,
 	PersonalAccountOverviewFragment,
 	PersonalAccountTag,
-} from './../graphql';
-import {
-	GetPersonalAccountMonthlyDataByIdDocument,
-	PersonalAccountMonthlyDataOverviewFragmentDoc,
 	TagDataType,
-} from './../graphql/schema-backend.service';
+} from './../graphql';
 
 @Injectable({
 	providedIn: 'root',
@@ -246,25 +248,87 @@ export class PersonalAccountApiService {
 					this.updateAggregations(input.personalAccountId, dailyData, 'increase');
 
 					// add daily data into monthly details
-					const monthlyDetails = this.getPersonalAccountMonthlyDataByIdFromCache(dailyData.monthlyDataId);
-					if (monthlyDetails) {
-						this.updateMonthlyDataById({ ...monthlyDetails, dailyData: [...monthlyDetails.dailyData, dailyData] });
-					}
+					this.updateMonthlyDailyData(dailyData, 'add');
 				},
 			}
 		);
 	}
 
-	private updateMonthlyDataById(data: PersonalAccountMonthlyDataDetailFragment): void {
+	editPersonalAccountDailyEntry(
+		input: PersonalAccountDailyDataEdit
+	): Observable<FetchResult<EditPersonalAccountDailyEntryMutation>> {
+		return this.editPersonalAccountDailyEntryGQL.mutate(
+			{
+				input,
+			},
+			{
+				update: (store: DataProxy, { data }) => {
+					const result = data?.editPersonalAccountDailyEntry;
+					const removedDailyData = result?.originalDailyData as PersonalAccountDailyDataFragment;
+					const addedDailyData = result?.modifiedDailyData as PersonalAccountDailyDataFragment;
+
+					// substract old data
+					this.updateAggregations(input.dailyDataDelete.personalAccountId, removedDailyData, 'decrease');
+					this.updateMonthlyDailyData(removedDailyData, 'remove');
+
+					// add new data
+					this.updateAggregations(input.dailyDataDelete.personalAccountId, addedDailyData, 'increase');
+					this.updateMonthlyDailyData(addedDailyData, 'add');
+
+					// remove from cache
+					this.apollo.client.cache.evict({ id: `${removedDailyData?.__typename}:${removedDailyData?.id}` });
+				},
+			}
+		);
+	}
+
+	deletePersonalAccountDailyEntry(
+		input: PersonalAccountDailyDataDelete
+	): Observable<FetchResult<DeletePersonalAccountDailyEntryMutation>> {
+		return this.deletePersonalAccountDailyEntryGQL.mutate(
+			{
+				input,
+			},
+			{
+				update: (store: DataProxy, { data }) => {
+					const dailyData = data?.deletePersonalAccountDailyEntry as PersonalAccountDailyDataFragment;
+
+					// udpate yearly, monthly, weekly aggregation
+					this.updateAggregations(input.personalAccountId, dailyData, 'decrease');
+
+					// add daily data into monthly details
+					this.updateMonthlyDailyData(dailyData, 'remove');
+
+					// remove from cache
+					this.apollo.client.cache.evict({ id: `${dailyData?.__typename}:${dailyData?.id}` });
+				},
+			}
+		);
+	}
+
+	private updateMonthlyDailyData(dailyData: PersonalAccountDailyDataFragment, operation: 'add' | 'remove'): void {
+		const monthlyDetails = this.getPersonalAccountMonthlyDataByIdFromCache(dailyData.monthlyDataId);
+
+		if (!monthlyDetails) {
+			return;
+		}
+
+		// add or remove dailyData into array
+		const updatedDailyData =
+			operation === 'add'
+				? [...monthlyDetails.dailyData, dailyData]
+				: monthlyDetails.dailyData.filter((d) => d.id !== dailyData.id);
+
 		this.apollo.client.writeQuery<GetPersonalAccountMonthlyDataByIdQuery>({
 			variables: {
-				input: data.id,
+				input: monthlyDetails.id,
 			},
 			query: GetPersonalAccountMonthlyDataByIdDocument,
 			data: {
 				__typename: 'Query',
 				getPersonalAccountMonthlyDataById: {
-					...data,
+					...monthlyDetails,
+					dailyData: updatedDailyData,
 				},
 			},
 		});

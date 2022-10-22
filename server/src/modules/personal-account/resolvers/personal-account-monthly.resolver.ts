@@ -3,9 +3,8 @@ import { Float, Int, Parent, Query, ResolveField, Resolver } from '@nestjs/graph
 import { PersonalAccountTagDataType } from '@prisma/client';
 import { Input } from 'src/graphql';
 import { PersonalAccountMonthlyData } from '../entities';
-import { PersonalAccountMonthlyDataSeach } from '../inputs';
 import { PersonalAccountMonthlyService } from '../services';
-import { AuthorizationGuard } from './../../../auth';
+import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => PersonalAccountMonthlyData)
@@ -17,12 +16,10 @@ export class PersonalAccountMonthlyResolver {
 		defaultValue: [],
 	})
 	getPersonalAccountMonthlyDataById(
-		@Input() monthlyDataSearch: PersonalAccountMonthlyDataSeach
+		@ReqUser() authUser: RequestUser,
+		@Input() monthlyDataId: string
 	): Promise<PersonalAccountMonthlyData> {
-		return this.personalAccountMonthlyService.getMonthlyDataById(
-			monthlyDataSearch.id,
-			monthlyDataSearch.personalAccountId
-		);
+		return this.personalAccountMonthlyService.getMonthlyDataById(monthlyDataId, authUser.id);
 	}
 
 	/* Resolvers */

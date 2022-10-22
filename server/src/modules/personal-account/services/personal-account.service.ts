@@ -52,7 +52,7 @@ export class PersonalAccountService {
 		const { year, month } = MomentServiceUtil.getDetailsInformationFromDate(personalAccount.createdAt);
 
 		// create monthly data for the new personal account
-		await this.personalAccountMonthlyService.createMonthlyData(personalAccount, year, month);
+		await this.personalAccountMonthlyService.createMonthlyData(personalAccount, userId, year, month);
 
 		return personalAccount;
 	}

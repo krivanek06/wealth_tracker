@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { GetDefaultTagsGQL } from './core';
+import { PreloadDataService } from './core/services';
+import { DialogServiceUtil } from './shared/utils';
 
 @Component({
 	selector: 'app-root',
@@ -7,8 +8,6 @@ import { GetDefaultTagsGQL } from './core';
 	styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-	constructor(private getDefaultTagsGQL: GetDefaultTagsGQL) {}
-	ngOnInit(): void {
-		this.getDefaultTagsGQL.watch().valueChanges.subscribe(console.log);
-	}
+	constructor(dialogServiceUtil: DialogServiceUtil, preloadDataService: PreloadDataService) {}
+	ngOnInit(): void {}
 }

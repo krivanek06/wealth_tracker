@@ -1,0 +1,11 @@
+:host {
+	display: block;
+
+	.wrapper-body {
+		@apply grid grid-cols-2 mb-3 py-2;
+
+		> * {
+			@apply ml-[20%];
+		}
+	}
+}

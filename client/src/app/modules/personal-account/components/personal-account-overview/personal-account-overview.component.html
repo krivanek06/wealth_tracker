@@ -1,0 +1,26 @@
+<h3 class="text-lg text-center">Account Overview</h3>
+
+<mat-divider></mat-divider>
+<div class="my-2">
+	<div class="text-base text-green-400">Income</div>
+	<ng-container *ngTemplateOutlet="tagBody; context: {displayTags:incomeTags, total: incomeTotal }"></ng-container>
+</div>
+
+<mat-divider></mat-divider>
+
+<div class="my-2">
+	<div class="text-base text-red-500">Expense</div>
+	<ng-container *ngTemplateOutlet="tagBody; context: {displayTags:expenseTags, total: expenseTotal }"></ng-container>
+</div>
+
+<!-- dynamic template -->
+<ng-template #tagBody let-displayTags="displayTags" let-total="total">
+	<div class="wrapper-body">
+		<ng-container *ngFor="let data of displayTags">
+			<div>{{ data.tagName }}</div>
+			<div>{{ data.value | currency }}</div>
+		</ng-container>
+	</div>
+
+	<div>Total: {{ incomeTotal | currency }}</div>
+</ng-template>

@@ -1,0 +1,4 @@
+<!-- display all personal accounts -->
+<ng-container *ngFor="let personalAccount of personalAccounts$ | async ">
+	<app-personal-account [personalAccount]="personalAccount"></app-personal-account>
+</ng-container>

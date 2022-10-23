@@ -1,3 +1,37 @@
 :host {
-  display: block;
+	display: block;
+}
+
+::ng-deep .advanced-pie-legend .legend-items-container .legend-items .legend-item .item-label {
+	// font-size: 12px;
+	// opacity: 0.7;
+	// margin-left: 11px;
+	// margin-top: -6px;
+	margin-bottom: 8px;
+}
+
+::ng-deep .advanced-pie-legend .legend-items-container .legend-items .legend-item .item-value {
+	margin-bottom: 8px;
+
+	&::before {
+		content: '$';
+	}
+}
+
+::ng-deep .advanced-pie-legend .legend-items-container .legend-items {
+	overflow: visible !important;
+}
+
+::ng-deep .advanced-pie-legend .total-label {
+	display: none;
+}
+
+::ng-deep .advanced-pie-legend .total-value {
+	margin-bottom: 24px;
+	font-size: 32px !important;
+	color: var(--color-main-title);
+
+	&::before {
+		content: 'Total: $';
+	}
 }

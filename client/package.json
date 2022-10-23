@@ -46,6 +46,8 @@
 		"@graphql-codegen/typescript": "^2.7.5",
 		"@graphql-codegen/typescript-apollo-angular": "^3.5.5",
 		"@graphql-codegen/typescript-operations": "^2.5.5",
+		"@types/d3-scale": "^4.0.2",
+		"@types/d3-selection": "^3.0.3",
 		"@types/jest": "^29.2.0",
 		"@typescript-eslint/eslint-plugin": "5.37.0",
 		"@typescript-eslint/parser": "5.37.0",

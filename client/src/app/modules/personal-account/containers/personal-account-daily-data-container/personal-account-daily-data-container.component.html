@@ -1,4 +1,4 @@
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 min-h-[300px]">
 	<div class="col-span-1 md:col-span-2">
 		<!-- table filter -->
 		<app-personal-account-daily-entries-filter></app-personal-account-daily-entries-filter>
@@ -7,5 +7,8 @@
 	</div>
 
 	<!-- spending allocation by tags -->
-	<app-personal-account-expense-allocation-chart></app-personal-account-expense-allocation-chart>
+	<app-personal-account-expense-allocation-chart
+		*ngIf="expenseAllocationChartData$ | async as data"
+		[data]="data"
+	></app-personal-account-expense-allocation-chart>
 </div>

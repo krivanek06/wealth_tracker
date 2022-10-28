@@ -1,1 +1,17 @@
-<p>personal-account-growth-chart works!</p>
+<div #chartContainer>
+	<ngx-charts-line-chart
+		[view]="[chartContainer.offsetWidth, chartContainer.offsetHeight]"
+		[autoScale]="true"
+		[scheme]="colorScheme"
+		[showXAxisLabel]="true"
+		[showYAxisLabel]="true"
+		[xAxis]="true"
+		[yAxis]="true"
+		[timeline]="true"
+		[results]="false"
+		[gradient]="true"
+		[results]="data"
+		[showGridLines]="true"
+	>
+	</ngx-charts-line-chart>
+</div>

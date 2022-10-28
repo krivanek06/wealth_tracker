@@ -1,3 +1,13 @@
 :host {
-  display: block;
+	display: block;
+}
+
+::ng-deep .ngx-charts {
+	text {
+		fill: var(--color-chart-text) !important;
+	}
+}
+
+::ng-deep .ngx-charts .gridline-path {
+	stroke: var(--color-chart-grid) !important;
 }

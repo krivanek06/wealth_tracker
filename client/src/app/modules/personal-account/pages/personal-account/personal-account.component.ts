@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { SwimlaneChartData, SwimlaneChartDataSeries } from '../../../../shared/models';
 import { PersonalAccountApiService } from './../../../../core/api';
 import { PersonalAccountOverviewFragment, TagDataType } from './../../../../core/graphql';
@@ -9,14 +9,31 @@ import { PersonalAccountOverviewFragment, TagDataType } from './../../../../core
 	styleUrls: ['./personal-account.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PersonalAccountComponent implements OnInit {
-	@Input() set personalAccount(data: PersonalAccountOverviewFragment) {
-		// get yearly aggregation
-		this.yearlyChartData = data.yearlyAggregaton.map((d) => {
+export class PersonalAccountComponent implements OnInit, OnChanges {
+	@Input() personalAccount!: PersonalAccountOverviewFragment;
+
+	yearlyChartData!: SwimlaneChartDataSeries[];
+	weeklyChartData!: SwimlaneChartData;
+	weeklyExpenseChartData!: SwimlaneChartData[];
+
+	constructor(private personalAccountApiService: PersonalAccountApiService) {}
+	ngOnChanges(changes: SimpleChanges): void {
+		if (changes?.['personalAccount']?.currentValue) {
+			this.yearlyChartData = this.getYearlyData(this.personalAccount);
+			this.weeklyChartData = this.getWeeklyChartData(this.personalAccount);
+			this.weeklyExpenseChartData = this.getWeeklyExpenseChartData(this.personalAccount);
+		}
+	}
+
+	ngOnInit(): void {}
+
+	private getYearlyData(data: PersonalAccountOverviewFragment): SwimlaneChartDataSeries[] {
+		return data.yearlyAggregaton.map((d) => {
 			return { name: d.tagName, value: d.value } as SwimlaneChartDataSeries;
 		});
+	}
 
-		// get weekly income aggregation
+	private getWeeklyChartData(data: PersonalAccountOverviewFragment): SwimlaneChartData {
 		const weeklyIncomeSeries: SwimlaneChartDataSeries[] = data.weeklyAggregaton.map((d) => {
 			// add together weekly income and expense
 			const weeklyIncome = d.data.reduce(
@@ -25,9 +42,10 @@ export class PersonalAccountComponent implements OnInit {
 			);
 			return { name: d.id, value: weeklyIncome };
 		});
-		this.weeklyChartData = { name: data.name, series: weeklyIncomeSeries };
+		return { name: data.name, series: weeklyIncomeSeries };
+	}
 
-		// get weekly expense aggregation
+	private getWeeklyExpenseChartData(data: PersonalAccountOverviewFragment): SwimlaneChartData[] {
 		/*
           [{
             "name": "Shopping",
@@ -39,7 +57,7 @@ export class PersonalAccountComponent implements OnInit {
             ]
           }]
     */
-		this.weeklyExpenseChartData = data.weeklyAggregaton.reduce((acc, curr) => {
+		return data.weeklyAggregaton.reduce((acc, curr) => {
 			curr.data
 				.filter((d) => d.tagType === TagDataType.Expense)
 				.forEach((d) => {
@@ -59,12 +77,4 @@ export class PersonalAccountComponent implements OnInit {
 			return acc;
 		}, [] as SwimlaneChartData[]);
 	}
-
-	yearlyChartData!: SwimlaneChartDataSeries[];
-	weeklyChartData!: SwimlaneChartData;
-	weeklyExpenseChartData!: SwimlaneChartData[];
-
-	constructor(private personalAccountApiService: PersonalAccountApiService) {}
-
-	ngOnInit(): void {}
 }

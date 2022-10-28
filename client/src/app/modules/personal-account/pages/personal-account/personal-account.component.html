@@ -10,4 +10,6 @@
 </div>
 
 <!-- daily data filter + table + spending allocation -->
-<app-personal-account-daily-data-container></app-personal-account-daily-data-container>
+<app-personal-account-daily-data-container
+	[personalAccountMonthlyData]="personalAccount.monthlyData"
+></app-personal-account-daily-data-container>

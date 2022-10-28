@@ -1,1 +1,19 @@
-<p>personal-account-expense-chart works!</p>
+<div #chartContainer>
+	<ngx-charts-line-chart
+		[view]="[chartContainer.offsetWidth, chartContainer.offsetHeight]"
+		[autoScale]="true"
+		[scheme]="colorScheme"
+		[showXAxisLabel]="true"
+		[showYAxisLabel]="true"
+		[xAxis]="true"
+		[yAxis]="true"
+		[timeline]="true"
+		[results]="false"
+		[gradient]="true"
+		[results]="data"
+		[legend]="true"
+		[showGridLines]="true"
+		[yScaleMin]="0"
+	>
+	</ngx-charts-line-chart>
+</div>

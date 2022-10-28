@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import {
+	PersonalAccountAggregationRadioButtonsModule,
 	PersonalAccountExpenseChartModule,
 	PersonalAccountGrowthChartModule,
 	PersonalAccountOverviewChartModule,
@@ -16,6 +17,7 @@ import { PersonalAccountComponent } from './personal-account.component';
 		PersonalAccountGrowthChartModule,
 		PersonalAccountOverviewChartModule,
 		PersonalAccountDailyDataContainerModule,
+		PersonalAccountAggregationRadioButtonsModule,
 	],
 	exports: [PersonalAccountComponent],
 })

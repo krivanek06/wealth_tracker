@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { chartColors1, SwimlaneChartData } from '../../../../shared/models';
+import { chartColors1, SwimlaneChartDataSeries } from '../../../../shared/models';
 
 @Component({
 	selector: 'app-personal-account-overview-chart',
@@ -8,7 +8,7 @@ import { chartColors1, SwimlaneChartData } from '../../../../shared/models';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountOverviewChartComponent implements OnInit {
-	@Input() data!: SwimlaneChartData[];
+	@Input() data!: SwimlaneChartDataSeries[];
 	view: [number, number] = [800, 300];
 
 	// options

@@ -3,9 +3,10 @@
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 	<!-- total accout growth -->
-	<app-personal-account-growth-chart></app-personal-account-growth-chart>
+	<app-personal-account-growth-chart [data]="[weeklyChartData]"></app-personal-account-growth-chart>
+
 	<!-- total account expenses by tags -->
-	<app-personal-account-expense-chart></app-personal-account-expense-chart>
+	<!-- <app-personal-account-expense-chart></app-personal-account-expense-chart> -->
 </div>
 
 <!-- daily data filter + table + spending allocation -->

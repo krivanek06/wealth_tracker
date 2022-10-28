@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { SwimlaneChartData } from '../../../../shared/models';
+import { SwimlaneChartData, SwimlaneChartDataSeries } from '../../../../shared/models';
 import { PersonalAccountApiService } from './../../../../core/api';
-import { PersonalAccountOverviewFragment } from './../../../../core/graphql';
+import { PersonalAccountOverviewFragment, TagDataType } from './../../../../core/graphql';
 
 @Component({
 	selector: 'app-personal-account',
@@ -11,12 +11,25 @@ import { PersonalAccountOverviewFragment } from './../../../../core/graphql';
 })
 export class PersonalAccountComponent implements OnInit {
 	@Input() set personalAccount(data: PersonalAccountOverviewFragment) {
+		// get yearly aggregation
 		this.yearlyChartData = data.yearlyAggregaton.map((d) => {
-			return { name: d.tagName, value: d.value } as SwimlaneChartData;
+			return { name: d.tagName, value: d.value } as SwimlaneChartDataSeries;
 		});
+
+		// get weekly aggregation
+		const weeklyIncomeSeries: SwimlaneChartDataSeries[] = data.weeklyAggregaton.map((d) => {
+			// add together weekly income and expense
+			const weeklyIncome = d.data.reduce(
+				(acc, curr) => acc + (curr.tagType === TagDataType.Income ? curr.value : -curr.value),
+				0
+			);
+			return { name: d.id, value: weeklyIncome };
+		});
+		this.weeklyChartData = { name: data.name, series: weeklyIncomeSeries };
 	}
 
-	yearlyChartData!: SwimlaneChartData[];
+	yearlyChartData!: SwimlaneChartDataSeries[];
+	weeklyChartData!: SwimlaneChartData;
 
 	constructor(private personalAccountApiService: PersonalAccountApiService) {}
 

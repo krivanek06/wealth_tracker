@@ -39,3 +39,12 @@
 		</td>
 	</tr>
 </table>
+
+<!-- pagination -->
+<mat-paginator
+	appStylePaginator
+	showFirstLastButtons
+	[length]="dataSource.filteredData?.length"
+	[appCustomLength]="dataSource.filteredData?.length"
+	[pageSize]="15"
+></mat-paginator>

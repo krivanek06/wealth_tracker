@@ -49,15 +49,6 @@ describe('PersonalAccountDailyService', () => {
 		monthlyDataId: 'TEST_MONTHLY_OCT',
 		week: 42,
 	};
-	const TEST_DAILY_DATA_SEP_1: PersonalAccountDailyData = {
-		id: 'TEST_DAILY_DATA_SEP_1',
-		value: 10,
-		userId: MOCK_USER_ID,
-		date: new Date(TEST_DATE_OCT),
-		tagId: 'TEST_DAILY_DATA_1_TAG_1',
-		monthlyDataId: 'TEST_MONTHLY_SEP',
-		week: 42,
-	};
 
 	// monthly data
 	const TEST_MONTHLY_OCT = {
@@ -75,12 +66,21 @@ describe('PersonalAccountDailyService', () => {
 		dailyData: [],
 	} as PersonalAccountMonthlyData;
 
+	const TEST_MONTHLY_NOV = {
+		personalAccountId: TEST_PERSONAL_ACCOUNT_ID,
+		id: 'TEST_MONTHLY_NOV',
+		month: TEST_DATE_NOV_DETAILS.month,
+		year: TEST_DATE_NOV_DETAILS.year,
+		dailyData: [],
+	} as PersonalAccountMonthlyData;
+
 	// mock prisma service
 	const prismaServiceMock: PrismaService = createMock<PrismaService>({
 		personalAccountMonthlyData: {
 			findFirst: jest.fn(),
 			// create: jest.fn(),
 			update: jest.fn(),
+			create: jest.fn().mockResolvedValue(TEST_MONTHLY_NOV),
 		},
 	});
 	SharedServiceUtil.getUUID = jest.fn().mockReturnValue(MOCK_UUID);
@@ -177,18 +177,38 @@ describe('PersonalAccountDailyService', () => {
 			expect(result).toStrictEqual(expectedResult);
 		});
 
-		it('should throw an error if monthly entry does not exist', async () => {
+		it('should create a new monthly instace and daily entry if monthly data does not exist', async () => {
 			// testing data for November
-			const testUserId = 'ABC1234';
 			const testInputData: PersonalAccountDailyDataCreate = {
 				tagId: '634a55e83d5f2180e336af5a',
-				value: 10,
-				personalAccountId: TEST_PERSONAL_ACCOUNT_ID,
+				value: 88.2,
+				personalAccountId: TEST_MONTHLY_NOV.personalAccountId,
 				date: TEST_DATE_NOV,
 			};
-			await expect(service.createPersonalAccountDailyEntry(testInputData, testUserId)).rejects.toThrowError(
-				PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA.NOT_FOUND
-			);
+			const { week, year, month } = MomentServiceUtil.getDetailsInformationFromDate(new Date(testInputData.date));
+
+			const expectedResult: PersonalAccountDailyData = {
+				id: MOCK_UUID,
+				value: testInputData.value,
+				userId: MOCK_USER_ID,
+				date: new Date(TEST_DATE_NOV),
+				tagId: testInputData.tagId,
+				monthlyDataId: TEST_MONTHLY_NOV.id,
+				week: week,
+			};
+
+			const result = await service.createPersonalAccountDailyEntry(testInputData, MOCK_USER_ID);
+
+			expect(result).toStrictEqual(expectedResult);
+			expect(prismaServiceMock.personalAccountMonthlyData.create).toHaveBeenCalledWith({
+				data: {
+					personalAccountId: TEST_MONTHLY_NOV.personalAccountId,
+					userId: MOCK_USER_ID,
+					year,
+					month,
+					dailyData: [],
+				},
+			});
 		});
 	});
 

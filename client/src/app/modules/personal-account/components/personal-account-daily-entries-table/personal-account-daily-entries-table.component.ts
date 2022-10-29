@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { PersonalAccountDailyDataFragment } from './../../../../core/graphql';
 
@@ -9,8 +11,13 @@ import { PersonalAccountDailyDataFragment } from './../../../../core/graphql';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountDailyEntriesTableComponent implements OnInit {
+	@ViewChild(MatPaginator) paginator!: MatPaginator;
+	@ViewChild(MatSort) sort!: MatSort;
+
 	@Input() set personalAccountDailyData(data: PersonalAccountDailyDataFragment[] | undefined) {
 		this.dataSource = new MatTableDataSource(data);
+		this.dataSource.paginator = this.paginator;
+		this.dataSource.sort = this.sort;
 	}
 	displayedColumns: string[] = ['tag', 'value', 'date', 'week', 'month'];
 	dataSource!: MatTableDataSource<PersonalAccountDailyDataFragment>;

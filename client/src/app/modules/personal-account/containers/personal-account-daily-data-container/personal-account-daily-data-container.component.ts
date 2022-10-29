@@ -34,23 +34,27 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		this.monthlyDataDetail$ = this.personalAccountApiService.getPersonalAccountMonthlyDataById(monthlyDataId);
 
 		this.expenseAllocationChartData$ = this.monthlyDataDetail$.pipe(
-			map((result) =>
-				result.dailyData.reduce((acc, curr) => {
-					// ignore income
-					if (curr.tag.type === TagDataType.Income) {
-						return acc;
-					}
-					// find index of saved tag
-					const dataIndex = acc.findIndex((d) => d.name === curr.tag.name);
-					if (dataIndex === -1) {
-						acc = [...acc, { name: curr.tag.name, value: curr.value }]; // new tag
-					} else {
-						acc[dataIndex].value += curr.value; // increase value for tag
-					}
-
-					return acc;
-				}, [] as SwimlaneChartDataSeries[])
-			)
+			map((result) => this.formatToExpenseAllocationChartDatta(result))
 		);
+	}
+
+	private formatToExpenseAllocationChartDatta(
+		data: PersonalAccountMonthlyDataDetailFragment
+	): SwimlaneChartDataSeries[] {
+		return data.dailyData.reduce((acc, curr) => {
+			// ignore income
+			if (curr.tag.type === TagDataType.Income) {
+				return acc;
+			}
+			// find index of saved tag
+			const dataIndex = acc.findIndex((d) => d.name === curr.tag.name);
+			if (dataIndex === -1) {
+				acc = [...acc, { name: curr.tag.name, value: curr.value }]; // new tag
+			} else {
+				acc[dataIndex].value += curr.value; // increase value for tag
+			}
+
+			return acc;
+		}, [] as SwimlaneChartDataSeries[]);
 	}
 }

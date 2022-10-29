@@ -1,6 +1,9 @@
 @use '@angular/material' as mat;
 @import '@angular/material/theming';
 
+// custom styles
+@import './material/mat-table.scss';
+
 // COLOR PALETTE GENERATOR - http://mcg.mbitson.com/
 
 $custom-success: (
@@ -118,4 +121,13 @@ $mat-theming-light: mat.define-light-theme(
 	)
 );
 
+$custom-typography: mat.define-typography-level(
+	$font-family: Pippins,
+	$font-weight: 400,
+	$font-size: 1rem,
+	$line-height: 1,
+	$letter-spacing: normal,
+);
+
+@include mat.core($custom-typography);
 @include mat.all-component-themes($mat-theming-light);

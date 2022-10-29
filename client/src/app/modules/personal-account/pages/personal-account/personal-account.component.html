@@ -1,12 +1,17 @@
 <!-- account overview -->
-<app-personal-account-overview-chart [data]="yearlyChartData"></app-personal-account-overview-chart>
+<div class="min-h-[300px]">
+	<app-personal-account-overview-chart [data]="yearlyChartData"></app-personal-account-overview-chart>
+</div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-4 min-h-[400px]">
 	<!-- total accout growth -->
-	<app-personal-account-growth-chart></app-personal-account-growth-chart>
+	<app-personal-account-growth-chart [data]="[weeklyChartData]"></app-personal-account-growth-chart>
+
 	<!-- total account expenses by tags -->
-	<app-personal-account-expense-chart></app-personal-account-expense-chart>
+	<app-personal-account-expense-chart [data]="weeklyExpenseChartData"></app-personal-account-expense-chart>
 </div>
 
 <!-- daily data filter + table + spending allocation -->
-<app-personal-account-daily-data-container></app-personal-account-daily-data-container>
+<app-personal-account-daily-data-container
+	[personalAccountMonthlyData]="personalAccount.monthlyData"
+></app-personal-account-daily-data-container>

@@ -8,6 +8,7 @@ import { PersonalAccounDataAggregatorService, PersonalAccountTagService } from '
 
 describe('PersonalAccounDataAggregatorService', () => {
 	let service: PersonalAccounDataAggregatorService;
+	const USER_ID_MOCK = 'TEST_USER_1234';
 
 	const PERSONAL_ACCOUNT_ID_EMPTY = { id: 'EMPTY' } as PersonalAccount;
 	const PERSONAL_ACCOUNT_MONTHLY_DATA_EMPTY: PersonalAccountMonthlyData = {
@@ -16,6 +17,7 @@ describe('PersonalAccounDataAggregatorService', () => {
 		month: 9,
 		year: 2022,
 		dailyData: [],
+		userId: USER_ID_MOCK,
 	};
 
 	const PERSONAL_ACCOUNT_ID_MULTIPLE_MONTHS = { id: 'MULTIPLE_MONTHS' } as PersonalAccount;
@@ -25,6 +27,7 @@ describe('PersonalAccounDataAggregatorService', () => {
 			month: 9,
 			year: 2022,
 			personalAccountId: PERSONAL_ACCOUNT_ID_EMPTY.id,
+			userId: USER_ID_MOCK,
 			dailyData: [
 				{
 					id: '94ac4e64-4ac2-4773-bcb6-46d8269bafa0',
@@ -78,6 +81,7 @@ describe('PersonalAccounDataAggregatorService', () => {
 			month: 8,
 			year: 2022,
 			personalAccountId: PERSONAL_ACCOUNT_ID_EMPTY.id,
+			userId: USER_ID_MOCK,
 			dailyData: [
 				{
 					id: '25975432-1f08-45d7-aa33-1d1c065ff783',

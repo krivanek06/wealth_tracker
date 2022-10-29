@@ -15,7 +15,11 @@
 }
 
 ::ng-deep .advanced-pie-legend .legend-items-container .legend-items {
-	overflow: visible !important;
+	padding: 12px 0 !important;
+
+	.legend-item:hover {
+		color: #994a30e8 !important;
+	}
 }
 
 ::ng-deep .advanced-pie-legend .total-label {

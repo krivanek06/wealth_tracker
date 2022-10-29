@@ -1,1 +1,8 @@
-<p>personal-account-expense-allocation-chart works!</p>
+<div #chartContainer>
+	<ngx-charts-pie-grid
+		[view]="[chartContainer.offsetWidth, chartContainer.offsetHeight]"
+		[scheme]="colorScheme"
+		[results]="data"
+	>
+	</ngx-charts-pie-grid>
+</div>

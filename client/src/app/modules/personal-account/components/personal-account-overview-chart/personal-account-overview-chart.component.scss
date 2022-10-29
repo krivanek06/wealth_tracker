@@ -3,10 +3,6 @@
 }
 
 ::ng-deep .advanced-pie-legend .legend-items-container .legend-items .legend-item .item-label {
-	// font-size: 12px;
-	// opacity: 0.7;
-	// margin-left: 11px;
-	// margin-top: -6px;
 	margin-bottom: 8px;
 }
 
@@ -19,7 +15,11 @@
 }
 
 ::ng-deep .advanced-pie-legend .legend-items-container .legend-items {
-	overflow: visible !important;
+	padding: 12px 0 !important;
+
+	.legend-item:hover {
+		color: #994a30e8 !important;
+	}
 }
 
 ::ng-deep .advanced-pie-legend .total-label {

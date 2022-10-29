@@ -36,7 +36,7 @@ export class PersonalAccountDailyService {
 		const { year, month, week } = MomentServiceUtil.getDetailsInformationFromDate(inputDate);
 
 		// load monthly data to which we want to register the dailyData
-		const monthlyData = await this.prisma.personalAccountMonthlyData.findFirst({
+		let monthlyData = await this.prisma.personalAccountMonthlyData.findFirst({
 			where: {
 				personalAccountId: input.personalAccountId,
 				year,
@@ -44,9 +44,17 @@ export class PersonalAccountDailyService {
 			},
 		});
 
-		// month not found, adding too soon or too in the future
+		// create new monthly data for the new daily data
 		if (!monthlyData) {
-			throw new HttpException(PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA.NOT_FOUND, HttpStatus.NOT_FOUND);
+			monthlyData = await this.prisma.personalAccountMonthlyData.create({
+				data: {
+					personalAccountId: input.personalAccountId,
+					userId,
+					year,
+					month,
+					dailyData: [],
+				},
+			});
 		}
 
 		// create entry

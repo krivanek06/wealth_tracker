@@ -22,7 +22,7 @@
 		"test-file": "npx nodemon test/testing.ts"
 	},
 	"prisma": {
-		"seed": "ts-node test/seed.ts",
+		"seed": "ts-node src/prisma/seed.ts",
 		"schema": "src/prisma/schema.prisma"
 	},
 	"lint-staged": {

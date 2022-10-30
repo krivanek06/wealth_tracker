@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
-import { chartColors1, ChartType, GenericChartSeries, GenericChartSeriesPie } from '../../models';
+import { ChartType, GenericChartSeries, GenericChartSeriesPie } from '../../models';
 
 NoDataToDisplay(Highcharts);
 // highcharts3D(Highcharts);
@@ -49,8 +49,6 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 	@Input() floatingLegend = false;
 
 	@Input() showExpandableButton = false;
-	@Input() addFancyColoring = false;
-	@Input() colors: string[] = chartColors1;
 
 	Highcharts: typeof Highcharts = Highcharts;
 	chart: any;
@@ -71,10 +69,6 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
-		if (this.addFancyColoring) {
-			this.fancyColoring();
-		}
-
 		this.initChart();
 
 		if (this.floatingLegend) {
@@ -137,7 +131,6 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 
 	private initChart() {
 		this.chartOptions = {
-			colors: this.colors,
 			chart: {
 				plotBackgroundColor: null,
 				plotBorderWidth: null,
@@ -406,24 +399,5 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 			const value = this.percentage.toFixed(2);
 			return '<span style="color:' + this.color + '">' + this.name + ': </span>(<b>' + value + '%)<br/>';
 		};
-	}
-
-	private fancyColoring() {
-		let count = 0;
-		this.series = this.series.map((s) => {
-			const data: GenericChartSeries = {
-				name: s.name,
-				data: s.data,
-				color: {
-					linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
-					stops: [
-						[0, (Highcharts.getOptions().colors as any[])[(count % 5) + 2]], // '#25aedd'
-						[1, (Highcharts.getOptions().colors as any[])[count % 10]],
-					],
-				},
-			} as GenericChartSeries;
-			count += 1;
-			return data;
-		});
 	}
 }

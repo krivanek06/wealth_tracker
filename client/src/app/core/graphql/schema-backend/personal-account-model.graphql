@@ -5,6 +5,7 @@ fragment PersonalAccountTag on PersonalAccountTag {
 	name
 	type
 	isDefault
+	color
 }
 
 fragment PersonalAccountDailyData on PersonalAccountDailyData {
@@ -60,6 +61,7 @@ fragment PersonalAccountAggregationData on PersonalAccountAggregationDataOutput 
 	tagId
 	tagName
 	tagType
+	tagColor
 }
 
 fragment PersonalAccountWeeklyAggregation on PersonalAccountWeeklyAggregationOutput {

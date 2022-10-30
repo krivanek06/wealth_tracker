@@ -58,6 +58,7 @@ export class PersonalAccountTagService {
 				data: {
 					name: defaultTag.name,
 					type: defaultTag.type,
+					color: defaultTag.color,
 					isDefault: true,
 				},
 			});

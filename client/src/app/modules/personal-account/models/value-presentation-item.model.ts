@@ -1,4 +1,5 @@
 export interface ValueItem {
+	id: string | number;
 	name: string | number;
 	description?: string;
 	value: number;

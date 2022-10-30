@@ -21,6 +21,11 @@ export class PersonalAccountTag implements PersonalAccountTagClient {
 	})
 	name: string;
 
+	@Field(() => String, {
+		description: 'Color of the tag',
+	})
+	color: string;
+
 	@Field(() => PersonalAccountTagDataType)
 	type: PersonalAccountTagDataType;
 

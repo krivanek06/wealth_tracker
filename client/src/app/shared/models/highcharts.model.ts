@@ -14,6 +14,7 @@ export interface GenericChartSeries {
 	type?: ChartType;
 	name?: string;
 	data: (number | null | undefined)[];
+	color?: string;
 }
 
 // Used only for Pie charts
@@ -40,15 +41,3 @@ export interface GenericChartSeriesInput {
 	series: GenericChartSeries[];
 	categories: string[];
 }
-
-export const chartColors1 = [
-	'#E8501E',
-	'#DB355E',
-	'#AD4185',
-	'#AE4ABE',
-	'#704F8F',
-	'#FFE6D6',
-	'#EBAA93',
-	'#85AEE1',
-	'#5564D9',
-];

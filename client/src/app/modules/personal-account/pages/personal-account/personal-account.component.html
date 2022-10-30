@@ -1,53 +1,37 @@
 <!-- account overview -->
-<div class="min-h-[300px]">
-	<app-personal-account-overview-chart [data]="yearlyChartData"></app-personal-account-overview-chart>
-</div>
-
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+<div class="grid gap-4">
 	<!-- present yearly expenses -->
-	<div class="grid gap-4">
-		<app-mat-card-wrapper>
-			<div class="flex flex-col gap-2">
-				<div class="g-color-primary text-2xl">● Balance: {{ accountState.total | currency }}</div>
-				<div class="text-green-500 text-2xl">
-					● Income: <span class="text-gray-200">{{ accountState.incomeTotal | currency }}</span>
-				</div>
-				<div class="text-red-500 text-2xl">
-					● Expense: <span class="text-gray-200">{{accountState.expenseTotal | currency}}</span>
-				</div>
-			</div>
-		</app-mat-card-wrapper>
-		<div class="flex flex-wrap gap-4">
-			<app-value-presentation-item
-				*ngFor="let item of valueItems"
-				[valueItem]="item"
-				class="min-w-[120px]"
-			></app-value-presentation-item>
+	<div class="flex flex-wrap gap-8 justify-center">
+		<div class="g-color-primary text-2xl">● Balance: {{ accountState.total | currency }}</div>
+		<div class="text-green-500 text-2xl">
+			● Income: <span class="text-gray-200">{{ accountState.incomeTotal | currency }}</span>
+		</div>
+		<div class="text-red-500 text-2xl">
+			● Expense: <span class="text-gray-200">{{accountState.expenseTotal | currency}}</span>
 		</div>
 	</div>
 
 	<!-- add 2 charts, one for income, second for expesnse -->
-	<div class="flex flex-col gap-4">
-		<!-- TODO income pie chart -->
-		<!-- TODO expnse pie chart -->
-	</div>
-</div>
-
-<div class="grid grid-cols-1 xl:grid-cols-2 gap-4 min-h-[400px]">
-	<!-- total accout growth -->
 	<app-generic-chart
 		[heightPx]="375"
 		[series]="weeklyChartData.series"
 		[categories]="weeklyChartData.categories"
 	></app-generic-chart>
-
-	<!-- total account expenses by tags -->
-	<app-generic-chart
-		[heightPx]="400"
-		[series]="weeklyExpenseChartData.series"
-		[categories]="weeklyExpenseChartData.categories"
-	></app-generic-chart>
 </div>
+
+<div class="flex flex-wrap gap-4 justify-center">
+	<app-value-presentation-item
+		*ngFor="let item of valueItems"
+		[valueItem]="item"
+		class="min-w-[120px]"
+	></app-value-presentation-item>
+</div>
+
+<app-generic-chart
+	[heightPx]="400"
+	[series]="weeklyExpenseChartData.series"
+	[categories]="weeklyExpenseChartData.categories"
+></app-generic-chart>
 
 <!-- daily data filter + table + spending allocation -->
 <app-personal-account-daily-data-container

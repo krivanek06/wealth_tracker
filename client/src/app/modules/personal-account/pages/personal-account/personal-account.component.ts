@@ -61,7 +61,7 @@ export class PersonalAccountComponent implements OnInit {
 			const colorIdex = index % chartColors1.length;
 			const result: ValueItem = {
 				name: `$ ${d.value}`,
-				description: d.tagName,
+				description: `${d.tagName} (${d.entries})`,
 				value: d.value / totalYearlyExpense,
 				color: chartColors1[colorIdex],
 				isPercent: true,

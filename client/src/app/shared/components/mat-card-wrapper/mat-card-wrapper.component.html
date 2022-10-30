@@ -1,0 +1,28 @@
+<mat-card [class]="additionalClasses" class="mat-elevation-z3">
+	<!-- title -->
+	<ng-container *ngIf="title">
+		<mat-card-header>
+			<mat-card-title>
+				<img *ngIf="titleImgUrl" appDefaultImg [src]="titleImgUrl" />
+				<h2 class="text-base g-color-primary mb-0">{{ title }}</h2>
+			</mat-card-title>
+		</mat-card-header>
+		<mat-divider></mat-divider>
+	</ng-container>
+
+	<!-- subtitle -->
+	<ng-container *ngIf="subtitle">
+		<mat-card-header>
+			<mat-card-subtitle>{{ subtitle }}</mat-card-subtitle>
+		</mat-card-header>
+		<mat-divider></mat-divider>
+	</ng-container>
+
+	<!-- content -->
+	<mat-card-content>
+		<!-- default content -->
+		<div class="default g-color-secondary">No data has been found</div>
+
+		<ng-content></ng-content>
+	</mat-card-content>
+</mat-card>

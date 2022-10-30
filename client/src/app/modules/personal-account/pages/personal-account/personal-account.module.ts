@@ -6,7 +6,7 @@ import {
 	ValuePresentationItemModule,
 } from '../../components';
 import { PersonalAccountDailyDataContainerModule } from '../../containers';
-import { GenericChartModule } from './../../../../shared/components';
+import { GenericChartModule, MatCardWrapperModule } from './../../../../shared/components';
 import { PersonalAccountComponent } from './personal-account.component';
 
 @NgModule({
@@ -18,6 +18,7 @@ import { PersonalAccountComponent } from './personal-account.component';
 		PersonalAccountAggregationRadioButtonsModule,
 		GenericChartModule,
 		ValuePresentationItemModule,
+		MatCardWrapperModule,
 	],
 	exports: [PersonalAccountComponent],
 })

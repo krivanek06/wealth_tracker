@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import {
 	chartColors1,
 	GenericChartSeries,
 	GenericChartSeriesInput,
 	SwimlaneChartDataSeries,
 } from '../../../../shared/models';
-import { ValueItem } from '../../models';
+import { AccountState, ValueItem } from '../../models';
 import { PersonalAccountApiService } from './../../../../core/api';
 import { PersonalAccountOverviewFragment, TagDataType } from './../../../../core/graphql';
 import { DateServiceUtil } from './../../../../shared/utils';
@@ -16,25 +16,42 @@ import { DateServiceUtil } from './../../../../shared/utils';
 	styleUrls: ['./personal-account.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PersonalAccountComponent implements OnInit, OnChanges {
+export class PersonalAccountComponent implements OnInit {
 	@Input() personalAccount!: PersonalAccountOverviewFragment;
 
 	yearlyChartData!: SwimlaneChartDataSeries[];
 	weeklyChartData!: GenericChartSeriesInput;
 	weeklyExpenseChartData!: GenericChartSeriesInput;
 	valueItems: ValueItem[] = [];
+	accountState!: AccountState;
 
 	constructor(private personalAccountApiService: PersonalAccountApiService) {}
-	ngOnChanges(changes: SimpleChanges): void {
-		if (changes?.['personalAccount']?.currentValue) {
-			this.yearlyChartData = this.getYearlyData(this.personalAccount);
-			this.weeklyChartData = this.getWeeklyChartData(this.personalAccount);
-			this.weeklyExpenseChartData = this.getWeeklyExpenseChartData(this.personalAccount);
-			this.valueItems = this.getYearlyExpenseValueItems(this.personalAccount);
-		}
+
+	ngOnInit(): void {
+		this.yearlyChartData = this.getYearlyData(this.personalAccount);
+		this.weeklyChartData = this.getWeeklyChartData(this.personalAccount);
+		this.weeklyExpenseChartData = this.getWeeklyExpenseChartData(this.personalAccount);
+		this.valueItems = this.getYearlyExpenseValueItems(this.personalAccount);
+		this.accountState = this.getAccountState(this.personalAccount);
 	}
 
-	ngOnInit(): void {}
+	private getAccountState(data: PersonalAccountOverviewFragment): AccountState {
+		const expenseTotal = data.yearlyAggregaton
+			.filter((d) => d.tagType === TagDataType.Expense)
+			.reduce((a, b) => a + b.value, 0);
+		const incomeTotal = data.yearlyAggregaton
+			.filter((d) => d.tagType === TagDataType.Income)
+			.reduce((a, b) => a + b.value, 0);
+		const total = incomeTotal - expenseTotal;
+
+		const result: AccountState = {
+			expenseTotal,
+			incomeTotal,
+			total,
+		};
+
+		return result;
+	}
 
 	private getYearlyExpenseValueItems(data: PersonalAccountOverviewFragment): ValueItem[] {
 		const yearlyExpenses = data.yearlyAggregaton.filter((d) => d.tagType === TagDataType.Expense);

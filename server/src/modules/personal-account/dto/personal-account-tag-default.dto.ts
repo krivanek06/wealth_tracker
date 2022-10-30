@@ -1,6 +1,8 @@
 import { PersonalAccountTagDataType } from '@prisma/client';
 
-export const PERSONAL_ACCOUNT_DEFAULT_TAGS = [
+const PERSONAL_ACCOUNT_ICOME_TAGS = [{ name: 'Job', type: PersonalAccountTagDataType.INCOME }] as const;
+
+const PERSONAL_ACCOUNT_EXPENSE_TAGS = [
 	{ name: 'Shoping', type: PersonalAccountTagDataType.EXPENSE },
 	{ name: 'Coffee', type: PersonalAccountTagDataType.EXPENSE },
 	{ name: 'Transport', type: PersonalAccountTagDataType.EXPENSE },
@@ -11,4 +13,10 @@ export const PERSONAL_ACCOUNT_DEFAULT_TAGS = [
 	{ name: 'Education', type: PersonalAccountTagDataType.EXPENSE },
 	{ name: 'Self care', type: PersonalAccountTagDataType.EXPENSE },
 	{ name: 'Food', type: PersonalAccountTagDataType.EXPENSE },
+	{ name: 'Charity', type: PersonalAccountTagDataType.EXPENSE },
+] as const;
+
+export const PERSONAL_ACCOUNT_DEFAULT_TAGS = [
+	...PERSONAL_ACCOUNT_ICOME_TAGS,
+	...PERSONAL_ACCOUNT_EXPENSE_TAGS,
 ] as const;

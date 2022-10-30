@@ -1,0 +1,21 @@
+:host {
+	.c-overflow-scroll {
+		overflow: scroll;
+	}
+
+	mat-card {
+		background-color: #2f3474 !important;
+	}
+
+	mat-card-content {
+		height: inherit;
+
+		.default {
+			@apply grid min-h-[200px] place-content-center;
+
+			&:not(:only-child) {
+				display: none !important;
+			}
+		}
+	}
+}

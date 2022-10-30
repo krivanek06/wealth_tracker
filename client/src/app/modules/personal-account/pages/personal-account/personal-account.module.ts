@@ -3,10 +3,10 @@ import { NgModule } from '@angular/core';
 import {
 	PersonalAccountAggregationRadioButtonsModule,
 	PersonalAccountExpenseChartModule,
-	PersonalAccountGrowthChartModule,
 	PersonalAccountOverviewChartModule,
 } from '../../components';
 import { PersonalAccountDailyDataContainerModule } from '../../containers';
+import { GenericChartModule } from './../../../../shared/components';
 import { PersonalAccountComponent } from './personal-account.component';
 
 @NgModule({
@@ -14,10 +14,10 @@ import { PersonalAccountComponent } from './personal-account.component';
 	imports: [
 		CommonModule,
 		PersonalAccountExpenseChartModule,
-		PersonalAccountGrowthChartModule,
 		PersonalAccountOverviewChartModule,
 		PersonalAccountDailyDataContainerModule,
 		PersonalAccountAggregationRadioButtonsModule,
+		GenericChartModule,
 	],
 	exports: [PersonalAccountComponent],
 })

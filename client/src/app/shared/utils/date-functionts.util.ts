@@ -1,4 +1,4 @@
-import { differenceInDays, getDay, getMonth, getWeek, getYear } from 'date-fns';
+import { differenceInDays, format, getDay, getMonth, getWeek, getYear } from 'date-fns';
 export type DateServiceUtilDateInformations = {
 	year: number;
 	month: number;
@@ -6,7 +6,9 @@ export type DateServiceUtilDateInformations = {
 	day: number;
 };
 
-export class MomentServiceUtil {
+type DateInput = string | number | Date;
+
+export class DateServiceUtil {
 	static getDetailsInformationFromDate(input: string | Date): DateServiceUtilDateInformations {
 		const date = new Date(input);
 
@@ -27,9 +29,21 @@ export class MomentServiceUtil {
 	 * @param second
 	 * @returns the day difference in two dates
 	 */
-	static getDayDifference(first: string | Date | number, second: string | Date | number): number {
+	static getDayDifference(first: DateInput, second: DateInput): number {
 		const firstDate = new Date(first);
 		const secondDate = new Date(second);
 		return Math.abs(differenceInDays(firstDate, secondDate));
+	}
+
+	/**
+	 * Docs: https://date-fns.org/v2.14.0/docs/format
+	 *
+	 * @param inputDate
+	 * @param formatOptions
+	 * @returns
+	 */
+	static formatDate(inputDate: DateInput, formatOptions: 'LLLL'): string {
+		const date = new Date(inputDate);
+		return format(date, formatOptions);
 	}
 }

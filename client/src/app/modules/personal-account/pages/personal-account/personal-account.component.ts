@@ -1,10 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import {
-	GenericChartSeries,
-	GenericChartSeriesInput,
-	SwimlaneChartData,
-	SwimlaneChartDataSeries,
-} from '../../../../shared/models';
+import { GenericChartSeries, GenericChartSeriesInput, SwimlaneChartDataSeries } from '../../../../shared/models';
 import { PersonalAccountApiService } from './../../../../core/api';
 import { PersonalAccountOverviewFragment, TagDataType } from './../../../../core/graphql';
 import { DateServiceUtil } from './../../../../shared/utils';
@@ -20,7 +15,7 @@ export class PersonalAccountComponent implements OnInit, OnChanges {
 
 	yearlyChartData!: SwimlaneChartDataSeries[];
 	weeklyChartData!: GenericChartSeriesInput;
-	weeklyExpenseChartData!: SwimlaneChartData[];
+	weeklyExpenseChartData!: GenericChartSeriesInput;
 
 	constructor(private personalAccountApiService: PersonalAccountApiService) {}
 	ngOnChanges(changes: SimpleChanges): void {
@@ -63,19 +58,11 @@ export class PersonalAccountComponent implements OnInit, OnChanges {
 		return { series: [series], categories };
 	}
 
-	private getWeeklyExpenseChartData(data: PersonalAccountOverviewFragment): SwimlaneChartData[] {
-		/*
-          [{
-            "name": "Shopping",
-            "series": [
-              {
-                "value": 2983,
-                "name": "2022-9-42"
-              },
-            ]
-          }]
-    */
-		return data.weeklyAggregaton.reduce((acc, curr) => {
+	private getWeeklyExpenseChartData(
+		data: PersonalAccountOverviewFragment,
+		aggregation: 'week' | 'month' = 'week'
+	): GenericChartSeriesInput {
+		const series = data.weeklyAggregaton.reduce((acc, curr) => {
 			curr.data
 				.filter((d) => d.tagType === TagDataType.Expense)
 				.forEach((d) => {
@@ -84,15 +71,21 @@ export class PersonalAccountComponent implements OnInit, OnChanges {
 
 					if (savedTagIndex === -1) {
 						// tag not yet save = new data
-						const newData = { name: d.tagName, series: [{ name: curr.id, value: d.value }] } as SwimlaneChartData;
-						acc.push(newData);
+						acc.push({ name: d.tagName, data: [d.value] } as GenericChartSeries);
 					} else {
 						// add another series into saved tag array
-						acc[savedTagIndex].series.push({ name: curr.id, value: d.value });
+						acc[savedTagIndex].data.push(d.value);
 					}
 				});
 
 			return acc;
-		}, [] as SwimlaneChartData[]);
+		}, [] as GenericChartSeries[]);
+
+		const categories = data.weeklyAggregaton.map((d) => {
+			const monthName = DateServiceUtil.formatDate(new Date(d.year, d.month), 'LLLL');
+			return `Week: ${d.week}, ${monthName}  ${d.year}`;
+		});
+
+		return { series, categories };
 	}
 }

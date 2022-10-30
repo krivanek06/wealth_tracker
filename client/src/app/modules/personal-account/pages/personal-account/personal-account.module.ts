@@ -1,10 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import {
-	PersonalAccountAggregationRadioButtonsModule,
-	PersonalAccountExpenseChartModule,
-	PersonalAccountOverviewChartModule,
-} from '../../components';
+import { PersonalAccountAggregationRadioButtonsModule, PersonalAccountOverviewChartModule } from '../../components';
 import { PersonalAccountDailyDataContainerModule } from '../../containers';
 import { GenericChartModule } from './../../../../shared/components';
 import { PersonalAccountComponent } from './personal-account.component';
@@ -13,7 +9,6 @@ import { PersonalAccountComponent } from './personal-account.component';
 	declarations: [PersonalAccountComponent],
 	imports: [
 		CommonModule,
-		PersonalAccountExpenseChartModule,
 		PersonalAccountOverviewChartModule,
 		PersonalAccountDailyDataContainerModule,
 		PersonalAccountAggregationRadioButtonsModule,

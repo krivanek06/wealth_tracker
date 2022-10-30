@@ -36,7 +36,6 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 	@Input() categories: string[] = [];
 	@Input() timestamp: number[] = [];
 	//@Input() enable3D = false;
-	@Input() isPercentage?: boolean = false;
 	@Input() showYAxis = true;
 	@Input() showXAxis = true;
 
@@ -51,7 +50,6 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 
 	@Input() showExpandableButton = false;
 	@Input() addFancyColoring = false;
-	@Input() tooltipShowCategory = false;
 	@Input() colors: string[] = chartColors1;
 
 	Highcharts: typeof Highcharts = Highcharts;
@@ -313,9 +311,7 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 					},
 					tooltip: {
 						headerFormat: '',
-						pointFormat: this.isPercentage
-							? `<span style="color:{point.color};">{point.name}</span>: <b>{point.y:.2f}%</b><br/>`
-							: '<span style="color:{point.color};">{point.name}</span>: <b>{point.y}</b><br/>',
+						pointFormat: '<span style="color:{point.color};">{point.name}</span>: <b>{point.y}</b><br/>',
 					},
 				},
 				pie: {

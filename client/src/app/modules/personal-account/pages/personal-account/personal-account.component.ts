@@ -1,7 +1,13 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { SwimlaneChartData, SwimlaneChartDataSeries } from '../../../../shared/models';
+import {
+	GenericChartSeries,
+	GenericChartSeriesInput,
+	SwimlaneChartData,
+	SwimlaneChartDataSeries,
+} from '../../../../shared/models';
 import { PersonalAccountApiService } from './../../../../core/api';
 import { PersonalAccountOverviewFragment, TagDataType } from './../../../../core/graphql';
+import { DateServiceUtil } from './../../../../shared/utils';
 
 @Component({
 	selector: 'app-personal-account',
@@ -13,7 +19,7 @@ export class PersonalAccountComponent implements OnInit, OnChanges {
 	@Input() personalAccount!: PersonalAccountOverviewFragment;
 
 	yearlyChartData!: SwimlaneChartDataSeries[];
-	weeklyChartData!: SwimlaneChartData;
+	weeklyChartData!: GenericChartSeriesInput;
 	weeklyExpenseChartData!: SwimlaneChartData[];
 
 	constructor(private personalAccountApiService: PersonalAccountApiService) {}
@@ -33,16 +39,28 @@ export class PersonalAccountComponent implements OnInit, OnChanges {
 		});
 	}
 
-	private getWeeklyChartData(data: PersonalAccountOverviewFragment): SwimlaneChartData {
-		const weeklyIncomeSeries: SwimlaneChartDataSeries[] = data.weeklyAggregaton.map((d) => {
-			// add together weekly income and expense
-			const weeklyIncome = d.data.reduce(
-				(acc, curr) => acc + (curr.tagType === TagDataType.Income ? curr.value : -curr.value),
-				0
-			);
-			return { name: d.id, value: weeklyIncome };
+	/**
+	 * Aggregates incomes and expenses into a chart format
+	 *
+	 * @param data aggregation from personal account
+	 * @param aggregation type of aggreation
+	 * @returns GenericChartSeriesInput data type
+	 */
+	private getWeeklyChartData(
+		data: PersonalAccountOverviewFragment,
+		aggregation: 'week' | 'month' = 'week'
+	): GenericChartSeriesInput {
+		// add together weekly income and expense
+		const weeklyIncomeSeries: number[] = data.weeklyAggregaton.map((d) =>
+			d.data.reduce((acc, curr) => acc + (curr.tagType === TagDataType.Income ? curr.value : -curr.value), 0)
+		);
+		const series: GenericChartSeries = { name: data.name, data: weeklyIncomeSeries };
+		const categories = data.weeklyAggregaton.map((d) => {
+			const monthName = DateServiceUtil.formatDate(new Date(d.year, d.month), 'LLLL');
+			return `Week: ${d.week}, ${monthName}  ${d.year}`;
 		});
-		return { name: data.name, series: weeklyIncomeSeries };
+
+		return { series: [series], categories };
 	}
 
 	private getWeeklyExpenseChartData(data: PersonalAccountOverviewFragment): SwimlaneChartData[] {

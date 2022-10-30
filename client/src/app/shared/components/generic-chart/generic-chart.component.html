@@ -1,0 +1,20 @@
+<button
+	mat-icon-button
+	*ngIf="showExpandableButton"
+	class="text-gray-400 expand-icon"
+	(click)="expand()"
+	matTooltip="Expand chart"
+>
+	<mat-icon>open_with</mat-icon>
+</button>
+
+<highcharts-chart
+	[Highcharts]="Highcharts"
+	[options]="chartOptions"
+	[callbackFunction]="chartCallback"
+	[(update)]="updateFromInput"
+	[oneToOne]="true"
+	style="width: 100%; display: block"
+	[style.height.px]="heightPx"
+>
+</highcharts-chart>

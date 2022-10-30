@@ -1,10 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import {
-	PersonalAccountDailyEntriesFilterModule,
-	PersonalAccountDailyEntriesTableModule,
-	PersonalAccountExpenseAllocationChartModule,
-} from '../../components';
+import { PersonalAccountDailyEntriesFilterModule, PersonalAccountDailyEntriesTableModule } from '../../components';
+import { GenericChartModule } from './../../../../shared/components';
 import { PersonalAccountDailyDataContainerComponent } from './personal-account-daily-data-container.component';
 
 @NgModule({
@@ -13,7 +10,7 @@ import { PersonalAccountDailyDataContainerComponent } from './personal-account-d
 		CommonModule,
 		PersonalAccountDailyEntriesFilterModule,
 		PersonalAccountDailyEntriesTableModule,
-		PersonalAccountExpenseAllocationChartModule,
+		GenericChartModule,
 	],
 	exports: [PersonalAccountDailyDataContainerComponent],
 })

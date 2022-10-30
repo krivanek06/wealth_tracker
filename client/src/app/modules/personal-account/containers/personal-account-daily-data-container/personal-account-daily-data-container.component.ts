@@ -6,7 +6,7 @@ import {
 	PersonalAccountMonthlyDataOverviewFragment,
 	TagDataType,
 } from './../../../../core/graphql';
-import { SwimlaneChartDataSeries } from './../../../../shared/models';
+import { ChartType, GenericChartSeriesData, GenericChartSeriesPie } from './../../../../shared/models';
 
 @Component({
 	selector: 'app-personal-account-daily-data-container',
@@ -18,14 +18,9 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 	@Input() personalAccountMonthlyData!: PersonalAccountMonthlyDataOverviewFragment[];
 
 	monthlyDataDetail$!: Observable<PersonalAccountMonthlyDataDetailFragment>;
+	expenseAllocationChartData$!: Observable<GenericChartSeriesPie>;
 
-	/*
-    [{
-      "name": "SHOPPING",
-      "value": 40632,
-    }]
-  */
-	expenseAllocationChartData$!: Observable<SwimlaneChartDataSeries[]>;
+	ChartType = ChartType;
 
 	constructor(private personalAccountApiService: PersonalAccountApiService) {}
 
@@ -38,10 +33,8 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		);
 	}
 
-	private formatToExpenseAllocationChartDatta(
-		data: PersonalAccountMonthlyDataDetailFragment
-	): SwimlaneChartDataSeries[] {
-		return data.dailyData.reduce((acc, curr) => {
+	private formatToExpenseAllocationChartDatta(data: PersonalAccountMonthlyDataDetailFragment): GenericChartSeriesPie {
+		const seriesData = data.dailyData.reduce((acc, curr) => {
 			// ignore income
 			if (curr.tag.type === TagDataType.Income) {
 				return acc;
@@ -49,12 +42,14 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 			// find index of saved tag
 			const dataIndex = acc.findIndex((d) => d.name === curr.tag.name);
 			if (dataIndex === -1) {
-				acc = [...acc, { name: curr.tag.name, value: curr.value }]; // new tag
+				acc = [...acc, { name: curr.tag.name, y: curr.value }]; // new tag
 			} else {
-				acc[dataIndex].value += curr.value; // increase value for tag
+				acc[dataIndex].y += curr.value; // increase value for tag
 			}
 
 			return acc;
-		}, [] as SwimlaneChartDataSeries[]);
+		}, [] as GenericChartSeriesData[]);
+
+		return { data: seriesData, colorByPoint: true, name: 'Expenses', innerSize: '30%' };
 	}
 }

@@ -13,7 +13,14 @@ export enum ChartType {
 export interface GenericChartSeries {
 	type?: ChartType;
 	name?: string;
-	data: (number | null | undefined)[]; // GenericChartSeriesData[] |
+	data: (number | null | undefined)[];
+}
+
+// Used only for Pie charts
+export interface GenericChartSeriesPie {
+	type?: ChartType;
+	name?: string;
+	data: GenericChartSeriesData[];
 	color?: string | any;
 	lineWidth?: number;
 	colorByPoint?: boolean;
@@ -21,12 +28,13 @@ export interface GenericChartSeries {
 	minPointSize?: number;
 }
 
-// export interface GenericChartSeriesData {
-// 	name?: string;
-// 	sliced?: boolean;
-// 	y: number | undefined | null;
-// 	color?: string;
-// }
+export interface GenericChartSeriesData {
+	name?: string;
+	sliced?: boolean;
+	y: number;
+	color?: string;
+	z?: number;
+}
 
 export interface GenericChartSeriesInput {
 	series: GenericChartSeries[];

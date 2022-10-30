@@ -16,4 +16,11 @@ body {
 body {
 	margin: 0;
 	font-family: Pippins, sans-serif !important;
+
+	width: 100%;
+
+	@screen lg {
+		margin: auto;
+		width: 85%;
+	}
 }

@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
-import { chartColors1, ChartType, GenericChartSeries } from '../../models';
+import { chartColors1, ChartType, GenericChartSeries, GenericChartSeriesPie } from '../../models';
 
 NoDataToDisplay(Highcharts);
 // highcharts3D(Highcharts);
@@ -25,7 +25,7 @@ NoDataToDisplay(Highcharts);
 export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 	@Output() expandEmitter: EventEmitter<any> = new EventEmitter<any>();
 
-	@Input() series!: GenericChartSeries[];
+	@Input() series!: GenericChartSeries[] | GenericChartSeriesPie[];
 	@Input() heightPx = 400;
 	@Input() chartType: ChartType = ChartType.line;
 	@Input() chartTitle = '';

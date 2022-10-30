@@ -1,28 +1,27 @@
-<!-- account overview -->
-<div class="grid gap-4">
-	<!-- present yearly expenses -->
-	<div class="flex flex-wrap gap-8 justify-center">
-		<div class="g-color-primary text-2xl">● Balance: {{ accountState.total | currency }}</div>
-		<div class="text-green-500 text-2xl">
-			● Income: <span class="text-gray-200">{{ accountState.incomeTotal | currency }}</span>
-		</div>
-		<div class="text-red-500 text-2xl">
-			● Expense: <span class="text-gray-200">{{accountState.expenseTotal | currency}}</span>
-		</div>
+<!-- present yearly expenses -->
+<div class="flex flex-wrap gap-8 justify-center mb-4">
+	<div class="g-color-primary text-2xl">● Balance: {{ accountState.total | currency }}</div>
+	<div class="text-green-500 text-2xl">
+		● Income: <span class="text-gray-200">{{ accountState.incomeTotal | currency }}</span>
 	</div>
-
-	<!-- add 2 charts, one for income, second for expesnse -->
-	<app-generic-chart
-		[heightPx]="375"
-		[series]="weeklyChartData.series"
-		[categories]="weeklyChartData.categories"
-	></app-generic-chart>
+	<div class="text-red-500 text-2xl">
+		● Expense: <span class="text-gray-200">{{accountState.expenseTotal | currency}}</span>
+	</div>
 </div>
+
+<!-- account growth chart -->
+<app-generic-chart
+	[heightPx]="375"
+	[series]="weeklyChartData.series"
+	[categories]="weeklyChartData.categories"
+></app-generic-chart>
 
 <div class="flex flex-wrap gap-4 justify-center">
 	<app-value-presentation-item
 		*ngFor="let item of valueItems"
+		(onClickEmitter)="onExpenseTagClick(item)"
 		[valueItem]="item"
+		[isActive]="activeValueItem === item"
 		class="min-w-[120px]"
 	></app-value-presentation-item>
 </div>

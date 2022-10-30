@@ -3,6 +3,10 @@
 	<app-personal-account-overview-chart [data]="yearlyChartData"></app-personal-account-overview-chart>
 </div>
 
+<div class="flex flex-wrap gap-4">
+	<app-value-presentation-item *ngFor="let item of valueItems" [valueItem]="item"></app-value-presentation-item>
+</div>
+
 <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 min-h-[400px]">
 	<!-- total accout growth -->
 	<app-generic-chart

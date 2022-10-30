@@ -1,5 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { GenericChartSeries, GenericChartSeriesInput, SwimlaneChartDataSeries } from '../../../../shared/models';
+import {
+	chartColors1,
+	GenericChartSeries,
+	GenericChartSeriesInput,
+	SwimlaneChartDataSeries,
+} from '../../../../shared/models';
+import { ValueItem } from '../../models';
 import { PersonalAccountApiService } from './../../../../core/api';
 import { PersonalAccountOverviewFragment, TagDataType } from './../../../../core/graphql';
 import { DateServiceUtil } from './../../../../shared/utils';
@@ -16,6 +22,7 @@ export class PersonalAccountComponent implements OnInit, OnChanges {
 	yearlyChartData!: SwimlaneChartDataSeries[];
 	weeklyChartData!: GenericChartSeriesInput;
 	weeklyExpenseChartData!: GenericChartSeriesInput;
+	valueItems: ValueItem[] = [];
 
 	constructor(private personalAccountApiService: PersonalAccountApiService) {}
 	ngOnChanges(changes: SimpleChanges): void {
@@ -23,10 +30,30 @@ export class PersonalAccountComponent implements OnInit, OnChanges {
 			this.yearlyChartData = this.getYearlyData(this.personalAccount);
 			this.weeklyChartData = this.getWeeklyChartData(this.personalAccount);
 			this.weeklyExpenseChartData = this.getWeeklyExpenseChartData(this.personalAccount);
+			this.valueItems = this.getYearlyExpenseValueItems(this.personalAccount);
 		}
 	}
 
 	ngOnInit(): void {}
+
+	private getYearlyExpenseValueItems(data: PersonalAccountOverviewFragment): ValueItem[] {
+		const yearlyExpenses = data.yearlyAggregaton.filter((d) => d.tagType === TagDataType.Expense);
+		const totalYearlyExpense = yearlyExpenses.reduce((a, b) => a + b.value, 0);
+
+		const valueItems = yearlyExpenses.map((d, index) => {
+			const colorIdex = index % chartColors1.length;
+			const result: ValueItem = {
+				name: `$ ${d.value}`,
+				description: d.tagName,
+				value: d.value / totalYearlyExpense,
+				color: chartColors1[colorIdex],
+				isPercent: true,
+			};
+			return result;
+		});
+
+		return valueItems;
+	}
 
 	private getYearlyData(data: PersonalAccountOverviewFragment): SwimlaneChartDataSeries[] {
 		return data.yearlyAggregaton.map((d) => {

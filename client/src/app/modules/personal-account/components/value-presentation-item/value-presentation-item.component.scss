@@ -1,0 +1,10 @@
+:host {
+	display: block;
+
+	button {
+		border-left: 4px solid var(--valueItemColor);
+		&:hover {
+			background-color: var(--valueItemColorActive);
+		}
+	}
+}

@@ -1,36 +1,46 @@
-<!-- present yearly expenses -->
-<div class="flex flex-wrap gap-8 justify-center mb-4">
-	<div class="g-color-primary text-2xl">● Balance: {{ accountState.total | currency }}</div>
-	<div class="text-green-500 text-2xl">
-		● Income: <span class="text-gray-200">{{ accountState.incomeTotal | currency }}</span>
-	</div>
-	<div class="text-red-500 text-2xl">
-		● Expense: <span class="text-gray-200">{{accountState.expenseTotal | currency}}</span>
+<div class="flex flex-col-reverse lg:flex-row gap-4">
+	<!-- account growth chart -->
+	<app-generic-chart
+		class="flex-1"
+		chartTitle="Account growth"
+		[heightPx]="375"
+		[series]="weeklyChartData.series"
+		[categories]="weeklyChartData.categories"
+	></app-generic-chart>
+
+	<!-- present yearly expenses -->
+	<div class="flex flex-col gap-4 justify-center mb-4">
+		<div class="g-color-primary text-2xl">● Balance: {{ accountState.total | currency }}</div>
+		<div class="text-green-500 text-2xl">
+			● Income: <span class="text-gray-200">{{ accountState.incomeTotal | currency }}</span>
+		</div>
+		<div class="text-red-500 text-2xl">
+			● Expense: <span class="text-gray-200">{{accountState.expenseTotal | currency}}</span>
+		</div>
 	</div>
 </div>
 
-<!-- account growth chart -->
-<app-generic-chart
-	[heightPx]="375"
-	[series]="weeklyChartData.series"
-	[categories]="weeklyChartData.categories"
-></app-generic-chart>
+<div class="flex gap-4 max-h-[400px]">
+	<!-- tag expense chart -->
+	<app-generic-chart
+		class="flex-1"
+		chartTitle="Expense by tag"
+		[heightPx]="400"
+		[series]="weeklyExpenseChartData.series"
+		[categories]="weeklyExpenseChartData.categories"
+	></app-generic-chart>
 
-<div class="flex flex-wrap gap-4 justify-center">
-	<app-value-presentation-item
-		*ngFor="let item of valueItems"
-		(onClickEmitter)="onExpenseTagClick(item)"
-		[valueItem]="item"
-		[isActive]="activeValueItem === item"
-		class="min-w-[120px]"
-	></app-value-presentation-item>
+	<!-- tag expense legend -->
+	<div class="flex flex-col gap-2 justify-center mt-4 overflow-auto">
+		<app-value-presentation-item
+			*ngFor="let item of yearlyExpenseAggregaton"
+			(onClickEmitter)="onExpenseTagClick(item)"
+			[yearlyExpenseTotal]="yearlyExpenseTotal"
+			[yearlyAggregation]="item"
+			[isActive]="activeValueItem === item"
+		></app-value-presentation-item>
+	</div>
 </div>
-
-<app-generic-chart
-	[heightPx]="400"
-	[series]="weeklyExpenseChartData.series"
-	[categories]="weeklyExpenseChartData.categories"
-></app-generic-chart>
 
 <!-- daily data filter + table + spending allocation -->
 <app-personal-account-daily-data-container

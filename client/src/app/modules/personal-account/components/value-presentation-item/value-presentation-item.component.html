@@ -1,14 +1,13 @@
 <button
 	mat-button
-	class="flex flex-col gap-1 px-4 py-1 rounded-lg w-full items-center cursor-pointer"
 	[style.--valueItemColor]="color"
 	[style.--valueItemColorActive]="colorActive"
 	[style]="isActive ? 'background-color: ' +  colorActive: ''"
 	(click)="onActivate()"
 >
-	<div class="text-xl text-gray-200">{{valueItem.name}}</div>
-	<div *ngIf="valueItem.description" class="text-base text-gray-400">{{ valueItem.description }}</div>
-	<div class="text-gray-200 text-lg">
-		{{ valueItem.isPercent ? (valueItem.value | percent: '1.2-2' ) : valueItem.value}}
+	<div class="button-body">
+		<div class="text-lg text-gray-200 mr-2">{{yearlyAggregation.tagName}}</div>
+		<div class="text-base text-gray-400">{{ yearlyAggregation.value | currency}}</div>
+		<div class="text-gray-500 text-base">({{ yearlyAggregation.value / yearlyExpenseTotal| percent: '1.2-2' }})</div>
 	</div>
 </button>

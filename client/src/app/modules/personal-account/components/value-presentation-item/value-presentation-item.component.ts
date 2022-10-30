@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ValueItem } from '../../models';
+import { PersonalAccountAggregationDataOutput } from './../../../../core/graphql';
 
 @Component({
 	selector: 'app-value-presentation-item',
@@ -10,7 +10,8 @@ import { ValueItem } from '../../models';
 export class ValuePresentationItemComponent implements OnInit {
 	@Output() onClickEmitter: EventEmitter<void> = new EventEmitter<void>();
 
-	@Input() valueItem!: ValueItem;
+	@Input() yearlyAggregation!: PersonalAccountAggregationDataOutput;
+	@Input() yearlyExpenseTotal!: number;
 	@Input() isActive = false;
 
 	color!: string;
@@ -19,7 +20,7 @@ export class ValuePresentationItemComponent implements OnInit {
 	constructor() {}
 
 	ngOnInit(): void {
-		this.color = this.valueItem.color ?? 'grey';
+		this.color = this.yearlyAggregation.tagColor ?? 'grey';
 		this.colorActive = `${this.color}33`;
 	}
 

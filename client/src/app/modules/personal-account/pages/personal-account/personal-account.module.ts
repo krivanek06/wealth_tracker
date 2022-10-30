@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { PersonalAccountAggregationRadioButtonsModule, ValuePresentationItemModule } from '../../components';
 import { PersonalAccountDailyDataContainerModule } from '../../containers';
-import { GenericChartModule, MatCardWrapperModule } from './../../../../shared/components';
+import { GenericChartModule } from './../../../../shared/components';
 import { PersonalAccountComponent } from './personal-account.component';
 
 @NgModule({
@@ -13,7 +13,6 @@ import { PersonalAccountComponent } from './personal-account.component';
 		PersonalAccountAggregationRadioButtonsModule,
 		GenericChartModule,
 		ValuePresentationItemModule,
-		MatCardWrapperModule,
 	],
 	exports: [PersonalAccountComponent],
 })

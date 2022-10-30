@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AccountState, ValueItem } from '../models';
+import { AccountState } from '../models';
 import { PersonalAccountOverviewFragment, TagDataType } from './../../../core/graphql';
 import { GenericChartSeries, GenericChartSeriesInput } from './../../../shared/models';
 import { DateServiceUtil } from './../../../shared/utils';
@@ -26,25 +26,6 @@ export class PersonalAccountDataModificationService {
 		};
 
 		return result;
-	}
-
-	getYearlyExpenseValueItems(data: PersonalAccountOverviewFragment): ValueItem[] {
-		const yearlyExpenses = data.yearlyAggregaton.filter((d) => d.tagType === TagDataType.Expense);
-		const totalYearlyExpense = yearlyExpenses.reduce((a, b) => a + b.value, 0);
-
-		const valueItems = yearlyExpenses.map((d, index) => {
-			const result: ValueItem = {
-				id: d.tagName,
-				name: `$ ${d.value}`,
-				description: `${d.tagName} (${d.entries})`,
-				value: d.value / totalYearlyExpense,
-				color: d.tagColor,
-				isPercent: true,
-			};
-			return result;
-		});
-
-		return valueItems;
 	}
 
 	/**

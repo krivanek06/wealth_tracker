@@ -1,7 +1,10 @@
 <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 min-h-[300px] items-center">
 	<div class="col-span-1 lg:col-span-3">
 		<!-- table filter -->
-		<app-personal-account-daily-entries-filter></app-personal-account-daily-entries-filter>
+		<app-personal-account-daily-entries-filter
+			[weeklyIds]="weeklyIds"
+			[monthlyDataId]="monthlyDataId"
+		></app-personal-account-daily-entries-filter>
 		<!-- table body -->
 		<app-personal-account-daily-entries-table
 			[personalAccountDailyData]="(monthlyDataDetail$ | async)?.dailyData"
@@ -9,11 +12,12 @@
 	</div>
 
 	<!-- spending allocation by tags -->
-	<div class="col-span-1 lg:col-span-2">
+	<div class="col-span-2 hidden lg:block">
 		<app-generic-chart
 			*ngIf="expenseAllocationChartData$ | async as series"
 			[chartType]="ChartType.pie"
 			[heightPx]="375"
+			[showDataLabel]="true"
 			[series]="[series]"
 		></app-generic-chart>
 	</div>

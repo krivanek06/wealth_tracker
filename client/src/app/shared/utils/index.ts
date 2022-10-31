@@ -1,2 +1,1 @@
-export * from './date-functionts.util';
-export * from '../dialogs/dialog-service.util';
+export * from './date-service.util';

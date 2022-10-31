@@ -1,0 +1,79 @@
+// decreasing height of form field with font-size
+.mat-form-field {
+	font-size: 0.75rem;
+
+	input,
+	textarea,
+	.mat-select-placeholder,
+	mat-select {
+		font-size: 1rem;
+	}
+
+	.mat-form-field-infix {
+		box-sizing: content-box;
+		height: 15px;
+		padding: 8px 0 12.5px 0;
+	}
+
+	label {
+		font-size: 1rem !important;
+		margin-top: -7px !important;
+	}
+
+	.mat-select-arrow-wrapper {
+		margin-top: 10px;
+	}
+
+	.mat-form-field-prefix {
+		mat-icon {
+			font-size: 18px;
+			color: var(--color-gray-300) !important;
+		}
+	}
+}
+
+app-form-mat-input-wrapper-one-line[inputtype='TEXTAREA'] .mat-form-field-infix,
+app-form-mat-input-wrapper[ng-reflect-input-type='TEXTAREA'] .mat-form-field-infix {
+	height: fit-content;
+}
+
+mat-form-field.mat-form-field-should-float label {
+	font-size: 1rem !important;
+	margin-top: -0.25rem !important;
+}
+
+.filter-sizing-no-outline {
+	padding: 0 1rem;
+
+	@screen md {
+		padding: 0;
+	}
+
+	.mat-form-field-outline {
+		opacity: 0 !important;
+	}
+
+	.mat-form-field-infix {
+		width: 140px !important;
+	}
+
+	.mat-form-field-flex {
+		padding: 0 !important;
+	}
+
+	label {
+		color: var(--color-gray-300) !important;
+	}
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline {
+	color: var(--color-gray-300) !important;
+}
+
+mat-form-field span.mat-form-field-label-wrapper label {
+	color: var(--color-gray-300) !important;
+}
+
+mat-form-field.mat-focused span.mat-form-field-label-wrapper label {
+	color: var(--color-primary-500) !important;
+}

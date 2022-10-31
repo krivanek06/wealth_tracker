@@ -3,7 +3,7 @@ import { map, Observable } from 'rxjs';
 import { PersonalAccountApiService } from './../../../../core/api';
 import {
 	PersonalAccountMonthlyDataDetailFragment,
-	PersonalAccountMonthlyDataOverviewFragment,
+	PersonalAccountOverviewFragment,
 	TagDataType,
 } from './../../../../core/graphql';
 import { ChartType, GenericChartSeriesData, GenericChartSeriesPie } from './../../../../shared/models';
@@ -15,8 +15,9 @@ import { ChartType, GenericChartSeriesData, GenericChartSeriesPie } from './../.
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountDailyDataContainerComponent implements OnInit {
-	@Input() personalAccountMonthlyData!: PersonalAccountMonthlyDataOverviewFragment[];
-
+	@Input() personalAccount!: PersonalAccountOverviewFragment;
+	weeklyIds!: string[]; // 2022-7-32, 2022-7-33, ...
+	monthlyDataId!: string;
 	monthlyDataDetail$!: Observable<PersonalAccountMonthlyDataDetailFragment>;
 	expenseAllocationChartData$!: Observable<GenericChartSeriesPie>;
 
@@ -25,8 +26,9 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 	constructor(private personalAccountApiService: PersonalAccountApiService) {}
 
 	ngOnInit(): void {
-		const monthlyDataId = this.personalAccountMonthlyData[0].id;
-		this.monthlyDataDetail$ = this.personalAccountApiService.getPersonalAccountMonthlyDataById(monthlyDataId);
+		this.monthlyDataId = this.personalAccount.monthlyData[0].id;
+		this.weeklyIds = this.personalAccount.weeklyAggregaton.map((d) => d.id);
+		this.monthlyDataDetail$ = this.personalAccountApiService.getPersonalAccountMonthlyDataById(this.monthlyDataId);
 
 		this.expenseAllocationChartData$ = this.monthlyDataDetail$.pipe(
 			map((result) => this.formatToExpenseAllocationChartDatta(result))

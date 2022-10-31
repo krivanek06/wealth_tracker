@@ -1,0 +1,14 @@
+:host {
+	display: block;
+
+	button {
+		@apply px-4 p-1 rounded-lg w-full m-1;
+		.button-body {
+			@apply flex flex-row gap-2  items-center;
+		}
+		border-left: 4px solid var(--valueItemColor);
+		&:hover {
+			background-color: var(--valueItemColorActive);
+		}
+	}
+}

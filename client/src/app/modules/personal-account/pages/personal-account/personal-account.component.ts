@@ -1,7 +1,13 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { SwimlaneChartData, SwimlaneChartDataSeries } from '../../../../shared/models';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { GenericChartSeriesInput } from '../../../../shared/models';
+import { AccountState } from '../../models';
+import { PersonalAccountDataModificationService } from '../../services';
 import { PersonalAccountApiService } from './../../../../core/api';
-import { PersonalAccountOverviewFragment, TagDataType } from './../../../../core/graphql';
+import {
+	PersonalAccountAggregationDataOutput,
+	PersonalAccountOverviewFragment,
+	TagDataType,
+} from './../../../../core/graphql';
 
 @Component({
 	selector: 'app-personal-account',
@@ -9,72 +15,43 @@ import { PersonalAccountOverviewFragment, TagDataType } from './../../../../core
 	styleUrls: ['./personal-account.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PersonalAccountComponent implements OnInit, OnChanges {
+export class PersonalAccountComponent implements OnInit {
 	@Input() personalAccount!: PersonalAccountOverviewFragment;
 
-	yearlyChartData!: SwimlaneChartDataSeries[];
-	weeklyChartData!: SwimlaneChartData;
-	weeklyExpenseChartData!: SwimlaneChartData[];
+	weeklyChartData!: GenericChartSeriesInput;
+	weeklyExpenseChartDataCopy!: GenericChartSeriesInput;
+	weeklyExpenseChartData!: GenericChartSeriesInput;
+	yearlyExpenseAggregaton: PersonalAccountAggregationDataOutput[] = [];
+	yearlyExpenseTotal!: number;
+	activeValueItem: PersonalAccountAggregationDataOutput | null = null;
+	accountState!: AccountState;
 
-	constructor(private personalAccountApiService: PersonalAccountApiService) {}
-	ngOnChanges(changes: SimpleChanges): void {
-		if (changes?.['personalAccount']?.currentValue) {
-			this.yearlyChartData = this.getYearlyData(this.personalAccount);
-			this.weeklyChartData = this.getWeeklyChartData(this.personalAccount);
-			this.weeklyExpenseChartData = this.getWeeklyExpenseChartData(this.personalAccount);
-		}
+	constructor(
+		private personalAccountApiService: PersonalAccountApiService,
+		private modificationService: PersonalAccountDataModificationService
+	) {}
+
+	ngOnInit(): void {
+		this.weeklyChartData = this.modificationService.getWeeklyChartData(this.personalAccount);
+		this.weeklyExpenseChartDataCopy = this.modificationService.getWeeklyExpenseChartData(this.personalAccount);
+		this.accountState = this.modificationService.getAccountState(this.personalAccount);
+
+		this.yearlyExpenseAggregaton = this.personalAccount.yearlyAggregaton.filter(
+			(d) => d.tagType === TagDataType.Expense
+		);
+		this.yearlyExpenseTotal = this.yearlyExpenseAggregaton.reduce((a, b) => a + b.value, 0);
+		this.weeklyExpenseChartData = { ...this.weeklyExpenseChartDataCopy };
 	}
 
-	ngOnInit(): void {}
-
-	private getYearlyData(data: PersonalAccountOverviewFragment): SwimlaneChartDataSeries[] {
-		return data.yearlyAggregaton.map((d) => {
-			return { name: d.tagName, value: d.value } as SwimlaneChartDataSeries;
-		});
-	}
-
-	private getWeeklyChartData(data: PersonalAccountOverviewFragment): SwimlaneChartData {
-		const weeklyIncomeSeries: SwimlaneChartDataSeries[] = data.weeklyAggregaton.map((d) => {
-			// add together weekly income and expense
-			const weeklyIncome = d.data.reduce(
-				(acc, curr) => acc + (curr.tagType === TagDataType.Income ? curr.value : -curr.value),
-				0
+	onExpenseTagClick(item: PersonalAccountAggregationDataOutput): void {
+		this.activeValueItem = item === this.activeValueItem ? null : item;
+		if (this.activeValueItem) {
+			const visibleSeries = this.weeklyExpenseChartDataCopy.series.filter(
+				(d) => d.name === this.activeValueItem?.tagName
 			);
-			return { name: d.id, value: weeklyIncome };
-		});
-		return { name: data.name, series: weeklyIncomeSeries };
-	}
-
-	private getWeeklyExpenseChartData(data: PersonalAccountOverviewFragment): SwimlaneChartData[] {
-		/*
-          [{
-            "name": "Shopping",
-            "series": [
-              {
-                "value": 2983,
-                "name": "2022-9-42"
-              },
-            ]
-          }]
-    */
-		return data.weeklyAggregaton.reduce((acc, curr) => {
-			curr.data
-				.filter((d) => d.tagType === TagDataType.Expense)
-				.forEach((d) => {
-					// index of tagName in accumulation
-					const savedTagIndex = acc.findIndex((accData) => accData.name === d.tagName);
-
-					if (savedTagIndex === -1) {
-						// tag not yet save = new data
-						const newData = { name: d.tagName, series: [{ name: curr.id, value: d.value }] } as SwimlaneChartData;
-						acc.push(newData);
-					} else {
-						// add another series into saved tag array
-						acc[savedTagIndex].series.push({ name: curr.id, value: d.value });
-					}
-				});
-
-			return acc;
-		}, [] as SwimlaneChartData[]);
+			this.weeklyExpenseChartData = { ...this.weeklyExpenseChartDataCopy, series: visibleSeries };
+		} else {
+			this.weeklyExpenseChartData = { ...this.weeklyExpenseChartDataCopy };
+		}
 	}
 }

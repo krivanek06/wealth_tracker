@@ -10,9 +10,11 @@
 
 	<!-- spending allocation by tags -->
 	<div class="col-span-1 lg:col-span-2">
-		<app-personal-account-expense-allocation-chart
-			*ngIf="expenseAllocationChartData$ | async as data"
-			[data]="data"
-		></app-personal-account-expense-allocation-chart>
+		<app-generic-chart
+			*ngIf="expenseAllocationChartData$ | async as series"
+			[chartType]="ChartType.pie"
+			[heightPx]="375"
+			[series]="[series]"
+		></app-generic-chart>
 	</div>
 </div>

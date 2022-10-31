@@ -1,0 +1,29 @@
+highcharts-chart::ng-deep {
+	.highcharts-container,
+	.highcharts-container svg {
+		width: 100% !important;
+		height: 100% !important;
+		display: inline-block !important;
+	}
+
+	.highcharts-stocktools-wrapper,
+	.highcharts-bindings-wrapper {
+		display: none;
+	}
+
+	tspan {
+		font-size: inherit;
+	}
+}
+
+:host {
+	@apply relative;
+
+	.expand-icon {
+		@apply absolute right-0 z-10;
+		&:hover {
+			transform: scale(0.9);
+			color: white !important;
+		}
+	}
+}

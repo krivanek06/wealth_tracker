@@ -70,6 +70,7 @@ model PersonalAccountTag {
     createdAt  DateTime                   @default(now())
     modifiedAt DateTime                   @updatedAt
     name       String // custom name for personal account
+    color      String
     type       PersonalAccountTagDataType
 
     // True only for default Tags - by admin

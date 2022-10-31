@@ -1,1 +1,11 @@
-<p>personal-account-daily-entries-filter works!</p>
+<form [formGroup]="formGroup">
+	<!-- display months -->
+	<mat-form-field appearance="outline">
+		<mat-label>Select date range</mat-label>
+		<mat-select formControlName="yearAndMonth">
+			<mat-option *ngFor="let date of yearsAndMonths" [value]="date">
+				{{date | dateFormatter: 'monthName'}} {{ date | dateFormatter: 'yearName' }}
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
+</form>

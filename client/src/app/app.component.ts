@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PreloadDataService } from './core/services';
-import { DialogServiceUtil } from './shared/utils';
+import { DialogServiceUtil } from './shared/dialogs';
 
 @Component({
 	selector: 'app-root',

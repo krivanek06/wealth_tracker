@@ -1,6 +1,6 @@
 import { PersonalAccountTagDataType } from '@prisma/client';
 
-const PERSONAL_ACCOUNT_ICOME_TAGS = [
+const PERSONAL_ACCOUNT_INCOME_TAGS = [
 	{ name: 'Job', type: PersonalAccountTagDataType.INCOME, color: '#22c55d' },
 ] as const;
 
@@ -19,6 +19,6 @@ const PERSONAL_ACCOUNT_EXPENSE_TAGS = [
 ] as const;
 
 export const PERSONAL_ACCOUNT_DEFAULT_TAGS = [
-	...PERSONAL_ACCOUNT_ICOME_TAGS,
+	...PERSONAL_ACCOUNT_INCOME_TAGS,
 	...PERSONAL_ACCOUNT_EXPENSE_TAGS,
 ] as const;

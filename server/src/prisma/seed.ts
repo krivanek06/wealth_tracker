@@ -61,14 +61,32 @@ const createDailyData = async (accunt: PersonalAccount): Promise<void> => {
 	}
 };
 
+const deleteMonthlyData = async (accunt: PersonalAccount): Promise<void> => {
+	const monthlyData = await prisma.personalAccountMonthlyData.findMany({
+		where: {
+			personalAccountId: accunt.id,
+		},
+	});
+	for await (const data of monthlyData) {
+		await prisma.personalAccountMonthlyData.delete({
+			where: {
+				id: data.id,
+			},
+		});
+		console.log(`[Personal account DELETE] Monthly data: ${data.personalAccountId}`);
+	}
+};
+
 const run = async () => {
 	try {
 		console.log('[Personal account] GET');
 		const personalAcc = await getPersonalAccount();
 		console.log(`[Personal account]: ID: ${personalAcc.id} - NAME: ${personalAcc.name}`);
-		console.log('[Personal account daily data] -> start');
+		console.log('[Personal account DELETE] -> daily data start');
+		await deleteMonthlyData(personalAcc);
+		console.log('[Personal account CREATE] -> daily data start');
 		await createDailyData(personalAcc);
-		console.log('[Personal account daily data] -> end');
+		console.log('[Personal account CREATE] -> daily data end');
 	} catch (e) {
 		console.log(e);
 	} finally {

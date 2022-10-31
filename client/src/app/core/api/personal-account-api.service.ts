@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { DataProxy, FetchResult } from '@apollo/client/core';
 import { Apollo } from 'apollo-angular';
 import { map, Observable } from 'rxjs';
-import { MomentServiceUtil } from './../../shared/utils';
+import { DateServiceUtil } from './../../shared/utils';
 import {
 	CreatePersonalAccountDailyEntryGQL,
 	CreatePersonalAccountDailyEntryMutation,
@@ -118,7 +118,7 @@ export class PersonalAccountApiService {
 	}
 
 	getMonthlyDataOverviewFromCache(personalAccountId: string, date: string): PersonalAccountMonthlyDataOverviewFragment {
-		const { year, month, week } = MomentServiceUtil.getDetailsInformationFromDate(date);
+		const { year, month, week } = DateServiceUtil.getDetailsInformationFromDate(date);
 
 		// load personal account from cache
 		const personalAccount = this.getPersonalAccountFromCachce(personalAccountId);
@@ -218,7 +218,7 @@ export class PersonalAccountApiService {
 	createPersonalAccountDailyEntry(
 		input: PersonalAccountDailyDataCreate
 	): Observable<FetchResult<CreatePersonalAccountDailyEntryMutation>> {
-		const { week } = MomentServiceUtil.getDetailsInformationFromDate(input.date);
+		const { week } = DateServiceUtil.getDetailsInformationFromDate(input.date);
 		const tag = this.getDefaultTagsFromCache(input.tagId);
 		const monthlyData = this.getMonthlyDataOverviewFromCache(input.personalAccountId, input.date);
 
@@ -340,7 +340,7 @@ export class PersonalAccountApiService {
 		operation: 'increase' | 'decrease'
 	): void {
 		const personalAccount = this.getPersonalAccountFromCachce(personalAccountId);
-		const dateDetails = MomentServiceUtil.getDetailsInformationFromDate(dailyData.date);
+		const dateDetails = DateServiceUtil.getDetailsInformationFromDate(dailyData.date);
 		const multiplyer = operation === 'increase' ? 1 : -1;
 
 		// update yearlyAggregaton that match tagId

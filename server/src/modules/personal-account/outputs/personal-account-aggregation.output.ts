@@ -58,4 +58,9 @@ export class PersonalAccountAggregationDataOutput {
 		description: 'Type of the tag',
 	})
 	tagType: PersonalAccountTagDataType;
+
+	@Field(() => String, {
+		description: 'Color of the tag',
+	})
+	tagColor: string;
 }

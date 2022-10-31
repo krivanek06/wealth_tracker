@@ -1,1 +1,1 @@
-export * from './swimlane.model';
+export * from './highcharts.model';

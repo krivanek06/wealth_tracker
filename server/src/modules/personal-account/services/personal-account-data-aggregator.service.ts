@@ -172,6 +172,6 @@ export class PersonalAccounDataAggregatorService {
 		value: number
 	): PersonalAccountAggregationDataOutput {
 		const defaultTag = this.personalAccountTagService.getDefaultTagById(tagId);
-		return { entries: 1, tagId, value, tagName: defaultTag.name, tagType: defaultTag.type };
+		return { entries: 1, tagId, value, tagName: defaultTag.name, tagType: defaultTag.type, tagColor: defaultTag.color };
 	}
 }

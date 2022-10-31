@@ -1,0 +1,10 @@
+<div class="m-auto">
+	<button mat-stroked-button class="mb-2" (click)="onScollChange('decement')"><mat-icon>expand_less</mat-icon></button>
+
+	<!-- content projection -->
+	<div #contentWrapper [style.height.px]="workingHeight" class="c-content-wrapper">
+		<ng-content></ng-content>
+	</div>
+
+	<button mat-stroked-button class="mt-2" (click)="onScollChange('increment')"><mat-icon>expand_more</mat-icon></button>
+</div>

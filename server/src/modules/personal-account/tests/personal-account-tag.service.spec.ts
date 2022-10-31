@@ -50,20 +50,23 @@ describe('PersonalAccountTagService', () => {
 
 	describe('Test: registerDefaultTags()', () => {
 		it('should register tags on application start', () => {
+			expect(prismaServiceMock.personalAccountTag.findFirst).toHaveBeenCalledTimes(
+				PERSONAL_ACCOUNT_DEFAULT_TAGS.length
+			);
 			PERSONAL_ACCOUNT_DEFAULT_TAGS.forEach((tag) => {
 				// test loading tag
-				expect(prismaServiceMock.personalAccountTag.findFirst).toBeCalledWith({
+				expect(prismaServiceMock.personalAccountTag.findFirst).toHaveBeenCalledWith({
 					where: {
 						name: tag.name,
 						isDefault: true,
 					},
 				});
-
 				// test creating tag
-				expect(prismaServiceMock.personalAccountTag.create).toBeCalledWith({
+				expect(prismaServiceMock.personalAccountTag.create).toHaveBeenCalledWith({
 					data: {
 						name: tag.name,
 						type: tag.type,
+						color: tag.color,
 						isDefault: true,
 					},
 				});

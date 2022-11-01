@@ -1,11 +1,36 @@
-<form [formGroup]="formGroup">
+<form [formGroup]="formGroup" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-3 lg:flex">
 	<!-- display months -->
-	<mat-form-field appearance="outline">
+	<mat-form-field appearance="outline" class="text-xs">
 		<mat-label>Select date range</mat-label>
 		<mat-select formControlName="yearAndMonth">
-			<mat-option *ngFor="let date of yearsAndMonths" [value]="date">
+			<mat-option *ngFor="let date of displayYearsAndMonths" [value]="date">
 				{{date | dateFormatter: 'monthName'}} {{ date | dateFormatter: 'yearName' }}
 			</mat-option>
 		</mat-select>
 	</mat-form-field>
+
+	<!-- display weeks in the selected month -->
+	<mat-form-field appearance="outline" class="text-xs">
+		<mat-label>Select date range</mat-label>
+		<mat-select formControlName="week">
+			<mat-option *ngFor="let data of displayWeeksInMonth" [value]="data">
+				{{ data === -1 ? 'Unselect' : 'Week ' + data }}
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
+
+	<!-- display tags in the selected month & week -->
+	<mat-form-field appearance="outline" class="text-xs">
+		<mat-label>Select date range</mat-label>
+		<mat-select formControlName="tag" multiple>
+			<mat-option *ngFor="let data of displayTags$ | async" [value]="data.tag.name">
+				{{ data.tag.name }} ({{data.total}})
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
+
+	<!-- current month -->
+	<button mat-stroked-button (click)="onCurrentMonthClick()" type="button" color="primary" class="mb-3">
+		Current month
+	</button>
 </form>

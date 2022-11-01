@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
 import { ControlValueAccessor, FormBuilder } from '@angular/forms';
+import { map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { ModelFormGroup } from '../../../../shared/models';
 import { DailyEntriesFiler } from '../../models';
+import { PersonalAccountMonthlyDataDetailFragment, PersonalAccountTagFragment } from './../../../../core/graphql';
+import { DateServiceUtil } from './../../../../shared/utils';
 
 @Component({
 	selector: 'app-personal-account-daily-entries-filter',
@@ -11,17 +14,73 @@ import { DailyEntriesFiler } from '../../models';
 })
 export class PersonalAccountDailyEntriesFilterComponent implements OnInit, ControlValueAccessor {
 	@Input() weeklyIds!: string[]; // 2022-7-32, 2022-7-33, ...
-	@Input() monthlyDataId!: string; // selected: 2022-7-32
 
-	yearsAndMonths!: string[];
+	/**
+	 * which monthly details is selected by the parent component
+	 */
+	@Input() set selectedMonthlyDataDetail(data: PersonalAccountMonthlyDataDetailFragment | null) {
+		if (!data) {
+			this.displayWeeksInMonth = [];
+			this.displayTags$ = of([]);
+			this.formGroup.controls.week.reset(-1, { emitEvent: false });
+			this.formGroup.controls.tag.reset([], { emitEvent: false });
+			return;
+		}
+		this.displayWeeksInMonth = [-1, ...new Set(data.dailyData.map((d) => d.week))];
+
+		/**
+		 * based on the selected week -> filter out avaiable tags,
+		 * if no week chosen (-1) then show every tag
+		 */
+		this.displayTags$ = this.formGroup.controls.week.valueChanges.pipe(
+			startWith(-1),
+			switchMap(() => of(data)),
+			tap(() => this.formGroup.controls.tag.reset()), // reset previously selected tags
+			map((monthlyData) => {
+				const selectedWeek = this.formGroup.controls.week.getRawValue();
+
+				// data that match selectedWeek or all
+				const dailyData = monthlyData.dailyData.filter((d) => (selectedWeek !== -1 ? d.week === selectedWeek : true));
+
+				const result: { total: number; tag: PersonalAccountTagFragment }[] = dailyData.reduce((acc, curr) => {
+					const existingIndex = acc.findIndex((d) => d.tag.id === curr.tag.id);
+					if (existingIndex === -1) {
+						// add tag to acc
+						acc.push({ total: 1, tag: curr.tag });
+					} else {
+						// increment total
+						acc[existingIndex].total += 1;
+					}
+
+					return acc;
+				}, [] as { total: number; tag: PersonalAccountTagFragment }[]);
+
+				return result;
+			})
+		);
+	}
+
+	/**
+	 * propery to store `${year}-${month}` format from yearsAndMonths
+	 */
+	displayYearsAndMonths!: string[];
+
+	/**
+	 * property to store available weeks from a selected month
+	 */
+	displayWeeksInMonth: number[] = [];
+
+	/**
+	 * property to store available tags from a selected month & week
+	 */
+	displayTags$?: Observable<{ total: number; tag: PersonalAccountTagFragment }[]>;
 
 	private fb = inject(FormBuilder);
 
 	readonly formGroup: ModelFormGroup<DailyEntriesFiler> = this.fb.nonNullable.group({
 		yearAndMonth: [''],
 		week: [-1],
-		day: [-1],
-		tag: [''],
+		tag: [['']],
 	});
 
 	onChange: (dateRange?: DailyEntriesFiler) => void = () => {
@@ -34,14 +93,14 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	constructor() {}
 
 	ngOnInit(): void {
-		this.yearsAndMonths = [
-			...new Set(
-				this.weeklyIds.map((d) => {
-					const [year, month] = d.split('-');
-					return `${year}-${month}`;
-				})
-			),
-		];
+		this.displayYearsAndMonths = this.getYearsAndMonths();
+	}
+
+	onCurrentMonthClick(): void {
+		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(new Date());
+		this.formGroup.controls.week.reset(-1, { emitEvent: false });
+		this.formGroup.controls.tag.reset([], { emitEvent: false });
+		this.formGroup.controls.yearAndMonth.patchValue(`${year}-${month}`);
 	}
 
 	writeValue(obj: any): void {
@@ -59,5 +118,16 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	 */
 	registerOnTouched(fn: PersonalAccountDailyEntriesFilterComponent['onTouched']): void {
 		this.onTouched = fn;
+	}
+
+	private getYearsAndMonths(): string[] {
+		return [
+			...new Set(
+				this.weeklyIds.map((d) => {
+					const [year, month] = d.split('-');
+					return `${year}-${month}`;
+				})
+			),
+		];
 	}
 }

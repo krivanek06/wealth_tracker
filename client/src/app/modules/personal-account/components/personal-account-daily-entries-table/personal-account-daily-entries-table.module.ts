@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
@@ -9,7 +11,16 @@ import { PersonalAccountDailyEntriesTableComponent } from './personal-account-da
 
 @NgModule({
 	declarations: [PersonalAccountDailyEntriesTableComponent],
-	imports: [CommonModule, MatTableModule, MatRippleModule, MatSortModule, MatPaginatorModule, StylePaginatorDirective],
+	imports: [
+		CommonModule,
+		MatTableModule,
+		MatRippleModule,
+		MatSortModule,
+		MatPaginatorModule,
+		StylePaginatorDirective,
+		MatIconModule,
+		MatButtonModule,
+	],
 	exports: [PersonalAccountDailyEntriesTableComponent],
 })
 export class PersonalAccountDailyEntriesTableModule {}

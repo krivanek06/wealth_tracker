@@ -40,11 +40,19 @@
 	</tr>
 </table>
 
-<!-- pagination -->
-<mat-paginator
-	appStylePaginator
-	showFirstLastButtons
-	[length]="dataSource.filteredData?.length"
-	[appCustomLength]="dataSource.filteredData?.length"
-	[pageSize]="12"
-></mat-paginator>
+<div class="flex flex-col-reverse md:flex-row gap-3 items-center justify-between">
+	<!-- add button -->
+	<button mat-stroked-button type="button" color="primary">
+		<mat-icon>add</mat-icon>
+		Add daily entry
+	</button>
+
+	<!-- pagination -->
+	<mat-paginator
+		appStylePaginator
+		showFirstLastButtons
+		[length]="dataSource.filteredData?.length"
+		[appCustomLength]="dataSource.filteredData?.length"
+		[pageSize]="12"
+	></mat-paginator>
+</div>

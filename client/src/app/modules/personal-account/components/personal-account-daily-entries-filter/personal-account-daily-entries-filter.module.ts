@@ -16,6 +16,7 @@ import { PersonalAccountDailyEntriesFilterComponent } from './personal-account-d
 		MatButtonModule,
 		ReactiveFormsModule,
 		PersonalAccountDailyEntryPipe,
+		MatButtonModule,
 	],
 	exports: [PersonalAccountDailyEntriesFilterComponent],
 })

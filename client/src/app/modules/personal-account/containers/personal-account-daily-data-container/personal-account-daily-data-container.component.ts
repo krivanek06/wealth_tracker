@@ -35,8 +35,9 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 	constructor(private personalAccountApiService: PersonalAccountApiService) {}
 
 	ngOnInit(): void {
-		//this.monthlyDataId = this.personalAccount.monthlyData[0].id;
-		this.setCurrentMonthToFilterForm();
+		// set current month to form
+		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(new Date());
+		this.filterControl.patchValue({ yearAndMonth: `${year}-${month}`, tag: [''], week: -1 }, { emitEvent: false });
 
 		this.weeklyIds = this.personalAccount.weeklyAggregaton.map((d) => d.id);
 
@@ -78,11 +79,6 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		this.expenseAllocationChartData$ = this.monthlyDataDetail$.pipe(
 			map((result) => this.formatToExpenseAllocationChartDatta(result))
 		);
-	}
-
-	private setCurrentMonthToFilterForm(): void {
-		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(new Date());
-		this.filterControl.patchValue({ yearAndMonth: `${year}-${month}`, tag: [''], week: -1 }, { emitEvent: false });
 	}
 
 	private formatToExpenseAllocationChartDatta(data: PersonalAccountMonthlyDataDetailFragment): GenericChartSeriesPie {

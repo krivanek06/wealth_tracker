@@ -1,4 +1,4 @@
-<form [formGroup]="formGroup" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-3 lg:flex">
+<form [formGroup]="formGroup" class="grid grid-cols-2 md:grid-cols-4 gap-x-3 lg:flex">
 	<!-- display months -->
 	<mat-form-field appearance="outline" class="text-xs">
 		<mat-label>Select date range</mat-label>
@@ -30,7 +30,9 @@
 	</mat-form-field>
 
 	<!-- current month -->
-	<button mat-stroked-button (click)="onCurrentMonthClick()" type="button" color="primary" class="mb-3">
-		Current month
-	</button>
+	<div class="mt-1 h-11">
+		<button mat-stroked-button (click)="onCurrentMonthClick()" type="button" color="primary" class="w-full h-full">
+			Current month
+		</button>
+	</div>
 </form>

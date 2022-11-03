@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
-import { ControlValueAccessor, FormBuilder } from '@angular/forms';
-import { map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { ChangeDetectionStrategy, Component, forwardRef, inject, Input, OnInit } from '@angular/core';
+import { ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { map, Observable, of, startWith, switchMap } from 'rxjs';
 import { ModelFormGroup } from '../../../../shared/models';
 import { DailyEntriesFiler } from '../../models';
 import { PersonalAccountMonthlyDataDetailFragment, PersonalAccountTagFragment } from './../../../../core/graphql';
@@ -11,9 +11,26 @@ import { DateServiceUtil } from './../../../../shared/utils';
 	templateUrl: './personal-account-daily-entries-filter.component.html',
 	styleUrls: ['./personal-account-daily-entries-filter.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	providers: [
+		{
+			provide: NG_VALUE_ACCESSOR,
+			useExisting: forwardRef(() => PersonalAccountDailyEntriesFilterComponent),
+			multi: true,
+		},
+	],
 })
 export class PersonalAccountDailyEntriesFilterComponent implements OnInit, ControlValueAccessor {
-	@Input() weeklyIds!: string[]; // 2022-7-32, 2022-7-33, ...
+	// 2022-7-32, 2022-7-33,
+	@Input() set weeklyIds(ids: string[]) {
+		this.displayYearsAndMonths = [
+			...new Set(
+				ids.map((d) => {
+					const [year, month] = d.split('-');
+					return `${year}-${month}`;
+				})
+			),
+		];
+	}
 
 	/**
 	 * which monthly details is selected by the parent component
@@ -28,6 +45,9 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 		}
 		this.displayWeeksInMonth = [-1, ...new Set(data.dailyData.map((d) => d.week))];
 
+		// save selected month-year into the form
+		this.formGroup.controls.yearAndMonth.patchValue(`${data.year}-${data.month}`, { emitEvent: false, onlySelf: true });
+
 		/**
 		 * based on the selected week -> filter out avaiable tags,
 		 * if no week chosen (-1) then show every tag
@@ -35,7 +55,6 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 		this.displayTags$ = this.formGroup.controls.week.valueChanges.pipe(
 			startWith(-1),
 			switchMap(() => of(data)),
-			tap(() => this.formGroup.controls.tag.reset()), // reset previously selected tags
 			map((monthlyData) => {
 				const selectedWeek = this.formGroup.controls.week.getRawValue();
 
@@ -93,13 +112,26 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	constructor() {}
 
 	ngOnInit(): void {
-		this.displayYearsAndMonths = this.getYearsAndMonths();
+		this.formGroup.controls.yearAndMonth.valueChanges.subscribe(() => {
+			// on month change reset weeks and tags
+			this.formGroup.controls.week.reset(-1, { emitEvent: false, onlySelf: true });
+			this.formGroup.controls.tag.reset([''], { emitEvent: false, onlySelf: true });
+			this.notifyParent();
+		});
+
+		this.formGroup.controls.week.valueChanges.subscribe(() => {
+			// on week change reset tags
+			this.formGroup.controls.tag.reset([''], { emitEvent: false, onlySelf: true });
+			this.notifyParent();
+		});
+
+		this.formGroup.controls.tag.valueChanges.subscribe(() => {
+			this.notifyParent();
+		});
 	}
 
 	onCurrentMonthClick(): void {
 		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(new Date());
-		this.formGroup.controls.week.reset(-1, { emitEvent: false });
-		this.formGroup.controls.tag.reset([], { emitEvent: false });
 		this.formGroup.controls.yearAndMonth.patchValue(`${year}-${month}`);
 	}
 
@@ -120,14 +152,7 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 		this.onTouched = fn;
 	}
 
-	private getYearsAndMonths(): string[] {
-		return [
-			...new Set(
-				this.weeklyIds.map((d) => {
-					const [year, month] = d.split('-');
-					return `${year}-${month}`;
-				})
-			),
-		];
+	private notifyParent(): void {
+		this.onChange(this.formGroup.getRawValue());
 	}
 }

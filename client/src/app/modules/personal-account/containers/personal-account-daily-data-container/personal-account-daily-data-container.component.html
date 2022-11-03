@@ -1,5 +1,6 @@
 <!-- table filter -->
 <app-personal-account-daily-entries-filter
+	[formControl]="filterControl"
 	[weeklyIds]="weeklyIds"
 	[selectedMonthlyDataDetail]="monthlyDataDetail$ | async"
 ></app-personal-account-daily-entries-filter>
@@ -8,7 +9,7 @@
 	<!-- table body -->
 	<div class="col-span-1 xl:col-span-3">
 		<app-personal-account-daily-entries-table
-			[personalAccountDailyData]="(monthlyDataDetail$ | async)?.dailyData"
+			[personalAccountDailyData]="(monthlyDataDetailTable$ | async)?.dailyData"
 		></app-personal-account-daily-entries-table>
 	</div>
 

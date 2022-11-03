@@ -2,31 +2,42 @@
 	<!-- tags -->
 	<ng-container matColumnDef="tag">
 		<th mat-header-cell *matHeaderCellDef>Tag</th>
-		<td mat-cell *matCellDef="let row">{{ row.tag.name }}</td>
+		<td mat-cell *matCellDef="let row">
+			<div class="flex gap-3 items-center">
+				<!-- tag svg -->
+				<img appDefaultImg imageType="tags" [src]="row.tag.name" class="h-7" />
+
+				<!-- tag data -->
+				<div class="flex flex-col">
+					<span class="text-gray-200">{{ row.tag.name }}</span>
+					<span class="table-cell sm:hidden">{{ row.date | date: 'EEEE h:mm a, MMM d.' }}</span>
+				</div>
+			</div>
+		</td>
 	</ng-container>
 
 	<!-- value -->
 	<ng-container matColumnDef="value">
 		<th mat-header-cell *matHeaderCellDef>Value</th>
-		<td mat-cell *matCellDef="let row">{{ row.value | currency }}</td>
+		<td mat-cell *matCellDef="let row" class="text-red-500">{{ row.value | currency }}</td>
 	</ng-container>
 
 	<!-- date -->
 	<ng-container matColumnDef="date">
-		<th mat-header-cell *matHeaderCellDef>Date</th>
-		<td mat-cell *matCellDef="let row">{{ row.date | date: 'EEEE h:mm:ss a (MMM d, y)' }}</td>
+		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Date</th>
+		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">{{ row.date | date: 'EEEE h:mm a (MMM d)' }}</td>
 	</ng-container>
 
 	<!-- week -->
 	<ng-container matColumnDef="week">
-		<th mat-header-cell *matHeaderCellDef>Week</th>
-		<td mat-cell *matCellDef="let row">{{ row.week }}</td>
+		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Week</th>
+		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">{{ row.week }}</td>
 	</ng-container>
 
 	<!-- month -->
 	<ng-container matColumnDef="month">
-		<th mat-header-cell *matHeaderCellDef>Month</th>
-		<td mat-cell *matCellDef="let row">{{ row.date | date: 'MMMM' }}</td>
+		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Month</th>
+		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">{{ row.date | date: 'MMMM' }}</td>
 	</ng-container>
 
 	<tr mat-header-row *matHeaderRowDef="displayedColumns" class="hidden sm:contents"></tr>
@@ -40,11 +51,19 @@
 	</tr>
 </table>
 
-<!-- pagination -->
-<mat-paginator
-	appStylePaginator
-	showFirstLastButtons
-	[length]="dataSource.filteredData?.length"
-	[appCustomLength]="dataSource.filteredData?.length"
-	[pageSize]="12"
-></mat-paginator>
+<div class="flex items-center justify-end sm:justify-between">
+	<!-- add button -->
+	<button mat-stroked-button type="button" color="primary" class="hidden sm:block">
+		<mat-icon>add</mat-icon>
+		Add daily entry
+	</button>
+
+	<!-- pagination -->
+	<mat-paginator
+		appStylePaginator
+		showFirstLastButtons
+		[length]="dataSource.filteredData?.length"
+		[appCustomLength]="dataSource.filteredData?.length"
+		[pageSize]="12"
+	></mat-paginator>
+</div>

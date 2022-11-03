@@ -201,6 +201,7 @@ describe('PersonalAccounDataAggregatorService', () => {
 							tagId: '634a55e83d5f2180e336af5a',
 							tagName: mockTag.name,
 							tagType: mockTag.type,
+							tagColor: undefined,
 						},
 						{
 							value: 20,
@@ -208,6 +209,7 @@ describe('PersonalAccounDataAggregatorService', () => {
 							tagId: '634a55e93d5f2180e336af5c',
 							tagName: mockTag.name,
 							tagType: mockTag.type,
+							tagColor: undefined,
 						},
 						{
 							value: 10,
@@ -215,6 +217,7 @@ describe('PersonalAccounDataAggregatorService', () => {
 							tagId: '634a55e93d5f2180e336af5f',
 							tagName: mockTag.name,
 							tagType: mockTag.type,
+							tagColor: undefined,
 						},
 					],
 				},
@@ -230,6 +233,7 @@ describe('PersonalAccounDataAggregatorService', () => {
 							tagId: '634a55ea3d5f2180e336af60',
 							tagName: mockTag.name,
 							tagType: mockTag.type,
+							tagColor: undefined,
 						},
 					],
 				},
@@ -245,6 +249,7 @@ describe('PersonalAccounDataAggregatorService', () => {
 							tagId: '634a55ea3d5f2180e336af60',
 							tagName: mockTag.name,
 							tagType: mockTag.type,
+							tagColor: undefined,
 						},
 						{
 							value: 12,
@@ -252,6 +257,7 @@ describe('PersonalAccounDataAggregatorService', () => {
 							tagId: '634a55ea3d5f2180e336af61',
 							tagName: mockTag.name,
 							tagType: mockTag.type,
+							tagColor: undefined,
 						},
 						{
 							value: 23,
@@ -259,6 +265,7 @@ describe('PersonalAccounDataAggregatorService', () => {
 							tagId: '634a55e83d5f2180e336af5a',
 							tagName: mockTag.name,
 							tagType: mockTag.type,
+							tagColor: undefined,
 						},
 					],
 				},

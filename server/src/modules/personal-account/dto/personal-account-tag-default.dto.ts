@@ -5,7 +5,7 @@ const PERSONAL_ACCOUNT_INCOME_TAGS = [
 ] as const;
 
 const PERSONAL_ACCOUNT_EXPENSE_TAGS = [
-	{ name: 'Shoping', type: PersonalAccountTagDataType.EXPENSE, color: '#E8501E' },
+	{ name: 'Shopping', type: PersonalAccountTagDataType.EXPENSE, color: '#E8501E' },
 	{ name: 'Coffee', type: PersonalAccountTagDataType.EXPENSE, color: '#DB355E' },
 	{ name: 'Transport', type: PersonalAccountTagDataType.EXPENSE, color: '#AD4185' },
 	{ name: 'House', type: PersonalAccountTagDataType.EXPENSE, color: '#AE4ABE' },
@@ -13,9 +13,13 @@ const PERSONAL_ACCOUNT_EXPENSE_TAGS = [
 	{ name: 'Restaurant', type: PersonalAccountTagDataType.EXPENSE, color: '#FFE6D6' },
 	{ name: 'Health', type: PersonalAccountTagDataType.EXPENSE, color: '#EBAA93' },
 	{ name: 'Education', type: PersonalAccountTagDataType.EXPENSE, color: '#85AEE1' },
+	{ name: 'Clothes', type: PersonalAccountTagDataType.EXPENSE, color: '#DB388E' },
 	{ name: 'Self care', type: PersonalAccountTagDataType.EXPENSE, color: '#5564D9' },
 	{ name: 'Food', type: PersonalAccountTagDataType.EXPENSE, color: '#E8501E' },
 	{ name: 'Charity', type: PersonalAccountTagDataType.EXPENSE, color: '#DB355E' },
+	{ name: 'Gift', type: PersonalAccountTagDataType.EXPENSE, color: '#DB388E' },
+	{ name: 'Sport', type: PersonalAccountTagDataType.EXPENSE, color: '#DB388E' },
+	{ name: 'Pets', type: PersonalAccountTagDataType.EXPENSE, color: '#DB388E' },
 ] as const;
 
 export const PERSONAL_ACCOUNT_DEFAULT_TAGS = [

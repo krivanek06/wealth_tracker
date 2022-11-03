@@ -1,7 +1,7 @@
 <form [formGroup]="formGroup" class="grid grid-cols-2 md:grid-cols-4 gap-x-3 lg:flex">
 	<!-- display months -->
 	<mat-form-field appearance="outline" class="text-xs">
-		<mat-label>Select date range</mat-label>
+		<mat-label>Select month</mat-label>
 		<mat-select formControlName="yearAndMonth">
 			<mat-option *ngFor="let date of displayYearsAndMonths" [value]="date">
 				{{date | dateFormatter: 'monthName'}} {{ date | dateFormatter: 'yearName' }}
@@ -11,7 +11,7 @@
 
 	<!-- display weeks in the selected month -->
 	<mat-form-field appearance="outline" class="text-xs">
-		<mat-label>Select date range</mat-label>
+		<mat-label>Select week</mat-label>
 		<mat-select formControlName="week">
 			<mat-option *ngFor="let data of displayWeeksInMonth" [value]="data">
 				{{ data === -1 ? 'Unselect' : 'Week ' + data }}
@@ -21,10 +21,13 @@
 
 	<!-- display tags in the selected month & week -->
 	<mat-form-field appearance="outline" class="text-xs">
-		<mat-label>Select date range</mat-label>
+		<mat-label>Select tag</mat-label>
 		<mat-select formControlName="tag" multiple>
 			<mat-option *ngFor="let data of displayTags$ | async" [value]="data.tag.name">
-				{{ data.tag.name }} ({{data.total}})
+				<div class="flex items-center gap-3">
+					<img appDefaultImg imageType="tags" [src]="data.tag.name" class="h-6" />
+					<span>{{ data.tag.name }} ({{data.total}})</span>
+				</div>
 			</mat-option>
 		</mat-select>
 	</mat-form-field>

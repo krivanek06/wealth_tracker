@@ -3,9 +3,15 @@
 	<ng-container matColumnDef="tag">
 		<th mat-header-cell *matHeaderCellDef>Tag</th>
 		<td mat-cell *matCellDef="let row">
-			<div class="flex flex-col">
-				<span class="text-gray-200">{{ row.tag.name }}</span>
-				<span class="table-cell sm:hidden">{{ row.date | date: 'EEEE h:mm a, MMM d.' }}</span>
+			<div class="flex gap-3 items-center">
+				<!-- tag svg -->
+				<img appDefaultImg imageType="tags" [src]="row.tag.name" class="h-7" />
+
+				<!-- tag data -->
+				<div class="flex flex-col">
+					<span class="text-gray-200">{{ row.tag.name }}</span>
+					<span class="table-cell sm:hidden">{{ row.date | date: 'EEEE h:mm a, MMM d.' }}</span>
+				</div>
 			</div>
 		</td>
 	</ng-container>

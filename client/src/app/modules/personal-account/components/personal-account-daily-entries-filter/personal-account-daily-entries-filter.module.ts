@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { PersonalAccountDailyEntryPipe } from '../../pipes';
+import { DefaultImgDirective } from './../../../../shared/directives';
 import { PersonalAccountDailyEntriesFilterComponent } from './personal-account-daily-entries-filter.component';
 
 @NgModule({
@@ -17,6 +18,7 @@ import { PersonalAccountDailyEntriesFilterComponent } from './personal-account-d
 		ReactiveFormsModule,
 		PersonalAccountDailyEntryPipe,
 		MatButtonModule,
+		DefaultImgDirective,
 	],
 	exports: [PersonalAccountDailyEntriesFilterComponent],
 })

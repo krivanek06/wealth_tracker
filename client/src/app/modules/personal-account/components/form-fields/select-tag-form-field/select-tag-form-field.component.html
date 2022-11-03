@@ -1,0 +1,53 @@
+<!-- multi select -->
+<mat-form-field *ngIf="multiSelect" appearance="outline">
+	<mat-label>Select tag</mat-label>
+
+	<!-- multi -->
+	<mat-select [formControl]="selectedTagsControl" [multiple]="true">
+		<!-- selected tags -->
+		<mat-select-trigger *ngIf="selectedTagsControl.value.length > 0" class="flex">
+			<div class="flex items-center gap-3 min-w-fit mr-3" *ngFor="let tag of selectedTagsControl.value">
+				<img appDefaultImg imageType="tags" [src]="tag.name" class="h-6" />
+				<span>{{ tag.name }}</span>
+			</div>
+		</mat-select-trigger>
+
+		<!-- select body -->
+		<mat-option *ngFor="let data of displayTags ?? []" [value]="data.tag">
+			<div class="flex items-center gap-3">
+				<img appDefaultImg imageType="tags" [src]="data.tag.name" class="h-6" />
+				<span
+					>{{ data.tag.name }}
+					<ng-container *ngIf="data.total">({{data.total}})</ng-container>
+				</span>
+			</div>
+		</mat-option>
+	</mat-select>
+</mat-form-field>
+
+<!-- single select -->
+<mat-form-field *ngIf="!multiSelect" appearance="outline">
+	<mat-label>Select tag</mat-label>
+
+	<!-- multi -->
+	<mat-select [formControl]="selectedTagControl" [multiple]="false">
+		<!-- selected tags -->
+		<mat-select-trigger *ngIf="selectedTagControl.value">
+			<div class="flex items-center gap-3 min-w-fit mr-3">
+				<img appDefaultImg imageType="tags" [src]="selectedTagControl.value.name" class="h-6" />
+				<span>{{ selectedTagControl.value }}</span>
+			</div>
+		</mat-select-trigger>
+
+		<!-- select body -->
+		<mat-option *ngFor="let data of displayTags ?? []" [value]="data.tag">
+			<div class="flex items-center gap-3">
+				<img appDefaultImg imageType="tags" [src]="data.tag.name" class="h-6" />
+				<span
+					>{{ data.tag.name }}
+					<ng-container *ngIf="data.total">({{data.total}})</ng-container>
+				</span>
+			</div>
+		</mat-option>
+	</mat-select>
+</mat-form-field>

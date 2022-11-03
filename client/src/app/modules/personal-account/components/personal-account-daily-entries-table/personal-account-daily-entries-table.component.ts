@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -11,6 +11,7 @@ import { PersonalAccountDailyDataFragment } from './../../../../core/graphql';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountDailyEntriesTableComponent implements OnInit {
+	@Output() dailyEntryClickEmitter: EventEmitter<void> = new EventEmitter<void>();
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 	@ViewChild(MatSort) sort!: MatSort;
 
@@ -28,5 +29,9 @@ export class PersonalAccountDailyEntriesTableComponent implements OnInit {
 
 	identify(index: number, item: PersonalAccountDailyDataFragment): string {
 		return item.id;
+	}
+
+	onDailyEntryClick(): void {
+		this.dailyEntryClickEmitter.emit();
 	}
 }

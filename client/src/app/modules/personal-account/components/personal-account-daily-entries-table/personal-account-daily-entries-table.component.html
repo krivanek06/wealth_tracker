@@ -53,7 +53,7 @@
 
 <div class="flex items-center justify-end sm:justify-between">
 	<!-- add button -->
-	<button mat-stroked-button type="button" color="primary" class="hidden sm:block">
+	<button mat-stroked-button (click)="onDailyEntryClick()" type="button" color="primary" class="hidden sm:block">
 		<mat-icon>add</mat-icon>
 		Add daily entry
 	</button>

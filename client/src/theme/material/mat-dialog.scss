@@ -1,0 +1,31 @@
+.g-mat-dialog .mat-dialog-container {
+	background: linear-gradient(126deg, #10255a 0%, #0c1d44 29%, #0c183e 44%, #061238 73%, #060e28 100%);
+	// max-width: 90vw !important;
+	// width: 90vw !important;
+	// padding-right: 0;
+	// overflow: hidden;
+	// padding-left: 0;
+
+	@screen md {
+		width: 75vw !important;
+	}
+
+	@screen xl {
+		width: 60vw !important;
+	}
+}
+
+// mat-dialog-content {
+// 	min-height: 94vh !important;
+// 	max-width: 100vw !important;
+// 	margin: auto !important;
+// 	padding: 16px !important;
+// 	overflow-y: auto !important;
+// 	max-height: fit-content !important;
+
+// 	@screen lg {
+// 		min-height: 100px !important;
+// 		padding-left: 32px !important;
+// 		padding-right: 32px !important;
+// 	}
+// }

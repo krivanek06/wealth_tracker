@@ -1,14 +1,18 @@
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { map, Observable, startWith, switchMap } from 'rxjs';
 import { PersonalAccountApiService } from './../../../../core/api';
 import {
+	PersonalAccountDailyDataFragment,
 	PersonalAccountMonthlyDataDetailFragment,
 	PersonalAccountOverviewFragment,
+	PersonalAccountTagFragment,
 	TagDataType,
 } from './../../../../core/graphql';
 import { ChartType, GenericChartSeriesData, GenericChartSeriesPie } from './../../../../shared/models';
 import { DateServiceUtil } from './../../../../shared/utils';
+import { PersonalAccountDailyDataEntryComponent } from './../../modals/personal-account-daily-data-entry/personal-account-daily-data-entry.component';
 
 @Component({
 	selector: 'app-personal-account-daily-data-container',
@@ -29,15 +33,15 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 	readonly filterControl = this.fb.nonNullable.control({
 		yearAndMonth: '',
 		week: -1,
-		tag: [''],
+		tag: [] as PersonalAccountTagFragment[],
 	});
 
-	constructor(private personalAccountApiService: PersonalAccountApiService) {}
+	constructor(private personalAccountApiService: PersonalAccountApiService, private dialog: MatDialog) {}
 
 	ngOnInit(): void {
 		// set current month to form
 		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(new Date());
-		this.filterControl.patchValue({ yearAndMonth: `${year}-${month}`, tag: [''], week: -1 }, { emitEvent: false });
+		this.filterControl.patchValue({ yearAndMonth: `${year}-${month}`, tag: [], week: -1 }, { emitEvent: false });
 
 		this.weeklyIds = this.personalAccount.weeklyAggregaton.map((d) => d.id);
 
@@ -58,11 +62,11 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 
 		this.monthlyDataDetailTable$ = this.monthlyDataDetail$.pipe(
 			map((monthlyDataDetails) => {
-				const selectedTags = this.filterControl.getRawValue().tag;
+				const selectedTags = this.filterControl.getRawValue().tag.map((d) => d.name);
 				const selectedWeek = this.filterControl.getRawValue().week;
 
 				const filteredDailyData = monthlyDataDetails.dailyData.filter((d) => {
-					if (selectedTags.length !== 0 && selectedTags[0] !== '' && !selectedTags.includes(d.tag.name)) {
+					if (selectedTags.length !== 0 && !selectedTags.includes(d.tag.name)) {
 						return false;
 					}
 					if (selectedWeek !== -1 && selectedWeek !== d.week) {
@@ -79,6 +83,20 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		this.expenseAllocationChartData$ = this.monthlyDataDetail$.pipe(
 			map((result) => this.formatToExpenseAllocationChartDatta(result))
 		);
+	}
+
+	async onDailyEntryClick(dailyData: PersonalAccountDailyDataFragment | null): Promise<void> {
+		const dialogRef = this.dialog.open(PersonalAccountDailyDataEntryComponent, {
+			data: {
+				dailyData,
+			},
+			maxWidth: '100vw',
+			minWidth: '60vw',
+			panelClass: 'g-mat-dialog-big',
+		});
+
+		const dismiss = await dialogRef.afterClosed().toPromise();
+		return dismiss;
 	}
 
 	private formatToExpenseAllocationChartDatta(data: PersonalAccountMonthlyDataDetailFragment): GenericChartSeriesPie {

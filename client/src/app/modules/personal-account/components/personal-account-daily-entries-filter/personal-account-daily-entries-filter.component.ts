@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, forwardRef, inject, Input, OnInit }
 import { ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { map, Observable, of, startWith, switchMap } from 'rxjs';
 import { ModelFormGroup } from '../../../../shared/models';
-import { DailyEntriesFiler } from '../../models';
+import { DailyEntriesFiler, DisplayTagFormField } from '../../models';
 import { PersonalAccountMonthlyDataDetailFragment, PersonalAccountTagFragment } from './../../../../core/graphql';
 import { DateServiceUtil } from './../../../../shared/utils';
 
@@ -92,14 +92,14 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	/**
 	 * property to store available tags from a selected month & week
 	 */
-	displayTags$?: Observable<{ total: number; tag: PersonalAccountTagFragment }[]>;
+	displayTags$?: Observable<DisplayTagFormField[]>;
 
 	private fb = inject(FormBuilder);
 
 	readonly formGroup: ModelFormGroup<DailyEntriesFiler> = this.fb.nonNullable.group({
 		yearAndMonth: [''],
 		week: [-1],
-		tag: [['']],
+		tag: [[] as PersonalAccountTagFragment[]],
 	});
 
 	onChange: (dateRange?: DailyEntriesFiler) => void = () => {
@@ -115,13 +115,13 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 		this.formGroup.controls.yearAndMonth.valueChanges.subscribe(() => {
 			// on month change reset weeks and tags
 			this.formGroup.controls.week.reset(-1, { emitEvent: false, onlySelf: true });
-			this.formGroup.controls.tag.reset([''], { emitEvent: false, onlySelf: true });
+			this.formGroup.controls.tag.reset([], { emitEvent: false, onlySelf: true });
 			this.notifyParent();
 		});
 
 		this.formGroup.controls.week.valueChanges.subscribe(() => {
 			// on week change reset tags
-			this.formGroup.controls.tag.reset([''], { emitEvent: false, onlySelf: true });
+			this.formGroup.controls.tag.reset([], { emitEvent: false, onlySelf: true });
 			this.notifyParent();
 		});
 

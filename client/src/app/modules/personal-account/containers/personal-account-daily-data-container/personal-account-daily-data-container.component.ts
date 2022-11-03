@@ -8,6 +8,7 @@ import {
 	TagDataType,
 } from './../../../../core/graphql';
 import { ChartType, GenericChartSeriesData, GenericChartSeriesPie } from './../../../../shared/models';
+import { DateServiceUtil } from './../../../../shared/utils';
 
 @Component({
 	selector: 'app-personal-account-daily-data-container',
@@ -35,11 +36,8 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 
 	ngOnInit(): void {
 		//this.monthlyDataId = this.personalAccount.monthlyData[0].id;
-		const data = this.personalAccount.monthlyData[0];
-		this.filterControl.patchValue(
-			{ yearAndMonth: `${data.year}-${data.month}`, tag: [''], week: -1 },
-			{ emitEvent: false }
-		);
+		this.setCurrentMonthToFilterForm();
+
 		this.weeklyIds = this.personalAccount.weeklyAggregaton.map((d) => d.id);
 
 		// load / filter date based on filter change
@@ -80,6 +78,11 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		this.expenseAllocationChartData$ = this.monthlyDataDetail$.pipe(
 			map((result) => this.formatToExpenseAllocationChartDatta(result))
 		);
+	}
+
+	private setCurrentMonthToFilterForm(): void {
+		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(new Date());
+		this.filterControl.patchValue({ yearAndMonth: `${year}-${month}`, tag: [''], week: -1 }, { emitEvent: false });
 	}
 
 	private formatToExpenseAllocationChartDatta(data: PersonalAccountMonthlyDataDetailFragment): GenericChartSeriesPie {

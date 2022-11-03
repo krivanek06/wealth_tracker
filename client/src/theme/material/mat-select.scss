@@ -1,0 +1,35 @@
+// turning default arrow to chevron
+.mat-select-arrow {
+	font-family: 'Material Icons';
+	border: 0 !important;
+
+	&:before {
+		font-size: 16px;
+		display: block;
+		margin-top: -10px;
+		margin-left: -12px;
+		width: fit-content;
+	}
+
+	[aria-expanded='false'] &:before {
+		content: 'expand_more';
+	}
+
+	[aria-expanded='true'] &:before {
+		content: 'expand_less';
+	}
+}
+
+// custom arrow is reaching into trigger space
+mat-select-trigger {
+	margin-right: 8px;
+	overflow: clip;
+}
+
+.mat-select-value {
+	color: var(--color-gray-300) !important;
+}
+
+.mat-select-min-line {
+	font-size: 14px !important;
+}

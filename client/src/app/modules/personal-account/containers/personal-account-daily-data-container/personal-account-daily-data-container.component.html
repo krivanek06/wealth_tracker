@@ -5,6 +5,12 @@
 	[selectedMonthlyDataDetail]="monthlyDataDetail$ | async"
 ></app-personal-account-daily-entries-filter>
 
+<!-- add button -->
+<button mat-stroked-button type="button" color="primary" class="block sm:hidden w-full mb-2">
+	<mat-icon>add</mat-icon>
+	Add daily entry
+</button>
+
 <div class="grid grid-cols-1 xl:grid-cols-5 gap-4 min-h-[300px] items-center">
 	<!-- table body -->
 	<div class="col-span-1 xl:col-span-3">
@@ -15,12 +21,16 @@
 
 	<!-- spending allocation by tags -->
 	<div class="col-span-2 hidden xl:block">
-		<app-generic-chart
-			*ngIf="expenseAllocationChartData$ | async as series"
-			[chartType]="ChartType.pie"
-			[heightPx]="375"
-			[showDataLabel]="true"
-			[series]="[series]"
-		></app-generic-chart>
+		<ng-container *ngIf="monthlyDataDetail$ | async as monthly">
+			<app-generic-chart
+				*ngIf="expenseAllocationChartData$ | async as series"
+				[chartTitle]="monthly.month + ' ' + monthly.year"
+				chartTitlePosition="center"
+				[chartType]="ChartType.pie"
+				[heightPx]="375"
+				[showDataLabel]="true"
+				[series]="[series]"
+			></app-generic-chart>
+		</ng-container>
 	</div>
 </div>

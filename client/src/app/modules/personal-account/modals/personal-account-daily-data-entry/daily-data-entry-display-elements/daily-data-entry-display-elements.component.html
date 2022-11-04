@@ -1,0 +1,34 @@
+<div class="grid gap-2">
+	<!-- selected tag -->
+	<div *ngIf="tag" class="c-item-wrapper">
+		<div
+			[ngClass]="{
+      'text-red-500':  tagType === TagDataType.Expense,
+      'text-green-500':  tagType === TagDataType.Income
+    }"
+		>
+			{{ tagType === TagDataType.Expense ? 'Expense' : 'Income' }}:
+		</div>
+		<div class="flex items-center gap-2">
+			<img appDefaultImg imageType="tags" [src]="tag[0].name" class="h-7" />
+			<span>{{ tag[0].name }}</span>
+		</div>
+	</div>
+
+	<!-- selected time -->
+	<div *ngIf="time" class="c-item-wrapper">
+		<div>Time</div>
+		<div>{{ time | date: 'h:mm a' }}</div>
+	</div>
+	<!-- selected date -->
+	<div *ngIf="date" class="c-item-wrapper">
+		<div>Date</div>
+		<div>{{ date | date: 'MMM d' }}</div>
+	</div>
+
+	<!-- selected value -->
+	<div *ngIf="value" class="c-item-wrapper">
+		<div>Value</div>
+		<div>{{ value | currency }}</div>
+	</div>
+</div>

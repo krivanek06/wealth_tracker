@@ -1,5 +1,5 @@
 <!-- multi select -->
-<mat-form-field *ngIf="multiSelect" appearance="outline">
+<mat-form-field *ngIf="multiSelect" appearance="outline" class="w-full">
 	<mat-label>Select tag</mat-label>
 
 	<!-- multi -->
@@ -26,7 +26,7 @@
 </mat-form-field>
 
 <!-- single select -->
-<mat-form-field *ngIf="!multiSelect" appearance="outline">
+<mat-form-field *ngIf="!multiSelect" appearance="outline" class="w-full">
 	<mat-label>Select tag</mat-label>
 
 	<!-- multi -->
@@ -35,7 +35,7 @@
 		<mat-select-trigger *ngIf="selectedTagControl.value">
 			<div class="flex items-center gap-3 min-w-fit mr-3">
 				<img appDefaultImg imageType="tags" [src]="selectedTagControl.value.name" class="h-6" />
-				<span>{{ selectedTagControl.value }}</span>
+				<span>{{ selectedTagControl.value.name }}</span>
 			</div>
 		</mat-select-trigger>
 
@@ -43,8 +43,8 @@
 		<mat-option *ngFor="let data of displayTags ?? []" [value]="data.tag">
 			<div class="flex items-center gap-3">
 				<img appDefaultImg imageType="tags" [src]="data.tag.name" class="h-6" />
-				<span
-					>{{ data.tag.name }}
+				<span>
+					{{ data.tag.name }}
 					<ng-container *ngIf="data.total">({{data.total}})</ng-container>
 				</span>
 			</div>

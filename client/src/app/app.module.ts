@@ -1,5 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -18,6 +20,8 @@ import { DialogServiceModule } from './shared/dialogs';
 		DialogServiceModule,
 		GraphQLModule,
 		HttpClientModule,
+		MatNativeDateModule,
+		MatDatepickerModule,
 	],
 	providers: [],
 	bootstrap: [AppComponent],

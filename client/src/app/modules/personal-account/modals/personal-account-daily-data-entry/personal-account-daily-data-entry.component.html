@@ -1,24 +1,68 @@
-<form (submit)="onSave()">
-	<mat-dialog-content class="flex flex-col-reverse md:flex-row gap-x-4 gap-y-2">
+<form (submit)="onSave()" [formGroup]="formGroup">
+	<mat-dialog-content class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2">
 		<!-- form inputs -->
-		<div>
+		<div class="col-span-1 md:col-span-2 flex flex-col">
+			<!-- tag types -->
+			<mat-radio-group
+				aria-label="Select tag type"
+				formControlName="tagType"
+				color="primary"
+				class="flex justify-around mb-2"
+			>
+				<mat-radio-button [value]="TagDataType.Expense">Expense</mat-radio-button>
+				<mat-radio-button [value]="TagDataType.Income">Income</mat-radio-button>
+			</mat-radio-group>
+
 			<!-- tag -->
-			<mat-form-field appearance="fill">
-				<mat-label>Input</mat-label>
-				<input matInput />
-			</mat-form-field>
+			<app-select-tag-form-field
+				formControlName="tag"
+				[multiSelect]="false"
+				[displayTags]="displayTags$ | async"
+			></app-select-tag-form-field>
+
+			<div class="flex flex-col sm:flex-row gap-x-4">
+				<!-- time picker -->
+				<mat-form-field appearance="outline" class="w-full">
+					<mat-label>Choose a time</mat-label>
+					<input matTimepicker #timePicker="matTimepicker" formControlName="time" />
+					<mat-icon matSuffix (click)="timePicker.showDialog()">access_time</mat-icon>
+				</mat-form-field>
+
+				<!-- date -->
+				<mat-form-field appearance="outline" class="w-full">
+					<mat-label>Choose a date</mat-label>
+					<input matInput [matDatepicker]="datePicker" formControlName="date" />
+					<mat-hint>DD.MM.YYYY</mat-hint>
+					<mat-datepicker-toggle matSuffix [for]="datePicker" class="text-gray-200"></mat-datepicker-toggle>
+					<mat-datepicker #datePicker></mat-datepicker>
+				</mat-form-field>
+			</div>
 
 			<!-- value -->
-			<mat-form-field appearance="fill">
-				<mat-label>Input</mat-label>
-				<input matInput />
+			<mat-form-field appearance="outline">
+				<mat-label>Value $$$</mat-label>
+				<input matInput type="number" formControlName="value" />
+				<mat-hint>Add USD to the selected tag, greater than 0</mat-hint>
+				<mat-error *ngIf="formGroup.controls.value.hasError('required')">Value for a tag is required</mat-error>
+				<mat-error *ngIf="formGroup.controls.value.hasError('min')">Minimal value must be greater than 0</mat-error>
 			</mat-form-field>
 		</div>
 
 		<!-- display value form form -->
-		<div></div>
+		<div class="p-4">
+			<app-daily-data-entry-display-elements
+				[tagType]="formGroup.controls.tagType.value"
+				[tag]="formGroup.controls.tag.value"
+				[value]="formGroup.controls.value.value"
+				[date]="formGroup.controls.date.value"
+				[time]="formGroup.controls.time.value"
+			></app-daily-data-entry-display-elements>
+		</div>
 	</mat-dialog-content>
 
+	<mat-divider></mat-divider>
+
+	<!-- action buttons -->
 	<mat-dialog-actions>
 		<button mat-stroked-button (click)="onCancel()" type="button">Cancel</button>
 		<button mat-stroked-button color="primary" (click)="onSave()" type="submit">Save</button>

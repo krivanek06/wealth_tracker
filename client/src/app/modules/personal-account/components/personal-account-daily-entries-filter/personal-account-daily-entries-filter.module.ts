@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { PersonalAccountDailyEntryPipe } from '../../pipes';
-import { SelectTagFormFieldModule } from '../form-fields';
+import { FormMatInputWrapperModule } from './../../../../shared/components';
 import { DefaultImgDirective } from './../../../../shared/directives';
 import { PersonalAccountDailyEntriesFilterComponent } from './personal-account-daily-entries-filter.component';
 
@@ -20,7 +20,7 @@ import { PersonalAccountDailyEntriesFilterComponent } from './personal-account-d
 		PersonalAccountDailyEntryPipe,
 		MatButtonModule,
 		DefaultImgDirective,
-		SelectTagFormFieldModule,
+		FormMatInputWrapperModule,
 	],
 	exports: [PersonalAccountDailyEntriesFilterComponent],
 })

@@ -1,7 +1,9 @@
+<h2 class="g-color-primary text-base">Entry for {{ data.personalAccountName }}</h2>
+
 <form (submit)="onSave()" [formGroup]="formGroup">
-	<mat-dialog-content class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2">
+	<mat-dialog-content class="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
 		<!-- form inputs -->
-		<div class="col-span-1 md:col-span-2 flex flex-col">
+		<div class="col-span-1 lg:col-span-2 flex flex-col">
 			<!-- tag types -->
 			<mat-radio-group
 				aria-label="Select tag type"
@@ -14,38 +16,44 @@
 			</mat-radio-group>
 
 			<!-- tag -->
-			<app-select-tag-form-field
-				formControlName="tag"
-				[multiSelect]="false"
-				[displayTags]="displayTags$ | async"
-			></app-select-tag-form-field>
+			<app-form-mat-input-wrapper
+				controlName="tag"
+				inputCaption="Select tag"
+				inputType="SELECT"
+				[inputSource]="displayTagsInputSource$ | async"
+			></app-form-mat-input-wrapper>
 
 			<div class="flex flex-col sm:flex-row gap-x-4">
-				<!-- time picker -->
-				<mat-form-field appearance="outline" class="w-full">
-					<mat-label>Choose a time</mat-label>
-					<input matTimepicker #timePicker="matTimepicker" formControlName="time" />
-					<mat-icon matSuffix (click)="timePicker.showDialog()">access_time</mat-icon>
-				</mat-form-field>
+				<!-- time -->
+				<app-form-mat-input-wrapper
+					class="w-full"
+					controlName="time"
+					inputCaption="Enter time"
+					inputType="TIMEPICKER"
+				></app-form-mat-input-wrapper>
 
 				<!-- date -->
-				<mat-form-field appearance="outline" class="w-full">
-					<mat-label>Choose a date</mat-label>
-					<input matInput [matDatepicker]="datePicker" formControlName="date" />
-					<mat-hint>DD.MM.YYYY</mat-hint>
-					<mat-datepicker-toggle matSuffix [for]="datePicker" class="text-gray-200"></mat-datepicker-toggle>
-					<mat-datepicker #datePicker></mat-datepicker>
-				</mat-form-field>
+				<app-form-mat-input-wrapper
+					class="w-full"
+					controlName="date"
+					inputCaption="Enter date"
+					inputType="DATEPICKER"
+				></app-form-mat-input-wrapper>
 			</div>
 
 			<!-- value -->
-			<mat-form-field appearance="outline">
+			<app-form-mat-input-wrapper
+				controlName="value"
+				inputCaption="Enter value"
+				inputType="NUMBER"
+			></app-form-mat-input-wrapper>
+			<!-- <mat-form-field appearance="outline">
 				<mat-label>Value $$$</mat-label>
 				<input matInput type="number" formControlName="value" />
 				<mat-hint>Add USD to the selected tag, greater than 0</mat-hint>
 				<mat-error *ngIf="formGroup.controls.value.hasError('required')">Value for a tag is required</mat-error>
 				<mat-error *ngIf="formGroup.controls.value.hasError('min')">Minimal value must be greater than 0</mat-error>
-			</mat-form-field>
+			</mat-form-field> -->
 		</div>
 
 		<!-- display value form form -->
@@ -60,11 +68,13 @@
 		</div>
 	</mat-dialog-content>
 
-	<mat-divider></mat-divider>
+	<div class="mt-4">
+		<mat-divider></mat-divider>
+	</div>
 
 	<!-- action buttons -->
 	<mat-dialog-actions>
-		<button mat-stroked-button (click)="onCancel()" type="button">Cancel</button>
-		<button mat-stroked-button color="primary" (click)="onSave()" type="submit">Save</button>
+		<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
+		<button mat-stroked-button color="primary" type="submit">Save</button>
 	</mat-dialog-actions>
 </form>

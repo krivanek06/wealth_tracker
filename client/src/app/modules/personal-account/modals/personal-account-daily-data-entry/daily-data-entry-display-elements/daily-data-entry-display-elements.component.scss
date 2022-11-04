@@ -2,10 +2,10 @@
 	display: block;
 
 	.c-item-wrapper {
-		@apply flex items-center justify-between sm:justify-start;
+		@apply flex items-center justify-between;
 
 		> div:first-child {
-			@apply text-base  sm:min-w-[120px];
+			@apply text-base flex-1;
 		}
 	}
 }

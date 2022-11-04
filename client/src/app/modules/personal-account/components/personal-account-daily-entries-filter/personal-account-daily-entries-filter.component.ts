@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, forwardRef, inject, Input, OnInit } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { map, Observable, of, startWith, switchMap } from 'rxjs';
-import { ModelFormGroup } from '../../../../shared/models';
-import { DailyEntriesFiler, DisplayTagFormField } from '../../models';
+import { InputSource, ModelFormGroup } from '../../../../shared/models';
+import { DailyEntriesFiler, getTagImageLocation } from '../../models';
 import { PersonalAccountMonthlyDataDetailFragment, PersonalAccountTagFragment } from './../../../../core/graphql';
 import { DateServiceUtil } from './../../../../shared/utils';
 
@@ -38,7 +38,7 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	@Input() set selectedMonthlyDataDetail(data: PersonalAccountMonthlyDataDetailFragment | null) {
 		if (!data) {
 			this.displayWeeksInMonth = [];
-			this.displayTags$ = of([]);
+			this.displayTagsInputSource$ = of([]);
 			this.formGroup.controls.week.reset(-1, { emitEvent: false });
 			this.formGroup.controls.tag.reset([], { emitEvent: false });
 			return;
@@ -52,7 +52,7 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 		 * based on the selected week -> filter out avaiable tags,
 		 * if no week chosen (-1) then show every tag
 		 */
-		this.displayTags$ = this.formGroup.controls.week.valueChanges.pipe(
+		this.displayTagsInputSource$ = this.formGroup.controls.week.valueChanges.pipe(
 			startWith(-1),
 			switchMap(() => of(data)),
 			map((monthlyData) => {
@@ -75,7 +75,16 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 				}, [] as { total: number; tag: PersonalAccountTagFragment }[]);
 
 				return result;
-			})
+			}),
+			map((results) =>
+				results.map((data) => {
+					return {
+						caption: `${data.tag.name} (${data.total})`,
+						value: data.tag,
+						image: getTagImageLocation(data.tag.name),
+					} as InputSource;
+				})
+			)
 		);
 	}
 
@@ -92,7 +101,7 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	/**
 	 * property to store available tags from a selected month & week
 	 */
-	displayTags$?: Observable<DisplayTagFormField[]>;
+	displayTagsInputSource$?: Observable<InputSource[]>;
 
 	private fb = inject(FormBuilder);
 

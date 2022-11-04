@@ -9,7 +9,7 @@ import { PersonalAccountTagFragment, TagDataType } from './../../../../../core/g
 })
 export class DailyDataEntryDisplayElementsComponent implements OnInit {
 	@Input() tagType: TagDataType | null = null;
-	@Input() tag: PersonalAccountTagFragment[] | null = null;
+	@Input() tag: PersonalAccountTagFragment | null = null;
 	@Input() value: number | null = null;
 	@Input() time: Date | null = null;
 	@Input() date: Date | null = null;

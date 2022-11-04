@@ -5,7 +5,7 @@ import { Directive, ElementRef, Input } from '@angular/core';
 	standalone: true,
 })
 export class DefaultImgDirective {
-	@Input() set src(location: string | null) {
+	@Input() set src(location: string | null | undefined) {
 		this.setImage(this.resolveImage(location));
 	}
 	@Input() imageType: 'default' | 'tags' = 'default';

@@ -16,7 +16,8 @@ export class PersonalAccountDailyEntriesTableComponent implements OnInit {
 	@ViewChild(MatSort) sort!: MatSort;
 
 	@Input() set personalAccountDailyData(data: PersonalAccountDailyDataFragment[] | undefined) {
-		this.dataSource = new MatTableDataSource(data);
+		const dataOrder = (data ?? []).sort((a, b) => Number(b.date) - Number(a.date));
+		this.dataSource = new MatTableDataSource(dataOrder);
 		this.dataSource.paginator = this.paginator;
 		this.dataSource.sort = this.sort;
 	}

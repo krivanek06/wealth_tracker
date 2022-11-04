@@ -1,18 +1,20 @@
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { map, Observable, startWith, switchMap } from 'rxjs';
+import { filter, first, iif, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { PersonalAccountApiService } from './../../../../core/api';
 import {
+	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataFragment,
 	PersonalAccountMonthlyDataDetailFragment,
 	PersonalAccountOverviewFragment,
 	PersonalAccountTagFragment,
 	TagDataType,
 } from './../../../../core/graphql';
+import { DialogServiceUtil } from './../../../../shared/dialogs';
 import { ChartType, GenericChartSeriesData, GenericChartSeriesPie } from './../../../../shared/models';
 import { DateServiceUtil } from './../../../../shared/utils';
-import { PersonalAccountDailyDataEntryComponent } from './../../modals/personal-account-daily-data-entry/personal-account-daily-data-entry.component';
+import { PersonalAccountDailyDataEntryComponent } from './../../modals';
 
 @Component({
 	selector: 'app-personal-account-daily-data-container',
@@ -85,18 +87,40 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		);
 	}
 
-	async onDailyEntryClick(dailyData: PersonalAccountDailyDataFragment | null): Promise<void> {
-		const dialogRef = this.dialog.open(PersonalAccountDailyDataEntryComponent, {
-			data: {
-				dailyData,
-			},
-			maxWidth: '100vw',
-			minWidth: '60vw',
-			panelClass: 'g-mat-dialog-big',
-		});
-
-		const dismiss = await dialogRef.afterClosed().toPromise();
-		return dismiss;
+	onDailyEntryClick(editingDailyData: PersonalAccountDailyDataFragment | null): void {
+		this.dialog
+			.open(PersonalAccountDailyDataEntryComponent, {
+				data: {
+					dailyData: editingDailyData,
+					personalAccountId: this.personalAccount.id,
+					personalAccountName: this.personalAccount.name,
+				},
+			})
+			.afterClosed()
+			.pipe(
+				// ignore undefined
+				filter((value): value is PersonalAccountDailyDataCreate => !!value),
+				// decide on creatr or edit
+				switchMap((dailyDataCreate) =>
+					iif(
+						() => !editingDailyData,
+						this.personalAccountApiService.createPersonalAccountDailyEntry(dailyDataCreate),
+						this.personalAccountApiService.editPersonalAccountDailyEntry({
+							dailyDataCreate,
+							dailyDataDelete: {
+								dailyDataId: editingDailyData!.id,
+								monthlyDataId: editingDailyData!.monthlyDataId,
+								personalAccountId: this.personalAccount.id,
+							},
+						})
+					)
+				),
+				// notify user
+				tap(() => DialogServiceUtil.showNotificationBar(`Daily entry has been saved`)),
+				// memory lead
+				first()
+			)
+			.subscribe(console.log);
 	}
 
 	private formatToExpenseAllocationChartDatta(data: PersonalAccountMonthlyDataDetailFragment): GenericChartSeriesPie {

@@ -34,6 +34,7 @@ import {
 	PersonalAccountMonthlyDataOverviewFragment,
 	PersonalAccountMonthlyDataOverviewFragmentDoc,
 	PersonalAccountOverviewFragment,
+	PersonalAccountOverviewFragmentDoc,
 	PersonalAccountTag,
 	TagDataType,
 } from './../graphql';
@@ -106,7 +107,7 @@ export class PersonalAccountApiService {
 		const fragment = this.apollo.client.readFragment<PersonalAccountOverviewFragment>({
 			id: `PersonalAccount:${personalAccountId}`,
 			fragmentName: 'PersonalAccountOverview',
-			fragment: GetPersonalAccountsDocument,
+			fragment: PersonalAccountOverviewFragmentDoc,
 		});
 
 		// not found - personal account must be in cache
@@ -117,18 +118,17 @@ export class PersonalAccountApiService {
 		return fragment;
 	}
 
-	getMonthlyDataOverviewFromCache(personalAccountId: string, date: string): PersonalAccountMonthlyDataOverviewFragment {
-		const { year, month, week } = DateServiceUtil.getDetailsInformationFromDate(date);
+	getMonthlyDataOverviewFromCache(
+		personalAccountId: string,
+		date: string
+	): PersonalAccountMonthlyDataOverviewFragment | undefined {
+		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(date);
 
 		// load personal account from cache
 		const personalAccount = this.getPersonalAccountFromCachce(personalAccountId);
 
 		// get monthly data from personal account
 		const monthlyData = personalAccount.monthlyData.find((d) => d.year === year && d.month === month);
-
-		if (!monthlyData) {
-			throw new Error(`Unable to find the correct monthly data`);
-		}
 
 		return monthlyData;
 	}
@@ -241,7 +241,7 @@ export class PersonalAccountApiService {
 						__typename: 'PersonalAccountDailyData',
 						id: new Date().toISOString(),
 						date: new Date().toDateString(),
-						monthlyDataId: monthlyData.id,
+						monthlyDataId: monthlyData?.id || '',
 						tagId: input.tagId,
 						value: input.value,
 						week,

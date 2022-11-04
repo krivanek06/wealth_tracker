@@ -4,3 +4,45 @@ import { FormControl, FormGroup } from '@angular/forms';
 export type ModelFormGroup<T> = FormGroup<{
 	[K in keyof T]: FormControl<T[K]>;
 }>;
+
+export interface InputSource {
+	image?: string;
+	value: unknown;
+	caption: string;
+}
+
+export interface InputTypeDateTimePickerConfig {
+	minDate: Date | string;
+}
+
+export enum InputTypeEnum {
+	TEXT = 'TEXT',
+	NUMBER = 'NUMBER',
+	EMAIL = 'EMAIL',
+	PASSWORD = 'PASSWORD',
+	CHECKBOX = 'CHECKBOX',
+	RADIO = 'RADIO',
+	SLIDE_TOGGLE = 'SLIDE_TOGGLE',
+	TIME = 'TIME',
+	SELECT = 'SELECT',
+	SELECTSEARCH = 'SELECTSEARCH',
+	TEXTAREA = 'TEXTAREA',
+	MULTISELECT = 'MULTISELECT',
+	DATEPICKER = 'DATEPICKER',
+	TIMEPICKER = 'TIMEPICKER',
+}
+
+export type InputType =
+	| 'TEXT'
+	| 'NUMBER'
+	| 'PASSWORD'
+	| 'EMAIL'
+	| 'CHECKBOX'
+	| 'RADIO'
+	| 'SLIDE_TOGGLE'
+	| 'DATEPICKER'
+	| 'TIMEPICKER'
+	| 'SELECT'
+	| 'SELECTSEARCH'
+	| 'MULTISELECT'
+	| 'TEXTAREA';

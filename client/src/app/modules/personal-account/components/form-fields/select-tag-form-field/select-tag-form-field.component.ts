@@ -50,9 +50,9 @@ export class SelectTagFormFieldComponent implements OnInit, ControlValueAccessor
 		});
 	}
 
-	writeValue(obj: any): void {
-		this.selectedTagsControl.patchValue([], { emitEvent: false, onlySelf: true });
-		this.selectedTagControl.patchValue(null, { emitEvent: false, onlySelf: true });
+	writeValue(obj: PersonalAccountTagFragment[] | null): void {
+		this.selectedTagsControl.patchValue(obj ?? [], { emitEvent: false, onlySelf: true });
+		this.selectedTagControl.patchValue(obj ? obj[0] : null, { emitEvent: false, onlySelf: true });
 	}
 	/**
 	 * Register Component's ControlValueAccessor onChange callback

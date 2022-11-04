@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DataProxy, FetchResult } from '@apollo/client/core';
 import { Apollo } from 'apollo-angular';
-import { map, Observable } from 'rxjs';
+import { first, map, Observable } from 'rxjs';
 import { DateServiceUtil } from './../../shared/utils';
 import {
 	CreatePersonalAccountDailyEntryGQL,
@@ -55,7 +55,7 @@ export class PersonalAccountApiService {
 		private apollo: Apollo
 	) {
 		// TODO: load tags &&& personalAccount outside this service
-		// this.getDefaultTags().pipe(first()).subscribe();
+		this.getDefaultTags().pipe(first()).subscribe();
 	}
 
 	/* ========= READING FROM CACHE ========= */
@@ -205,6 +205,14 @@ export class PersonalAccountApiService {
 
 	getDefaultTags(): Observable<PersonalAccountTag[]> {
 		return this.getDefaultTagsGQL.watch().valueChanges.pipe(map((res) => res.data.getDefaultTags));
+	}
+
+	getDefaultTagsExpense(): Observable<PersonalAccountTag[]> {
+		return this.getDefaultTags().pipe(map((tags) => tags.filter((t) => t.type === TagDataType.Expense)));
+	}
+
+	getDefaultTagsIncome(): Observable<PersonalAccountTag[]> {
+		return this.getDefaultTags().pipe(map((tags) => tags.filter((t) => t.type === TagDataType.Income)));
 	}
 
 	getPersonalAccountMonthlyDataById(monthlyDataId: string): Observable<PersonalAccountMonthlyDataDetailFragment> {

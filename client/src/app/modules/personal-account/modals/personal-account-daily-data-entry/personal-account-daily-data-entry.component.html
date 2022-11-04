@@ -20,6 +20,7 @@
 				controlName="tag"
 				inputCaption="Select tag"
 				inputType="SELECT"
+				hintText="Select tag that will be associated with the value"
 				[inputSource]="displayTagsInputSource$ | async"
 			></app-form-mat-input-wrapper>
 
@@ -46,14 +47,8 @@
 				controlName="value"
 				inputCaption="Enter value"
 				inputType="NUMBER"
+				hintText="Add USD to the selected tag, greater than 0"
 			></app-form-mat-input-wrapper>
-			<!-- <mat-form-field appearance="outline">
-				<mat-label>Value $$$</mat-label>
-				<input matInput type="number" formControlName="value" />
-				<mat-hint>Add USD to the selected tag, greater than 0</mat-hint>
-				<mat-error *ngIf="formGroup.controls.value.hasError('required')">Value for a tag is required</mat-error>
-				<mat-error *ngIf="formGroup.controls.value.hasError('min')">Minimal value must be greater than 0</mat-error>
-			</mat-form-field> -->
 		</div>
 
 		<!-- display value form form -->

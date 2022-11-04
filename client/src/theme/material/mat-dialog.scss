@@ -17,17 +17,6 @@ mat-dialog-container {
 	margin-left: 0 !important;
 }
 
-// mat-dialog-content {
-// 	//min-height: 94vh !important;
-// 	max-width: 100vw !important;
-// 	// margin: auto !important;
-// 	// padding: 16px !important;
-// 	// overflow-y: auto !important;
-// 	// max-height: fit-content !important;
-
-// 	// @screen lg {
-// 	// 	min-height: 100px !important;
-// 	// 	padding-left: 32px !important;
-// 	// 	padding-right: 32px !important;
-// 	// }
-// }
+.mat-dialog-container {
+	padding: 30px !important;
+}

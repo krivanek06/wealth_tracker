@@ -10,8 +10,8 @@
 			{{ tagType === TagDataType.Expense ? 'Expense' : 'Income' }}:
 		</div>
 		<div class="flex items-center gap-2">
-			<img appDefaultImg imageType="tags" [src]="tag[0].name" class="h-7" />
-			<span>{{ tag[0].name }}</span>
+			<img appDefaultImg imageType="tags" [src]="tag.name" class="h-7" />
+			<span>{{ tag.name }}</span>
 		</div>
 	</div>
 

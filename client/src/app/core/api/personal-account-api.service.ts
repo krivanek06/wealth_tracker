@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DataProxy, FetchResult } from '@apollo/client/core';
 import { Apollo } from 'apollo-angular';
-import { map, Observable } from 'rxjs';
+import { first, map, Observable } from 'rxjs';
 import { DateServiceUtil } from './../../shared/utils';
 import {
 	CreatePersonalAccountDailyEntryGQL,
@@ -31,9 +31,11 @@ import {
 	PersonalAccountDailyDataFragment,
 	PersonalAccountEditInput,
 	PersonalAccountMonthlyDataDetailFragment,
+	PersonalAccountMonthlyDataDetailFragmentDoc,
 	PersonalAccountMonthlyDataOverviewFragment,
 	PersonalAccountMonthlyDataOverviewFragmentDoc,
 	PersonalAccountOverviewFragment,
+	PersonalAccountOverviewFragmentDoc,
 	PersonalAccountTag,
 	TagDataType,
 } from './../graphql';
@@ -55,7 +57,7 @@ export class PersonalAccountApiService {
 		private apollo: Apollo
 	) {
 		// TODO: load tags &&& personalAccount outside this service
-		// this.getDefaultTags().pipe(first()).subscribe();
+		this.getDefaultTags().pipe(first()).subscribe();
 	}
 
 	/* ========= READING FROM CACHE ========= */
@@ -72,7 +74,7 @@ export class PersonalAccountApiService {
 		const fragment = this.apollo.client.readFragment<PersonalAccountMonthlyDataDetailFragment>({
 			id: `PersonalAccountMonthlyData:${monthlyDataId}`,
 			fragmentName: 'PersonalAccountMonthlyDataDetail',
-			fragment: GetPersonalAccountMonthlyDataByIdDocument,
+			fragment: PersonalAccountMonthlyDataDetailFragmentDoc,
 			variables: {
 				input: monthlyDataId,
 			},
@@ -106,7 +108,7 @@ export class PersonalAccountApiService {
 		const fragment = this.apollo.client.readFragment<PersonalAccountOverviewFragment>({
 			id: `PersonalAccount:${personalAccountId}`,
 			fragmentName: 'PersonalAccountOverview',
-			fragment: GetPersonalAccountsDocument,
+			fragment: PersonalAccountOverviewFragmentDoc,
 		});
 
 		// not found - personal account must be in cache
@@ -117,18 +119,17 @@ export class PersonalAccountApiService {
 		return fragment;
 	}
 
-	getMonthlyDataOverviewFromCache(personalAccountId: string, date: string): PersonalAccountMonthlyDataOverviewFragment {
-		const { year, month, week } = DateServiceUtil.getDetailsInformationFromDate(date);
+	getMonthlyDataOverviewFromCache(
+		personalAccountId: string,
+		date: string
+	): PersonalAccountMonthlyDataOverviewFragment | undefined {
+		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(date);
 
 		// load personal account from cache
 		const personalAccount = this.getPersonalAccountFromCachce(personalAccountId);
 
 		// get monthly data from personal account
 		const monthlyData = personalAccount.monthlyData.find((d) => d.year === year && d.month === month);
-
-		if (!monthlyData) {
-			throw new Error(`Unable to find the correct monthly data`);
-		}
 
 		return monthlyData;
 	}
@@ -207,6 +208,14 @@ export class PersonalAccountApiService {
 		return this.getDefaultTagsGQL.watch().valueChanges.pipe(map((res) => res.data.getDefaultTags));
 	}
 
+	getDefaultTagsExpense(): Observable<PersonalAccountTag[]> {
+		return this.getDefaultTags().pipe(map((tags) => tags.filter((t) => t.type === TagDataType.Expense)));
+	}
+
+	getDefaultTagsIncome(): Observable<PersonalAccountTag[]> {
+		return this.getDefaultTags().pipe(map((tags) => tags.filter((t) => t.type === TagDataType.Income)));
+	}
+
 	getPersonalAccountMonthlyDataById(monthlyDataId: string): Observable<PersonalAccountMonthlyDataDetailFragment> {
 		return this.getPersonalAccountMonthlyDataByIdGQL
 			.watch({
@@ -233,7 +242,7 @@ export class PersonalAccountApiService {
 						__typename: 'PersonalAccountDailyData',
 						id: new Date().toISOString(),
 						date: new Date().toDateString(),
-						monthlyDataId: monthlyData.id,
+						monthlyDataId: monthlyData?.id || '',
 						tagId: input.tagId,
 						value: input.value,
 						week,
@@ -390,7 +399,7 @@ export class PersonalAccountApiService {
 		this.apollo.client.writeFragment<PersonalAccountOverviewFragment>({
 			id: `PersonalAccount:${personalAccountId}`,
 			fragmentName: 'PersonalAccountOverview',
-			fragment: GetPersonalAccountsDocument,
+			fragment: PersonalAccountOverviewFragmentDoc,
 			data: {
 				...personalAccount,
 				yearlyAggregaton,

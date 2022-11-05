@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AccountState } from '../models';
 import { PersonalAccountOverviewFragment, TagDataType } from './../../../core/graphql';
-import { GenericChartSeries, GenericChartSeriesInput } from './../../../shared/models';
+import { ChartType, GenericChartSeries } from './../../../shared/models';
 import { DateServiceUtil } from './../../../shared/utils';
 
 @Injectable({
@@ -10,6 +10,11 @@ import { DateServiceUtil } from './../../../shared/utils';
 export class PersonalAccountDataModificationService {
 	constructor() {}
 
+	/**
+	 *
+	 * @param data
+	 * @returns accumulated expenses, incomes and their difference
+	 */
 	getAccountState(data: PersonalAccountOverviewFragment): AccountState {
 		const expenseTotal = data.yearlyAggregaton
 			.filter((d) => d.tagType === TagDataType.Expense)
@@ -29,33 +34,51 @@ export class PersonalAccountDataModificationService {
 	}
 
 	/**
+	 *
+	 * @param data
+	 * @param aggregation
+	 * @returns weekly or monthly categories in string format
+	 */
+	getChartCategories(data: PersonalAccountOverviewFragment, aggregation: 'week' | 'month' = 'week'): string[] {
+		const categories = data.weeklyAggregaton.map((d) => {
+			const monthName = DateServiceUtil.formatDate(new Date(d.year, d.month), 'LLL');
+			return `Week: ${d.week}, ${monthName}`;
+		});
+		return categories;
+	}
+
+	/**
 	 * Aggregates incomes and expenses into a chart format
+	 * for account growth overview
 	 *
 	 * @param data aggregation from personal account
 	 * @param aggregation type of aggreation
-	 * @returns GenericChartSeriesInput data type
+	 * @returns GenericChartSeries data type
 	 */
-	getWeeklyChartData(
+	getAccountgrowthChartData(
 		data: PersonalAccountOverviewFragment,
 		aggregation: 'week' | 'month' = 'week'
-	): GenericChartSeriesInput {
+	): GenericChartSeries {
 		// add together weekly income and expense
 		const weeklyIncomeSeries: number[] = data.weeklyAggregaton.map((d) =>
 			d.data.reduce((acc, curr) => acc + (curr.tagType === TagDataType.Income ? curr.value : -curr.value), 0)
 		);
-		const series: GenericChartSeries = { name: data.name, data: weeklyIncomeSeries };
-		const categories = data.weeklyAggregaton.map((d) => {
-			const monthName = DateServiceUtil.formatDate(new Date(d.year, d.month), 'LLLL');
-			return `Week: ${d.week}, ${monthName}  ${d.year}`;
-		});
+		const series: GenericChartSeries = { name: 'Total', data: weeklyIncomeSeries, type: ChartType.column };
 
-		return { series: [series], categories };
+		return series;
 	}
 
+	/**
+	 * Aggregates weekly expenses by tag into week/month format
+	 *
+	 * @param data aggregation from personal account
+	 * @param aggregation type of aggreation
+	 * @returns GenericChartSeries data type
+	 */
 	getWeeklyExpenseChartData(
 		data: PersonalAccountOverviewFragment,
 		aggregation: 'week' | 'month' = 'week'
-	): GenericChartSeriesInput {
+	): GenericChartSeries[] {
 		const series = data.weeklyAggregaton.reduce((acc, curr) => {
 			curr.data
 				.filter((d) => d.tagType === TagDataType.Expense)
@@ -65,7 +88,12 @@ export class PersonalAccountDataModificationService {
 
 					if (savedTagIndex === -1) {
 						// tag not yet save = new data
-						acc.push({ name: d.tagName, data: [d.value], color: d.tagColor } as GenericChartSeries);
+						acc.push({
+							name: d.tagName,
+							data: [d.value],
+							color: d.tagColor,
+							type: ChartType.line,
+						} as GenericChartSeries);
 					} else {
 						// add another series into saved tag array
 						acc[savedTagIndex].data.push(d.value);
@@ -75,11 +103,6 @@ export class PersonalAccountDataModificationService {
 			return acc;
 		}, [] as GenericChartSeries[]);
 
-		const categories = data.weeklyAggregaton.map((d) => {
-			const monthName = DateServiceUtil.formatDate(new Date(d.year, d.month), 'LLLL');
-			return `Week: ${d.week}, ${monthName}  ${d.year}`;
-		});
-
-		return { series, categories };
+		return series;
 	}
 }

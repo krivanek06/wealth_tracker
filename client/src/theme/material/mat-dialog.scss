@@ -1,0 +1,22 @@
+mat-dialog-container {
+	width: 90vw !important;
+	background: var(--color-main-dialog) !important;
+	color: var(--color-gray-200) !important;
+
+	@screen md {
+		width: 75vw !important;
+	}
+
+	@screen xl {
+		width: 60vw !important;
+	}
+}
+
+.mat-dialog-actions .mat-button-base + .mat-button-base,
+.mat-dialog-actions .mat-mdc-button-base + .mat-mdc-button-base {
+	margin-left: 0 !important;
+}
+
+.mat-dialog-container {
+	padding: 30px !important;
+}

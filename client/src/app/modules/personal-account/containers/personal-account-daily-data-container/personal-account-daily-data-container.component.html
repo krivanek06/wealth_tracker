@@ -6,15 +6,23 @@
 ></app-personal-account-daily-entries-filter>
 
 <!-- add button -->
-<button mat-stroked-button type="button" color="primary" class="block sm:hidden w-full mb-2">
+<button
+	(click)="onDailyEntryClick(null)"
+	mat-stroked-button
+	type="button"
+	color="primary"
+	class="block sm:hidden w-full mb-2"
+>
 	<mat-icon>add</mat-icon>
 	Add daily entry
 </button>
 
 <div class="grid grid-cols-1 xl:grid-cols-5 gap-4 min-h-[300px] items-center">
 	<!-- table body -->
-	<div class="col-span-1 xl:col-span-3">
+	<div class="col-span-1 xl:col-span-3 h-full">
 		<app-personal-account-daily-entries-table
+			(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
+			(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
 			[personalAccountDailyData]="(monthlyDataDetailTable$ | async)?.dailyData"
 		></app-personal-account-daily-entries-table>
 	</div>

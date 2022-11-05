@@ -1,0 +1,10 @@
+:host {
+	display: block;
+
+	mat-dialog-actions {
+		@apply flex flex-col-reverse md:flex-row justify-end items-center gap-2;
+		button {
+			@apply min-w-[120px] w-full md:w-auto;
+		}
+	}
+}

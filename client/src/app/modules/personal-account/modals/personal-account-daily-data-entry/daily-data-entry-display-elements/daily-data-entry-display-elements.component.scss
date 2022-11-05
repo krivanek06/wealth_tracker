@@ -1,0 +1,11 @@
+:host {
+	display: block;
+
+	.c-item-wrapper {
+		@apply flex items-center justify-between;
+
+		> div:first-child {
+			@apply text-base flex-1;
+		}
+	}
+}

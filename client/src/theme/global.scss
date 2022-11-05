@@ -17,6 +17,8 @@ body {
 
 /* mat tooltip */
 .cdk-overlay-pane {
+	max-width: 90vw !important;
+
 	&.mat-tooltip-panel {
 		.mat-tooltip {
 			color: var(--color-gray-200);

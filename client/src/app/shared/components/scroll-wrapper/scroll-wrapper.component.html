@@ -1,10 +1,14 @@
-<div class="m-auto">
-	<button mat-stroked-button class="mb-2" (click)="onScollChange('decement')"><mat-icon>expand_less</mat-icon></button>
+<div class="m-auto flex items-center gap-3">
+	<button mat-stroked-button (click)="onScollChange('decement')" [style.height.px]="buttonHeightPx">
+		<mat-icon>arrow_back_ios</mat-icon>
+	</button>
 
 	<!-- content projection -->
-	<div #contentWrapper [style.height.px]="workingHeight" class="c-content-wrapper">
+	<div #contentWrapper class="c-content-wrapper">
 		<ng-content></ng-content>
 	</div>
 
-	<button mat-stroked-button class="mt-2" (click)="onScollChange('increment')"><mat-icon>expand_more</mat-icon></button>
+	<button mat-stroked-button (click)="onScollChange('increment')" [style.height.px]="buttonHeightPx">
+		<mat-icon>arrow_forward_ios</mat-icon>
+	</button>
 </div>

@@ -8,7 +8,6 @@ import {
 	PersonalAccountDailyDataFragment,
 	PersonalAccountMonthlyDataDetailFragment,
 	PersonalAccountOverviewFragment,
-	PersonalAccountTagFragment,
 	TagDataType,
 } from './../../../../core/graphql';
 import { DialogServiceUtil } from './../../../../shared/dialogs';
@@ -35,7 +34,7 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 	readonly filterControl = this.fb.nonNullable.control({
 		yearAndMonth: '',
 		week: -1,
-		tag: [] as PersonalAccountTagFragment[],
+		tag: [] as string[],
 	});
 
 	constructor(private personalAccountApiService: PersonalAccountApiService, private dialog: MatDialog) {}
@@ -64,11 +63,11 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 
 		this.monthlyDataDetailTable$ = this.monthlyDataDetail$.pipe(
 			map((monthlyDataDetails) => {
-				const selectedTags = this.filterControl.getRawValue().tag.map((d) => d.name);
+				const selectedTagIds = this.filterControl.getRawValue().tag;
 				const selectedWeek = this.filterControl.getRawValue().week;
 
 				const filteredDailyData = monthlyDataDetails.dailyData.filter((d) => {
-					if (selectedTags.length !== 0 && !selectedTags.includes(d.tag.name)) {
+					if (selectedTagIds.length !== 0 && !selectedTagIds.includes(d.tag.id)) {
 						return false;
 					}
 					if (selectedWeek !== -1 && selectedWeek !== d.week) {

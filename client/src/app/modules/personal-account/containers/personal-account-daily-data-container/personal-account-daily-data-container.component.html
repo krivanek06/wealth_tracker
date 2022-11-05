@@ -21,7 +21,8 @@
 	<!-- table body -->
 	<div class="col-span-1 xl:col-span-3 h-full">
 		<app-personal-account-daily-entries-table
-			(dailyEntryClickEmitter)="onDailyEntryClick(null)"
+			(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
+			(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
 			[personalAccountDailyData]="(monthlyDataDetailTable$ | async)?.dailyData"
 		></app-personal-account-daily-entries-table>
 	</div>

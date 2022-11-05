@@ -11,7 +11,9 @@ import { PersonalAccountDailyDataFragment } from './../../../../core/graphql';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountDailyEntriesTableComponent implements OnInit {
-	@Output() dailyEntryClickEmitter: EventEmitter<void> = new EventEmitter<void>();
+	@Output() addDailyEntryClickEmitter = new EventEmitter<void>();
+	@Output() editDailyEntryClickEmitter = new EventEmitter<PersonalAccountDailyDataFragment>();
+
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 	@ViewChild(MatSort) sort!: MatSort;
 
@@ -32,7 +34,11 @@ export class PersonalAccountDailyEntriesTableComponent implements OnInit {
 		return item.id;
 	}
 
-	onDailyEntryClick(): void {
-		this.dailyEntryClickEmitter.emit();
+	onEditDailyEntryClick(data: PersonalAccountDailyDataFragment): void {
+		this.editDailyEntryClickEmitter.emit(data);
+	}
+
+	onAddDailyEntryClick(): void {
+		this.addDailyEntryClickEmitter.emit();
 	}
 }

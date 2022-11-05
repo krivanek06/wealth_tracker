@@ -7,8 +7,9 @@ export type ModelFormGroup<T> = FormGroup<{
 
 export interface InputSource {
 	image?: string;
-	value: unknown;
+	value: string | number;
 	caption: string;
+	additionalData?: unknown;
 }
 
 export interface InputTypeDateTimePickerConfig {

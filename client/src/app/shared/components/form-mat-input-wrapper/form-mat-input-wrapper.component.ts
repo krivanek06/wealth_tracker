@@ -1,17 +1,7 @@
-import {
-	Component,
-	ElementRef,
-	EventEmitter,
-	Input,
-	OnChanges,
-	OnInit,
-	Output,
-	SimpleChanges,
-	ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ControlContainer, FormControl } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
-import { first } from 'rxjs/operators';
+import { map, Observable } from 'rxjs';
+import { startWith } from 'rxjs/operators';
 import { InputSource, InputType, InputTypeDateTimePickerConfig, InputTypeEnum } from '../../models';
 
 @Component({
@@ -20,9 +10,6 @@ import { InputSource, InputType, InputTypeDateTimePickerConfig, InputTypeEnum } 
 	styleUrls: ['./form-mat-input-wrapper.component.scss'],
 })
 export class FormMatInputWrapperComponent implements OnInit, OnChanges {
-	/* emits only if showCloseIcon === true &&  inputType === 'TEXT' */
-	@Output() resetInputValueEmitter: EventEmitter<void> = new EventEmitter<void>();
-
 	@Input() controlName!: string;
 	@Input() inputCaption!: string;
 	@Input() prefixIcon?: string;
@@ -44,12 +31,6 @@ export class FormMatInputWrapperComponent implements OnInit, OnChanges {
 		 use only if inputType === 'SELECT' | 'MULTISELECT' | 'SELECTSEARCH'
 	  */
 	@Input() inputSource?: InputSource[] | null = []; //s
-	@Input() fieldsetAdditionalClasses = '';
-
-	/*
-		use only if inputType === 'TEXT'
-	  */
-	@Input() showCloseIcon = false;
 
 	/*
 		used when inputType === DATEPICKER
@@ -58,7 +39,7 @@ export class FormMatInputWrapperComponent implements OnInit, OnChanges {
 
 	@ViewChild('matSearchSelectInput') matSearchSelectInput?: ElementRef<HTMLInputElement>;
 
-	selectedInputSource?: InputSource; // ONLY USED FOR inputType === SELECT
+	selectedInputSource$?: Observable<InputSource | undefined>; // ONLY USED FOR inputType === SELECT
 
 	formInputControl!: FormControl;
 
@@ -102,14 +83,6 @@ export class FormMatInputWrapperComponent implements OnInit, OnChanges {
 		}
 	}
 
-	resetValue(): void {
-		this.resetInputValueEmitter.emit();
-	}
-
-	toggleButton(): void {
-		this.formInputControl.patchValue(!this.formInputControl.value);
-	}
-
 	/*
 	 * used when inputType === MULTISELECT to filter data
 	 * */
@@ -130,24 +103,10 @@ export class FormMatInputWrapperComponent implements OnInit, OnChanges {
 		}
 	}
 
-	selectOption(event: MatSelectChange): void {
-		if (!this.inputSource) {
-			return;
-		}
-
-		this.selectedInputSource = this.inputSource.find((s) => s.value === event.source.value);
-	}
-
 	private findSelectedInputSource(): void {
-		this.selectedInputSource = this.inputSource?.find((s) => s.value === this.formInputControl.value);
-
-		/*
-		  even if we find selectedInputSource, still listen on change
-		  used to be a bug when edited an entity, we patched a 'null' value into form as a default value,
-		  but after we patched a value from the entity it did not show the correct value
-		*/
-		this.formInputControl.valueChanges.pipe(first((res) => !!res)).subscribe((res) => {
-			this.selectedInputSource = this.inputSource?.find((s) => s.value === res);
-		});
+		this.selectedInputSource$ = this.formInputControl.valueChanges.pipe(
+			startWith(this.formInputControl.value),
+			map((value) => this.inputSource?.find((s) => s.value === value))
+		);
 	}
 }

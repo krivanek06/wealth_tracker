@@ -17,7 +17,7 @@
 
 			<!-- tag -->
 			<app-form-mat-input-wrapper
-				controlName="tag"
+				controlName="tagId"
 				inputCaption="Select tag"
 				inputType="SELECT"
 				hintText="Select tag that will be associated with the value"
@@ -55,7 +55,7 @@
 		<div class="p-4">
 			<app-daily-data-entry-display-elements
 				[tagType]="formGroup.controls.tagType.value"
-				[tag]="formGroup.controls.tag.value"
+				[tag]="selectedTag$ | async"
 				[value]="formGroup.controls.value.value"
 				[date]="formGroup.controls.date.value"
 				[time]="formGroup.controls.time.value"

@@ -15,5 +15,6 @@ export class DashboardComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.personalAccounts$ = this.personalAccountApiService.getPersonalAccounts();
+		this.personalAccounts$.subscribe(console.log);
 	}
 }

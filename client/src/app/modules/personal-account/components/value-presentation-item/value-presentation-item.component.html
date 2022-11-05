@@ -1,18 +1,20 @@
-<button
-	mat-button
-	[style.--valueItemColor]="color"
-	[style.--valueItemColorActive]="colorActive"
-	[style]="isActive ? 'background-color: ' +  colorActive: ''"
-	(click)="onActivate()"
->
-	<div class="flex flex-col">
-		<div class="flex flex-row gap-2">
-			<img appDefaultImg [src]="yearlyAggregation.tagName" imageType="tags" />
-			<div class="text-lg text-gray-200 mr-2">{{yearlyAggregation.tagName}}</div>
+<ng-container *ngFor="let item of yearlyExpenseTags">
+	<button
+		mat-button
+		[style.--valueItemColor]="item.tag.color"
+		[style.--valueItemColorActive]="item.tag.color + '44'"
+		[style]="(activeTags | inArray: item.tag : 'id' ) ? 'background-color: ' +  item.tag.color + '44': ''"
+		(click)="onClick(item.tag)"
+	>
+		<div class="flex flex-col">
+			<div class="flex flex-row gap-2">
+				<img appDefaultImg [src]="item.tag.name" imageType="tags" />
+				<div class="text-lg text-gray-200 mr-2">{{item.tag.name}}</div>
+			</div>
+			<div class="flex flex-row gap-2">
+				<div class="text-base text-gray-400">{{ item.value | currency}}</div>
+				<div class="text-gray-500 text-base">({{ item.value / yearlyExpenseTotal| percent: '1.2-2' }})</div>
+			</div>
 		</div>
-		<div class="flex flex-row gap-2">
-			<div class="text-base text-gray-400">{{ yearlyAggregation.value | currency}}</div>
-			<div class="text-gray-500 text-base">({{ yearlyAggregation.value / yearlyExpenseTotal| percent: '1.2-2' }})</div>
-		</div>
-	</div>
-</button>
+	</button>
+</ng-container>

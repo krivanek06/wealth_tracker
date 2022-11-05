@@ -110,7 +110,7 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 		tag: new FormControl<string[]>([]),
 	});
 
-	onChange: (dateRange?: unknown) => void = () => {
+	onChange: (filterState?: unknown) => void = () => {
 		/** empty */
 	};
 	// onTouched callback that will be overridden using `registerOnTouched`

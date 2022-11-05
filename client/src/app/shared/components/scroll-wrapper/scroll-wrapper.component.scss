@@ -3,12 +3,16 @@
 
 	button {
 		border: 1px solid #9d98984a;
-		width: 100%;
+		width: 16px;
 	}
 
 	.c-content-wrapper {
-		overflow: scroll;
+		overflow-x: scroll;
+		overflow-y: hidden;
+		white-space: nowrap;
+		display: flex;
 		scroll-behavior: smooth;
+		gap: 8px;
 
 		-ms-overflow-style: none; /* Internet Explorer 10+ */
 		scrollbar-width: none; /* Firefox */

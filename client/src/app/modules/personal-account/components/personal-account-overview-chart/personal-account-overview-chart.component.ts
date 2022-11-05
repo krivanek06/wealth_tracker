@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
-import { PersonalAccountDataModificationService } from '../../services';
-import { PersonalAccountAggregationDataOutput, PersonalAccountOverviewFragment } from './../../../../core/graphql';
+import { PersonalAccountChartService } from '../../services';
+import { PersonalAccountOverviewFragment, PersonalAccountTagFragment } from './../../../../core/graphql';
 import { GenericChartSeries } from './../../../../shared/models';
 
 NoDataToDisplay(Highcharts);
@@ -15,13 +15,13 @@ NoDataToDisplay(Highcharts);
 })
 export class PersonalAccountOverviewChartComponent implements OnInit {
 	@Input() personalAccount!: PersonalAccountOverviewFragment;
-	@Input() set activeValueItem(data: PersonalAccountAggregationDataOutput | null) {
+	@Input() set activeItems(data: PersonalAccountTagFragment[]) {
 		this.onExpenseTagClick(data);
 	}
 
 	private mergedCategories!: string[];
 
-	private accountgrowthChartData!: GenericChartSeries;
+	private accountIncomeExpenseChartData!: [GenericChartSeries, GenericChartSeries];
 	private expenseChartDataCopy!: GenericChartSeries[];
 	private expenseChartData!: GenericChartSeries[];
 
@@ -31,7 +31,7 @@ export class PersonalAccountOverviewChartComponent implements OnInit {
 	chartCallback: any;
 	chartOptions: Highcharts.Options = {}; //  : Highcharts.Options
 
-	constructor(private modificationService: PersonalAccountDataModificationService) {
+	constructor(private modificationService: PersonalAccountChartService) {
 		const self = this;
 
 		this.chartCallback = (chart: any) => {
@@ -43,21 +43,24 @@ export class PersonalAccountOverviewChartComponent implements OnInit {
 	ngOnInit(): void {
 		this.mergedCategories = this.modificationService.getChartCategories(this.personalAccount);
 
-		this.accountgrowthChartData = this.modificationService.getAccountgrowthChartData(this.personalAccount);
+		this.accountIncomeExpenseChartData = this.modificationService.getAccountIncomeExpenseChartData(
+			this.personalAccount,
+			'week'
+		);
 		this.expenseChartDataCopy = this.modificationService.getWeeklyExpenseChartData(this.personalAccount);
 		this.expenseChartData = [...this.expenseChartDataCopy];
 
 		this.initChart();
 	}
 
-	private onExpenseTagClick(item: PersonalAccountAggregationDataOutput | null): void {
-		if (item) {
-			const visibleSeries = this.expenseChartDataCopy.filter((d) => d.name === item.tagName);
-			this.expenseChartData = [...visibleSeries];
-		} else {
-			this.expenseChartData = [...this.expenseChartDataCopy];
-		}
-		this.initChart();
+	private onExpenseTagClick(item: PersonalAccountTagFragment[]): void {
+		// if (item) {
+		// 	const visibleSeries = this.expenseChartDataCopy.filter((d) => d.name === item.tagName);
+		// 	this.expenseChartData = [...visibleSeries];
+		// } else {
+		// 	this.expenseChartData = [...(this.expenseChartDataCopy ?? [])];
+		// }
+		// this.initChart();
 	}
 
 	private initChart() {
@@ -175,16 +178,16 @@ export class PersonalAccountOverviewChartComponent implements OnInit {
 					enableMouseTracking: true,
 				},
 			},
-			series: [this.accountgrowthChartData, ...this.expenseChartData].map((d, index) => {
+			series: [...this.accountIncomeExpenseChartData, ...this.expenseChartData].map((d, index) => {
 				return {
 					name: d.name,
 					type: d.type,
 					color: d.color,
 					data: d.data,
 					dataLabels: {
-						enabled: index === 0,
+						enabled: index === 0 || index === 1,
 					},
-					yAxis: index === 0 ? 1 : undefined,
+					yAxis: index === 0 || index === 1 ? 1 : undefined,
 				} as Highcharts.SeriesOptionsType;
 			}),
 		};

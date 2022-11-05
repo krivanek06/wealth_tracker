@@ -121,7 +121,7 @@ export class PersonalAccounDataAggregatorService {
 					(acc[KEY] as PersonalAccountWeeklyAggregationOutput) ?? this.createAccountWeeklyDataAggregation(curr);
 
 				// get index of the data which value we want to increment or -1 if new value
-				const index = weeklyAggregation.data.findIndex((d) => d.tagId === curr.tagId);
+				const index = weeklyAggregation.data.findIndex((d) => d.tag.id === curr.tagId);
 				if (index > -1) {
 					// increment existing
 					weeklyAggregation.data[index].entries += 1;
@@ -172,6 +172,6 @@ export class PersonalAccounDataAggregatorService {
 		value: number
 	): PersonalAccountAggregationDataOutput {
 		const defaultTag = this.personalAccountTagService.getDefaultTagById(tagId);
-		return { entries: 1, tagId, value, tagName: defaultTag.name, tagType: defaultTag.type, tagColor: defaultTag.color };
+		return { entries: 1, value, tag: defaultTag };
 	}
 }

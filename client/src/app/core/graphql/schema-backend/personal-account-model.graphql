@@ -58,10 +58,9 @@ fragment PersonalAccountOverview on PersonalAccount {
 fragment PersonalAccountAggregationData on PersonalAccountAggregationDataOutput {
 	value
 	entries
-	tagId
-	tagName
-	tagType
-	tagColor
+	tag {
+		...PersonalAccountTag
+	}
 }
 
 fragment PersonalAccountWeeklyAggregation on PersonalAccountWeeklyAggregationOutput {

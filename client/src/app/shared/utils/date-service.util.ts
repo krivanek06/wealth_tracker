@@ -42,7 +42,7 @@ export class DateServiceUtil {
 	 * @param formatOptions
 	 * @returns
 	 */
-	static formatDate(inputDate: DateInput, formatOptions: 'LLLL'): string {
+	static formatDate(inputDate: DateInput, formatOptions: string): string {
 		const date = new Date(inputDate);
 		return format(date, formatOptions);
 	}

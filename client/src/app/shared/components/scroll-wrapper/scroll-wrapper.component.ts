@@ -24,7 +24,7 @@ export class ScrollWrapperComponent implements OnInit, AfterViewInit {
 	ngOnInit(): void {}
 
 	ngAfterViewInit(): void {
-		this.buttonHeightPx = this.element.nativeElement.offsetHeight - 15;
+		this.buttonHeightPx = this.element.nativeElement.offsetHeight - 20;
 		this.cd.detectChanges();
 	}
 

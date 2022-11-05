@@ -3,10 +3,10 @@
 
 	button {
 		@apply px-4 p-1 rounded-lg w-full m-1;
-		.button-body {
-			@apply flex flex-row gap-2  items-center;
-		}
+
+		border: 1px solid var(--valueItemColor);
 		border-left: 4px solid var(--valueItemColor);
+		border-right: 4px solid var(--valueItemColor);
 		&:hover {
 			background-color: var(--valueItemColorActive);
 		}

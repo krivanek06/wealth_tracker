@@ -1,3 +1,10 @@
 :host {
-  display: block;
+	display: block;
+
+	.c-wrapper {
+		@apply grid grid-cols-2 md:grid-cols-4 gap-x-3 lg:flex;
+		& > * {
+			@apply flex-1 xl:flex-none;
+		}
+	}
 }

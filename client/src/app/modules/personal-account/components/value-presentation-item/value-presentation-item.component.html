@@ -5,9 +5,11 @@
 	[style]="isActive ? 'background-color: ' +  colorActive: ''"
 	(click)="onActivate()"
 >
-	<div class="button-body">
+	<div class="flex flex-col">
 		<div class="text-lg text-gray-200 mr-2">{{yearlyAggregation.tagName}}</div>
-		<div class="text-base text-gray-400">{{ yearlyAggregation.value | currency}}</div>
-		<div class="text-gray-500 text-base">({{ yearlyAggregation.value / yearlyExpenseTotal| percent: '1.2-2' }})</div>
+		<div class="flex flex-row gap-2">
+			<div class="text-base text-gray-400">{{ yearlyAggregation.value | currency}}</div>
+			<div class="text-gray-500 text-base">({{ yearlyAggregation.value / yearlyExpenseTotal| percent: '1.2-2' }})</div>
+		</div>
 	</div>
 </button>

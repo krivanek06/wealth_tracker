@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	ElementRef,
+	OnInit,
+	ViewChild,
+} from '@angular/core';
 
 @Component({
 	selector: 'app-scroll-wrapper',
@@ -6,29 +14,22 @@ import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChil
 	styleUrls: ['./scroll-wrapper.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ScrollWrapperComponent implements OnInit {
-	/**
-	 * maximum height of the component
-	 */
-	@Input() maxHeight!: number;
-
-	/**
-	 * height of each element we display
-	 */
-	@Input() elementHeight!: number;
-
+export class ScrollWrapperComponent implements OnInit, AfterViewInit {
 	@ViewChild('contentWrapper') element!: ElementRef;
 
-	workingHeight!: number;
+	buttonHeightPx = 40;
 
-	ngOnInit(): void {
-		const buttonHeights = 2 * 35; // 2x mat button up/down arrows
-		const space = 40;
-		this.workingHeight = this.maxHeight - buttonHeights - space;
+	constructor(private cd: ChangeDetectorRef) {}
+
+	ngOnInit(): void {}
+
+	ngAfterViewInit(): void {
+		this.buttonHeightPx = this.element.nativeElement.offsetHeight - 15;
+		this.cd.detectChanges();
 	}
 
 	onScollChange(change: 'increment' | 'decement'): void {
-		const addValue = change === 'increment' ? this.elementHeight : -this.elementHeight;
-		this.element.nativeElement.scrollTop += addValue;
+		const addValue = change === 'increment' ? 200 : -200;
+		this.element.nativeElement.scrollLeft += addValue;
 	}
 }

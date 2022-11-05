@@ -20,27 +20,25 @@
 	</div>
 </div>
 
-<div class="flex flex-col-reverse lg:flex-row gap-4 lg:items-center">
-	<!-- tag expense chart -->
-	<app-generic-chart
-		class="flex-1"
-		chartTitle="Expense by tag"
-		[heightPx]="400"
-		[series]="weeklyExpenseChartData.series"
-		[categories]="weeklyExpenseChartData.categories"
-	></app-generic-chart>
+<!-- tag expense legend -->
+<app-scroll-wrapper>
+	<app-value-presentation-item
+		*ngFor="let item of yearlyExpenseAggregaton"
+		(onClickEmitter)="onExpenseTagClick(item)"
+		[yearlyExpenseTotal]="yearlyExpenseTotal"
+		[yearlyAggregation]="item"
+		[isActive]="activeValueItem === item"
+	></app-value-presentation-item>
+</app-scroll-wrapper>
 
-	<!-- tag expense legend -->
-	<app-scroll-wrapper [maxHeight]="360" [elementHeight]="36">
-		<app-value-presentation-item
-			*ngFor="let item of yearlyExpenseAggregaton"
-			(onClickEmitter)="onExpenseTagClick(item)"
-			[yearlyExpenseTotal]="yearlyExpenseTotal"
-			[yearlyAggregation]="item"
-			[isActive]="activeValueItem === item"
-		></app-value-presentation-item>
-	</app-scroll-wrapper>
-</div>
+<!-- tag expense chart -->
+<app-generic-chart
+	class="flex-1"
+	chartTitle="Expense by tag"
+	[heightPx]="400"
+	[series]="weeklyExpenseChartData.series"
+	[categories]="weeklyExpenseChartData.categories"
+></app-generic-chart>
 
 <!-- daily data filter + table + spending allocation -->
 <app-personal-account-daily-data-container

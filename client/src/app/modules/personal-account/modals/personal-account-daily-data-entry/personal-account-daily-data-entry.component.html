@@ -1,4 +1,4 @@
-<h2 class="g-color-primary text-base">Entry for {{ data.personalAccountName }}</h2>
+<div class="text-lg mb-6 text-center">Account: <span class="g-color-primary">{{ data.personalAccountName }}</span></div>
 
 <form (submit)="onSave()" [formGroup]="formGroup">
 	<mat-dialog-content class="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
@@ -47,7 +47,7 @@
 				controlName="value"
 				inputCaption="Enter value"
 				inputType="NUMBER"
-				hintText="Add USD to the selected tag, greater than 0"
+				hintText="Add USD to the selected tag, greater than 0$"
 			></app-form-mat-input-wrapper>
 		</div>
 

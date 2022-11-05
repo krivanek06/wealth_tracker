@@ -1,6 +1,10 @@
 :host {
 	display: block;
 
+	img {
+		height: 24px;
+	}
+
 	button {
 		@apply px-4 p-1 rounded-lg w-full m-1;
 

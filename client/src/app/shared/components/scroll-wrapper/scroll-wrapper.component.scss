@@ -2,8 +2,8 @@
 	display: block;
 
 	button {
+		@apply w-4 hidden sm:block;
 		border: 1px solid #9d98984a;
-		width: 16px;
 	}
 
 	.c-content-wrapper {

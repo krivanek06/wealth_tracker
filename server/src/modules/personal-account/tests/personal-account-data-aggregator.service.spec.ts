@@ -20,6 +20,18 @@ describe('PersonalAccounDataAggregatorService', () => {
 		userId: USER_ID_MOCK,
 	};
 
+	const mockTag: PersonalAccountTag = {
+		name: 'Test tag',
+		type: 'EXPENSE',
+		id: '11111',
+	} as PersonalAccountTag;
+
+	const mockTag2: PersonalAccountTag = {
+		name: 'Test tag 2',
+		type: 'EXPENSE',
+		id: '22222',
+	} as PersonalAccountTag;
+
 	const PERSONAL_ACCOUNT_ID_MULTIPLE_MONTHS = { id: 'MULTIPLE_MONTHS' } as PersonalAccount;
 	const PERSONAL_ACCOUNT_MONTHLY_DATA_MULTIPLE_MONTHS: PersonalAccountMonthlyData[] = [
 		{
@@ -33,7 +45,7 @@ describe('PersonalAccounDataAggregatorService', () => {
 					id: '94ac4e64-4ac2-4773-bcb6-46d8269bafa0',
 					value: 10,
 					date: new Date('1665733206000'),
-					tagId: '634a55e83d5f2180e336af5a',
+					tagId: mockTag.id,
 					monthlyDataId: '634a522ff8c911d565a41f1a',
 					week: 42,
 					userId: '1234',
@@ -42,7 +54,7 @@ describe('PersonalAccounDataAggregatorService', () => {
 					id: '017321af-ae2e-4aac-a536-322d173fb48d',
 					value: 10,
 					date: new Date('1665733206000'),
-					tagId: '634a55e83d5f2180e336af5a',
+					tagId: mockTag.id,
 					monthlyDataId: '634a522ff8c911d565a41f1a',
 					week: 42,
 					userId: '1234',
@@ -51,25 +63,25 @@ describe('PersonalAccounDataAggregatorService', () => {
 					id: 'da107f69-382c-4a42-b22f-162691aa0935',
 					value: 10,
 					date: new Date('1665733206000'),
-					tagId: '634a55e93d5f2180e336af5c',
+					tagId: mockTag.id,
 					monthlyDataId: '634a522ff8c911d565a41f1a',
 					week: 42,
 					userId: '1234',
 				},
 				{
 					id: '3f4ffcdc-9d60-4461-85d2-ca411c68b845',
-					value: 10,
+					value: 30,
 					date: new Date('1665733206000'),
-					tagId: '634a55e93d5f2180e336af5c',
+					tagId: mockTag2.id,
 					monthlyDataId: '634a522ff8c911d565a41f1a',
 					week: 42,
 					userId: '1234',
 				},
 				{
 					id: 'cd1a9003-22c3-4643-8b6c-e261ff690bc6',
-					value: 10,
+					value: 30,
 					date: new Date('1665733206000'),
-					tagId: '634a55e93d5f2180e336af5f',
+					tagId: mockTag2.id,
 					monthlyDataId: '634a522ff8c911d565a41f1a',
 					week: 42,
 					userId: '1234',
@@ -85,18 +97,18 @@ describe('PersonalAccounDataAggregatorService', () => {
 			dailyData: [
 				{
 					id: '25975432-1f08-45d7-aa33-1d1c065ff783',
-					value: 14,
+					value: 11,
 					date: new Date('1662757200000'),
-					tagId: '634a55ea3d5f2180e336af60',
+					tagId: mockTag.id,
 					monthlyDataId: '63522c180990090d666127db',
 					week: 37,
 					userId: '1234',
 				},
 				{
 					id: '6d73bd80-6120-4ba9-bfce-923b5bbe554a',
-					value: 14,
+					value: 11,
 					date: new Date('1663016400000'),
-					tagId: '634a55ea3d5f2180e336af60',
+					tagId: mockTag.id,
 					monthlyDataId: '63522c180990090d666127db',
 					week: 38,
 					userId: '1234',
@@ -105,7 +117,7 @@ describe('PersonalAccounDataAggregatorService', () => {
 					id: '2028a86a-132c-4a1b-932d-6fd6084c31d1',
 					value: 12,
 					date: new Date('1663016400000'),
-					tagId: '634a55ea3d5f2180e336af61',
+					tagId: mockTag2.id,
 					monthlyDataId: '63522c180990090d666127db',
 					week: 38,
 					userId: '1234',
@@ -114,16 +126,16 @@ describe('PersonalAccounDataAggregatorService', () => {
 					id: 'e54bfa8a-f38b-4d90-83f5-004003ee6187',
 					value: 12,
 					date: new Date('1663016400000'),
-					tagId: '634a55e83d5f2180e336af5a',
+					tagId: mockTag2.id,
 					monthlyDataId: '63522c180990090d666127db',
 					week: 38,
 					userId: '1234',
 				},
 				{
 					id: 'eee8d135-e213-42b4-a9f8-1108775fde59',
-					value: 11,
+					value: 12,
 					date: new Date('1663016400000'),
-					tagId: '634a55e83d5f2180e336af5a',
+					tagId: mockTag2.id,
 					monthlyDataId: '63522c180990090d666127db',
 					week: 38,
 					userId: '1234',
@@ -138,13 +150,16 @@ describe('PersonalAccounDataAggregatorService', () => {
 			findMany: jest.fn(),
 		},
 	});
-	const mockTag: PersonalAccountTag = {
-		name: 'Test tag',
-		type: 'EXPENSE',
-	} as PersonalAccountTag;
+
 	const personalAccountTagServiceMock: PersonalAccountTagService = createMock<PersonalAccountTagService>({
-		getDefaultTagById: jest.fn().mockReturnValue(mockTag),
+		getDefaultTagById: jest.fn(),
 	});
+
+	when(personalAccountTagServiceMock.getDefaultTagById)
+		.calledWith(mockTag.id)
+		.mockReturnValue(mockTag)
+		.calledWith(mockTag2.id)
+		.mockReturnValue(mockTag2);
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -196,28 +211,18 @@ describe('PersonalAccounDataAggregatorService', () => {
 					week: 42,
 					data: [
 						{
-							value: 20,
-							entries: 2,
-							tagId: '634a55e83d5f2180e336af5a',
-							tagName: mockTag.name,
-							tagType: mockTag.type,
-							tagColor: undefined,
+							value: 30,
+							entries: 3,
+							tag: {
+								...mockTag,
+							},
 						},
 						{
-							value: 20,
+							value: 60,
 							entries: 2,
-							tagId: '634a55e93d5f2180e336af5c',
-							tagName: mockTag.name,
-							tagType: mockTag.type,
-							tagColor: undefined,
-						},
-						{
-							value: 10,
-							entries: 1,
-							tagId: '634a55e93d5f2180e336af5f',
-							tagName: mockTag.name,
-							tagType: mockTag.type,
-							tagColor: undefined,
+							tag: {
+								...mockTag2,
+							},
 						},
 					],
 				},
@@ -228,12 +233,11 @@ describe('PersonalAccounDataAggregatorService', () => {
 					week: 37,
 					data: [
 						{
-							value: 14,
+							value: 11,
 							entries: 1,
-							tagId: '634a55ea3d5f2180e336af60',
-							tagName: mockTag.name,
-							tagType: mockTag.type,
-							tagColor: undefined,
+							tag: {
+								...mockTag,
+							},
 						},
 					],
 				},
@@ -244,28 +248,18 @@ describe('PersonalAccounDataAggregatorService', () => {
 					week: 38,
 					data: [
 						{
-							value: 14,
+							value: 11,
 							entries: 1,
-							tagId: '634a55ea3d5f2180e336af60',
-							tagName: mockTag.name,
-							tagType: mockTag.type,
-							tagColor: undefined,
+							tag: {
+								...mockTag,
+							},
 						},
 						{
-							value: 12,
-							entries: 1,
-							tagId: '634a55ea3d5f2180e336af61',
-							tagName: mockTag.name,
-							tagType: mockTag.type,
-							tagColor: undefined,
-						},
-						{
-							value: 23,
-							entries: 2,
-							tagId: '634a55e83d5f2180e336af5a',
-							tagName: mockTag.name,
-							tagType: mockTag.type,
-							tagColor: undefined,
+							value: 36,
+							entries: 3,
+							tag: {
+								...mockTag2,
+							},
 						},
 					],
 				},
@@ -288,44 +282,18 @@ describe('PersonalAccounDataAggregatorService', () => {
 		it('should return yearly weekly data for multiple months', async () => {
 			const expectedResult: PersonalAccountAggregationDataOutput[] = [
 				{
-					value: 43,
-					entries: 4,
-					tagId: '634a55e83d5f2180e336af5a',
-					tagName: mockTag.name,
-					tagType: mockTag.type,
-					tagColor: mockTag.color,
+					value: 52,
+					entries: 5,
+					tag: {
+						...mockTag,
+					},
 				},
 				{
-					value: 20,
-					entries: 2,
-					tagId: '634a55e93d5f2180e336af5c',
-					tagName: mockTag.name,
-					tagType: mockTag.type,
-					tagColor: mockTag.color,
-				},
-				{
-					value: 10,
-					entries: 1,
-					tagId: '634a55e93d5f2180e336af5f',
-					tagName: mockTag.name,
-					tagType: mockTag.type,
-					tagColor: mockTag.color,
-				},
-				{
-					value: 28,
-					entries: 2,
-					tagId: '634a55ea3d5f2180e336af60',
-					tagName: mockTag.name,
-					tagType: mockTag.type,
-					tagColor: mockTag.color,
-				},
-				{
-					value: 12,
-					entries: 1,
-					tagId: '634a55ea3d5f2180e336af61',
-					tagName: mockTag.name,
-					tagType: mockTag.type,
-					tagColor: mockTag.color,
+					value: 96,
+					entries: 5,
+					tag: {
+						...mockTag2,
+					},
 				},
 			];
 

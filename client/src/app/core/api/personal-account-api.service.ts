@@ -354,7 +354,7 @@ export class PersonalAccountApiService {
 
 		// update yearlyAggregaton that match tagId
 		const yearlyAggregaton = personalAccount.yearlyAggregaton.map((data) => {
-			if (data.tagId === dailyData.tagId) {
+			if (data.tag.id === dailyData.tagId) {
 				return { ...data, value: data.value + dailyData.value * multiplyer, entries: data.entries + 1 * multiplyer };
 			}
 			return data;
@@ -366,7 +366,7 @@ export class PersonalAccountApiService {
 			if (data.year === dateDetails.year && data.month === dateDetails.month && data.week === dateDetails.week) {
 				// update data in array that match tagId
 				const weeklyAggregatonDailyData = data.data.map((d) => {
-					if (d.tagId === dailyData.tagId) {
+					if (d.tag.id === dailyData.tagId) {
 						return { ...d, entries: d.entries + 1 * multiplyer, value: d.value + dailyData.value * multiplyer };
 					}
 

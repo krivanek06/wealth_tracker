@@ -14,18 +14,16 @@
 <!-- tag expense legend -->
 <app-scroll-wrapper>
 	<app-value-presentation-item
-		*ngFor="let item of yearlyExpenseTags"
-		(onClickEmitter)="onExpenseTagClick(item)"
+		[formControl]="activeItemsFormControl"
 		[yearlyExpenseTotal]="yearlyExpenseTotal"
-		[yearlyAggregation]="item"
-		[isActive]="activeValueItem === item"
+		[yearlyExpenseTags]="yearlyExpenseTags"
 	></app-value-presentation-item>
 </app-scroll-wrapper>
 
 <!-- account overview -->
 <app-personal-account-overview-chart
 	[personalAccount]="personalAccount"
-	[activeValueItem]="activeValueItem"
+	[activeItems]="activeItemsFormControl.value"
 ></app-personal-account-overview-chart>
 
 <!-- daily data filter + table + spending allocation -->

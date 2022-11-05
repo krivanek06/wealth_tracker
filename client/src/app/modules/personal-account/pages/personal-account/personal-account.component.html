@@ -22,8 +22,9 @@
 
 <!-- account overview -->
 <app-personal-account-overview-chart
-	[personalAccount]="personalAccount"
-	[activeItems]="activeItemsFormControl.value"
+	*ngIf="chartData$ | async as chartData"
+	[chartData]="chartData"
+	[categories]="categories"
 ></app-personal-account-overview-chart>
 
 <!-- daily data filter + table + spending allocation -->

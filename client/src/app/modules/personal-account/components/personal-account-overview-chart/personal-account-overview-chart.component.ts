@@ -1,8 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
-import { PersonalAccountChartService } from '../../services';
-import { PersonalAccountTagFragment } from './../../../../core/graphql';
 import { GenericChartSeries } from './../../../../shared/models';
 
 NoDataToDisplay(Highcharts);
@@ -13,20 +11,9 @@ NoDataToDisplay(Highcharts);
 	styleUrls: ['./personal-account-overview-chart.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PersonalAccountOverviewChartComponent implements OnInit {
-	// @Input() personalAccount!: PersonalAccountOverviewFragment;
-	// @Input() set activeItems(data: PersonalAccountTagFragment[]) {
-	// 	this.onExpenseTagClick(data);
-	// }
-
+export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges {
 	@Input() categories!: string[];
-	@Input() set chartData(data: GenericChartSeries[] | null) {
-		this.initChart(data ?? []);
-	}
-
-	// private accountIncomeExpenseChartData!: [GenericChartSeries, GenericChartSeries];
-	// private expenseChartDataCopy!: GenericChartSeries[];
-	// private expenseChartData!: GenericChartSeries[];
+	@Input() chartData!: GenericChartSeries[] | null;
 
 	Highcharts: typeof Highcharts = Highcharts;
 	chart: any;
@@ -34,7 +21,7 @@ export class PersonalAccountOverviewChartComponent implements OnInit {
 	chartCallback: any;
 	chartOptions: Highcharts.Options = {}; //  : Highcharts.Options
 
-	constructor(private modificationService: PersonalAccountChartService) {
+	constructor() {
 		const self = this;
 
 		this.chartCallback = (chart: any) => {
@@ -42,27 +29,30 @@ export class PersonalAccountOverviewChartComponent implements OnInit {
 			self.chart = chart; // new Highcharts.Chart(this.chartOptions); //chart;
 		};
 	}
+	ngOnChanges(changes: SimpleChanges): void {
+		if (changes?.['chartData']?.currentValue) {
+			this.initChart();
 
-	ngOnInit(): void {
-		// this.accountIncomeExpenseChartData = this.modificationService.getAccountIncomeExpenseChartData(
-		// 	this.personalAccount,
-		// 	'week'
-		// );
-		// this.expenseChartDataCopy = this.modificationService.getWeeklyExpenseChartData(this.personalAccount);
-		// this.expenseChartData = [...this.expenseChartDataCopy];
+			const chartData = changes?.['chartData']?.currentValue;
+			this.chartOptions.series = [...chartData].map((d, index) => {
+				return {
+					name: d.name,
+					type: d.type,
+					color: d.color,
+					data: d.data,
+					dataLabels: {
+						enabled: index === 0,
+					},
+					yAxis: index === 1 || index === 2 ? 1 : undefined,
+				} as Highcharts.SeriesOptionsType;
+			});
+			(this.chartOptions.xAxis as any).categories = this.categories;
+		}
 	}
 
-	private onExpenseTagClick(item: PersonalAccountTagFragment[]): void {
-		// if (item) {
-		// 	const visibleSeries = this.expenseChartDataCopy.filter((d) => d.name === item.tagName);
-		// 	this.expenseChartData = [...visibleSeries];
-		// } else {
-		// 	this.expenseChartData = [...(this.expenseChartDataCopy ?? [])];
-		// }
-		// this.initChart();
-	}
+	ngOnInit(): void {}
 
-	private initChart(chartData: GenericChartSeries[]) {
+	private initChart() {
 		this.chartOptions = {
 			chart: {
 				plotBackgroundColor: undefined,
@@ -76,21 +66,7 @@ export class PersonalAccountOverviewChartComponent implements OnInit {
 			yAxis: [
 				{
 					title: {
-						text: 'Total balance',
-					},
-					startOnTick: false,
-					endOnTick: false,
-					gridLineColor: '#66666655',
-					opposite: true,
-					gridLineWidth: 1,
-					minorTickInterval: 'auto',
-					tickPixelInterval: 40,
-					minorGridLineWidth: 0,
-					visible: true,
-				},
-				{
-					title: {
-						text: 'Expense by tags',
+						text: '',
 					},
 					startOnTick: false,
 					endOnTick: false,
@@ -102,11 +78,25 @@ export class PersonalAccountOverviewChartComponent implements OnInit {
 					minorGridLineWidth: 0,
 					visible: true,
 				},
+				{
+					title: {
+						text: '',
+					},
+					startOnTick: false,
+					endOnTick: false,
+					gridLineColor: '#66666655',
+					opposite: true,
+					gridLineWidth: 1,
+					minorTickInterval: 'auto',
+					tickPixelInterval: 40,
+					minorGridLineWidth: 0,
+					visible: false,
+				},
 			],
 			xAxis: {
 				visible: true,
 				crosshair: true,
-				categories: this.categories,
+				categories: [],
 			},
 			title: {
 				text: 'Account overview',
@@ -177,18 +167,7 @@ export class PersonalAccountOverviewChartComponent implements OnInit {
 					enableMouseTracking: true,
 				},
 			},
-			series: [...chartData].map((d, index) => {
-				return {
-					name: d.name,
-					type: d.type,
-					color: d.color,
-					data: d.data,
-					dataLabels: {
-						enabled: index === 0 || index === 1,
-					},
-					yAxis: index === 0 || index === 1 ? 1 : undefined,
-				} as Highcharts.SeriesOptionsType;
-			}),
+			series: [],
 		};
 	}
 }

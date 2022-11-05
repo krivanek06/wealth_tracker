@@ -20,12 +20,23 @@
 	></app-value-presentation-item>
 </app-scroll-wrapper>
 
-<!-- account overview -->
-<app-personal-account-overview-chart
-	*ngIf="chartData$ | async as chartData"
-	[chartData]="chartData"
-	[categories]="categories"
-></app-personal-account-overview-chart>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+	<!-- account overview -->
+	<app-personal-account-overview-chart
+		*ngIf="accountOverviewChartData$ | async as chartData"
+		[chartData]="chartData"
+		[categories]="categories"
+	></app-personal-account-overview-chart>
+
+	<!-- expenses by tags -->
+	<app-generic-chart
+		*ngIf="expenseTagsChartData$ | async as chartData"
+		chartTitle="Expense by tag"
+		[heightPx]="400"
+		[series]="chartData"
+		[categories]="categories"
+	></app-generic-chart>
+</div>
 
 <!-- daily data filter + table + spending allocation -->
 <app-personal-account-daily-data-container

@@ -57,13 +57,23 @@ export class PersonalAccountChartService {
 	 */
 	getAccountGrowthChartData(
 		data: PersonalAccountOverviewFragment,
-		aggregation: 'week' | 'month' = 'week'
+		aggregation: 'week' | 'month' = 'week',
+		activeTags: PersonalAccountTagFragment[] = []
 	): GenericChartSeries {
+		const activeTagIds = activeTags.map((d) => d.id);
+
 		// add together weekly income and expense
 		const weeklyIncomeSeries: number[] = data.weeklyAggregaton.map((d) =>
-			d.data.reduce((acc, curr) => acc + (curr.tag.type === TagDataType.Income ? curr.value : -curr.value), 0)
+			d.data.reduce((acc, curr) => {
+				if (curr.tag.type === TagDataType.Income) {
+					return acc + curr.value;
+				}
+
+				// subtract only if tag is selected or activeTags is empty
+				return acc - (activeTagIds.length == 0 || activeTagIds.includes(curr.tag.id) ? curr.value : 0);
+			}, 0)
 		);
-		const series: GenericChartSeries = { name: 'Total', data: weeklyIncomeSeries, type: ChartType.column };
+		const series: GenericChartSeries = { name: 'Total', data: weeklyIncomeSeries, type: ChartType.line };
 
 		return series;
 	}

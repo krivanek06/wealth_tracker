@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { merge, Observable, reduce, startWith, switchMap } from 'rxjs';
+import { map, merge, Observable, reduce, startWith, switchMap } from 'rxjs';
 import { AccountState } from '../../models';
 import { PersonalAccountChartService } from '../../services';
 import { PersonalAccountApiService } from './../../../../core/api';
@@ -25,7 +25,8 @@ export class PersonalAccountComponent implements OnInit {
 	yearlyExpenseTotal!: number;
 	accountState!: AccountState;
 
-	chartData$!: Observable<GenericChartSeries[]>;
+	accountOverviewChartData$!: Observable<GenericChartSeries[]>;
+	expenseTagsChartData$!: Observable<GenericChartSeries[]>;
 	categories!: string[];
 
 	// keeps track of visible tags, if empty -> all is visible
@@ -43,12 +44,29 @@ export class PersonalAccountComponent implements OnInit {
 
 		this.categories = this.personalAccountChartService.getChartCategories(this.personalAccount);
 
-		this.chartData$ = this.activeItemsFormControl.valueChanges.pipe(
+		// this.chartData$ = this.activeItemsFormControl.valueChanges.pipe(
+		// 	startWith(this.activeItemsFormControl.value),
+		// 	switchMap((activeTags) =>
+		// 		merge(
+		// 			this.personalAccountChartService.getAccountIncomeExpenseChartData(this.personalAccount, 'week', activeTags),
+		// 			this.personalAccountChartService.getWeeklyExpenseChartData(this.personalAccount, 'week', activeTags)
+		// 		).pipe(reduce((acc, curr) => [...acc, curr], [] as GenericChartSeries[]))
+		// 	)
+		// );
+
+		this.expenseTagsChartData$ = this.activeItemsFormControl.valueChanges.pipe(
+			startWith(this.activeItemsFormControl.value),
+			map((activeTags) =>
+				this.personalAccountChartService.getWeeklyExpenseChartData(this.personalAccount, 'week', activeTags)
+			)
+		);
+
+		this.accountOverviewChartData$ = this.activeItemsFormControl.valueChanges.pipe(
 			startWith(this.activeItemsFormControl.value),
 			switchMap((activeTags) =>
 				merge(
-					this.personalAccountChartService.getAccountIncomeExpenseChartData(this.personalAccount, 'week', activeTags),
-					this.personalAccountChartService.getWeeklyExpenseChartData(this.personalAccount, 'week', activeTags)
+					[this.personalAccountChartService.getAccountGrowthChartData(this.personalAccount, 'week', activeTags)],
+					this.personalAccountChartService.getAccountIncomeExpenseChartData(this.personalAccount, 'week', activeTags)
 				).pipe(reduce((acc, curr) => [...acc, curr], [] as GenericChartSeries[]))
 			)
 		);

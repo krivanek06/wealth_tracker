@@ -31,6 +31,7 @@ import {
 	PersonalAccountDailyDataFragment,
 	PersonalAccountEditInput,
 	PersonalAccountMonthlyDataDetailFragment,
+	PersonalAccountMonthlyDataDetailFragmentDoc,
 	PersonalAccountMonthlyDataOverviewFragment,
 	PersonalAccountMonthlyDataOverviewFragmentDoc,
 	PersonalAccountOverviewFragment,
@@ -73,7 +74,7 @@ export class PersonalAccountApiService {
 		const fragment = this.apollo.client.readFragment<PersonalAccountMonthlyDataDetailFragment>({
 			id: `PersonalAccountMonthlyData:${monthlyDataId}`,
 			fragmentName: 'PersonalAccountMonthlyDataDetail',
-			fragment: GetPersonalAccountMonthlyDataByIdDocument,
+			fragment: PersonalAccountMonthlyDataDetailFragmentDoc,
 			variables: {
 				input: monthlyDataId,
 			},
@@ -398,7 +399,7 @@ export class PersonalAccountApiService {
 		this.apollo.client.writeFragment<PersonalAccountOverviewFragment>({
 			id: `PersonalAccount:${personalAccountId}`,
 			fragmentName: 'PersonalAccountOverview',
-			fragment: GetPersonalAccountsDocument,
+			fragment: PersonalAccountOverviewFragmentDoc,
 			data: {
 				...personalAccount,
 				yearlyAggregaton,

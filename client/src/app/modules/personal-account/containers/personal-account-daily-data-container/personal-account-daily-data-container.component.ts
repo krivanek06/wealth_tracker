@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { filter, first, iif, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { filter, first, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { PersonalAccountApiService } from './../../../../core/api';
 import {
 	PersonalAccountDailyDataCreate,
@@ -102,25 +102,23 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 				filter((value): value is PersonalAccountDailyDataCreate => !!value),
 				// decide on creatr or edit
 				switchMap((dailyDataCreate) =>
-					iif(
-						() => !editingDailyData,
-						this.personalAccountApiService.createPersonalAccountDailyEntry(dailyDataCreate),
-						this.personalAccountApiService.editPersonalAccountDailyEntry({
-							dailyDataCreate,
-							dailyDataDelete: {
-								dailyDataId: editingDailyData!.id,
-								monthlyDataId: editingDailyData!.monthlyDataId,
-								personalAccountId: this.personalAccount.id,
-							},
-						})
-					)
+					!editingDailyData
+						? this.personalAccountApiService.createPersonalAccountDailyEntry(dailyDataCreate)
+						: this.personalAccountApiService.editPersonalAccountDailyEntry({
+								dailyDataCreate,
+								dailyDataDelete: {
+									dailyDataId: editingDailyData.id,
+									monthlyDataId: editingDailyData.monthlyDataId,
+									personalAccountId: this.personalAccount.id,
+								},
+						  })
 				),
 				// notify user
 				tap(() => DialogServiceUtil.showNotificationBar(`Daily entry has been saved`)),
 				// memory lead
 				first()
 			)
-			.subscribe(console.log);
+			.subscribe();
 	}
 
 	private formatToExpenseAllocationChartDatta(data: PersonalAccountMonthlyDataDetailFragment): GenericChartSeriesPie {

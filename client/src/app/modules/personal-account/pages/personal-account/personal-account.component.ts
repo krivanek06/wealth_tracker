@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { GenericChartSeriesInput } from '../../../../shared/models';
 import { AccountState } from '../../models';
 import { PersonalAccountDataModificationService } from '../../services';
 import { PersonalAccountApiService } from './../../../../core/api';
@@ -18,10 +17,7 @@ import {
 export class PersonalAccountComponent implements OnInit {
 	@Input() personalAccount!: PersonalAccountOverviewFragment;
 
-	weeklyChartData!: GenericChartSeriesInput;
-	weeklyExpenseChartDataCopy!: GenericChartSeriesInput;
-	weeklyExpenseChartData!: GenericChartSeriesInput;
-	yearlyExpenseAggregaton: PersonalAccountAggregationDataOutput[] = [];
+	yearlyExpenseTags: PersonalAccountAggregationDataOutput[] = [];
 	yearlyExpenseTotal!: number;
 	activeValueItem: PersonalAccountAggregationDataOutput | null = null;
 	accountState!: AccountState;
@@ -32,26 +28,12 @@ export class PersonalAccountComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.weeklyChartData = this.modificationService.getWeeklyChartData(this.personalAccount);
-		this.weeklyExpenseChartDataCopy = this.modificationService.getWeeklyExpenseChartData(this.personalAccount);
 		this.accountState = this.modificationService.getAccountState(this.personalAccount);
-
-		this.yearlyExpenseAggregaton = this.personalAccount.yearlyAggregaton.filter(
-			(d) => d.tagType === TagDataType.Expense
-		);
-		this.yearlyExpenseTotal = this.yearlyExpenseAggregaton.reduce((a, b) => a + b.value, 0);
-		this.weeklyExpenseChartData = { ...this.weeklyExpenseChartDataCopy };
+		this.yearlyExpenseTags = this.personalAccount.yearlyAggregaton.filter((d) => d.tagType === TagDataType.Expense);
+		this.yearlyExpenseTotal = this.yearlyExpenseTags.reduce((a, b) => a + b.value, 0);
 	}
 
 	onExpenseTagClick(item: PersonalAccountAggregationDataOutput): void {
 		this.activeValueItem = item === this.activeValueItem ? null : item;
-		if (this.activeValueItem) {
-			const visibleSeries = this.weeklyExpenseChartDataCopy.series.filter(
-				(d) => d.name === this.activeValueItem?.tagName
-			);
-			this.weeklyExpenseChartData = { ...this.weeklyExpenseChartDataCopy, series: visibleSeries };
-		} else {
-			this.weeklyExpenseChartData = { ...this.weeklyExpenseChartDataCopy };
-		}
 	}
 }

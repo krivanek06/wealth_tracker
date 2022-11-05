@@ -1,6 +1,6 @@
 // decreasing height of form field with font-size
 .mat-form-field {
-	font-size: 0.75rem;
+	font-size: 12px !important;
 
 	input,
 	textarea,
@@ -78,4 +78,21 @@ mat-form-field span.mat-form-field-label-wrapper label {
 
 mat-form-field.mat-focused span.mat-form-field-label-wrapper label {
 	color: var(--color-primary-500) !important;
+}
+
+// on Error
+.mat-form-field-appearance-outline.mat-form-field-invalid.mat-form-field-invalid .mat-form-field-outline-thick {
+	color: var(--color-primary-900) !important;
+}
+
+.mat-form-field.mat-form-field-invalid .mat-form-field-label {
+	color: var(--color-primary-900) !important;
+}
+
+mat-hint {
+	color: var(--color-gray-200) !important;
+}
+
+mat-divider {
+	background-color: var(--color-gray-400) !important;
 }

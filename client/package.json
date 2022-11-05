@@ -29,6 +29,7 @@
 		"graphql": "^16",
 		"highcharts": "^10.2.1",
 		"highcharts-angular": "^3.0.0",
+		"mat-timepicker": "^5.1.7",
 		"rxjs": "~7.5.0",
 		"subscriptions-transport-ws": "^0.11.0",
 		"tslib": "^2.3.0",

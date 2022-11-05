@@ -1,0 +1,157 @@
+<ng-container [ngSwitch]="inputType">
+	<mat-form-field
+		*ngIf="!['CHECKBOX', 'RADIO', 'SLIDE_TOGGLE', 'SLIDER' ,'BUTTON'].includes(inputType); else fieldWhichCannotBeInFormField"
+		appearance="outline"
+		[ngClass]="{ 'errors-showed': usedFormControl.touched  && usedFormControl.invalid }"
+	>
+		<!-- label -->
+		<mat-label> {{ inputCaption }}</mat-label>
+
+		<!-- textarea -->
+		<textarea
+			#textAreaElement
+			*ngSwitchCase="'TEXTAREA'"
+			[formControl]="formInputControl"
+			cdkAutosizeMaxRows="7"
+			cdkAutosizeMinRows="3"
+			cdkTextareaAutosize
+			matInput
+		>
+		</textarea>
+
+		<!-- select & multiselect and search select-->
+		<ng-container *ngSwitchCase="'SELECT'">
+			<ng-container *ngTemplateOutlet="selectTemplate"></ng-container>
+		</ng-container>
+		<ng-container *ngSwitchCase="'SELECTSEARCH'">
+			<ng-container *ngTemplateOutlet="selectTemplate"></ng-container>
+		</ng-container>
+		<ng-container *ngSwitchCase="'MULTISELECT'">
+			<ng-container *ngTemplateOutlet="selectTemplate"></ng-container>
+		</ng-container>
+
+		<ng-template #selectTemplate>
+			<mat-select
+				[disableRipple]="disabled"
+				[formControl]="formInputControl"
+				[ngClass]="{'disabled-element': disabled}"
+				[multiple]="inputType === InputType.MULTISELECT"
+			>
+				<mat-select-trigger *ngIf="selectedInputSource$ | async as selectedInputSource" class="flex gap-2 items-center">
+					<img *ngIf="selectedInputSource?.image" [src]="selectedInputSource.image" alt="" />
+					{{ selectedInputSource.caption }}
+				</mat-select-trigger>
+				<input
+					*ngIf="inputType === InputType.SELECTSEARCH || inputType === InputType.MULTISELECT"
+					#matSearchSelectInput
+					(keyup)="multiSelectKeyPress($event)"
+					class="select-input"
+					placeholder="Search"
+					tabindex="0"
+				/>
+				<mat-option *ngFor="let optionData of inputSource" [value]="optionData.value">
+					<div class="flex gap-2 items-center">
+						<img *ngIf="optionData?.image" [src]="optionData.image" alt="" />
+						{{ optionData.caption }}
+					</div>
+				</mat-option>
+			</mat-select>
+		</ng-template>
+
+		<!-- date picker -->
+		<ng-container *ngSwitchCase="'DATEPICKER'">
+			<div class="flex items-center relative -top-[12px]">
+				<input
+					[min]="inputTypeDateTimePickerConfig?.minDate"
+					matInput
+					[matDatepicker]="datePicker"
+					[formControl]="formInputControl"
+				/>
+				<mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+				<mat-datepicker #datePicker></mat-datepicker>
+			</div>
+		</ng-container>
+
+		<!-- time picker -->
+		<ng-container *ngSwitchCase="'TIMEPICKER'">
+			<div class="flex items-center relative -top-[4px]">
+				<input matTimepicker #timePicker="matTimepicker" [formControl]="formInputControl" />
+				<mat-icon matSuffix (click)="timePicker.showDialog()">access_time</mat-icon>
+			</div>
+		</ng-container>
+
+		<!-- number -->
+		<ng-container *ngSwitchCase="'NUMBER'">
+			<input
+				[formControl]="formInputControl"
+				[readOnly]="disabled"
+				type="number"
+				[autocomplete]="inputAutoComplete ? 'on' : 'off'"
+				matInput
+			/>
+		</ng-container>
+
+		<!-- text, number, time, email -->
+		<input
+			*ngSwitchDefault
+			[formControl]="formInputControl"
+			[readOnly]="disabled"
+			[type]="inputType | lowercase"
+			[autocomplete]="inputAutoComplete ? 'on' : 'off'"
+			matInput
+		/>
+
+		<!-- errors -->
+		<mat-error *ngFor="let inputError of usedFormControl.errors | keyvalue" [id]="''">
+			{{ inputError.value.errorText }}
+		</mat-error>
+
+		<!-- hint -->
+		<mat-icon *ngIf="hintText" [matTooltip]="hintText" class="helper-text-tooltip-icon" matSuffix>
+			help_outline
+		</mat-icon>
+
+		<!-- prefix icon -->
+		<mat-icon *ngIf="prefixIcon" matPrefix class="icon-prefix">{{ prefixIcon }}</mat-icon>
+	</mat-form-field>
+
+	<!-- mat-form-field can not contain the following elements -->
+	<ng-template #fieldWhichCannotBeInFormField>
+		<div class="not-form-field-inputs">
+			<!-- checkbox -->
+			<mat-checkbox
+				*ngSwitchCase="'CHECKBOX'"
+				[disableRipple]="disabled"
+				[formControl]="formInputControl"
+				color="primary"
+				[matTooltip]="hintText ? (hintText) : ''"
+				[ngClass]="{'disabled-element': disabled}"
+			>
+				{{ inputCaption }}
+			</mat-checkbox>
+
+			<!-- radio button -->
+			<ng-container *ngSwitchCase="'RADIO'">
+				<!-- label -->
+				<mat-label class="font-bold"> {{ inputCaption }}</mat-label>
+
+				<mat-radio-group
+					[formControl]="formInputControl"
+					[matTooltip]="hintText ? (hintText) : ''"
+					[ngClass]="{'disabled-element': disabled}"
+					class="flex flex-col mt-4"
+				>
+					<mat-radio-button *ngFor="let optionData of inputSource" [value]="optionData.value">
+						{{ optionData.caption }}
+					</mat-radio-button>
+				</mat-radio-group>
+			</ng-container>
+			<!-- errors -->
+			<ng-container *ngIf="shouldBeErrorsShowed">
+				<mat-error *ngFor="let inputError of usedFormControl.errors | keyvalue" [id]="''">
+					{{ inputError.value.errorText }}
+				</mat-error>
+			</ng-container>
+		</div>
+	</ng-template>
+</ng-container>

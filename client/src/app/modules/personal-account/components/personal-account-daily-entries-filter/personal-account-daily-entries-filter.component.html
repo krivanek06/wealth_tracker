@@ -1,6 +1,6 @@
-<form [formGroup]="formGroup" class="grid grid-cols-2 md:grid-cols-4 gap-x-3 lg:flex">
+<form [formGroup]="formGroup" class="c-wrapper">
 	<!-- display months -->
-	<mat-form-field appearance="outline" class="text-xs">
+	<mat-form-field appearance="outline">
 		<mat-label>Select month</mat-label>
 		<mat-select formControlName="yearAndMonth">
 			<mat-option *ngFor="let date of displayYearsAndMonths" [value]="date">
@@ -10,7 +10,7 @@
 	</mat-form-field>
 
 	<!-- display weeks in the selected month -->
-	<mat-form-field appearance="outline" class="text-xs">
+	<mat-form-field appearance="outline">
 		<mat-label>Select week</mat-label>
 		<mat-select formControlName="week">
 			<mat-option *ngFor="let data of displayWeeksInMonth" [value]="data">
@@ -20,17 +20,12 @@
 	</mat-form-field>
 
 	<!-- display tags in the selected month & week -->
-	<mat-form-field appearance="outline" class="text-xs">
-		<mat-label>Select tag</mat-label>
-		<mat-select formControlName="tag" multiple>
-			<mat-option *ngFor="let data of displayTags$ | async" [value]="data.tag.name">
-				<div class="flex items-center gap-3">
-					<img appDefaultImg imageType="tags" [src]="data.tag.name" class="h-6" />
-					<span>{{ data.tag.name }} ({{data.total}})</span>
-				</div>
-			</mat-option>
-		</mat-select>
-	</mat-form-field>
+	<app-form-mat-input-wrapper
+		controlName="tag"
+		inputCaption="Select tag"
+		inputType="MULTISELECT"
+		[inputSource]="displayTagsInputSource$ | async"
+	></app-form-mat-input-wrapper>
 
 	<!-- current month -->
 	<div class="mt-1 h-11">

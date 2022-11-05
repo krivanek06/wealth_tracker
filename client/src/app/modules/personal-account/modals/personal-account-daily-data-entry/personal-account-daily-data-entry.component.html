@@ -1,0 +1,75 @@
+<div class="text-lg mb-6 text-center">Account: <span class="g-color-primary">{{ data.personalAccountName }}</span></div>
+
+<form (submit)="onSave()" [formGroup]="formGroup">
+	<mat-dialog-content class="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
+		<!-- form inputs -->
+		<div class="col-span-1 lg:col-span-2 flex flex-col">
+			<!-- tag types -->
+			<mat-radio-group
+				aria-label="Select tag type"
+				formControlName="tagType"
+				color="primary"
+				class="flex justify-around mb-2"
+			>
+				<mat-radio-button [value]="TagDataType.Expense">Expense</mat-radio-button>
+				<mat-radio-button [value]="TagDataType.Income">Income</mat-radio-button>
+			</mat-radio-group>
+
+			<!-- tag -->
+			<app-form-mat-input-wrapper
+				controlName="tagId"
+				inputCaption="Select tag"
+				inputType="SELECT"
+				hintText="Select tag that will be associated with the value"
+				[inputSource]="displayTagsInputSource$ | async"
+			></app-form-mat-input-wrapper>
+
+			<div class="flex flex-col sm:flex-row gap-x-4">
+				<!-- time -->
+				<app-form-mat-input-wrapper
+					class="w-full"
+					controlName="time"
+					inputCaption="Enter time"
+					inputType="TIMEPICKER"
+				></app-form-mat-input-wrapper>
+
+				<!-- date -->
+				<app-form-mat-input-wrapper
+					class="w-full"
+					controlName="date"
+					inputCaption="Enter date"
+					inputType="DATEPICKER"
+				></app-form-mat-input-wrapper>
+			</div>
+
+			<!-- value -->
+			<app-form-mat-input-wrapper
+				controlName="value"
+				inputCaption="Enter value"
+				inputType="NUMBER"
+				hintText="Add USD to the selected tag, greater than 0$"
+			></app-form-mat-input-wrapper>
+		</div>
+
+		<!-- display value form form -->
+		<div class="p-4">
+			<app-daily-data-entry-display-elements
+				[tagType]="formGroup.controls.tagType.value"
+				[tag]="selectedTag$ | async"
+				[value]="formGroup.controls.value.value"
+				[date]="formGroup.controls.date.value"
+				[time]="formGroup.controls.time.value"
+			></app-daily-data-entry-display-elements>
+		</div>
+	</mat-dialog-content>
+
+	<div class="mt-4">
+		<mat-divider></mat-divider>
+	</div>
+
+	<!-- action buttons -->
+	<mat-dialog-actions>
+		<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
+		<button mat-stroked-button color="primary" type="submit">Save</button>
+	</mat-dialog-actions>
+</form>

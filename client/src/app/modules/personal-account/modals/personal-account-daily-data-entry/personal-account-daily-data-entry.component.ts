@@ -21,11 +21,12 @@ import { positiveNumberValidator, requiredValidator } from './../../../../shared
 })
 export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	displayTagsInputSource$!: Observable<InputSource[]>;
+	selectedTag$!: Observable<PersonalAccountTagFragment>;
 	TagDataType = TagDataType;
 
 	readonly formGroup = new FormGroup({
 		tagType: new FormControl<TagDataType>(TagDataType.Expense, { validators: [requiredValidator] }),
-		tag: new FormControl<PersonalAccountTagFragment | null>(null, { validators: [requiredValidator] }),
+		tagId: new FormControl<string | null>(null, { validators: [requiredValidator] }),
 		value: new FormControl<number | null>(null, { validators: [requiredValidator, positiveNumberValidator] }),
 		time: new FormControl<Date>(new Date(), { validators: [requiredValidator] }),
 		date: new FormControl<Date>(new Date(), { validators: [requiredValidator] }),
@@ -43,12 +44,19 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.formGroup.valueChanges.subscribe(console.log);
-		this.initIncomeExpenseTags();
-
 		if (this.data.dailyData) {
-			// todo implement editing
+			this.formGroup.setValue({
+				date: new Date(Number(this.data.dailyData.date)),
+				time: new Date(Number(this.data.dailyData.date)),
+				tagId: this.data.dailyData.tag.id,
+				tagType: this.data.dailyData.tag.type,
+				value: this.data.dailyData.value,
+			});
 		}
+
+		this.displayTagsInputSource$ = this.initIncomeExpenseTags();
+		this.selectedTag$ = this.initSelectedTag();
+		this.clearTagOnTagTypeChange();
 	}
 
 	onSave(): void {
@@ -60,7 +68,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		// get values from form
 		const dateValue = this.formGroup.controls.date.value;
 		const timeValue = this.formGroup.controls.time.value;
-		const tagValue = this.formGroup.controls.tag.value;
+		const tagValue = this.formGroup.controls.tagId.value;
 		const valueValue = this.formGroup.controls.value.value;
 
 		// TS checking, should not happen
@@ -82,19 +90,39 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		const dailyEntry: PersonalAccountDailyDataCreate = {
 			date: combinedDate.toString(),
 			value: valueValue,
-			tagId: tagValue.id,
+			tagId: tagValue,
 			personalAccountId: this.data.personalAccountId,
 		};
 
 		this.dialogRef.close(dailyEntry);
 	}
 
-	private initIncomeExpenseTags(): void {
+	private initSelectedTag(): Observable<PersonalAccountTagFragment> {
+		return this.formGroup.controls.tagId.valueChanges.pipe(
+			startWith(this.formGroup.controls.tagId.value),
+			switchMap((value) =>
+				this.displayTagsInputSource$.pipe(
+					map((source) => source.find((d) => d.value === value)?.additionalData as PersonalAccountTagFragment)
+				)
+			)
+		);
+	}
+
+	private clearTagOnTagTypeChange(): void {
+		this.formGroup.controls.tagType.valueChanges
+			.pipe(
+				// reset selected tag
+				tap(() => this.formGroup.controls.tagId.patchValue(null, { emitEvent: false }))
+			)
+			.subscribe();
+	}
+
+	private initIncomeExpenseTags(): Observable<InputSource[]> {
 		// filter expense tags
 		const displayTagsExponse$ = this.personalAccountApiService.getDefaultTagsExpense().pipe(
 			map((tags) =>
 				tags.map((d) => {
-					return { caption: d.name, value: d, image: getTagImageLocation(d.name) } as InputSource;
+					return { caption: d.name, value: d.id, additionalData: d, image: getTagImageLocation(d.name) } as InputSource;
 				})
 			)
 		);
@@ -103,16 +131,14 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		const displayTagsIncome$ = this.personalAccountApiService.getDefaultTagsIncome().pipe(
 			map((tags) =>
 				tags.map((d) => {
-					return { caption: d.name, value: d, image: getTagImageLocation(d.name) } as InputSource;
+					return { caption: d.name, value: d.id, additionalData: d, image: getTagImageLocation(d.name) } as InputSource;
 				})
 			)
 		);
 
 		// based on tagType switch which one to display
-		this.displayTagsInputSource$ = this.formGroup.controls.tagType.valueChanges.pipe(
+		return this.formGroup.controls.tagType.valueChanges.pipe(
 			startWith(this.formGroup.controls.tagType.value),
-			// reset selected tag
-			tap(() => this.formGroup.controls.tag.patchValue(null, { emitEvent: false })),
 			// decide which tag types to display
 			switchMap((tagType) => iif(() => tagType === TagDataType.Expense, displayTagsExponse$, displayTagsIncome$))
 		);

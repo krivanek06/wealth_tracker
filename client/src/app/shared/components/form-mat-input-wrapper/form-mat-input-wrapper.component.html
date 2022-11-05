@@ -35,10 +35,9 @@
 				[disableRipple]="disabled"
 				[formControl]="formInputControl"
 				[ngClass]="{'disabled-element': disabled}"
-				(selectionChange)="selectOption($event)"
 				[multiple]="inputType === InputType.MULTISELECT"
 			>
-				<mat-select-trigger *ngIf="selectedInputSource" class="flex gap-2 items-center">
+				<mat-select-trigger *ngIf="selectedInputSource$ | async as selectedInputSource" class="flex gap-2 items-center">
 					<img *ngIf="selectedInputSource?.image" [src]="selectedInputSource.image" alt="" />
 					{{ selectedInputSource.caption }}
 				</mat-select-trigger>
@@ -111,17 +110,6 @@
 		<mat-icon *ngIf="hintText" [matTooltip]="hintText" class="helper-text-tooltip-icon" matSuffix>
 			help_outline
 		</mat-icon>
-
-		<!-- postfix close icon -->
-		<button
-			*ngIf="showCloseIcon && inputType === 'TEXT' "
-			matSuffix
-			mat-icon-button
-			aria-label="Clear"
-			(click)="resetValue()"
-		>
-			<mat-icon>close</mat-icon>
-		</button>
 
 		<!-- prefix icon -->
 		<mat-icon *ngIf="prefixIcon" matPrefix class="icon-prefix">{{ prefixIcon }}</mat-icon>

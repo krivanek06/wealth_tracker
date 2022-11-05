@@ -1,6 +1,6 @@
 <div class="grid gap-2">
 	<!-- selected tag -->
-	<div *ngIf="tag" class="c-item-wrapper">
+	<div class="c-item-wrapper">
 		<div
 			[ngClass]="{
       'text-red-500':  tagType === TagDataType.Expense,
@@ -10,8 +10,10 @@
 			{{ tagType === TagDataType.Expense ? 'Expense' : 'Income' }}:
 		</div>
 		<div class="flex items-center gap-2">
-			<img appDefaultImg imageType="tags" [src]="tag.name" class="h-7" />
-			<span>{{ tag.name }}</span>
+			<ng-container *ngIf="tag">
+				<img appDefaultImg imageType="tags" [src]="tag.name" class="h-7" />
+				<span>{{ tag.name }}</span>
+			</ng-container>
 		</div>
 	</div>
 

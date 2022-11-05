@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, forwardRef, inject, Input, OnInit } from '@angular/core';
-import { ControlValueAccessor, FormBuilder, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, forwardRef, Input, OnInit } from '@angular/core';
+import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { map, Observable, of, startWith, switchMap } from 'rxjs';
-import { InputSource, ModelFormGroup } from '../../../../shared/models';
-import { DailyEntriesFiler, getTagImageLocation } from '../../models';
+import { InputSource } from '../../../../shared/models';
+import { getTagImageLocation } from '../../models';
 import { PersonalAccountMonthlyDataDetailFragment, PersonalAccountTagFragment } from './../../../../core/graphql';
 import { DateServiceUtil } from './../../../../shared/utils';
 
@@ -80,7 +80,8 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 				results.map((data) => {
 					return {
 						caption: `${data.tag.name} (${data.total})`,
-						value: data.tag,
+						value: data.tag.id,
+						additionalData: data.tag,
 						image: getTagImageLocation(data.tag.name),
 					} as InputSource;
 				})
@@ -103,15 +104,13 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	 */
 	displayTagsInputSource$?: Observable<InputSource[]>;
 
-	private fb = inject(FormBuilder);
-
-	readonly formGroup: ModelFormGroup<DailyEntriesFiler> = this.fb.nonNullable.group({
-		yearAndMonth: [''],
-		week: [-1],
-		tag: [[] as PersonalAccountTagFragment[]],
+	readonly formGroup = new FormGroup({
+		yearAndMonth: new FormControl<string | null>(''),
+		week: new FormControl<number>(-1),
+		tag: new FormControl<string[]>([]),
 	});
 
-	onChange: (dateRange?: DailyEntriesFiler) => void = () => {
+	onChange: (dateRange?: unknown) => void = () => {
 		/** empty */
 	};
 	// onTouched callback that will be overridden using `registerOnTouched`

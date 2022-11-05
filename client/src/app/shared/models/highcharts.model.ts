@@ -36,8 +36,3 @@ export interface GenericChartSeriesData {
 	color?: string;
 	z?: number;
 }
-
-export interface GenericChartSeriesInput {
-	series: GenericChartSeries[];
-	categories: string[];
-}

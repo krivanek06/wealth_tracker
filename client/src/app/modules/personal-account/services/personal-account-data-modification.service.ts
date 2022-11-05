@@ -10,6 +10,11 @@ import { DateServiceUtil } from './../../../shared/utils';
 export class PersonalAccountDataModificationService {
 	constructor() {}
 
+	/**
+	 *
+	 * @param data
+	 * @returns accumulated expenses, incomes and their difference
+	 */
 	getAccountState(data: PersonalAccountOverviewFragment): AccountState {
 		const expenseTotal = data.yearlyAggregaton
 			.filter((d) => d.tagType === TagDataType.Expense)
@@ -30,6 +35,7 @@ export class PersonalAccountDataModificationService {
 
 	/**
 	 * Aggregates incomes and expenses into a chart format
+	 * for account growth overview
 	 *
 	 * @param data aggregation from personal account
 	 * @param aggregation type of aggreation
@@ -52,6 +58,13 @@ export class PersonalAccountDataModificationService {
 		return { series: [series], categories };
 	}
 
+	/**
+	 * Aggregates weekly expenses by tag into week/month format
+	 *
+	 * @param data aggregation from personal account
+	 * @param aggregation type of aggreation
+	 * @returns GenericChartSeriesInput data type
+	 */
 	getWeeklyExpenseChartData(
 		data: PersonalAccountOverviewFragment,
 		aggregation: 'week' | 'month' = 'week'

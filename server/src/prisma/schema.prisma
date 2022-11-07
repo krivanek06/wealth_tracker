@@ -123,128 +123,111 @@ type PersonalAccountDailyData {
 
 // ---------------- Investment account ------------------
 model InvestmentAccount {
-    id          String @id @default(auto()) @map("_id") @db.ObjectId
-    name        String // custom name for personal account
-    cashCurrent Float  @default(0) // how much cash on hand user has in the trading platform
+    id   String @id @default(auto()) @map("_id") @db.ObjectId
+    name String // custom name for personal account
 
-    // all assets user hold in his InvestmentAccount
+    // whole history of changed cash on hand
+    cashChange InvestmentAccountCashChange[]
+
+    // whole history of purchased/sold assets
     holdings InvestmentAccountHolding[]
 
     // 1 - N relationship with user
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String @db.ObjectId
-
-    // 1 - 1 relationship with InvestmentAccountSnapshots
-    // calculated from InvestmentAccount.holdings
-    investmentAccountHistory       InvestmentAccountHistory?
-    investmentAccountHistoryChange InvestmentAccountHistoryChange[]
 }
 
-model InvestmentAccountHistory {
-    id String @id @default(auto()) @map("_id") @db.ObjectId
-
-    portfolioSnapshotTotal Int
-    portfolioSnapshots     InvestmentAccountPortfolioSnapshot[]
-
-    // 1 - 1 relationship with InvestmentAccount
-    investmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
-    investmentAccountId String            @unique
+type InvestmentAccountCashChange {
+    itemId      String // random UUID
+    cashCurrent Float
+    date        DateTime
 }
 
+// the whole history of the one asset that was bough, completly sold, then bought again
 type InvestmentAccountHolding {
     id                  String // ID of symbol in DB -> AAPL, MSFT
-    investmentAccountId String // InvestmentAccount.id
-    addedDate           DateTime                     @default(now()) // date when it was added to holdings
-    type                InvestmentAccountHoldingType
-    units               Float // how many units of asset the user have
-    investedAlready     Float // $ how much user invested into a specific asset
+    assetId             String // AAPL, MSFT, BTC
+    investmentAccountId String
+    name                String // full name of the asset
+
+    type   InvestmentAccountHoldingType
+    sector String
+
+    // whole history of sells/purchases of assetId
+    holdingHistory InvestmentAccountHoldingHistory[]
+}
+
+type InvestmentAccountHoldingHistory {
+    date           DateTime @default(now()) // date when it was added to holdings
+    units          Float // how many units of asset the user have
+    investedAmount Float // $ how much user invested into a specific asset
 }
 
 enum InvestmentAccountHoldingType {
     STOCK
     CRYPTO
+    ETF
+    MUTUAL_FUND
+    COMMODITY
 }
 
-type InvestmentAccountPortfolioSnapshot {
-    id                String // random UUID 
-    snapshotDate      DateTime @default(now())
-    cash              Float // user input
-    investmentCurrent Float // current investment of all (assets * units)
+// ---------------- Asset manager general ------------------
 
-    // saving current state of owned assets - to show progress chart
-    portfolioSnapshotInfo InvestmentAccountPortfolioSnapshotInfo[]
-}
-
-// Snapshot of asset data at the current point of time in InvestmentAccountPortfolioSnapshot
-type InvestmentAccountPortfolioSnapshotInfo {
-    assetId          String // AAPL, MSFT
-    assetClosedPrice Float
-    assetSector      String
-    units            Float
-    investedAmount   Float
-}
-
-// Keeps track of the whole history that one asset was bough, completly sold, then bought again
-model InvestmentAccountHistoryChange {
-    id      String @id @map("_id")
-    assetId String // AAPL, MSFT, BTC
-
-    // whole history of sells/purchases of assetId
-    historyChangeInfo InvestmentAccountHistoryChangeInfo[]
-
-    investmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
-    investmentAccountId String            @db.ObjectId
-}
-
-type InvestmentAccountHistoryChangeInfo {
-    infoId           String // random unique UUID
-    assetClosedPrice Float
-    assetSector      String
-    units            Float
-    investedAmount   Float
-    date             DateTime
-}
-
-// ---------------- Asset manager stock ------------------
-model AssetStock {
-    symbol String @id @map("_id")
-
-    // when price was lastly updated - usually end of each day by cloud function
-    priceUpdateTimestamp Float
+model AssetGeneral {
+    id   String @id @map("_id") // symbol name: AAPL, MSFT, QQQ, ...
+    name String // asset full name
 
     // when additional information were lastly updated 
-    infoUpdateTimestamp Float
+    assetIntoLastUpdate DateTime @default(now())
 
     // additional data for a stock
-    assetStockQuote   AssetStockQuote
-    assetStockProfile AssetStockProfile
+    assetQuote AssetGeneralQuote
+
+    // historical prices for chart
+    assetHistoricalPrices AssetGeneralHistoricalPrices[]
 }
 
-type AssetStockQuote {
-    symbol               String
-    price                Float
-    volume               Float
-    name                 String
-    changesPercentage    Float
-    change               Float
-    dayLow               Float
-    dayHigh              Float
-    yearHigh             Float
-    yearLow              Float
-    marketCap            Float
-    priceAvg50           Float
-    priceAvg200          Float
-    avgVolume            Float
-    exchange             String
-    open                 Float
-    previousClose        Float
-    eps                  Float?
-    pe                   Float?
-    earningsAnnouncement String?
-    sharesOutstanding    Float
+type AssetGeneralHistoricalPrices {
+    date          String // "2022-03-12"
+    open          Float
+    high          Float
+    low           Float
+    close         Float
+    volume        Float
+    change        Float
+    changePercent Float
+}
+
+type AssetGeneralQuote {
+    yearLow     Float
+    yearHigh    Float
+    marketCap   Float
+    priceAvg50  Float
+    priceAvg200 Float
+    avgVolume   Float
+    exchange    String
+
+    // for crypto it is current supply
+    sharesOutstanding Float
 
     // tells when this was updates
     timestamp Float
+
+    // only present for stocks
+    eps                  Float?
+    pe                   Float?
+    earningsAnnouncement String?
+}
+
+// ---------------- Asset manager stock ------------------
+
+model AssetStock {
+    // symbol name: AAPL, MSFT, QQQ, ...
+    id String @id @map("_id")
+
+    profile AssetStockProfile
+
+    lastUpdated DateTime @default(now())
 }
 
 type AssetStockProfile {

@@ -20,16 +20,16 @@ model User {
 
     // 1 - 1 relationship with user tags
     // one user can craete multiple tags
-    PersonalAccountTags PersonalAccountTag[]
+    personalAccountTags PersonalAccountTag[]
 
     // 1 - N relationship with multiple investment accounts
     // one user can craete multiple investment accounts
-    InvestmentAccounts InvestmentAccount[]
+    investmentAccounts InvestmentAccount[]
 
     // 1 - N relationship with multiple personal accounts
     // one user can craete multiple personal accounts & monthly data
-    PersonalAccounts           PersonalAccount[]
-    PersonalAccountMonthlyData PersonalAccountMonthlyData[]
+    personalAccounts           PersonalAccount[]
+    personalAccountMonthlyData PersonalAccountMonthlyData[]
 }
 
 type UserAuthentication {
@@ -130,15 +130,14 @@ model InvestmentAccount {
     // all assets user hold in his InvestmentAccount
     holdings InvestmentAccountHolding[]
 
-    // last inserted value in InvestmentAccountSnapshots[-1], new accounts the first day is null
-    lastPortfolioSnapshot InvestmentAccountPortfolioSnapshot?
-
     // 1 - N relationship with user
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String @db.ObjectId
 
     // 1 - 1 relationship with InvestmentAccountSnapshots
-    investmentAccountHistory InvestmentAccountHistory?
+    // calculated from InvestmentAccount.holdings
+    investmentAccountHistory       InvestmentAccountHistory?
+    investmentAccountHistoryChange InvestmentAccountHistoryChange[]
 }
 
 model InvestmentAccountHistory {
@@ -148,13 +147,14 @@ model InvestmentAccountHistory {
     portfolioSnapshots     InvestmentAccountPortfolioSnapshot[]
 
     // 1 - 1 relationship with InvestmentAccount
-    InvestmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
+    investmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
     investmentAccountId String            @unique
 }
 
 type InvestmentAccountHolding {
     id                  String // ID of symbol in DB -> AAPL, MSFT
     investmentAccountId String // InvestmentAccount.id
+    addedDate           DateTime                     @default(now()) // date when it was added to holdings
     type                InvestmentAccountHoldingType
     units               Float // how many units of asset the user have
     investedAlready     Float // $ how much user invested into a specific asset
@@ -167,9 +167,42 @@ enum InvestmentAccountHoldingType {
 
 type InvestmentAccountPortfolioSnapshot {
     id                String // random UUID 
-    date              DateTime @default(now())
+    snapshotDate      DateTime @default(now())
     cash              Float // user input
     investmentCurrent Float // current investment of all (assets * units)
+
+    // saving current state of owned assets - to show progress chart
+    portfolioSnapshotInfo InvestmentAccountPortfolioSnapshotInfo[]
+}
+
+// Snapshot of asset data at the current point of time in InvestmentAccountPortfolioSnapshot
+type InvestmentAccountPortfolioSnapshotInfo {
+    assetId          String // AAPL, MSFT
+    assetClosedPrice Float
+    assetSector      String
+    units            Float
+    investedAmount   Float
+}
+
+// Keeps track of the whole history that one asset was bough, completly sold, then bought again
+model InvestmentAccountHistoryChange {
+    id      String @id @map("_id")
+    assetId String // AAPL, MSFT, BTC
+
+    // whole history of sells/purchases of assetId
+    historyChangeInfo InvestmentAccountHistoryChangeInfo[]
+
+    investmentAccount   InvestmentAccount @relation(fields: [investmentAccountId], references: [id], onDelete: Cascade)
+    investmentAccountId String            @db.ObjectId
+}
+
+type InvestmentAccountHistoryChangeInfo {
+    infoId           String // random unique UUID
+    assetClosedPrice Float
+    assetSector      String
+    units            Float
+    investedAmount   Float
+    date             DateTime
 }
 
 // ---------------- Asset manager stock ------------------

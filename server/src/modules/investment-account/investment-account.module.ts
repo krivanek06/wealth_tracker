@@ -7,7 +7,12 @@ import {
 	InvestmentAccountHoldingStockResolver,
 	InvestmentAccountResolver,
 } from './resolvers';
-import { InvestmentAccountHistoryService, InvestmentAccountHoldingService, InvestmentAccountService } from './services';
+import {
+	InvestmentAccountHistoryChangeService,
+	InvestmentAccountHistoryService,
+	InvestmentAccountHoldingService,
+	InvestmentAccountService,
+} from './services';
 
 @Module({
 	imports: [forwardRef(() => AssetStockModule)],
@@ -20,6 +25,7 @@ import { InvestmentAccountHistoryService, InvestmentAccountHoldingService, Inves
 		InvestmentAccountHoldingService,
 		InvestmentAccountHoldingResolver,
 		InvestmentAccountHoldingStockResolver,
+		InvestmentAccountHistoryChangeService,
 	],
 	exports: [
 		InvestmentAccountHistoryResolver,

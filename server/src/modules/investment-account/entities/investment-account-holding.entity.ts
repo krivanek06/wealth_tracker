@@ -1,4 +1,4 @@
-import { Field, Float, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, Float, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import {
 	InvestmentAccountHolding as InvestmentAccountHoldingClient,
 	InvestmentAccountHoldingType,
@@ -23,7 +23,10 @@ export abstract class InvestmentAccountHolding implements InvestmentAccountHoldi
 	@Field(() => InvestmentAccountHoldingType)
 	type: InvestmentAccountHoldingType;
 
-	@Field(() => Float, {
+	@Field(() => String)
+	addedDate: Date;
+
+	@Field(() => Int, {
 		description: 'How many units of this symbol user has',
 	})
 	units: number;

@@ -51,6 +51,7 @@ export class InvestmentAccountHoldingService {
 			investmentAccountId: input.investmentAccountId,
 			type: input.type,
 			units: input.units,
+			addedDate: new Date(input.date),
 		};
 
 		// save entity

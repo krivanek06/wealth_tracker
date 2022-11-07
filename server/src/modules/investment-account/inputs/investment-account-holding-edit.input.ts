@@ -1,5 +1,5 @@
 import { ArgsType, Field, Float, InputType } from '@nestjs/graphql';
-import { Min } from 'class-validator';
+import { IsDate, Min } from 'class-validator';
 
 @InputType()
 @ArgsType()
@@ -24,4 +24,10 @@ export class InvestmentAccounHoldingEditInput {
 		description: 'Amount the user invested into this symbol',
 	})
 	investedAlready: number;
+
+	@Field(() => String, {
+		description: 'Date when we added this holding to our investment account',
+	})
+	@IsDate()
+	date: string;
 }

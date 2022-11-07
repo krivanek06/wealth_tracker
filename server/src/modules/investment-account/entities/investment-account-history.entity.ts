@@ -17,8 +17,8 @@ export class InvestmentAccountHistory implements InvestmentAccountHistoryClient 
 	})
 	portfolioSnapshotTotal: number;
 
-	@Field(() => [InvestmentAccountPortfolioSnapshot], {
-		description: 'Historical snapshots of portfolio change',
+	@Field(() => InvestmentAccountPortfolioSnapshot, {
+		description: 'Total portfolioSnapshot.length',
 	})
 	portfolioSnapshots: InvestmentAccountPortfolioSnapshot[];
 }

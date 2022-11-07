@@ -1,10 +1,13 @@
 import { UseGuards } from '@nestjs/common';
-import { Resolver } from '@nestjs/graphql';
+import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard } from '../../../auth';
-import { InvestmentAccountHistory } from '../entities';
+import { InvestmentAccountHistory, InvestmentAccountPortfolioSnapshot } from '../entities';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccountHistory)
 export class InvestmentAccountHistoryResolver {
-	constructor() {}
+	@ResolveField('lastPortfolioSnapshot', () => InvestmentAccountPortfolioSnapshot)
+	getLastPortfolioSnapshot(@Parent() history: InvestmentAccountHistory): InvestmentAccountPortfolioSnapshot | null {
+		return history.portfolioSnapshots[history.portfolioSnapshots.length - 1] ?? null;
+	}
 }

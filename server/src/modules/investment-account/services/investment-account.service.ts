@@ -55,7 +55,6 @@ export class InvestmentAccountService {
 				name: input.name,
 				userId,
 				holdings: [],
-				lastPortfolioSnapshot: null,
 				cashCurrent: 0,
 			},
 		});

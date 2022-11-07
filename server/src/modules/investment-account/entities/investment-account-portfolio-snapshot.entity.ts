@@ -1,5 +1,8 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql';
-import { InvestmentAccountPortfolioSnapshot as InvestmentAccountPortfolioSnapshotClient } from '@prisma/client';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+import {
+	InvestmentAccountPortfolioSnapshot as InvestmentAccountPortfolioSnapshotClient,
+	InvestmentAccountPortfolioSnapshotInfo as InvestmentAccountPortfolioSnapshotInfoClient,
+} from '@prisma/client';
 
 @ObjectType()
 export class InvestmentAccountPortfolioSnapshot implements InvestmentAccountPortfolioSnapshotClient {
@@ -7,7 +10,7 @@ export class InvestmentAccountPortfolioSnapshot implements InvestmentAccountPort
 	id: string;
 
 	@Field(() => String)
-	date: Date;
+	snapshotDate: Date;
 
 	@Field(() => Float, {
 		description: 'how much cash user had on hands during this snapshot',
@@ -18,4 +21,37 @@ export class InvestmentAccountPortfolioSnapshot implements InvestmentAccountPort
 		description: 'current price of assets * units',
 	})
 	investmentCurrent: number;
+
+	@Field(() => InvestmentAccountPortfolioSnapshotInfo, {
+		description: 'details about owned asset this time',
+	})
+	portfolioSnapshotInfo: InvestmentAccountPortfolioSnapshotInfo[];
+}
+
+@ObjectType()
+export class InvestmentAccountPortfolioSnapshotInfo implements InvestmentAccountPortfolioSnapshotInfoClient {
+	@Field(() => String, {
+		description: 'Symbol name: AAPL, MSFT, BTC',
+	})
+	assetId: string;
+
+	@Field(() => Float, {
+		description: 'Asset closed price at the end of the day',
+	})
+	assetClosedPrice: number;
+
+	@Field(() => String, {
+		description: 'Sector to which the asset belongs: Technology, Health care, Crypto, Commodities',
+	})
+	assetSector: string;
+
+	@Field(() => Int, {
+		description: 'How many units of assets were owned this time',
+	})
+	units: number;
+
+	@Field(() => Float, {
+		description: 'How much invested amount was in this asset this time',
+	})
+	investedAmount: number;
 }

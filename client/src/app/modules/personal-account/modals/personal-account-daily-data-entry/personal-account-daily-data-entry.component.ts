@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { iif, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, first, iif, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { InputSource } from '../../../../shared/models';
 import { getTagImageLocation } from '../../models';
 import { PersonalAccountApiService } from './../../../../core/api';
@@ -11,6 +11,7 @@ import {
 	PersonalAccountTagFragment,
 	TagDataType,
 } from './../../../../core/graphql';
+import { DialogServiceUtil } from './../../../../shared/dialogs';
 import { positiveNumberValidator, requiredValidator } from './../../../../shared/models';
 
 @Component({
@@ -23,6 +24,10 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	displayTagsInputSource$!: Observable<InputSource[]>;
 	selectedTag$!: Observable<PersonalAccountTagFragment>;
 	TagDataType = TagDataType;
+
+	// booleans to show spinner
+	isSaving = false;
+	isRemoving = false;
 
 	readonly formGroup = new FormGroup({
 		tagType: new FormControl<TagDataType>(TagDataType.Expense, { validators: [requiredValidator] }),
@@ -59,12 +64,77 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		this.clearTagOnTagTypeChange();
 	}
 
+	onRemove(): void {
+		if (!this.data.dailyData) {
+			throw new Error('PersonalAccountDailyDataEntryComponent, removing unexisting item');
+		}
+		this.isRemoving = true;
+		this.personalAccountApiService
+			.deletePersonalAccountDailyEntry({
+				dailyDataId: this.data.dailyData.id,
+				monthlyDataId: this.data.dailyData.monthlyDataId,
+				personalAccountId: this.data.personalAccountId,
+			})
+			.pipe(
+				// notify user
+				tap(() => DialogServiceUtil.showNotificationBar(`Daily entry has been removed`)),
+				// close dialog
+				tap(() => this.dialogRef.close()),
+				// client error message
+				catchError(() => {
+					this.isSaving = false;
+					DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
+					return EMPTY;
+				}),
+				// memory leak
+				first()
+			)
+			.subscribe();
+	}
+
 	onSave(): void {
 		this.formGroup.markAllAsTouched();
-		if (this.formGroup.invalid) {
+		const dailyDataCreate = this.getDailyDatafromForm();
+
+		if (this.formGroup.invalid || !dailyDataCreate) {
 			return;
 		}
 
+		this.isSaving = true;
+
+		// decide if creating or editing
+		const editedDailyData = this.data.dailyData;
+		of(editedDailyData)
+			.pipe(
+				switchMap(() =>
+					!editedDailyData
+						? this.personalAccountApiService.createPersonalAccountDailyEntry(dailyDataCreate)
+						: this.personalAccountApiService.editPersonalAccountDailyEntry({
+								dailyDataCreate,
+								dailyDataDelete: {
+									dailyDataId: editedDailyData.id,
+									monthlyDataId: editedDailyData.monthlyDataId,
+									personalAccountId: this.data.personalAccountId,
+								},
+						  })
+				),
+				// notify user
+				tap(() => DialogServiceUtil.showNotificationBar(`Daily entry has been saved`)),
+				// close dialog
+				tap(() => this.dialogRef.close()),
+				// client error message
+				catchError(() => {
+					this.isSaving = false;
+					DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
+					return EMPTY;
+				}),
+				// memory leak
+				first()
+			)
+			.subscribe();
+	}
+
+	private getDailyDatafromForm(): PersonalAccountDailyDataCreate | null {
 		// get values from form
 		const dateValue = this.formGroup.controls.date.value;
 		const timeValue = this.formGroup.controls.time.value;
@@ -73,7 +143,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 
 		// TS checking, should not happen
 		if (!dateValue || !timeValue || !tagValue || !valueValue) {
-			return;
+			return null;
 		}
 
 		// combine dateValue & timeValue into one date
@@ -94,7 +164,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			personalAccountId: this.data.personalAccountId,
 		};
 
-		this.dialogRef.close(dailyEntry);
+		return dailyEntry;
 	}
 
 	private initSelectedTag(): Observable<PersonalAccountTagFragment> {

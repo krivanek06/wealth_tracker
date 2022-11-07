@@ -33,4 +33,13 @@
 		<div>Value</div>
 		<div>{{ value | currency }}</div>
 	</div>
+
+	<!-- remove button -->
+	<div *ngIf="isEditing" class="c-item-wrapper p-2">
+		<button mat-stroked-button color="warn" class="w-full" type="button" (click)="onRemove()">
+			<mat-icon *ngIf="!isRemoving">delete</mat-icon>
+			<mat-icon *ngIf="isRemoving" class="animate-spin">cached</mat-icon>
+			Remove
+		</button>
+	</div>
 </div>

@@ -113,7 +113,7 @@ export class PersonalAccountApiService {
 
 		// not found - personal account must be in cache
 		if (!fragment) {
-			throw new Error(`Unable to find the correct personal account`);
+			throw new Error(`[PersonalAccountApiService]: Unable to find the correct personal account`);
 		}
 
 		return fragment;

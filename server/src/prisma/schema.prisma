@@ -145,10 +145,9 @@ type InvestmentAccountCashChange {
 
 // the whole history of the one asset that was bough, completly sold, then bought again
 type InvestmentAccountHolding {
-    id                  String // ID of symbol in DB -> AAPL, MSFT
+    id                  String // AAPL, MSFT, BTC
     assetId             String // AAPL, MSFT, BTC
     investmentAccountId String
-    name                String // full name of the asset
 
     type   InvestmentAccountHoldingType
     sector String
@@ -158,6 +157,7 @@ type InvestmentAccountHolding {
 }
 
 type InvestmentAccountHoldingHistory {
+    itemId         String
     date           DateTime @default(now()) // date when it was added to holdings
     units          Float // how many units of asset the user have
     investedAmount Float // $ how much user invested into a specific asset
@@ -174,20 +174,28 @@ enum InvestmentAccountHoldingType {
 // ---------------- Asset manager general ------------------
 
 model AssetGeneral {
-    id   String @id @map("_id") // symbol name: AAPL, MSFT, QQQ, ...
-    name String // asset full name
+    id             String @id @map("_id") // symbol name: AAPL, MSFT, QQQ, ...
+    name           String // asset full name
+    symbolImageURL String
 
     // when additional information were lastly updated 
     assetIntoLastUpdate DateTime @default(now())
 
     // additional data for a stock
     assetQuote AssetGeneralQuote
-
-    // historical prices for chart
-    assetHistoricalPrices AssetGeneralHistoricalPrices[]
 }
 
-type AssetGeneralHistoricalPrices {
+model AssetGeneralHistoricalPrices {
+    id String @id @map("_id") // symbol name: AAPL, MSFT, QQQ, ...
+
+    // range of downloaded assetHistoricalPricesData -> 
+    dateStart DateTime // assetHistoricalPricesData[0]
+    dateEnd   DateTime // assetHistoricalPricesData[-1]
+
+    assetHistoricalPricesData AssetGeneralHistoricalPricesData[]
+}
+
+type AssetGeneralHistoricalPricesData {
     date          String // "2022-03-12"
     open          Float
     high          Float
@@ -199,6 +207,7 @@ type AssetGeneralHistoricalPrices {
 }
 
 type AssetGeneralQuote {
+    name        String
     yearLow     Float
     yearHigh    Float
     marketCap   Float

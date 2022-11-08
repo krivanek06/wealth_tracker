@@ -1,12 +1,12 @@
 import { UseGuards } from '@nestjs/common';
-import { Mutation, Resolver } from '@nestjs/graphql';
+import { Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql/args';
 import { InvestmentAccountHolding } from '../entities';
 import {
 	InvestmentAccounHoldingCreateInput,
-	InvestmentAccounHoldingDeleteInput,
-	InvestmentAccounHoldingEditInput,
+	InvestmentAccounHoldingHistoryDeleteInput,
+	InvestmentAccounHoldingHistoryEditInput,
 } from '../inputs';
 import { InvestmentAccountHoldingService } from '../services';
 
@@ -25,7 +25,7 @@ export class InvestmentAccountHoldingResolver {
 
 	@Mutation(() => InvestmentAccountHolding)
 	editInvestmentAccountHolding(
-		@Input() input: InvestmentAccounHoldingEditInput,
+		@Input() input: InvestmentAccounHoldingHistoryEditInput,
 		@ReqUser() authUser: RequestUser
 	): Promise<InvestmentAccountHolding> {
 		return this.investmentAccountHoldingService.editInvestmentAccountHolding(input, authUser.id);
@@ -33,9 +33,17 @@ export class InvestmentAccountHoldingResolver {
 
 	@Mutation(() => InvestmentAccountHolding)
 	deleteInvestmentAccountHolding(
-		@Input() input: InvestmentAccounHoldingDeleteInput,
+		@Input() input: InvestmentAccounHoldingHistoryDeleteInput,
 		@ReqUser() authUser: RequestUser
 	): Promise<InvestmentAccountHolding> {
 		return this.investmentAccountHoldingService.deleteInvestmentAccountHolding(input, authUser.id);
+	}
+
+	/* Resolvers */
+
+	@ResolveField('isActive', () => Boolean)
+	isHoldingActive(@Parent() holding: InvestmentAccountHolding): boolean {
+		const holdingHistory = holding.holdingHistory;
+		return holdingHistory.length > 0 ? holdingHistory[holdingHistory.length - 1].units > 0 : false;
 	}
 }

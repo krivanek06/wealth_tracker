@@ -1,4 +1,4 @@
-import { differenceInDays, getDay, getMonth, getWeek, getYear } from 'date-fns';
+import { differenceInDays, getDay, getMonth, getWeek, getYear, isBefore } from 'date-fns';
 export type DateServiceUtilDateInformations = {
 	year: number;
 	month: number;
@@ -16,6 +16,12 @@ export class MomentServiceUtil {
 			week: getWeek(date),
 			day: getDay(date),
 		};
+	}
+
+	static isBefore(date: Date | number | string, dateToCompare: Date | number | string): boolean {
+		const firstDate = new Date(date);
+		const secondate = new Date(dateToCompare);
+		return isBefore(firstDate, secondate);
 	}
 
 	/**

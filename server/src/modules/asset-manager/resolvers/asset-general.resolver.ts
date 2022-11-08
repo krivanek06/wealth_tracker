@@ -15,7 +15,7 @@ export class AssetGeneralResolver {
 		description: 'Search asset based on symbol',
 		defaultValue: [],
 	})
-	searchAssetStockSymbol(@Input() symbolPrefix: string, @Input() isCrypto = false): Promise<AssetGeneralSearch[]> {
+	searchAssetBySymbol(@Input() symbolPrefix: string, @Input() isCrypto = false): Promise<AssetGeneralSearch[]> {
 		return this.financialModelingAPIService.searchAssetBySymbolPrefix(symbolPrefix, isCrypto);
 	}
 }

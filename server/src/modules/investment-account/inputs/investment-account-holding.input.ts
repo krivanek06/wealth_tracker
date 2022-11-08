@@ -18,6 +18,35 @@ export class InvestmentAccounHoldingCreateInput {
 	@Field(() => InvestmentAccountHoldingType)
 	type: InvestmentAccountHoldingType;
 
+	@Field(() => HoldingInputData)
+	holdingInputData: HoldingInputData;
+}
+
+// ----------- Delete ------------
+
+@InputType()
+@ArgsType()
+export class InvestmentAccounHoldingHistoryDeleteInput {
+	@Field(() => String, {
+		description: 'Symbol ID',
+	})
+	symbol: string;
+
+	@Field(() => String, {
+		description: 'Investment account associated with the asset',
+	})
+	investmentAccountId: string;
+
+	@Field(() => String, {
+		description: 'Id of the item the user wants to remove',
+	})
+	itemId: string;
+}
+
+// ----------- Other ------------
+
+@InputType()
+export class HoldingInputData {
 	@Field(() => Int, {
 		description: 'How many units of this symbol user has',
 	})
@@ -28,7 +57,7 @@ export class InvestmentAccounHoldingCreateInput {
 	@Field(() => Float, {
 		description: 'Amount the user invested into this symbol',
 	})
-	investedAlready: number;
+	investedAmount: number;
 
 	@Field(() => String, {
 		description: 'Date when we added this holding to our investment account',

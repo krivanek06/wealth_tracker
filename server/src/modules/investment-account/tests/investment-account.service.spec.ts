@@ -5,7 +5,7 @@ import { PrismaService } from '../../../prisma';
 import { INVESTMENT_ACCOUNT_ERROR } from '../dto';
 import { InvestmentAccount } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput } from '../inputs';
-import { InvestmentAccountHistoryService, InvestmentAccountService } from '../services';
+import { InvestmentAccountHoldingHistoryService, InvestmentAccountService } from '../services';
 import { investmentAccountMock, INVESTMENT_ACCOUNT_ID, USER_ID_MOCK } from './mocks';
 
 describe('InvestmentAccountService', () => {
@@ -34,14 +34,14 @@ describe('InvestmentAccountService', () => {
 		},
 	});
 
-	const investmentAccountHistoryServiceMock = createMock<InvestmentAccountHistoryService>();
+	const investmentAccountHistoryServiceMock = createMock<InvestmentAccountHoldingHistoryService>();
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				InvestmentAccountService,
 				{ provide: PrismaService, useValue: prismaServiceMock },
-				{ provide: InvestmentAccountHistoryService, useValue: investmentAccountHistoryServiceMock },
+				{ provide: InvestmentAccountHoldingHistoryService, useValue: investmentAccountHistoryServiceMock },
 			],
 		}).compile();
 

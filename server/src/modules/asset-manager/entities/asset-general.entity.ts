@@ -10,6 +10,9 @@ export class AssetGeneral implements AssetGeneralClient {
 	name: string;
 
 	@Field(() => String)
+	symbolImageURL: string;
+
+	@Field(() => String)
 	assetIntoLastUpdate: Date;
 
 	@Field(() => AssetGeneralQuote)
@@ -17,6 +20,9 @@ export class AssetGeneral implements AssetGeneralClient {
 }
 
 export class AssetGeneralQuote implements AssetGeneralQuoteClient {
+	@Field(() => String)
+	name: string;
+
 	@Field(() => Float)
 	yearLow: number;
 

@@ -9,6 +9,12 @@ export class AssetGeneralHistoricalPrices implements AssetGeneralHistoricalPrice
 	@Field(() => String)
 	id: string;
 
+	@Field(() => String)
+	dateStart: Date;
+
+	@Field(() => String)
+	dateEnd: Date;
+
 	@Field(() => [AssetGeneralHistoricalPricesData], {
 		description: 'Historical prices to create charts for portoflio',
 		defaultValue: [],

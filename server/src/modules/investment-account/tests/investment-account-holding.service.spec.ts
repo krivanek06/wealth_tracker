@@ -2,15 +2,15 @@ import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import { PrismaService } from '../../../prisma';
+import { AssetStockService } from '../../asset-manager';
 import { INVESTMENT_ACCOUNT_HOLDING_ERROR, INVESTMENT_ACOUNT_HOLDING_LIMIT } from '../dto';
 import { InvestmentAccountHolding } from '../entities';
 import {
 	InvestmentAccounHoldingCreateInput,
-	InvestmentAccounHoldingDeleteInput,
-	InvestmentAccounHoldingEditInput,
+	InvestmentAccounHoldingHistoryDeleteInput,
+	InvestmentAccounHoldingHistoryEditInput,
 } from '../inputs';
 import { InvestmentAccountHoldingService, InvestmentAccountService } from '../services';
-import { AssetStockService } from './../../asset-stock/';
 import { holdingMSFTMock, investmentAccountMock as IAM } from './mocks';
 
 describe('InvestmentAccountHoldingService', () => {
@@ -113,7 +113,7 @@ describe('InvestmentAccountHoldingService', () => {
 	describe('Test: editInvestmentAccountHolding()', () => {
 		it('should edit an existing symbol in my holdings', async () => {
 			// input
-			const input: InvestmentAccounHoldingEditInput = {
+			const input: InvestmentAccounHoldingHistoryEditInput = {
 				investedAlready: 9999,
 				investmentAccountId: holdingMSFTMock.investmentAccountId,
 				symbol: holdingMSFTMock.id,
@@ -143,9 +143,9 @@ describe('InvestmentAccountHoldingService', () => {
 		});
 
 		it('should throw an error if symbol does not exist in my holdings', async () => {
-			const input: InvestmentAccounHoldingEditInput = {
+			const input: InvestmentAccounHoldingHistoryEditInput = {
 				symbol: 'SYMBOL_NOT_EXISTS',
-			} as InvestmentAccounHoldingEditInput;
+			} as InvestmentAccounHoldingHistoryEditInput;
 
 			await expect(service.editInvestmentAccountHolding(input, 'mockUserId2')).rejects.toThrowError(
 				INVESTMENT_ACCOUNT_HOLDING_ERROR.NOT_FOUND
@@ -155,7 +155,7 @@ describe('InvestmentAccountHoldingService', () => {
 
 	describe('Test: deleteInvestmentAccountHolding()', () => {
 		it('should delete a symbol from my holdings', async () => {
-			const input: InvestmentAccounHoldingDeleteInput = {
+			const input: InvestmentAccounHoldingHistoryDeleteInput = {
 				investmentAccountId: holdingMSFTMock.investmentAccountId,
 				symbol: holdingMSFTMock.id,
 			};
@@ -177,9 +177,9 @@ describe('InvestmentAccountHoldingService', () => {
 		});
 
 		it('should throw an error if symbol does not exist in my holdings', async () => {
-			const input: InvestmentAccounHoldingDeleteInput = {
+			const input: InvestmentAccounHoldingHistoryDeleteInput = {
 				symbol: 'SYMBOL_NOT_EXISTS',
-			} as InvestmentAccounHoldingDeleteInput;
+			} as InvestmentAccounHoldingHistoryDeleteInput;
 
 			await expect(service.deleteInvestmentAccountHolding(input, 'mockUserId2')).rejects.toThrowError(
 				INVESTMENT_ACCOUNT_HOLDING_ERROR.NOT_FOUND

@@ -9,6 +9,8 @@ import { FINANCIAL_MODELING_ERROR } from './financial-modeling-error-messages.dt
 export class FinancialModelingAPIService {
 	private readonly apiKey = process.env.FINANCIAL_MODELING_API_KEY;
 	private readonly endpointV3 = 'https://financialmodelingprep.com/api/v3';
+	private readonly endpointImage = 'https://financialmodelingprep.com/image-stock';
+
 	constructor(private readonly httpService: HttpService) {}
 
 	/**
@@ -18,7 +20,7 @@ export class FinancialModelingAPIService {
 	 * @returns searched stocks by prefix symbol
 	 */
 	searchAssetBySymbolPrefix(symbolPrefix: string, isCrypto = false): Promise<FMSearch[]> {
-		const modifiedPrefix = isCrypto ? `${symbolPrefix}USD` : symbolPrefix;
+		const modifiedPrefix = (isCrypto ? `${symbolPrefix}USD` : symbolPrefix).toUpperCase();
 		const requestConfig: AxiosRequestConfig = {
 			params: {
 				query: modifiedPrefix,
@@ -27,7 +29,13 @@ export class FinancialModelingAPIService {
 			},
 		};
 		return lastValueFrom(
-			this.httpService.get<FMSearch[]>(`${this.endpointV3}/search-name`, requestConfig).pipe(map((res) => res.data))
+			this.httpService.get<FMSearch[]>(`${this.endpointV3}/search-name`, requestConfig).pipe(
+				map((res) =>
+					res.data.map((d) => {
+						return { ...d, image: `${this.endpointImage}/${modifiedPrefix}.png` };
+					})
+				)
+			)
 		);
 	}
 
@@ -37,12 +45,19 @@ export class FinancialModelingAPIService {
 	 * @param startDate format YYYY-MM-DD
 	 * @param endDate format YYYY-MM-DD
 	 */
-	getAssetHistoricalPrices(symbol: string, startDate: string, endDate: string): Promise<FMAssetHistoricalPrices[]> {
+	getAssetHistoricalPrices(
+		symbol: string,
+		startDate: string | Date,
+		endDate: string | Date
+	): Promise<FMAssetHistoricalPrices[]> {
+		const dateStart = new Date(startDate).toISOString().slice(0, 10);
+		const dateEnd = new Date(endDate).toISOString().slice(0, 10);
+
 		const requestConfig: AxiosRequestConfig = {
 			params: {
 				apikey: this.apiKey,
-				from: startDate,
-				to: endDate,
+				from: dateStart,
+				to: dateEnd,
 			},
 		};
 
@@ -94,6 +109,7 @@ export class FinancialModelingAPIService {
 	 * @returns
 	 */
 	getAssetQuote(symbol: string): Promise<FMQuote> {
+		const modifiedSymbol = symbol.toUpperCase();
 		const requestConfig: AxiosRequestConfig = {
 			params: {
 				apikey: this.apiKey,
@@ -103,7 +119,7 @@ export class FinancialModelingAPIService {
 			this.httpService.get<FMQuote[]>(`${this.endpointV3}/quote/${symbol}`, requestConfig).pipe(
 				map((res) => {
 					if (res.data.length > 0) {
-						return res.data[0];
+						return { ...res.data[0], symbolImage: `${this.endpointImage}/${modifiedSymbol}.png` } as FMQuote;
 					}
 					throw new HttpException(FINANCIAL_MODELING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
 				})
@@ -118,7 +134,7 @@ export class FinancialModelingAPIService {
 	 * @returns
 	 */
 	getAssetQuotes(symbols: string[]): Promise<FMQuote[]> {
-		const formattedSymbols = symbols.join(',');
+		const formattedSymbols = symbols.map((d) => d.toUpperCase()).join(',');
 		const requestConfig: AxiosRequestConfig = {
 			params: {
 				apikey: this.apiKey,
@@ -128,7 +144,9 @@ export class FinancialModelingAPIService {
 			this.httpService.get<FMQuote[]>(`${this.endpointV3}/quote/${formattedSymbols}`, requestConfig).pipe(
 				map((res) => {
 					if (res.data.length > 0) {
-						return res.data;
+						return res.data.map((d) => {
+							return { ...d, image: `${this.endpointImage}/${d.symbol}.png` };
+						});
 					}
 					throw new HttpException(FINANCIAL_MODELING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
 				})

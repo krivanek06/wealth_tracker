@@ -2,6 +2,7 @@
 
 // https://financialmodelingprep.com/api/v3/search?query=AA&limit=10&apikey=XXX
 export interface FMSearch {
+	image: string;
 	symbol: string;
 	name: string;
 	currency: string;
@@ -59,6 +60,7 @@ export interface FMProfile {
 // https://financialmodelingprep.com/api/v3/quote/AAPL?apikey=XXX
 export interface FMQuote {
 	symbol: string;
+	symbolImage: string;
 	name: string;
 	price: number;
 	changesPercentage: number;

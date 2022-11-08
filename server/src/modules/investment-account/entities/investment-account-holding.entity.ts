@@ -1,8 +1,9 @@
-import { Field, Float, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import {
 	InvestmentAccountHolding as InvestmentAccountHoldingClient,
 	InvestmentAccountHoldingType,
 } from '@prisma/client';
+import { InvestmentAccountHoldingHistory } from './investment-account-holding-history.entity';
 
 registerEnumType(InvestmentAccountHoldingType, {
 	name: 'InvestmentAccountHoldingType',
@@ -16,6 +17,11 @@ export abstract class InvestmentAccountHolding implements InvestmentAccountHoldi
 	id: string;
 
 	@Field(() => String, {
+		description: 'Symbol ID -> AAPL, MSFT, BTC',
+	})
+	assetId: string;
+
+	@Field(() => String, {
 		description: 'Associated InvestmentAccount.id',
 	})
 	investmentAccountId: string;
@@ -24,15 +30,10 @@ export abstract class InvestmentAccountHolding implements InvestmentAccountHoldi
 	type: InvestmentAccountHoldingType;
 
 	@Field(() => String)
-	addedDate: Date;
+	sector: string;
 
-	@Field(() => Int, {
+	@Field(() => [InvestmentAccountHoldingHistory], {
 		description: 'How many units of this symbol user has',
 	})
-	units: number;
-
-	@Field(() => Float, {
-		description: 'Amount the user invested into this symbol',
-	})
-	investedAlready: number;
+	holdingHistory: InvestmentAccountHoldingHistory[];
 }

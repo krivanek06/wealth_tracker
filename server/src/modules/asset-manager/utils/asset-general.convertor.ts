@@ -4,6 +4,7 @@ import { AssetGeneralQuote } from '../entities';
 export class AssetGeneralUtil {
 	static convertFMQuoteToAssetGeneralQuote = (quote: FMQuote): AssetGeneralQuote => {
 		const result: AssetGeneralQuote = {
+			name: quote.name,
 			timestamp: quote.timestamp,
 			yearHigh: quote.yearHigh,
 			yearLow: quote.yearLow,

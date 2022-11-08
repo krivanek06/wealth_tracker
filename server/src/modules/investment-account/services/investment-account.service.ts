@@ -3,13 +3,13 @@ import { PrismaService } from '../../../prisma';
 import { INVESTMENT_ACCOUNT_ERROR } from '../dto';
 import { InvestmentAccount } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput } from '../inputs';
-import { InvestmentAccountHistoryService } from './investment-account-history.service';
+import { InvestmentAccountHoldingHistoryService } from './investment-account-holding-history.service';
 
 @Injectable()
 export class InvestmentAccountService {
 	constructor(
 		private prisma: PrismaService,
-		private investmentAccountHistoryService: InvestmentAccountHistoryService
+		private investmentAccountHistoryService: InvestmentAccountHoldingHistoryService
 	) {}
 
 	getInvestmentAccounts(userId: string): Promise<InvestmentAccount[]> {
@@ -55,7 +55,7 @@ export class InvestmentAccountService {
 				name: input.name,
 				userId,
 				holdings: [],
-				cashCurrent: 0,
+				cashChange: [],
 			},
 		});
 
@@ -71,7 +71,6 @@ export class InvestmentAccountService {
 		return this.prisma.investmentAccount.update({
 			data: {
 				name: input.name,
-				cashCurrent: input.cashCurrent,
 			},
 			where: {
 				id: input.investmentAccountId,

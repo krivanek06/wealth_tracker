@@ -1,18 +1,17 @@
 import { UseGuards } from '@nestjs/common';
-import { Float, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql';
 import { InvestmentAccount, InvestmentAccountHistory } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput } from '../inputs';
-import { InvestmentAccountHoldingCrypto, InvestmentAccountHoldingStock } from '../outputs';
-import { InvestmentAccountHistoryService, InvestmentAccountService } from '../services';
+import { InvestmentAccountHoldingHistoryService, InvestmentAccountService } from '../services';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccount)
 export class InvestmentAccountResolver {
 	constructor(
 		private investmentAccountService: InvestmentAccountService,
-		private investmentAccountHistoryService: InvestmentAccountHistoryService
+		private investmentAccountHistoryService: InvestmentAccountHoldingHistoryService
 	) {}
 
 	/* Queries */
@@ -60,27 +59,27 @@ export class InvestmentAccountResolver {
 		return this.investmentAccountHistoryService.getInvestmentAccountHistoryInvestmentAccount(investmentAccount);
 	}
 
-	@ResolveField('investedAlreadyTotal', () => Float)
-	getInvestedAlreadyTotal(@Parent() investmentAccount: InvestmentAccount): number {
-		const holdingsInvestedAlready = investmentAccount.holdings.reduce((acc, curr) => acc + curr.investedAlready, 0);
-		return holdingsInvestedAlready;
-	}
+	// @ResolveField('investedAlreadyTotal', () => Float)
+	// getInvestedAlreadyTotal(@Parent() investmentAccount: InvestmentAccount): number {
+	// 	const holdingsInvestedAlready = investmentAccount.holdings.reduce((acc, curr) => acc + curr.investedAlready, 0);
+	// 	return holdingsInvestedAlready;
+	// }
 
-	@ResolveField('portfolioBalanceTotal', () => Float)
-	getPortfolioTotal(@Parent() investmentAccount: InvestmentAccount): number {
-		const holdingsInvestedAlready = investmentAccount.holdings.reduce((acc, curr) => acc + curr.investedAlready, 0);
-		return investmentAccount.cashCurrent + holdingsInvestedAlready;
-	}
+	// @ResolveField('portfolioBalanceTotal', () => Float)
+	// getPortfolioTotal(@Parent() investmentAccount: InvestmentAccount): number {
+	// 	const holdingsInvestedAlready = investmentAccount.holdings.reduce((acc, curr) => acc + curr.investedAlready, 0);
+	// 	return investmentAccount.cashCurrent + holdingsInvestedAlready;
+	// }
 
-	@ResolveField('holdingStocks', () => [InvestmentAccountHoldingStock])
-	getHoldingStocks(@Parent() investmentAccount: InvestmentAccount): InvestmentAccountHoldingStock[] {
-		const stocks = investmentAccount.holdings.filter((x) => x.type === 'STOCK');
-		return stocks;
-	}
+	// @ResolveField('holdingStocks', () => [InvestmentAccountHoldingStock])
+	// getHoldingStocks(@Parent() investmentAccount: InvestmentAccount): InvestmentAccountHoldingStock[] {
+	// 	const stocks = investmentAccount.holdings.filter((x) => x.type === 'STOCK');
+	// 	return stocks;
+	// }
 
-	@ResolveField('holdingCrypto', () => [InvestmentAccountHoldingCrypto])
-	getHoldingCrypto(@Parent() investmentAccount: InvestmentAccount): InvestmentAccountHoldingCrypto[] {
-		const crypto = investmentAccount.holdings.filter((x) => x.type === 'CRYPTO');
-		return crypto;
-	}
+	// @ResolveField('holdingCrypto', () => [InvestmentAccountHoldingCrypto])
+	// getHoldingCrypto(@Parent() investmentAccount: InvestmentAccount): InvestmentAccountHoldingCrypto[] {
+	// 	const crypto = investmentAccount.holdings.filter((x) => x.type === 'CRYPTO');
+	// 	return crypto;
+	// }
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { FinancialModelingAPIService } from '../../../api';
+import { PrismaService } from '../../../prisma';
 import { AssetStock } from '../entities';
-import { CreateAssetStockUtil } from '../utils';
-import { FinancialModelingAPIService } from './../../../api';
-import { PrismaService } from './../../../prisma';
+import { AssetStockUtil } from '../utils';
 
 @Injectable()
 export class AssetStockService {
@@ -11,7 +11,7 @@ export class AssetStockService {
 	getStockBySymbol(symbol: string): Promise<AssetStock> {
 		return this.prisma.assetStock.findFirst({
 			where: {
-				symbol,
+				id: symbol,
 			},
 		});
 	}
@@ -44,11 +44,16 @@ export class AssetStockService {
 
 	private async getAssetStockFromAPI(symbol: string): Promise<AssetStock> {
 		// load data
-		const stockQuote = await this.financialModelingAPIService.getStockQuote(symbol);
-		const stockProfile = await this.financialModelingAPIService.getStockProfile(symbol);
+		const fmProfile = await this.financialModelingAPIService.getStockProfile(symbol);
 
 		// create entity
-		const result: AssetStock = CreateAssetStockUtil.createAssetStock(stockQuote, stockProfile);
+		const profile = AssetStockUtil.convertFMProfileToAssetStockProfile(fmProfile);
+
+		const result: AssetStock = {
+			id: symbol,
+			lastUpdated: new Date(),
+			profile,
+		};
 
 		return result;
 	}

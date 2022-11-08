@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class AssetStockSearch {
+export class AssetGeneralSearch {
 	@Field(() => String)
 	symbol: string;
 

@@ -1,11 +1,11 @@
 import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
+import { FinancialModelingAPIService } from '../../../api';
 import { PrismaService } from '../../../prisma';
 import { AssetStock } from '../entities';
 import { AssetStockService } from '../services';
-import { CreateAssetStockUtil } from '../utils';
-import { FinancialModelingAPIService } from './../../../api';
+import { AssetStockUtil } from '../utils';
 
 describe('AssetStockService', () => {
 	let service: AssetStockService;
@@ -15,7 +15,7 @@ describe('AssetStockService', () => {
 	} as AssetStock;
 
 	// mock services
-	CreateAssetStockUtil.createAssetStock = jest.fn().mockReturnValue(assetMock);
+	AssetStockUtil.createAssetStock = jest.fn().mockReturnValue(assetMock);
 	const prismaServiceMock: PrismaService = createMock<PrismaService>({
 		assetStock: {
 			create: jest.fn().mockResolvedValue(assetMock),

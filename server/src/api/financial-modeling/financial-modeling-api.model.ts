@@ -81,3 +81,20 @@ export interface FMQuote {
 	sharesOutstanding: number;
 	timestamp: number;
 }
+
+// https://financialmodelingprep.com/api/v3/historical-price-full/BTCUSD?from=2021-03-12&to=2022-03-12&apikey=XXX
+export interface FMAssetHistoricalPrices {
+	date: string; // format YYYY-MM-DD
+	open: number;
+	high: number;
+	low: number;
+	close: number;
+	adjClose: number;
+	volume: number;
+	unadjustedVolume: number;
+	change: number;
+	changePercent: number;
+	vwap: number;
+	label: string;
+	changeOverTime: number;
+}

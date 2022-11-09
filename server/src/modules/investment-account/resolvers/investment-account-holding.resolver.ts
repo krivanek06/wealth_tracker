@@ -5,7 +5,8 @@ import { Input } from '../../../graphql/args';
 import { InvestmentAccountHolding, InvestmentAccountHoldingHistory } from '../entities';
 import { InvestmentAccounHoldingCreateInput, InvestmentAccounHoldingHistoryDeleteInput } from '../inputs';
 import { InvestmentAccountHoldingService } from '../services';
-import { AssetGeneralService } from './../../asset-manager';
+import { MomentServiceUtil } from './../../../utils';
+import { AssetGeneralHistoricalPricesData, AssetGeneralService } from './../../asset-manager';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccountHolding)
@@ -38,9 +39,22 @@ export class InvestmentAccountHoldingResolver {
 		return holding.holdingHistory[holding.holdingHistory.length - 1]?.units > 0;
 	}
 
-	// TODO load historical prices for each stock to create chart
-	// @ResolveField('historicalPrices', () => [AssetGeneralHistoricalPrices])
-	// getHoldingHistoricalPrices(): Promise<AssetGeneralHistoricalPrices[]> {
-	// 	// TODO load historical prices for each stock to create chart
-	// }
+	@ResolveField('historicalPrices', () => [AssetGeneralHistoricalPricesData], {
+		description: 'Return historical data for a symbol starting from ',
+	})
+	async getHoldingHistoricalPrices(
+		@Parent() holding: InvestmentAccountHolding
+	): Promise<AssetGeneralHistoricalPricesData[]> {
+		if (holding.holdingHistory.length === 0) {
+			return [];
+		}
+
+		const yesterDay = MomentServiceUtil.format(MomentServiceUtil.subDays(new Date(), 1));
+		const result = await this.assetGeneralService.getAssetHistoricalPricesStartToEnd(
+			holding.assetId,
+			holding.holdingHistory[0].date,
+			yesterDay
+		);
+		return result.assetHistoricalPricesData;
+	}
 }

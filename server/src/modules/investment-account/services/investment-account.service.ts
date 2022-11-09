@@ -41,7 +41,7 @@ export class InvestmentAccountService {
 			// just in case to not get index overflow
 			.filter((d) => d.holdingHistory.length > 0);
 
-		const yesterDay = MomentServiceUtil.format(MomentServiceUtil.subDays(new Date(), -1));
+		const yesterDay = MomentServiceUtil.format(MomentServiceUtil.subDays(new Date(), 1));
 
 		// load historical prices for each holding
 		// caution! => every historicalPrices[N].assetHistoricalPricesData have different length, because of slicing
@@ -52,7 +52,8 @@ export class InvestmentAccountService {
 		);
 
 		// create investment growth chart by each asset - check if asset was owned d.holdingHistory[N].unit that date
-		const assetGrowth = historicalPrices
+		// investedGrowth -> array of {date, calculcation} - where calculation is the reduced total invested amount on that date
+		const investedGrowth = historicalPrices
 			.map((d) => {
 				const holdingHistory = filteredHoldings.find((h) => h.assetId === d.id).holdingHistory ?? [];
 				const holdingIndexSize = holdingHistory.length - 1;
@@ -99,20 +100,26 @@ export class InvestmentAccountService {
 				return acc;
 			}, [] as { date: string; calculation: number }[]);
 
-		// create an array of date ranges since investmentAccount.createdAt until today
-		const dateRange = MomentServiceUtil.getDates(investmentAccount.createdAt, new Date());
+		// generate cash calculation since we had cash in account
+		let cashChangeIndex = 0; // needed because of cash change in investmentAccount.cashChange
+		const cashGrowth = MomentServiceUtil.getDates(investmentAccount.cashChange[0]?.date, new Date()).map((d) => {
+			const formattedDate = MomentServiceUtil.format(d);
+			const nextCashChange = investmentAccount.cashChange[cashChangeIndex + 1];
+			cashChangeIndex += formattedDate >= nextCashChange?.date && !!nextCashChange ? 1 : 0;
+			return {
+				date: formattedDate,
+				calculation: investmentAccount.cashChange[cashChangeIndex].cashCurrent,
+			};
+		});
+
+		// select soonest date to generate date range for chart data
+		const soonestDate = cashGrowth[0]?.date < investedGrowth[0]?.date ? cashGrowth[0].date : investedGrowth[0].date;
+		const dateRange = MomentServiceUtil.getDates(soonestDate, new Date());
 
 		const result = dateRange.map((date) => {
 			const formattedDate = MomentServiceUtil.format(date);
-
-			// find cash that curr.data is more than formattedDate
-			const cash = investmentAccount.cashChange.reduce((acc, curr) => {
-				if (formattedDate >= curr.date) {
-					curr.cashCurrent;
-				}
-				return acc;
-			}, 0);
-			const invested = assetGrowth.find((d) => d.date === formattedDate).calculation ?? 0;
+			const invested = investedGrowth.find((d) => d.date === formattedDate)?.calculation ?? 0;
+			const cash = cashGrowth.find((d) => d.date === formattedDate)?.calculation ?? 0;
 
 			const data: InvestmentAccountGrowth = {
 				invested,

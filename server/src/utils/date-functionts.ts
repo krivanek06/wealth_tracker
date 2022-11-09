@@ -7,7 +7,7 @@ import {
 	getWeek,
 	getYear,
 	isBefore,
-	isEqual,
+	isWeekend,
 	startOfDay,
 	subDays,
 } from 'date-fns';
@@ -48,26 +48,29 @@ export class MomentServiceUtil {
 		return isBefore(firstDate, secondate);
 	}
 
+	static isWeekend(date: Date | string | number): boolean {
+		return isWeekend(new Date(date));
+	}
+
 	/**
 	 * Gets an array of Dates where the values increment by one day
 	 * and the first value is the first value of the `DateRange`,
 	 * and the last value is the last value of `DateRange`
 	 */
-	static getDates(start: Date | string, end: Date | string): Date[] {
-		const startDate = new Date(start);
-		const endDate = new Date(end);
+	static getDates(start?: Date | string, end?: Date | string, skipWeekends = true): Date[] {
+		if (!start || !end) {
+			return [];
+		}
+		const startDate = startOfDay(new Date(start));
+		const endDate = startOfDay(new Date(end));
 		const diff = differenceInDays(endDate, startDate);
 
 		const days = Array.from({ length: diff }, (_, i) => i + 1);
 
-		const dates = [startDate, ...days.map((additionalDays) => addDays(startDate, additionalDays))];
+		const dates = [startDate, ...days.map((additionalDays) => startOfDay(addDays(startDate, additionalDays)))];
+		const filteredDates = !!skipWeekends ? dates.filter((d) => !isWeekend(d)) : dates;
 
-		if (!isEqual(dates.at(-1), endDate)) {
-			console.error({ dates, end });
-			throw new Error('Unexpected getDates end mismatch');
-		}
-
-		return dates;
+		return filteredDates;
 	}
 
 	/**

@@ -20,6 +20,11 @@ export class InvestmentAccountHoldingService {
 		input: InvestmentAccounHoldingCreateInput,
 		userId: string
 	): Promise<InvestmentAccountHolding> {
+		// do not allow selecting weekend for date
+		if (MomentServiceUtil.isWeekend(input.holdingInputData.date)) {
+			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.IS_WEEKEND, HttpStatus.FORBIDDEN);
+		}
+
 		let assetSecotor = input.type.toString();
 
 		// load and save assets data into the DB
@@ -35,12 +40,17 @@ export class InvestmentAccountHoldingService {
 			userId
 		);
 
+		// prevent adding future holdings
+		if (MomentServiceUtil.format(new Date()) < MomentServiceUtil.format(input.holdingInputData.date)) {
+			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTRED_DATE_RANGE, HttpStatus.FORBIDDEN);
+		}
+
 		// get year data form input and today
 		const { year: inputYear } = MomentServiceUtil.getDetailsInformationFromDate(input.holdingInputData.date);
 		const { year: todayYear } = MomentServiceUtil.getDetailsInformationFromDate(new Date());
 
-		// prevent lodaing more than 5 year of stock data or future data - just in case
-		if (inputYear > todayYear || todayYear - inputYear > 5) {
+		// prevent lodaing more than 8 year of stock data or future data - just in case
+		if (todayYear - inputYear > 8) {
 			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTRED_DATE_RANGE, HttpStatus.FORBIDDEN);
 		}
 
@@ -157,12 +167,12 @@ export class InvestmentAccountHoldingService {
 	 * @param assetSecotor
 	 * @returns
 	 */
-	private createNewHoldingWithHistory(
+	private async createNewHoldingWithHistory(
 		investmentAccount: InvestmentAccount,
 		input: InvestmentAccounHoldingCreateInput,
 		mergedHoldingHistory: InvestmentAccountHoldingHistory[],
 		assetSecotor: string
-	): InvestmentAccountHolding {
+	): Promise<InvestmentAccountHolding> {
 		// create new holding
 		const holding: InvestmentAccountHolding = {
 			id: input.symbol,
@@ -175,13 +185,16 @@ export class InvestmentAccountHoldingService {
 
 		// save entity
 		const modifiedHoldings = [...investmentAccount.holdings, holding];
-		this.updateInvestmenAccountHolding(input.investmentAccountId, modifiedHoldings);
+		await this.updateInvestmenAccountHolding(input.investmentAccountId, modifiedHoldings);
 
 		return holding;
 	}
 
-	private updateInvestmenAccountHolding(investmenAccountId: string, holdings: InvestmentAccountHolding[]): void {
-		this.prisma.investmentAccount.update({
+	private updateInvestmenAccountHolding(
+		investmenAccountId: string,
+		holdings: InvestmentAccountHolding[]
+	): Promise<InvestmentAccount> {
+		return this.prisma.investmentAccount.update({
 			data: {
 				holdings: [...holdings],
 			},

@@ -1,7 +1,9 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql';
-import { InvestmentAccount as InvestmentAccountClient } from '@prisma/client';
+import { Field, ObjectType } from '@nestjs/graphql';
+import {
+	InvestmentAccount as InvestmentAccountClient,
+	InvestmentAccountCashChange as InvestmentAccountCashChangeClient,
+} from '@prisma/client';
 import { InvestmentAccountHolding } from './investment-account-holding.entity';
-import { InvestmentAccountPortfolioSnapshot } from './investment-account-portfolio-snapshot.entity';
 
 @ObjectType()
 export class InvestmentAccount implements InvestmentAccountClient {
@@ -13,22 +15,37 @@ export class InvestmentAccount implements InvestmentAccountClient {
 	})
 	name: string;
 
-	@Field(() => Float, {
-		description: 'How much cash on hand is on this investment account',
+	@Field(() => String, {
+		description: 'Date time when account was created',
 	})
-	cashCurrent: number;
-
-	@Field(() => InvestmentAccountPortfolioSnapshot, {
-		nullable: true,
-		description: 'Last inserted data in InvestmentAccountHistory.portfolioSnapshots',
-	})
-	lastPortfolioSnapshot: InvestmentAccountPortfolioSnapshot | null;
+	createdAt: Date;
 
 	@Field(() => String, {
 		description: 'Reference to User.ID who created this investment account',
 	})
 	userId: string;
 
-	// unused becasuse InvestmentAccountHolding is abstract
+	@Field(() => [InvestmentAccountCashChange], {
+		description: 'History of changed cash value',
+	})
+	cashChange: InvestmentAccountCashChange[];
+
+	@Field(() => [InvestmentAccountHolding], {
+		description: 'Holding history of this asset',
+	})
 	holdings: InvestmentAccountHolding[];
+}
+
+@ObjectType()
+export class InvestmentAccountCashChange implements InvestmentAccountCashChangeClient {
+	@Field(() => String)
+	itemId: string;
+
+	@Field(() => Number)
+	cashCurrent: number;
+
+	@Field(() => String, {
+		description: 'Format yyyy-MM-DD',
+	})
+	date: string;
 }

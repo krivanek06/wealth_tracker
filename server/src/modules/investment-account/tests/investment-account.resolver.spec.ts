@@ -2,21 +2,21 @@ import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { InvestmentAccount } from '../entities';
 import { InvestmentAccountResolver } from '../resolvers';
-import { InvestmentAccountHistoryService, InvestmentAccountService } from '../services';
+import { InvestmentAccountHoldingHistoryService, InvestmentAccountService } from '../services';
 import { investmentAccountMock } from './mocks';
 
 describe('InvestmentAccountResolver', () => {
 	let resolver: InvestmentAccountResolver;
 
 	const investmentAccountServiceMock = createMock<InvestmentAccountService>({});
-	const investmentAccountHistoryServiceMock = createMock<InvestmentAccountHistoryService>({});
+	const investmentAccountHistoryServiceMock = createMock<InvestmentAccountHoldingHistoryService>({});
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				InvestmentAccountResolver,
 				{ provide: InvestmentAccountService, useValue: investmentAccountServiceMock },
-				{ provide: InvestmentAccountHistoryService, useValue: investmentAccountHistoryServiceMock },
+				{ provide: InvestmentAccountHoldingHistoryService, useValue: investmentAccountHistoryServiceMock },
 			],
 		}).compile();
 

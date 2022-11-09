@@ -1,20 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { AssetStock as AssetStockClient, AssetStockProfile as AssetStockProfileClient } from '@prisma/client';
-@ObjectType()
-export class AssetStock implements AssetStockClient {
-	@Field(() => String)
-	id: string;
-
-	@Field(() => String, {
-		description: 'Last time the information was updated for this stock',
-	})
-	lastUpdated: Date;
-
-	@Field(() => AssetStockProfile, {
-		description: 'More detail information about the stock',
-	})
-	profile: AssetStockProfile;
-}
 
 @ObjectType()
 export class AssetStockProfile implements AssetStockProfileClient {
@@ -95,4 +80,20 @@ export class AssetStockProfile implements AssetStockProfileClient {
 
 	@Field(() => Boolean)
 	isFund: boolean;
+}
+
+@ObjectType()
+export class AssetStock implements AssetStockClient {
+	@Field(() => String)
+	id: string;
+
+	@Field(() => String, {
+		description: 'Last time the information was updated for this stock',
+	})
+	lastUpdated: Date;
+
+	@Field(() => AssetStockProfile, {
+		description: 'More detail information about the stock',
+	})
+	profile: AssetStockProfile;
 }

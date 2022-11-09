@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
+import { MomentServiceUtil } from './../../utils';
 import {
 	FMAssetHistoricalPricesLine,
 	FMProfile,
@@ -56,8 +57,8 @@ export class FinancialModelingAPIService {
 		startDate: string | Date,
 		endDate: string | Date
 	): Promise<FMAssetHistoricalPricesLine[]> {
-		const dateStart = new Date(startDate).toISOString().slice(0, 10);
-		const dateEnd = new Date(endDate).toISOString().slice(0, 10);
+		const dateStart = MomentServiceUtil.format(startDate);
+		const dateEnd = MomentServiceUtil.format(endDate);
 
 		const requestConfig: AxiosRequestConfig = {
 			params: {
@@ -79,7 +80,7 @@ export class FinancialModelingAPIService {
 						if (!res) {
 							throw new HttpException(FINANCIAL_MODELING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
 						}
-						return res.data.historical;
+						return res.data.historical.sort((a, b) => (a.date < b.date ? -1 : 1));
 					})
 				)
 		);

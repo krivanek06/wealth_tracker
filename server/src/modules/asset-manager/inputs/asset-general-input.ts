@@ -1,5 +1,5 @@
 import { ArgsType, Field, InputType } from '@nestjs/graphql';
-import { MaxLength } from 'class-validator';
+import { IsDate, MaxLength } from 'class-validator';
 
 @InputType()
 @ArgsType()
@@ -12,4 +12,20 @@ export class AssetGeneralSearchInput {
 		defaultValue: false,
 	})
 	isCrypto: boolean;
+}
+
+@InputType()
+@ArgsType()
+export class AssetGeneralHistoricalPricesInput {
+	@Field(() => String)
+	@MaxLength(10)
+	symbol: string;
+
+	@Field(() => String)
+	@IsDate()
+	start: string;
+
+	@Field(() => String)
+	@IsDate()
+	end: string;
 }

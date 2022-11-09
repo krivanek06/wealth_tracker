@@ -25,7 +25,7 @@ export class InvestmentAccount implements InvestmentAccountClient {
 	})
 	userId: string;
 
-	@Field(() => InvestmentAccountCashChange, {
+	@Field(() => [InvestmentAccountCashChange], {
 		description: 'History of changed cash value',
 	})
 	cashChange: InvestmentAccountCashChange[];

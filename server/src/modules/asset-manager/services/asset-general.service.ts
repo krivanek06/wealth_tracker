@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FinancialModelingAPIService } from '../../../api';
 import { PrismaService } from '../../../prisma';
+import { ASSET_HISTORICAL_ERROR } from '../dto';
 import { AssetGeneral, AssetGeneralHistoricalPrices } from '../entities';
 import { AssetGeneralSearch } from '../outputs';
 import { AssetGeneralUtil } from '../utils';
@@ -45,15 +46,21 @@ export class AssetGeneralService {
 		end: string
 	): Promise<AssetGeneralHistoricalPrices> {
 		const historicalPrices = await this.refreshHistoricalPriceIntoDatabase(symbol, start, end);
-		const startIndex = historicalPrices.assetHistoricalPricesData.findIndex((d) => d.date === start);
-		const endIndex = historicalPrices.assetHistoricalPricesData.findIndex((d) => d.date === end);
 
-		if (startIndex === -1 || endIndex === -1) {
-			throw new Error(`Index error for symbol: ${symbol}, start: ${startIndex}, end ${endIndex}`);
-		}
+		// using >= because we may choose from weekend
+		const startIndex = historicalPrices.assetHistoricalPricesData.findIndex((d) => d.date >= start);
+		const endIndex = historicalPrices.assetHistoricalPricesData.findIndex((d) => d.date >= end);
 
-		const priceSlice = historicalPrices.assetHistoricalPricesData.slice(startIndex, endIndex - 1);
-		return { id: symbol, dateStart: start, dateEnd: end, assetHistoricalPricesData: priceSlice };
+		// if we fetch for today then endIndex === -1
+		const endIndexFixed = endIndex === -1 ? historicalPrices.assetHistoricalPricesData.length : endIndex;
+
+		const priceSlice = historicalPrices.assetHistoricalPricesData.slice(startIndex, endIndexFixed + 1);
+		return {
+			id: symbol,
+			dateStart: priceSlice[0].date,
+			dateEnd: priceSlice[priceSlice.length - 1].date,
+			assetHistoricalPricesData: priceSlice,
+		};
 	}
 
 	async refreshHistoricalPriceIntoDatabase(
@@ -61,15 +68,17 @@ export class AssetGeneralService {
 		start: string,
 		end: string
 	): Promise<AssetGeneralHistoricalPrices> {
-		const dateStart = new Date(start);
-		const dateEnd = new Date(end);
+		if (MomentServiceUtil.isBefore(end, start)) {
+			throw new HttpException(ASSET_HISTORICAL_ERROR.BAD_INPUT_DATE, HttpStatus.BAD_REQUEST);
+		}
+
 		const savedData = await this.getAssetHistoricalPrices(symbol);
 
 		// check if exists or dateStart, dateEnd in range
 		const refreshData =
 			!savedData ||
-			MomentServiceUtil.isBefore(dateStart, savedData.dateStart) ||
-			MomentServiceUtil.isBefore(savedData.dateEnd, dateEnd);
+			MomentServiceUtil.isBefore(start, savedData.dateStart) ||
+			MomentServiceUtil.isBefore(savedData.dateEnd, end);
 
 		// data in range
 		if (!refreshData) {
@@ -77,7 +86,7 @@ export class AssetGeneralService {
 		}
 
 		// load data from API
-		const apiData = await this.financialModelingAPIService.getAssetHistoricalPrices(symbol, dateStart, dateEnd);
+		const apiData = await this.financialModelingAPIService.getAssetHistoricalPrices(symbol, start, end);
 
 		// save historical prices
 		return this.prisma.assetGeneralHistoricalPrices.upsert({

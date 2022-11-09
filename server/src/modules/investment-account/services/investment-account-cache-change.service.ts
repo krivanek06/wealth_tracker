@@ -25,8 +25,11 @@ export class InvestmentAccountCashChangeService {
 			date: MomentServiceUtil.format(input.date),
 		};
 
+		// order ASC
+		const cacheChange = [...account.cashChange, entry].sort((a, b) => (a.date < b.date ? -1 : 1));
+
 		// modify in DB
-		await this.updateInvestmentAccountCashchange(input.investmentAccountId, [...account.cashChange, entry]);
+		await this.updateInvestmentAccountCashchange(input.investmentAccountId, cacheChange);
 
 		return entry;
 	}
@@ -38,16 +41,18 @@ export class InvestmentAccountCashChangeService {
 		const account = await this.getInvestmentAccount(input.investmentAccountId, userId);
 
 		// edit the correct itemId
-		const editedCashChanges = account.cashChange.map((d) => {
-			if (d.itemId === input.itemId) {
-				return {
-					...d,
-					date: MomentServiceUtil.format(input.date),
-					cashCurrent: input.cashCurrent,
-				} as InvestmentAccountCashChange;
-			}
-			return d;
-		});
+		const editedCashChanges = account.cashChange
+			.map((d) => {
+				if (d.itemId === input.itemId) {
+					return {
+						...d,
+						date: MomentServiceUtil.format(input.date),
+						cashCurrent: input.cashCurrent,
+					} as InvestmentAccountCashChange;
+				}
+				return d;
+			})
+			.sort((a, b) => (a.date < b.date ? -1 : 1));
 
 		// return back to user
 		const editedChange = editedCashChanges.find((d) => d.itemId === input.itemId);
@@ -69,17 +74,17 @@ export class InvestmentAccountCashChangeService {
 		const account = await this.getInvestmentAccount(input.investmentAccountId, userId);
 
 		// return back to user
-		const editedChange = account.cashChange.find((d) => d.itemId === input.itemId);
+		const removedCashChange = account.cashChange.find((d) => d.itemId === input.itemId);
 		const filteredOut = account.cashChange.filter((d) => d.itemId !== input.itemId);
 
-		if (!editedChange) {
+		if (!removedCashChange) {
 			throw new HttpException(INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		// modify in DB
 		await this.updateInvestmentAccountCashchange(input.investmentAccountId, filteredOut);
 
-		return editedChange;
+		return removedCashChange;
 	}
 
 	private async updateInvestmentAccountCashchange(

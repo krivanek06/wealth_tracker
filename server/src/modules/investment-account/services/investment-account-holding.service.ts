@@ -22,7 +22,12 @@ export class InvestmentAccountHoldingService {
 	): Promise<InvestmentAccountHolding> {
 		// do not allow selecting weekend for date
 		if (MomentServiceUtil.isWeekend(input.holdingInputData.date)) {
-			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.IS_WEEKEND, HttpStatus.FORBIDDEN);
+			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.IS_WEEKEND, HttpStatus.BAD_REQUEST);
+		}
+
+		// negative units
+		if (input.holdingInputData.units < 0) {
+			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.MIN_UNIT_VALUE, HttpStatus.BAD_REQUEST);
 		}
 
 		let assetSecotor = input.type.toString();
@@ -78,7 +83,7 @@ export class InvestmentAccountHoldingService {
 
 		// merge and sort ASC, because user may add newHoldingHistory sooner than existingHoldingHistories[-1]
 		const mergedHoldingHistory = [...existingHoldingHistories, newHoldingHistory].sort((a, b) =>
-			MomentServiceUtil.isBefore(a.date, b.date) ? 1 : -1
+			MomentServiceUtil.isBefore(a.date, b.date) ? -1 : 1
 		);
 
 		// holding may already exists or create new one
@@ -131,11 +136,11 @@ export class InvestmentAccountHoldingService {
 	 * @param mergedHoldingHistory
 	 * @returns
 	 */
-	private modifyExistingHoldingWithHistory(
+	private async modifyExistingHoldingWithHistory(
 		investmentAccount: InvestmentAccount,
 		symbol: string,
 		mergedHoldingHistory: InvestmentAccountHoldingHistory[]
-	): InvestmentAccountHolding {
+	): Promise<InvestmentAccountHolding> {
 		// replace holding history for matching symbol
 		const modifiedHoldings = investmentAccount.holdings.map((d) => {
 			if (d.id === symbol) {
@@ -145,14 +150,14 @@ export class InvestmentAccountHoldingService {
 		});
 
 		// find holding that was modified
-		const modifiedHolding = investmentAccount.holdings.find((d) => d.assetId === symbol);
+		const modifiedHolding = modifiedHoldings.find((d) => d.assetId === symbol);
 
 		if (!modifiedHolding) {
 			throw new Error('InvestmentAccountHoldingService.modifyExistingHoldingWithHistory(), holding not found');
 		}
 
 		// save data into DB
-		this.updateInvestmenAccountHolding(investmentAccount.id, modifiedHoldings);
+		await this.updateInvestmenAccountHolding(investmentAccount.id, modifiedHoldings);
 
 		return modifiedHolding;
 	}

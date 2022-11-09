@@ -7,7 +7,7 @@ export class InvestmentAccountHoldingHistory implements InvestmentAccountHolding
 	itemId: string;
 
 	@Field(() => String)
-	date: Date;
+	date: string;
 
 	@Field(() => Float)
 	units: number;

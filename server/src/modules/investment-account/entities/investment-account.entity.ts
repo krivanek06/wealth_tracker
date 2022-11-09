@@ -16,6 +16,11 @@ export class InvestmentAccount implements InvestmentAccountClient {
 	name: string;
 
 	@Field(() => String, {
+		description: 'Date time when account was created',
+	})
+	createdAt: Date;
+
+	@Field(() => String, {
 		description: 'Reference to User.ID who created this investment account',
 	})
 	userId: string;
@@ -39,6 +44,8 @@ export class InvestmentAccountCashChange implements InvestmentAccountCashChangeC
 	@Field(() => Number)
 	cashCurrent: number;
 
-	@Field(() => String)
-	date: Date;
+	@Field(() => String, {
+		description: 'Format yyyy-MM-DD',
+	})
+	date: string;
 }

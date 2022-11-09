@@ -2,7 +2,13 @@ import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
-import { FMAssetHistoricalPrices, FMProfile, FMQuote, FMSearch, FMStockPrice } from './financial-modeling-api.model';
+import {
+	FMAssetHistoricalPricesLine,
+	FMProfile,
+	FMQuote,
+	FMSearch,
+	FMStockPrice,
+} from './financial-modeling-api.model';
 import { FINANCIAL_MODELING_ERROR } from './financial-modeling-error-messages.dto';
 
 @Injectable()
@@ -49,7 +55,7 @@ export class FinancialModelingAPIService {
 		symbol: string,
 		startDate: string | Date,
 		endDate: string | Date
-	): Promise<FMAssetHistoricalPrices[]> {
+	): Promise<FMAssetHistoricalPricesLine[]> {
 		const dateStart = new Date(startDate).toISOString().slice(0, 10);
 		const dateEnd = new Date(endDate).toISOString().slice(0, 10);
 
@@ -58,12 +64,13 @@ export class FinancialModelingAPIService {
 				apikey: this.apiKey,
 				from: dateStart,
 				to: dateEnd,
+				serietype: 'line',
 			},
 		};
 
 		return lastValueFrom(
 			this.httpService
-				.get<{ symbol: string; historical: FMAssetHistoricalPrices[] }>(
+				.get<{ symbol: string; historical: FMAssetHistoricalPricesLine[] }>(
 					`${this.endpointV3}/historical-price-full/${symbol}`,
 					requestConfig
 				)

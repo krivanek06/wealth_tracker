@@ -9,4 +9,4 @@ import { AssetGeneralService, AssetStockService } from './services';
 	providers: [AssetGeneralResolver, AssetStockService, AssetGeneralService, PrismaService],
 	exports: [AssetGeneralResolver, AssetStockService, AssetGeneralService],
 })
-export class AssetStockModule {}
+export class AssetManagerModule {}

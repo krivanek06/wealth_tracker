@@ -1,37 +1,28 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { PrismaService } from '../../prisma';
-import { AssetStockModule } from '../asset-manager';
+import { AssetManagerModule } from '../asset-manager';
 import {
 	InvestmentAccountCashChangeResolver,
-	InvestmentAccountHistoryResolver,
 	InvestmentAccountHoldingResolver,
 	InvestmentAccountResolver,
 } from './resolvers';
 import {
-	InvestmentAccountCacheChangeService,
-	InvestmentAccountHoldingHistoryService,
+	InvestmentAccountCashChangeService,
 	InvestmentAccountHoldingService,
 	InvestmentAccountService,
 } from './services';
 
 @Module({
-	imports: [forwardRef(() => AssetStockModule)],
+	imports: [forwardRef(() => AssetManagerModule)],
 	providers: [
 		PrismaService,
 		InvestmentAccountService,
 		InvestmentAccountResolver,
-		InvestmentAccountHoldingHistoryService,
-		InvestmentAccountHistoryResolver,
 		InvestmentAccountHoldingService,
 		InvestmentAccountHoldingResolver,
-		InvestmentAccountCacheChangeService,
+		InvestmentAccountCashChangeService,
 		InvestmentAccountCashChangeResolver,
 	],
-	exports: [
-		InvestmentAccountHistoryResolver,
-		InvestmentAccountResolver,
-		InvestmentAccountHoldingResolver,
-		InvestmentAccountCashChangeResolver,
-	],
+	exports: [InvestmentAccountResolver, InvestmentAccountHoldingResolver, InvestmentAccountCashChangeResolver],
 })
 export class InvestmentAccountModule {}

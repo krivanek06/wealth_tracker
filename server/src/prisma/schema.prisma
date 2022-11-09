@@ -123,8 +123,9 @@ type PersonalAccountDailyData {
 
 // ---------------- Investment account ------------------
 model InvestmentAccount {
-    id   String @id @default(auto()) @map("_id") @db.ObjectId
-    name String // custom name for personal account
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    name      String // custom name for personal account
+    createdAt DateTime @default(now())
 
     // whole history of changed cash on hand
     cashChange InvestmentAccountCashChange[]
@@ -140,7 +141,7 @@ model InvestmentAccount {
 type InvestmentAccountCashChange {
     itemId      String // random UUID
     cashCurrent Float
-    date        DateTime
+    date        String // YYYY-MM-DD
 }
 
 // the whole history of the one asset that was bough, completly sold, then bought again
@@ -158,7 +159,7 @@ type InvestmentAccountHolding {
 
 type InvestmentAccountHoldingHistory {
     itemId         String
-    date           DateTime @default(now()) // date when it was added to holdings
+    date           String // YYYY-MM-DD of day when it was added to holdings
     units          Float // how many units of asset the user have
     investedAmount Float // $ how much user invested into a specific asset
 }
@@ -189,21 +190,15 @@ model AssetGeneralHistoricalPrices {
     id String @id @map("_id") // symbol name: AAPL, MSFT, QQQ, ...
 
     // range of downloaded assetHistoricalPricesData -> 
-    dateStart DateTime // assetHistoricalPricesData[0]
-    dateEnd   DateTime // assetHistoricalPricesData[-1]
+    dateStart String // YYYY-MM-DD - assetHistoricalPricesData[0].date
+    dateEnd   String // YYYY-MM-DD - assetHistoricalPricesData[-1].date
 
     assetHistoricalPricesData AssetGeneralHistoricalPricesData[]
 }
 
 type AssetGeneralHistoricalPricesData {
-    date          String // "2022-03-12"
-    open          Float
-    high          Float
-    low           Float
-    close         Float
-    volume        Float
-    change        Float
-    changePercent Float
+    date  String // "2022-03-12"
+    close Float
 }
 
 type AssetGeneralQuote {

@@ -10,10 +10,10 @@ export class AssetGeneralHistoricalPrices implements AssetGeneralHistoricalPrice
 	id: string;
 
 	@Field(() => String)
-	dateStart: Date;
+	dateStart: string;
 
 	@Field(() => String)
-	dateEnd: Date;
+	dateEnd: string;
 
 	@Field(() => [AssetGeneralHistoricalPricesData], {
 		description: 'Historical prices to create charts for portoflio',
@@ -30,23 +30,5 @@ export class AssetGeneralHistoricalPricesData implements AssetGeneralHistoricalP
 	date: string;
 
 	@Field(() => Float)
-	open: number;
-
-	@Field(() => Float)
-	high: number;
-
-	@Field(() => Float)
-	low: number;
-
-	@Field(() => Float)
 	close: number;
-
-	@Field(() => Float)
-	volume: number;
-
-	@Field(() => Float)
-	change: number;
-
-	@Field(() => Float)
-	changePercent: number;
 }

@@ -7,10 +7,10 @@ import {
 	InvestmentAccountCashDeleteInput,
 	InvestmentAccountCashEditInput,
 } from '../inputs';
-import { SharedServiceUtil } from './../../../utils';
+import { MomentServiceUtil, SharedServiceUtil } from './../../../utils';
 
 @Injectable()
-export class InvestmentAccountCacheChangeService {
+export class InvestmentAccountCashChangeService {
 	constructor(private prisma: PrismaService) {}
 
 	async createInvestmentAccountCashe(
@@ -22,7 +22,7 @@ export class InvestmentAccountCacheChangeService {
 		const entry: InvestmentAccountCashChange = {
 			itemId: SharedServiceUtil.getUUID(),
 			cashCurrent: input.cashCurrent,
-			date: new Date(input.date),
+			date: MomentServiceUtil.format(input.date),
 		};
 
 		// modify in DB
@@ -40,7 +40,11 @@ export class InvestmentAccountCacheChangeService {
 		// edit the correct itemId
 		const editedCashChanges = account.cashChange.map((d) => {
 			if (d.itemId === input.itemId) {
-				return { ...d, date: new Date(input.date), cashCurrent: input.cashCurrent };
+				return {
+					...d,
+					date: MomentServiceUtil.format(input.date),
+					cashCurrent: input.cashCurrent,
+				} as InvestmentAccountCashChange;
 			}
 			return d;
 		});

@@ -2,17 +2,15 @@ import { UseGuards } from '@nestjs/common';
 import { Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql';
-import { InvestmentAccount, InvestmentAccountHistory } from '../entities';
-import { InvestmentAccountCreateInput, InvestmentAccountEditInput } from '../inputs';
-import { InvestmentAccountHoldingHistoryService, InvestmentAccountService } from '../services';
+import { InvestmentAccount, InvestmentAccountHolding } from '../entities';
+import { InvestmentAccountCreateInput, InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
+import { InvestmentAccountGrowth } from '../outputs';
+import { InvestmentAccountService } from '../services';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccount)
 export class InvestmentAccountResolver {
-	constructor(
-		private investmentAccountService: InvestmentAccountService,
-		private investmentAccountHistoryService: InvestmentAccountHoldingHistoryService
-	) {}
+	constructor(private investmentAccountService: InvestmentAccountService) {}
 
 	/* Queries */
 
@@ -22,6 +20,17 @@ export class InvestmentAccountResolver {
 	})
 	getInvestmentAccounts(@ReqUser() authUser: RequestUser): Promise<InvestmentAccount[]> {
 		return this.investmentAccountService.getInvestmentAccounts(authUser.id);
+	}
+
+	@Query(() => [InvestmentAccountGrowth], {
+		description: 'Returns the investment account history growth, based on the input values',
+		defaultValue: [],
+	})
+	getInvestmentAccountGrowth(
+		@ReqUser() authUser: RequestUser,
+		@Input() input: InvestmentAccountGrowthInput
+	): Promise<InvestmentAccountGrowth[]> {
+		return this.investmentAccountService.getInvestmentAccountGrowth(input, authUser.id);
 	}
 
 	/* Mutation */
@@ -54,32 +63,14 @@ export class InvestmentAccountResolver {
 
 	/* Resolvers */
 
-	@ResolveField('accountHistory', () => InvestmentAccountHistory)
-	getInvestmentAccountHistory(@Parent() investmentAccount: InvestmentAccount): Promise<InvestmentAccountHistory> {
-		return this.investmentAccountHistoryService.getInvestmentAccountHistoryInvestmentAccount(investmentAccount);
+	/**
+	 * it is used to filter our in-active holdings from InvestmentAccount.holdings
+	 */
+	@ResolveField('activeHoldings', () => [InvestmentAccountHolding], {
+		description: 'Returns holdings from an investment account that are active, meaning user has not solved them all',
+		defaultValue: [],
+	})
+	getActiveHoldings(@Parent() investmentAccount: InvestmentAccount): InvestmentAccountHolding[] {
+		return investmentAccount.holdings.filter((d) => d.holdingHistory[d.holdingHistory.length - 1].units > 0);
 	}
-
-	// @ResolveField('investedAlreadyTotal', () => Float)
-	// getInvestedAlreadyTotal(@Parent() investmentAccount: InvestmentAccount): number {
-	// 	const holdingsInvestedAlready = investmentAccount.holdings.reduce((acc, curr) => acc + curr.investedAlready, 0);
-	// 	return holdingsInvestedAlready;
-	// }
-
-	// @ResolveField('portfolioBalanceTotal', () => Float)
-	// getPortfolioTotal(@Parent() investmentAccount: InvestmentAccount): number {
-	// 	const holdingsInvestedAlready = investmentAccount.holdings.reduce((acc, curr) => acc + curr.investedAlready, 0);
-	// 	return investmentAccount.cashCurrent + holdingsInvestedAlready;
-	// }
-
-	// @ResolveField('holdingStocks', () => [InvestmentAccountHoldingStock])
-	// getHoldingStocks(@Parent() investmentAccount: InvestmentAccount): InvestmentAccountHoldingStock[] {
-	// 	const stocks = investmentAccount.holdings.filter((x) => x.type === 'STOCK');
-	// 	return stocks;
-	// }
-
-	// @ResolveField('holdingCrypto', () => [InvestmentAccountHoldingCrypto])
-	// getHoldingCrypto(@Parent() investmentAccount: InvestmentAccount): InvestmentAccountHoldingCrypto[] {
-	// 	const crypto = investmentAccount.holdings.filter((x) => x.type === 'CRYPTO');
-	// 	return crypto;
-	// }
 }

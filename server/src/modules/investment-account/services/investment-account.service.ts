@@ -56,16 +56,13 @@ export class InvestmentAccountService {
 		const investedGrowth = historicalPrices
 			.map((d) => {
 				const holdingHistory = filteredHoldings.find((h) => h.assetId === d.id).holdingHistory ?? [];
-				const holdingIndexSize = holdingHistory.length - 1;
 				let holdingCurrentIndex = 0;
 
 				// store asset.units * price.close
 				const assetGrowthCalculation = d.assetHistoricalPricesData.map((price) => {
 					// increate holdingCurrentIndex if holdingHistory[holdingCurrentIndex].date is same as price.date
 					holdingCurrentIndex =
-						holdingCurrentIndex < holdingIndexSize && holdingHistory[holdingCurrentIndex].date >= price.date
-							? holdingCurrentIndex + 1
-							: holdingCurrentIndex;
+						price.date >= holdingHistory[holdingCurrentIndex + 1]?.date ? holdingCurrentIndex + 1 : holdingCurrentIndex;
 
 					return { date: price.date, calculation: holdingHistory[holdingCurrentIndex].units * price.close };
 				});

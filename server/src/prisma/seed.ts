@@ -35,7 +35,7 @@ const randomIntFromInterval = (min: number, max: number) => {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-const createDailyData = async (accunt: PersonalAccount): Promise<void> => {
+const personalAccountCreateDailyData = async (accunt: PersonalAccount): Promise<void> => {
 	const defaultTags = personalAccountTagService.getDefaultTags();
 
 	// for each day
@@ -61,7 +61,7 @@ const createDailyData = async (accunt: PersonalAccount): Promise<void> => {
 	}
 };
 
-const deleteMonthlyData = async (accunt: PersonalAccount): Promise<void> => {
+const personalAccountDeleteMonthlyData = async (accunt: PersonalAccount): Promise<void> => {
 	const monthlyData = await prisma.personalAccountMonthlyData.findMany({
 		where: {
 			personalAccountId: accunt.id,
@@ -79,14 +79,22 @@ const deleteMonthlyData = async (accunt: PersonalAccount): Promise<void> => {
 
 const run = async () => {
 	try {
+		console.log('[Personal account] ----- START');
+
 		console.log('[Personal account] GET');
 		const personalAcc = await getPersonalAccount();
 		console.log(`[Personal account]: ID: ${personalAcc.id} - NAME: ${personalAcc.name}`);
 		console.log('[Personal account DELETE] -> daily data start');
-		await deleteMonthlyData(personalAcc);
+		await personalAccountDeleteMonthlyData(personalAcc);
 		console.log('[Personal account CREATE] -> daily data start');
-		await createDailyData(personalAcc);
+		await personalAccountCreateDailyData(personalAcc);
 		console.log('[Personal account CREATE] -> daily data end');
+
+		console.log('[Personal account] ----- END');
+
+		console.log('[Investment account] ----- START');
+
+		console.log('[Investment account] ----- END');
 	} catch (e) {
 		console.log(e);
 	} finally {

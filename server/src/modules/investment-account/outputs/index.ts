@@ -1,2 +1,1 @@
-export * from './investment-account-holding-crypto.output';
-export * from './investment-account-holding-stock.output';
+export * from './investment-account-growth.output';

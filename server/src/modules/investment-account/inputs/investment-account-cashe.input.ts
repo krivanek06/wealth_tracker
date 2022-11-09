@@ -1,0 +1,58 @@
+import { ArgsType, Field, Float, InputType } from '@nestjs/graphql';
+import { MaxLength, Min } from 'class-validator';
+
+@InputType()
+@ArgsType()
+export class InvestmentAccountCashCreateInput {
+	@Field(() => String)
+	@MaxLength(50)
+	investmentAccountId: string;
+
+	@Field(() => Float)
+	@Min(0)
+	cashCurrent: number;
+
+	@Field(() => String, {
+		description: 'What date to associate cash account change',
+	})
+	date: string;
+}
+
+// ----------- Edit ------------
+
+@InputType()
+@ArgsType()
+export class InvestmentAccountCashEditInput {
+	@Field(() => String, {
+		description: 'If value is assigned, it will change existing cash value or create a new entry',
+	})
+	itemId: string;
+
+	@Field(() => String)
+	@MaxLength(50)
+	investmentAccountId: string;
+
+	@Field(() => Float)
+	@Min(0)
+	cashCurrent: number;
+
+	@Field(() => String, {
+		description: 'What date to associate cash account change',
+	})
+	date: string;
+}
+
+// ----------- Delete ------------
+
+@InputType()
+@ArgsType()
+export class InvestmentAccountCashDeleteInput {
+	@Field(() => String, {
+		description: 'If value is assigned, it will change existing cash value or create a new entry',
+	})
+	itemId: string;
+
+	@Field(() => String)
+	@MaxLength(50)
+	investmentAccountId: string;
+}

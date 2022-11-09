@@ -3,10 +3,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import { PrismaService } from '../../../prisma';
 import { InvestmentAccount, InvestmentAccountHistory } from '../entities';
-import { InvestmentAccountHistoryService } from '../services/investment-account-history.service';
+import { InvestmentAccountHoldingHistoryService } from '../services/investment-account-holding-history.service';
 
 describe('InvestmentAccountHistoryService', () => {
-	let service: InvestmentAccountHistoryService;
+	let service: InvestmentAccountHoldingHistoryService;
 
 	const investmentAccountHistoryIdMock = '1234';
 	const investmentAccountIdMock = 'poiuewewew';
@@ -31,10 +31,10 @@ describe('InvestmentAccountHistoryService', () => {
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [InvestmentAccountHistoryService, { provide: PrismaService, useValue: prismaServiceMock }],
+			providers: [InvestmentAccountHoldingHistoryService, { provide: PrismaService, useValue: prismaServiceMock }],
 		}).compile();
 
-		service = module.get<InvestmentAccountHistoryService>(InvestmentAccountHistoryService);
+		service = module.get<InvestmentAccountHoldingHistoryService>(InvestmentAccountHoldingHistoryService);
 
 		when(prismaServiceMock.investmentAccountHistory.findFirst)
 			.calledWith({

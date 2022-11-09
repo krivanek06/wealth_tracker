@@ -2,6 +2,7 @@
 
 // https://financialmodelingprep.com/api/v3/search?query=AA&limit=10&apikey=XXX
 export interface FMSearch {
+	image: string;
 	symbol: string;
 	name: string;
 	currency: string;
@@ -59,6 +60,7 @@ export interface FMProfile {
 // https://financialmodelingprep.com/api/v3/quote/AAPL?apikey=XXX
 export interface FMQuote {
 	symbol: string;
+	symbolImage: string;
 	name: string;
 	price: number;
 	changesPercentage: number;
@@ -80,4 +82,10 @@ export interface FMQuote {
 	earningsAnnouncement: string | null;
 	sharesOutstanding: number;
 	timestamp: number;
+}
+
+// https://financialmodelingprep.com/api/v3/historical-price-full/BTCUSD?from=2021-03-12&to=2022-03-12&apikey=XXX
+export interface FMAssetHistoricalPricesLine {
+	date: string; // format YYYY-MM-DD
+	close: number;
 }

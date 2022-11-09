@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { InvestmentAccountHistoryResolver } from '../resolvers/investment-account-history.resolver';
+import { InvestmentAccountHoldingHistoryResolver } from '../resolvers/investment-account-holding-history.resolver';
 
 describe('InvestmentAccountHistoryResolver', () => {
-	let resolver: InvestmentAccountHistoryResolver;
+	let resolver: InvestmentAccountHoldingHistoryResolver;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [InvestmentAccountHistoryResolver],
+			providers: [InvestmentAccountHoldingHistoryResolver],
 		}).compile();
 
-		resolver = module.get<InvestmentAccountHistoryResolver>(InvestmentAccountHistoryResolver);
+		resolver = module.get<InvestmentAccountHoldingHistoryResolver>(InvestmentAccountHoldingHistoryResolver);
 	});
 
 	it('should be defined', () => {

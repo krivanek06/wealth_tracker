@@ -4,8 +4,7 @@ import { AssetGeneralService, AssetStockService } from '../../asset-manager';
 import { INVESTMENT_ACCOUNT_HOLDING_ERROR } from '../dto';
 import { InvestmentAccount, InvestmentAccountHolding, InvestmentAccountHoldingHistory } from '../entities';
 import { InvestmentAccounHoldingCreateInput, InvestmentAccounHoldingHistoryDeleteInput } from '../inputs';
-import { MomentServiceUtil } from './../../../utils';
-import { InvestmentAccountHoldingUtil } from './../utils/investment-account-holding.util';
+import { MomentServiceUtil, SharedServiceUtil } from './../../../utils';
 import { InvestmentAccountService } from './investment-account.service';
 
 @Injectable()
@@ -51,7 +50,7 @@ export class InvestmentAccountHoldingService {
 			this.assetGeneralService.refreshHistoricalPriceIntoDatabase(
 				input.symbol,
 				input.holdingInputData.date,
-				new Date()
+				MomentServiceUtil.format(new Date())
 			),
 		]);
 
@@ -60,9 +59,12 @@ export class InvestmentAccountHoldingService {
 		const existingHoldingHistories = existingHolding?.holdingHistory ?? [];
 
 		// create DB object
-		const newHoldingHistory = InvestmentAccountHoldingUtil.createInvestmentAccountHoldingHistory(
-			input.holdingInputData
-		);
+		const newHoldingHistory: InvestmentAccountHoldingHistory = {
+			itemId: SharedServiceUtil.getUUID(),
+			units: input.holdingInputData.units,
+			investedAmount: input.holdingInputData.investedAmount,
+			date: MomentServiceUtil.format(input.holdingInputData.date),
+		};
 
 		// merge and sort ASC, because user may add newHoldingHistory sooner than existingHoldingHistories[-1]
 		const mergedHoldingHistory = [...existingHoldingHistories, newHoldingHistory].sort((a, b) =>
@@ -77,11 +79,38 @@ export class InvestmentAccountHoldingService {
 		return modifiedHolding;
 	}
 
-	// TODO: delete holding history
+	/**
+	 * Removes a matching itemId from InvestmentAccountHolding and returns it
+	 *
+	 * @param input
+	 */
 	async deleteHoldingHistory(
-		input: InvestmentAccounHoldingHistoryDeleteInput
+		input: InvestmentAccounHoldingHistoryDeleteInput,
+		userId: string
 	): Promise<InvestmentAccountHoldingHistory> {
-		TODO;
+		// load investment account
+		const investmentAccount = await this.investmentAccountService.getInvestmentAccountById(
+			input.investmentAccountId,
+			userId
+		);
+
+		// find existing holding
+		const existingHolding = investmentAccount.holdings.find((x) => x.id === input.symbol);
+
+		// should not happen what we don't have a holding when removing a history
+		if (!existingHolding) {
+			throw new Error(
+				`InvestmentAccountHoldingService.deleteHoldingHistory, holding not found for symbol ${input.symbol}`
+			);
+		}
+
+		const modifiedHoldingHistories = existingHolding.holdingHistory.filter((d) => d.itemId !== input.itemId);
+		const removedHoldingHistory = existingHolding.holdingHistory.find((d) => d.itemId === input.itemId);
+
+		// save data into DB
+		this.modifyExistingHoldingWithHistory(investmentAccount, input.symbol, modifiedHoldingHistories);
+
+		return removedHoldingHistory;
 	}
 
 	/**
@@ -97,18 +126,22 @@ export class InvestmentAccountHoldingService {
 		symbol: string,
 		mergedHoldingHistory: InvestmentAccountHoldingHistory[]
 	): InvestmentAccountHolding {
+		// replace holding history for matching symbol
 		const modifiedHoldings = investmentAccount.holdings.map((d) => {
 			if (d.id === symbol) {
 				return { ...d, holdingHistory: mergedHoldingHistory };
 			}
 			return d;
 		});
+
+		// find holding that was modified
 		const modifiedHolding = investmentAccount.holdings.find((d) => d.assetId === symbol);
 
 		if (!modifiedHolding) {
 			throw new Error('InvestmentAccountHoldingService.modifyExistingHoldingWithHistory(), holding not found');
 		}
 
+		// save data into DB
 		this.updateInvestmenAccountHolding(investmentAccount.id, modifiedHoldings);
 
 		return modifiedHolding;
@@ -157,80 +190,4 @@ export class InvestmentAccountHoldingService {
 			},
 		});
 	}
-
-	// async editInvestmentAccountHolding(
-	// 	input: InvestmentAccounHoldingInput,
-	// 	userId: string
-	// ): Promise<InvestmentAccountHolding> {
-	// 	// load investment account to which we want to edit the holding
-	// 	const investmentAccount = await this.investmentAccountService.getInvestmentAccountById(
-	// 		input.investmentAccountId,
-	// 		userId
-	// 	);
-
-	// 	// check if symbol exists
-	// 	const isExistsSymbol = investmentAccount.holdings.find((x) => x.id === input.symbol);
-	// 	if (!isExistsSymbol) {
-	// 		throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
-	// 	}
-
-	// 	// modify isExistsSymbol with data from input
-	// 	const modifiedHolding: InvestmentAccountHolding = {
-	// 		...isExistsSymbol,
-	// 		units: input.units,
-	// 		investedAlready: input.investedAlready,
-	// 	};
-
-	// 	// replace the old Symbol holding with the modifiedHolding
-	// 	const newHoldings = investmentAccount.holdings.map((x) => (x.id === input.symbol ? modifiedHolding : x));
-
-	// 	// save data
-	// 	await this.updateInvestmentAccountHolding(input.investmentAccountId, newHoldings);
-
-	// 	return modifiedHolding;
-	// }
-
-	// async deleteInvestmentAccountHolding(
-	// 	input: InvestmentAccounHoldingDeleteInput,
-	// 	userId: string
-	// ): Promise<InvestmentAccountHolding> {
-	// 	// load investment account to which we want to delete the holding
-	// 	const investmentAccount = await this.investmentAccountService.getInvestmentAccountById(
-	// 		input.investmentAccountId,
-	// 		userId
-	// 	);
-
-	// 	// check if symbol exists
-	// 	const isExistsSymbol = investmentAccount.holdings.find((x) => x.id === input.symbol);
-	// 	if (!isExistsSymbol) {
-	// 		throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
-	// 	}
-
-	// 	// filter out data that doesnt not match the symbol
-	// 	const newHoldings = investmentAccount.holdings.filter((x) => x.id !== input.symbol);
-
-	// 	// save data
-	// 	await this.updateInvestmentAccountHolding(input.investmentAccountId, newHoldings);
-
-	// 	return isExistsSymbol;
-	// }
-
-	// private updateInvestmentAccountHolding(
-	// 	investmentAccount: InvestmentAccount,
-	// 	holdingHistory: InvestmentAccountHoldingHistory[]
-	// ): Promise<InvestmentAccount> {
-	// 	return this.prisma.investmentAccount.update({
-	// 		data: {
-	// 			holdings: {
-	// 				at: 2,
-	// 				set: {
-	// 					holdingHistory: [],
-	// 				},
-	// 			},
-	// 		},
-	// 		where: {
-	// 			id: investmentAccountId,
-	// 		},
-	// 	});
-	// }
 }

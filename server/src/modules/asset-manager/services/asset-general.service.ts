@@ -25,10 +25,27 @@ export class AssetGeneralService {
 		});
 	}
 
+	async getAssetHistoricalPricesStartToEnd(
+		symbol: string,
+		start: string,
+		end: string
+	): Promise<AssetGeneralHistoricalPrices> {
+		const historicalPrices = await this.refreshHistoricalPriceIntoDatabase(symbol, start, end);
+		const startIndex = historicalPrices.assetHistoricalPricesData.findIndex((d) => d.date === start);
+		const endIndex = historicalPrices.assetHistoricalPricesData.findIndex((d) => d.date === end);
+
+		if (startIndex === -1 || endIndex === -1) {
+			throw new Error(`Index error for symbol: ${symbol}, start: ${startIndex}, end ${endIndex}`);
+		}
+
+		const priceSlice = historicalPrices.assetHistoricalPricesData.slice(startIndex, endIndex - 1);
+		return { id: symbol, dateStart: start, dateEnd: end, assetHistoricalPricesData: priceSlice };
+	}
+
 	async refreshHistoricalPriceIntoDatabase(
 		symbol: string,
-		start: string | Date,
-		end: string | Date
+		start: string,
+		end: string
 	): Promise<AssetGeneralHistoricalPrices> {
 		const dateStart = new Date(start);
 		const dateEnd = new Date(end);
@@ -52,13 +69,13 @@ export class AssetGeneralService {
 		return this.prisma.assetGeneralHistoricalPrices.upsert({
 			create: {
 				id: symbol,
-				dateStart,
-				dateEnd,
+				dateStart: start,
+				dateEnd: end,
 				assetHistoricalPricesData: apiData,
 			},
 			update: {
-				dateStart,
-				dateEnd,
+				dateStart: start,
+				dateEnd: end,
 				assetHistoricalPricesData: apiData,
 			},
 			where: {

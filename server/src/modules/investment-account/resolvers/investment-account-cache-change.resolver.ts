@@ -7,15 +7,14 @@ import {
 	InvestmentAccountCashDeleteInput,
 	InvestmentAccountCashEditInput,
 } from '../inputs';
-import { InvestmentAccountCacheChangeService } from '../services';
-import { RequestUser } from './../../../auth';
-import { ReqUser } from './../../../auth/';
+import { InvestmentAccountCashChangeService } from '../services';
+import { RequestUser, ReqUser } from './../../../auth/';
 import { Input } from './../../../graphql/args/';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccountCashChange)
 export class InvestmentAccountCashChangeResolver {
-	constructor(private investmentAccountCacheChangeService: InvestmentAccountCacheChangeService) {}
+	constructor(private investmentAccountCacheChangeService: InvestmentAccountCashChangeService) {}
 
 	@Mutation(() => InvestmentAccountCashChange)
 	async createInvestmentAccountCashe(

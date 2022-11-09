@@ -2,23 +2,6 @@ import { Field, Float, ObjectType } from '@nestjs/graphql';
 import { AssetGeneral as AssetGeneralClient, AssetGeneralQuote as AssetGeneralQuoteClient } from '@prisma/client';
 
 @ObjectType()
-export class AssetGeneral implements AssetGeneralClient {
-	@Field(() => String)
-	id: string;
-
-	@Field(() => String)
-	name: string;
-
-	@Field(() => String)
-	symbolImageURL: string;
-
-	@Field(() => String)
-	assetIntoLastUpdate: Date;
-
-	@Field(() => AssetGeneralQuote)
-	assetQuote: AssetGeneralQuote;
-}
-
 export class AssetGeneralQuote implements AssetGeneralQuoteClient {
 	@Field(() => String)
 	name: string;
@@ -66,4 +49,22 @@ export class AssetGeneralQuote implements AssetGeneralQuoteClient {
 		description: 'Only present for stocks',
 	})
 	earningsAnnouncement: string;
+}
+
+@ObjectType()
+export class AssetGeneral implements AssetGeneralClient {
+	@Field(() => String)
+	id: string;
+
+	@Field(() => String)
+	name: string;
+
+	@Field(() => String)
+	symbolImageURL: string;
+
+	@Field(() => String)
+	assetIntoLastUpdate: Date;
+
+	@Field(() => AssetGeneralQuote)
+	assetQuote: AssetGeneralQuote;
 }

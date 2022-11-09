@@ -2,12 +2,26 @@ import { Injectable } from '@nestjs/common';
 import { FinancialModelingAPIService } from '../../../api';
 import { PrismaService } from '../../../prisma';
 import { AssetGeneral, AssetGeneralHistoricalPrices } from '../entities';
+import { AssetGeneralSearch } from '../outputs';
 import { AssetGeneralUtil } from '../utils';
 import { MomentServiceUtil } from './../../../utils';
 
 @Injectable()
 export class AssetGeneralService {
 	constructor(private prisma: PrismaService, private financialModelingAPIService: FinancialModelingAPIService) {}
+
+	async searchAssetBySymbol(symbolPrefix: string, isCrypto = false): Promise<AssetGeneralSearch[]> {
+		const apiData = await this.financialModelingAPIService.searchAssetBySymbolPrefix(symbolPrefix, isCrypto);
+		return apiData.map((d) => {
+			return {
+				name: d.name,
+				currency: d.currency,
+				exchangeShortName: d.exchangeShortName,
+				stockExchange: d.exchangeShortName,
+				symbol: d.symbol,
+			};
+		});
+	}
 
 	getAssetBySymbol(symbol: string): Promise<AssetGeneral> {
 		return this.prisma.assetGeneral.findFirst({

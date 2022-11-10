@@ -1,9 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FinancialModelingAPIService } from '../../../api';
 import { PrismaService } from '../../../prisma';
-import { ASSET_HISTORICAL_ERROR } from '../dto';
+import { ASSET_HISTORICAL_ERROR, ASSET_PRICE_UPDATE_THRESHOLD_HOURS } from '../dto';
 import { AssetGeneral, AssetGeneralHistoricalPrices } from '../entities';
-import { AssetGeneralSearch } from '../outputs';
 import { AssetGeneralUtil } from '../utils';
 import { MomentServiceUtil } from './../../../utils';
 
@@ -11,17 +10,10 @@ import { MomentServiceUtil } from './../../../utils';
 export class AssetGeneralService {
 	constructor(private prisma: PrismaService, private financialModelingAPIService: FinancialModelingAPIService) {}
 
-	async searchAssetBySymbol(symbolPrefix: string, isCrypto = false): Promise<AssetGeneralSearch[]> {
+	async searchAssetBySymbol(symbolPrefix: string, isCrypto = false): Promise<AssetGeneral[]> {
 		const apiData = await this.financialModelingAPIService.searchAssetBySymbolPrefix(symbolPrefix, isCrypto);
-		return apiData.map((d) => {
-			return {
-				name: d.name,
-				currency: d.currency,
-				exchangeShortName: d.exchangeShortName,
-				stockExchange: d.exchangeShortName,
-				symbol: d.symbol,
-			};
-		});
+		const symbolNames = apiData.map((d) => d.name);
+		return this.getAssetGeneralInformationForSymbols(symbolNames);
 	}
 
 	getAssetBySymbol(symbol: string): Promise<AssetGeneral> {
@@ -38,6 +30,44 @@ export class AssetGeneralService {
 				id: symbol,
 			},
 		});
+	}
+
+	/**
+	 * For each symbols loads AssetGeneral data from the DB and check if they
+	 * are not recent data, refresh them from the API
+	 *
+	 * @param symbols an array of symbols we want to get back current AssetGeneral
+	 */
+	async getAssetGeneralInformationForSymbols(symbols: string[]): Promise<AssetGeneral[]> {
+		// load general data from all assets
+		// TODO not working
+		const assetsGeneralData = await this.prisma.assetGeneral.findMany({
+			where: {
+				id: {
+					in: symbols,
+				},
+			},
+		});
+
+		// filter out outdated data older than STOCK_PRICE_UPDATE_THRESHOLD_HOURS hours
+		const outDatedSymbols = assetsGeneralData
+			.filter(
+				(d) =>
+					MomentServiceUtil.getDifference(d.assetIntoLastUpdate, new Date(), 'hours') >
+					ASSET_PRICE_UPDATE_THRESHOLD_HOURS
+			)
+			.map((d) => d.name);
+
+		// update outdated symbols data in DB from API
+		const updatedQuotes = await this.refreshSymbolQuotesInDB(outDatedSymbols);
+
+		// replace updatedQuotes in assetsGeneralData
+		const updatedQuotesMap = new Map(updatedQuotes.map((e) => [e.id, e]));
+		const mergedQuotes = assetsGeneralData.map((obj) =>
+			updatedQuotesMap.has(obj.id) ? updatedQuotesMap.get(obj.id) : obj
+		);
+
+		return mergedQuotes;
 	}
 
 	async getAssetHistoricalPricesStartToEnd(
@@ -63,7 +93,7 @@ export class AssetGeneralService {
 		};
 	}
 
-	async refreshHistoricalPriceIntoDatabase(
+	private async refreshHistoricalPriceIntoDatabase(
 		symbol: string,
 		start: string,
 		end: string
@@ -107,47 +137,33 @@ export class AssetGeneralService {
 		});
 	}
 
-	/**
-	 * Load and persist asset symbol data to the DB if not already saved,
-	 *
-	 * @param symbol stock symbol
-	 */
-	async refreshAssetIntoDatabase(symbol: string): Promise<AssetGeneral> {
-		// if symbol already saved, skip
-		const symbolData = await this.getAssetBySymbol(symbol);
-
-		// record exists
-		if (!!symbolData) {
-			return symbolData;
+	private async refreshSymbolQuotesInDB(outDatedSymbols: string[]): Promise<AssetGeneral[]> {
+		if (outDatedSymbols.length === 0) {
+			return [];
 		}
 
-		// load symbol data from the API
-		const data = await this.getAssetStockFromAPI(symbol);
+		const assetQuotesAPI = await this.financialModelingAPIService.getAssetQuotes(outDatedSymbols);
+		const assetQuotes = assetQuotesAPI.map((d) => AssetGeneralUtil.convertFMQuoteToAssetGeneralQuote(d));
 
-		// save symbol data
-		return this.prisma.assetGeneral.create({
-			data: {
-				...data,
-			},
-		});
-	}
-
-	private async getAssetStockFromAPI(symbol: string): Promise<AssetGeneral> {
-		// load data
-		const assetQuoteApi = await this.financialModelingAPIService.getAssetQuote(symbol);
-
-		// create entity
-		const assetQuote = AssetGeneralUtil.convertFMQuoteToAssetGeneralQuote(assetQuoteApi);
-
-		// create result
-		const result: AssetGeneral = {
-			id: symbol,
-			symbolImageURL: assetQuoteApi.symbolImage,
-			name: assetQuoteApi.name,
-			assetIntoLastUpdate: new Date(assetQuoteApi.timestamp),
-			assetQuote,
-		};
-
-		return result;
+		return await Promise.all(
+			assetQuotes.map((d) =>
+				this.prisma.assetGeneral.upsert({
+					create: {
+						id: d.symbol,
+						symbolImageURL: d.symbolImageURL,
+						name: d.name,
+						assetQuote: d,
+					},
+					update: {
+						symbolImageURL: d.symbolImageURL,
+						name: d.name,
+						assetQuote: d,
+					},
+					where: {
+						id: d.symbol,
+					},
+				})
+			)
+		);
 	}
 }

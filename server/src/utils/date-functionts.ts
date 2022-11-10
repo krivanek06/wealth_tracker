@@ -1,6 +1,7 @@
 import {
 	addDays,
 	differenceInDays,
+	differenceInHours,
 	format,
 	getDay,
 	getMonth,
@@ -18,8 +19,10 @@ export type DateServiceUtilDateInformations = {
 	day: number;
 };
 
+type DateInput = string | Date | number;
+
 export class MomentServiceUtil {
-	static getDetailsInformationFromDate(input: string | Date): DateServiceUtilDateInformations {
+	static getDetailsInformationFromDate(input: DateInput): DateServiceUtilDateInformations {
 		const date = new Date(input);
 
 		return {
@@ -30,25 +33,29 @@ export class MomentServiceUtil {
 		};
 	}
 
-	static format(date: string | Date | number, formateStr = 'yyyy-MM-dd'): string {
+	static format(date: DateInput, formateStr = 'yyyy-MM-dd'): string {
 		return format(new Date(date), formateStr);
 	}
 
-	static subDays(date: string | Date | number, amount: number): Date {
+	static subDays(date: DateInput, amount: number): Date {
 		return subDays(new Date(date), amount);
 	}
 
-	static startOfDay(date: string | Date | number): Date {
+	static addDays(date: DateInput, amount: number): Date {
+		return addDays(new Date(date), amount);
+	}
+
+	static startOfDay(date: DateInput): Date {
 		return startOfDay(new Date(date));
 	}
 
-	static isBefore(date: Date | number | string, dateToCompare: Date | number | string): boolean {
+	static isBefore(date: DateInput, dateToCompare: DateInput): boolean {
 		const firstDate = new Date(date);
 		const secondate = new Date(dateToCompare);
 		return isBefore(firstDate, secondate);
 	}
 
-	static isWeekend(date: Date | string | number): boolean {
+	static isWeekend(date: DateInput): boolean {
 		return isWeekend(new Date(date));
 	}
 
@@ -57,7 +64,7 @@ export class MomentServiceUtil {
 	 * and the first value is the first value of the `DateRange`,
 	 * and the last value is the last value of `DateRange`
 	 */
-	static getDates(start?: Date | string, end?: Date | string, skipWeekends = true): Date[] {
+	static getDates(start?: DateInput, end?: DateInput, skipWeekends = true): Date[] {
 		if (!start || !end) {
 			return [];
 		}
@@ -74,17 +81,21 @@ export class MomentServiceUtil {
 	}
 
 	/**
-	 * const one = new Date(2022, 10, 20);
-	 * const second = new Date(2022, 10, 22);
-	 * result will be 2
 	 *
 	 * @param first
 	 * @param second
-	 * @returns the day difference in two dates
+	 * @returns the selected difference in two dates
 	 */
-	static getDayDifference(first: string | Date | number, second: string | Date | number): number {
+	static getDifference(first: DateInput, second: DateInput, diff: 'days' | 'hours'): number {
 		const firstDate = new Date(first);
 		const secondDate = new Date(second);
-		return Math.abs(differenceInDays(firstDate, secondDate));
+
+		if (diff === 'days') {
+			return Math.abs(differenceInDays(firstDate, secondDate));
+		}
+		if (diff === 'hours') {
+			return Math.abs(differenceInHours(firstDate, secondDate));
+		}
+		return 0;
 	}
 }

@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma';
-import { AssetGeneralService, AssetStockService } from '../../asset-manager';
-import { INVESTMENT_ACCOUNT_HOLDING_ERROR } from '../dto';
+import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
+import { AssetStockService } from '../../asset-manager';
+import { INVESTMENT_ACCOUNT_HOLDING_ERROR, INVESTMENT_ACCOUNT_HOLDING_MAX_YEARS } from '../dto';
 import { InvestmentAccount, InvestmentAccountHolding, InvestmentAccountHoldingHistory } from '../entities';
 import { InvestmentAccounHoldingCreateInput, InvestmentAccounHoldingHistoryDeleteInput } from '../inputs';
-import { MomentServiceUtil, SharedServiceUtil } from './../../../utils';
 import { InvestmentAccountService } from './investment-account.service';
 
 @Injectable()
@@ -12,7 +12,6 @@ export class InvestmentAccountHoldingService {
 	constructor(
 		private prisma: PrismaService,
 		private investmentAccountService: InvestmentAccountService,
-		private assetGeneralService: AssetGeneralService,
 		private assetStockService: AssetStockService
 	) {}
 
@@ -30,6 +29,20 @@ export class InvestmentAccountHoldingService {
 			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.MIN_UNIT_VALUE, HttpStatus.BAD_REQUEST);
 		}
 
+		// prevent adding future holdings
+		if (MomentServiceUtil.format(new Date()) < MomentServiceUtil.format(input.holdingInputData.date)) {
+			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTRED_DATE_RANGE, HttpStatus.FORBIDDEN);
+		}
+
+		// get year data form input and today
+		const { year: inputYear } = MomentServiceUtil.getDetailsInformationFromDate(input.holdingInputData.date);
+		const { year: todayYear } = MomentServiceUtil.getDetailsInformationFromDate(new Date());
+
+		// prevent lodaing more than N year of asset data or future data - just in case
+		if (todayYear - inputYear > INVESTMENT_ACCOUNT_HOLDING_MAX_YEARS) {
+			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTRED_DATE_RANGE, HttpStatus.FORBIDDEN);
+		}
+
 		let assetSecotor = input.type.toString();
 
 		// load and save assets data into the DB
@@ -44,30 +57,6 @@ export class InvestmentAccountHoldingService {
 			input.investmentAccountId,
 			userId
 		);
-
-		// prevent adding future holdings
-		if (MomentServiceUtil.format(new Date()) < MomentServiceUtil.format(input.holdingInputData.date)) {
-			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTRED_DATE_RANGE, HttpStatus.FORBIDDEN);
-		}
-
-		// get year data form input and today
-		const { year: inputYear } = MomentServiceUtil.getDetailsInformationFromDate(input.holdingInputData.date);
-		const { year: todayYear } = MomentServiceUtil.getDetailsInformationFromDate(new Date());
-
-		// prevent lodaing more than 8 year of stock data or future data - just in case
-		if (todayYear - inputYear > 8) {
-			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTRED_DATE_RANGE, HttpStatus.FORBIDDEN);
-		}
-
-		// refresh symbol data & historical loaded prices
-		await Promise.all([
-			this.assetGeneralService.refreshAssetIntoDatabase(input.symbol),
-			this.assetGeneralService.refreshHistoricalPriceIntoDatabase(
-				input.symbol,
-				input.holdingInputData.date,
-				MomentServiceUtil.format(new Date())
-			),
-		]);
 
 		// find existing holding
 		const existingHolding = investmentAccount.holdings.find((x) => x.id === input.symbol);
@@ -110,21 +99,35 @@ export class InvestmentAccountHoldingService {
 		);
 
 		// find existing holding
-		const existingHolding = investmentAccount.holdings.find((x) => x.id === input.symbol);
+		const existingHoldingIndex = investmentAccount.holdings.findIndex((x) => x.id === input.symbol);
 
 		// should not happen what we don't have a holding when removing a history
-		if (!existingHolding) {
-			throw new Error(
-				`InvestmentAccountHoldingService.deleteHoldingHistory, holding not found for symbol ${input.symbol}`
-			);
+		if (existingHoldingIndex === -1) {
+			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
 		}
 
-		const modifiedHoldingHistories = existingHolding.holdingHistory.filter((d) => d.itemId !== input.itemId);
+		const existingHolding = investmentAccount.holdings[existingHoldingIndex];
 		const removedHoldingHistory = existingHolding.holdingHistory.find((d) => d.itemId === input.itemId);
 
-		// save data into DB
-		this.modifyExistingHoldingWithHistory(investmentAccount, input.symbol, modifiedHoldingHistories);
+		// replace holding history for matching symbol
+		const modifiedHoldings = investmentAccount.holdings.map((d) => {
+			if (d.id === input.symbol) {
+				return { ...d, holdingHistory: existingHolding.holdingHistory.filter((d) => d.itemId !== input.itemId) };
+			}
+			return d;
+		});
 
+		// Save holding to the DB
+		await this.prisma.investmentAccount.update({
+			data: {
+				holdings: [...modifiedHoldings],
+			},
+			where: {
+				id: investmentAccount.id,
+			},
+		});
+
+		// returned removed history
 		return removedHoldingHistory;
 	}
 

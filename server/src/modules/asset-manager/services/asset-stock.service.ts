@@ -31,30 +31,18 @@ export class AssetStockService {
 			return stock;
 		}
 
-		// load symbol data from the API
-		const data = await this.getAssetStockFromAPI(symbol);
-
-		// save symbol data
-		return this.prisma.assetStock.create({
-			data: {
-				...data,
-			},
-		});
-	}
-
-	private async getAssetStockFromAPI(symbol: string): Promise<AssetStock> {
-		// load data
+		// load data from API
 		const fmProfile = await this.financialModelingAPIService.getStockProfile(symbol);
 
 		// create entity
 		const profile = AssetStockUtil.convertFMProfileToAssetStockProfile(fmProfile);
 
-		const result: AssetStock = {
-			id: symbol,
-			lastUpdated: new Date(),
-			profile,
-		};
-
-		return result;
+		// save symbol data
+		return this.prisma.assetStock.create({
+			data: {
+				id: symbol,
+				profile,
+			},
+		});
 	}
 }

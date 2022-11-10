@@ -202,14 +202,22 @@ type AssetGeneralHistoricalPricesData {
 }
 
 type AssetGeneralQuote {
-    name        String
-    yearLow     Float
-    yearHigh    Float
-    marketCap   Float
-    priceAvg50  Float
-    priceAvg200 Float
-    avgVolume   Float
-    exchange    String
+    symbol            String
+    symbolImageURL    String
+    price             Float
+    changesPercentage Float
+    change            Float
+    dayLow            Float
+    dayHigh           Float
+    yearHigh          Float
+    yearLow           Float
+    name              String
+    marketCap         Float
+    priceAvg50        Float
+    priceAvg200       Float
+    avgVolume         Float
+    volume            Float
+    exchange          String
 
     // for crypto it is current supply
     sharesOutstanding Float

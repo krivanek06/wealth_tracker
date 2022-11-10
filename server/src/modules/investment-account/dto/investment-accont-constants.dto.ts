@@ -1,4 +1,2 @@
-/**
- * How many holdings can be in one investment account
- */
-export const INVESTMENT_ACOUNT_HOLDING_LIMIT = 100;
+export const INVESTMENT_ACCOUNT_MAX = 5;
+export const INVESTMENT_ACCOUNT_HOLDING_MAX_YEARS = 10;

@@ -49,11 +49,10 @@ export class InvestmentAccountHoldingResolver {
 			return [];
 		}
 
-		const yesterDay = MomentServiceUtil.format(MomentServiceUtil.subDays(new Date(), 1));
 		const result = await this.assetGeneralService.getAssetHistoricalPricesStartToEnd(
 			holding.assetId,
 			holding.holdingHistory[0].date,
-			yesterDay
+			MomentServiceUtil.format(new Date())
 		);
 		return result.assetHistoricalPricesData;
 	}

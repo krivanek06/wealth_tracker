@@ -39,7 +39,7 @@ export class FinancialModelingAPIService {
 			this.httpService.get<FMSearch[]>(`${this.endpointV3}/search-name`, requestConfig).pipe(
 				map((res) =>
 					res.data.map((d) => {
-						return { ...d, image: `${this.endpointImage}/${modifiedPrefix}.png` };
+						return { ...d, image: `${this.endpointImage}/${d.symbol}.png` };
 					})
 				)
 			)
@@ -159,14 +159,12 @@ export class FinancialModelingAPIService {
 
 				return lastValueFrom(
 					this.httpService.get<FMQuote[]>(`${this.endpointV3}/quote/${formattedSymbols}`, requestConfig).pipe(
-						map((res) => {
-							if (res.data.length > 0) {
-								return res.data.map((d) => {
-									return { ...d, image: `${this.endpointImage}/${d.symbol}.png` };
-								});
-							}
-							throw new HttpException(FINANCIAL_MODELING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
-						})
+						map((res) =>
+							res.data.map((d) => {
+								const data: FMQuote = { ...d, symbolImage: `${this.endpointImage}/${d.symbol}.png` };
+								return data;
+							})
+						)
 					)
 				);
 			})

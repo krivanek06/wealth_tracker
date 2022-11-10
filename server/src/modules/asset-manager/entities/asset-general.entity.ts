@@ -6,7 +6,9 @@ export class AssetGeneralQuote implements AssetGeneralQuoteClient {
 	@Field(() => String)
 	symbol: string;
 
-	@Field(() => String)
+	@Field(() => String, {
+		nullable: true,
+	})
 	symbolImageURL: string;
 
 	@Field(() => String)
@@ -83,7 +85,9 @@ export class AssetGeneral implements AssetGeneralClient {
 	@Field(() => String)
 	name: string;
 
-	@Field(() => String)
+	@Field(() => String, {
+		nullable: true,
+	})
 	symbolImageURL: string;
 
 	@Field(() => String)

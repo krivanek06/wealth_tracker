@@ -12,7 +12,7 @@ export class AssetGeneralService {
 
 	async searchAssetBySymbol(symbolPrefix: string, isCrypto = false): Promise<AssetGeneral[]> {
 		const apiData = await this.financialModelingAPIService.searchAssetBySymbolPrefix(symbolPrefix, isCrypto);
-		const symbolNames = apiData.map((d) => d.name);
+		const symbolNames = apiData.map((d) => d.symbol);
 		return this.getAssetGeneralInformationForSymbols(symbolNames);
 	}
 
@@ -40,32 +40,39 @@ export class AssetGeneralService {
 	 */
 	async getAssetGeneralInformationForSymbols(symbols: string[]): Promise<AssetGeneral[]> {
 		// load general data from all assets
-		// TODO not working
-		const assetsGeneralData = await this.prisma.assetGeneral.findMany({
+		const existingAssetsGeneralData = await this.prisma.assetGeneral.findMany({
 			where: {
 				id: {
 					in: symbols,
 				},
 			},
 		});
+		const assetsGeneralDataSymbols = existingAssetsGeneralData.map((d) => d.id);
 
 		// filter out outdated data older than STOCK_PRICE_UPDATE_THRESHOLD_HOURS hours
-		const outDatedSymbols = assetsGeneralData
+		const outDatedSymbols = existingAssetsGeneralData
 			.filter(
 				(d) =>
 					MomentServiceUtil.getDifference(d.assetIntoLastUpdate, new Date(), 'hours') >
 					ASSET_PRICE_UPDATE_THRESHOLD_HOURS
 			)
-			.map((d) => d.name);
+			.map((d) => d.id);
+		const notExistingSymbols = symbols.filter((d) => !assetsGeneralDataSymbols.includes(d));
 
 		// update outdated symbols data in DB from API
-		const updatedQuotes = await this.refreshSymbolQuotesInDB(outDatedSymbols);
+		const updatedQuotes = await this.refreshSymbolQuotesInDB([...outDatedSymbols, ...notExistingSymbols]);
+
+		// create key value map for better accessibility, so we don't need to use find()
+		const updatedQuotesMap = new Map(updatedQuotes.map((e) => [e.id, e]));
+		const existingAssetQuotesMap = new Map(existingAssetsGeneralData.map((e) => [e.id, e]));
 
 		// replace updatedQuotes in assetsGeneralData
-		const updatedQuotesMap = new Map(updatedQuotes.map((e) => [e.id, e]));
-		const mergedQuotes = assetsGeneralData.map((obj) =>
-			updatedQuotesMap.has(obj.id) ? updatedQuotesMap.get(obj.id) : obj
-		);
+		const mergedQuotes = symbols
+			.map((symbol) =>
+				updatedQuotesMap.has(symbol) ? updatedQuotesMap.get(symbol) : existingAssetQuotesMap.get(symbol)
+			)
+			// may happen that we query some symbol that does not exists and undefined will be in the returning value
+			.filter((d) => !!d);
 
 		return mergedQuotes;
 	}
@@ -145,7 +152,7 @@ export class AssetGeneralService {
 		const assetQuotesAPI = await this.financialModelingAPIService.getAssetQuotes(outDatedSymbols);
 		const assetQuotes = assetQuotesAPI.map((d) => AssetGeneralUtil.convertFMQuoteToAssetGeneralQuote(d));
 
-		return await Promise.all(
+		return Promise.all(
 			assetQuotes.map((d) =>
 				this.prisma.assetGeneral.upsert({
 					create: {

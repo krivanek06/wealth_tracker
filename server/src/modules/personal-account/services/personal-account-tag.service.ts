@@ -20,9 +20,9 @@ export class PersonalAccountTagService {
 		return this.defaultTags;
 	}
 
-	getDefaultTagById(tagId: string): PersonalAccountTag {
+	getDefaultTagById(tagId: string): PersonalAccountTag | null {
 		const allTags = this.getDefaultTags();
-		return allTags.find((t) => t.id === tagId);
+		return allTags.find((t) => t.id === tagId) ?? null;
 	}
 
 	getDefaultTagsByTypes(tagType: PersonalAccountTagDataType): PersonalAccountTag[] {

@@ -1,6 +1,5 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { HttpStatus } from '@nestjs/common';
-import { SubscriptionConfig } from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-fastify';
 
 export const INTERNAL_SERVER_ERROR_MESSAGE = 'Oops, something went wrong';
@@ -32,20 +31,6 @@ export class GraphQLHelper {
 					request,
 					reply,
 				};
-			},
-			subscriptions: GraphQLHelper.getSubscriptionConfig(),
-		};
-	}
-
-	private static getSubscriptionConfig(): SubscriptionConfig {
-		return {
-			'subscriptions-transport-ws': {
-				onConnect: (connectionParams: Record<string, unknown>) => {
-					return {
-						isSubscription: true,
-						...connectionParams,
-					};
-				},
 			},
 		};
 	}

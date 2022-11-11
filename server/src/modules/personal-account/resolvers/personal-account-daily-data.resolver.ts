@@ -9,7 +9,7 @@ import {
 import { PersonalAccountDailyDataEditOutput } from '../outputs';
 import { PersonalAccountDailyService, PersonalAccountTagService } from '../services';
 import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth';
-import { Input } from './../../../graphql';
+import { Input } from './../../../graphql/';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => PersonalAccountDailyData)

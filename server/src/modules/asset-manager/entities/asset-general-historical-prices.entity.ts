@@ -6,7 +6,9 @@ import {
 
 @ObjectType()
 export class AssetGeneralHistoricalPrices implements AssetGeneralHistoricalPricesClient {
-	@Field(() => String)
+	@Field(() => String, {
+		description: 'Symbol Id - AAPL, MSFT, BTCUSD',
+	})
 	id: string;
 
 	@Field(() => String)

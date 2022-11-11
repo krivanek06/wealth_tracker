@@ -11,6 +11,7 @@ import {
 	isWeekend,
 	startOfDay,
 	subDays,
+	subHours,
 } from 'date-fns';
 export type DateServiceUtilDateInformations = {
 	year: number;
@@ -39,6 +40,10 @@ export class MomentServiceUtil {
 
 	static subDays(date: DateInput, amount: number): Date {
 		return subDays(new Date(date), amount);
+	}
+
+	static subHours(date: DateInput, amount: number): Date {
+		return subHours(new Date(date), amount);
 	}
 
 	static addDays(date: DateInput, amount: number): Date {

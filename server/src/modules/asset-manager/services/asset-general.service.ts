@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FinancialModelingAPIService } from '../../../api';
 import { PrismaService } from '../../../prisma';
+import { MomentServiceUtil } from '../../../utils';
 import { ASSET_HISTORICAL_ERROR, ASSET_PRICE_UPDATE_THRESHOLD_HOURS } from '../dto';
 import { AssetGeneral, AssetGeneralHistoricalPrices } from '../entities';
 import { AssetGeneralUtil } from '../utils';
-import { MomentServiceUtil } from './../../../utils';
 
 @Injectable()
 export class AssetGeneralService {
@@ -13,23 +13,12 @@ export class AssetGeneralService {
 	async searchAssetBySymbol(symbolPrefix: string, isCrypto = false): Promise<AssetGeneral[]> {
 		const apiData = await this.financialModelingAPIService.searchAssetBySymbolPrefix(symbolPrefix, isCrypto);
 		const symbolNames = apiData.map((d) => d.symbol);
-		return this.getAssetGeneralInformationForSymbols(symbolNames);
+		return this.getAssetGeneralForSymbols(symbolNames);
 	}
 
-	getAssetBySymbol(symbol: string): Promise<AssetGeneral> {
-		return this.prisma.assetGeneral.findFirst({
-			where: {
-				id: symbol,
-			},
-		});
-	}
-
-	getAssetHistoricalPrices(symbol: string): Promise<AssetGeneralHistoricalPrices> {
-		return this.prisma.assetGeneralHistoricalPrices.findFirst({
-			where: {
-				id: symbol,
-			},
-		});
+	async getAssetGeneralForSymbol(symbol: string): Promise<AssetGeneral | null> {
+		const result = await this.getAssetGeneralForSymbols([symbol]);
+		return result[0] ?? null;
 	}
 
 	/**
@@ -38,7 +27,7 @@ export class AssetGeneralService {
 	 *
 	 * @param symbols an array of symbols we want to get back current AssetGeneral
 	 */
-	async getAssetGeneralInformationForSymbols(symbols: string[]): Promise<AssetGeneral[]> {
+	async getAssetGeneralForSymbols(symbols: string[]): Promise<AssetGeneral[]> {
 		// load general data from all assets
 		const existingAssetsGeneralData = await this.prisma.assetGeneral.findMany({
 			where: {
@@ -88,10 +77,12 @@ export class AssetGeneralService {
 		const startIndex = historicalPrices.assetHistoricalPricesData.findIndex((d) => d.date >= start);
 		const endIndex = historicalPrices.assetHistoricalPricesData.findIndex((d) => d.date >= end);
 
-		// if we fetch for today then endIndex === -1
+		// if end index not found, return until the end - can happen if we select today
 		const endIndexFixed = endIndex === -1 ? historicalPrices.assetHistoricalPricesData.length : endIndex;
 
+		// slice returning historical data
 		const priceSlice = historicalPrices.assetHistoricalPricesData.slice(startIndex, endIndexFixed + 1);
+
 		return {
 			id: symbol,
 			dateStart: priceSlice[0].date,
@@ -109,7 +100,12 @@ export class AssetGeneralService {
 			throw new HttpException(ASSET_HISTORICAL_ERROR.BAD_INPUT_DATE, HttpStatus.BAD_REQUEST);
 		}
 
-		const savedData = await this.getAssetHistoricalPrices(symbol);
+		// load historical prices
+		const savedData = await this.prisma.assetGeneralHistoricalPrices.findFirst({
+			where: {
+				id: symbol,
+			},
+		});
 
 		// check if exists or dateStart, dateEnd in range
 		const refreshData =
@@ -122,20 +118,24 @@ export class AssetGeneralService {
 			return savedData;
 		}
 
+		// always increase the range to save the historical data
+		const newStart = MomentServiceUtil.isBefore(start, savedData.dateStart) ? start : savedData.dateStart;
+		const newEnd = MomentServiceUtil.isBefore(savedData.dateEnd, end) ? end : savedData.dateEnd;
+
 		// load data from API
-		const apiData = await this.financialModelingAPIService.getAssetHistoricalPrices(symbol, start, end);
+		const apiData = await this.financialModelingAPIService.getAssetHistoricalPrices(symbol, newStart, newEnd);
 
 		// save historical prices
 		return this.prisma.assetGeneralHistoricalPrices.upsert({
 			create: {
 				id: symbol,
-				dateStart: start,
-				dateEnd: end,
+				dateStart: newStart,
+				dateEnd: newEnd,
 				assetHistoricalPricesData: apiData,
 			},
 			update: {
-				dateStart: start,
-				dateEnd: end,
+				dateStart: newStart,
+				dateEnd: newEnd,
 				assetHistoricalPricesData: apiData,
 			},
 			where: {

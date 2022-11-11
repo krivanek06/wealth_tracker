@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma';
+import { PrismaService } from '../../../prisma';
 import { INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR, INVESTMENT_ACCOUNT_ERROR } from '../dto';
 import { InvestmentAccount, InvestmentAccountCashChange } from '../entities';
 import {
@@ -25,11 +25,8 @@ export class InvestmentAccountCashChangeService {
 			date: MomentServiceUtil.format(input.date),
 		};
 
-		// order ASC
-		const cacheChange = [...account.cashChange, entry].sort((a, b) => (a.date < b.date ? -1 : 1));
-
 		// modify in DB
-		await this.updateInvestmentAccountCashchange(input.investmentAccountId, cacheChange);
+		await this.updateInvestmentAccountCashchange(input.investmentAccountId, [...account.cashChange, entry]);
 
 		return entry;
 	}
@@ -41,18 +38,16 @@ export class InvestmentAccountCashChangeService {
 		const account = await this.getInvestmentAccount(input.investmentAccountId, userId);
 
 		// edit the correct itemId
-		const editedCashChanges = account.cashChange
-			.map((d) => {
-				if (d.itemId === input.itemId) {
-					return {
-						...d,
-						date: MomentServiceUtil.format(input.date),
-						cashCurrent: input.cashCurrent,
-					} as InvestmentAccountCashChange;
-				}
-				return d;
-			})
-			.sort((a, b) => (a.date < b.date ? -1 : 1));
+		const editedCashChanges = account.cashChange.map((d) => {
+			if (d.itemId === input.itemId) {
+				return {
+					...d,
+					date: MomentServiceUtil.format(input.date),
+					cashCurrent: input.cashCurrent,
+				} as InvestmentAccountCashChange;
+			}
+			return d;
+		});
 
 		// return back to user
 		const editedChange = editedCashChanges.find((d) => d.itemId === input.itemId);
@@ -89,8 +84,11 @@ export class InvestmentAccountCashChangeService {
 
 	private async updateInvestmentAccountCashchange(
 		investmentAccountId: string,
-		cashChange: InvestmentAccountCashChange[]
+		cashChangeInput: InvestmentAccountCashChange[]
 	): Promise<void> {
+		// order ASC
+		const cashChange = cashChangeInput.sort((a, b) => (a.date < b.date ? -1 : 1));
+
 		await this.prisma.investmentAccount.update({
 			data: {
 				cashChange: {

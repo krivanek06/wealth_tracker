@@ -1,10 +1,9 @@
 import { UseGuards } from '@nestjs/common';
-import { Query, Resolver } from '@nestjs/graphql';
+import { Args, Query, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard } from '../../../auth';
 import { Input } from '../../../graphql';
 import { AssetGeneral, AssetGeneralHistoricalPrices } from '../entities';
 import { AssetGeneralHistoricalPricesInput, AssetGeneralSearchInput } from '../inputs';
-import { AssetGeneralSearch } from '../outputs';
 import { AssetGeneralService } from '../services';
 
 @UseGuards(AuthorizationGuard)
@@ -12,12 +11,28 @@ import { AssetGeneralService } from '../services';
 export class AssetGeneralResolver {
 	constructor(private assetGeneralService: AssetGeneralService) {}
 
-	@Query(() => [AssetGeneralSearch], {
+	@Query(() => [AssetGeneral], {
 		description: 'Search asset based on symbol',
 		defaultValue: [],
 	})
-	searchAssetBySymbol(@Input() input: AssetGeneralSearchInput): Promise<AssetGeneralSearch[]> {
+	searchAssetBySymbol(@Input() input: AssetGeneralSearchInput): Promise<AssetGeneral[]> {
 		return this.assetGeneralService.searchAssetBySymbol(input.symbolPrefix, input.isCrypto);
+	}
+
+	@Query(() => AssetGeneral, {
+		nullable: true,
+	})
+	getAssetGeneralForSymbol(@Input() symbol: string): Promise<AssetGeneral | null> {
+		return this.assetGeneralService.getAssetGeneralForSymbol(symbol);
+	}
+
+	@Query(() => [AssetGeneral], {
+		defaultValue: [],
+	})
+	getAssetGeneralForSymbols(
+		@Args({ name: 'symbols', type: () => [String] }) symbols: string[]
+	): Promise<AssetGeneral[]> {
+		return this.assetGeneralService.getAssetGeneralForSymbols(symbols);
 	}
 
 	@Query(() => AssetGeneralHistoricalPrices, {

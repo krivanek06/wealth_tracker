@@ -3,26 +3,37 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import { FinancialModelingAPIService } from '../../../api';
 import { PrismaService } from '../../../prisma';
-import { AssetStock } from '../entities';
+import { AssetStock, AssetStockProfile } from '../entities';
 import { AssetStockService } from '../services';
 import { AssetStockUtil } from '../utils';
 
 describe('AssetStockService', () => {
 	let service: AssetStockService;
 	const symbolMock = 'AAPL';
+
+	const assetProfilMock: AssetStockProfile = {
+		ceo: 'Test name1',
+	} as AssetStockProfile;
+
 	const assetMock: AssetStock = {
-		symbol: symbolMock,
+		id: symbolMock,
+		profile: {
+			...assetProfilMock,
+		},
 	} as AssetStock;
 
 	// mock services
-	AssetStockUtil.createAssetStock = jest.fn().mockReturnValue(assetMock);
+	AssetStockUtil.convertFMProfileToAssetStockProfile = jest.fn().mockReturnValue(assetProfilMock);
+
 	const prismaServiceMock: PrismaService = createMock<PrismaService>({
 		assetStock: {
-			create: jest.fn().mockResolvedValue(assetMock),
+			create: jest.fn(),
 			findFirst: jest.fn(),
 		},
 	});
-	const financialModelingAPIServiceMock: FinancialModelingAPIService = createMock<FinancialModelingAPIService>({});
+	const financialModelingAPIServiceMock: FinancialModelingAPIService = createMock<FinancialModelingAPIService>({
+		getStockProfile: jest.fn(),
+	});
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -38,7 +49,7 @@ describe('AssetStockService', () => {
 		when(prismaServiceMock.assetStock.findFirst)
 			.calledWith({
 				where: {
-					symbol: symbolMock,
+					id: symbolMock,
 				},
 			})
 			.mockResolvedValue(assetMock);
@@ -58,7 +69,7 @@ describe('AssetStockService', () => {
 
 			expect(prismaServiceMock.assetStock.findFirst).toHaveBeenCalledWith({
 				where: {
-					symbol: symbolMock,
+					id: symbolMock,
 				},
 			});
 			expect(result).toStrictEqual(assetMock);
@@ -67,15 +78,18 @@ describe('AssetStockService', () => {
 
 	describe('Test: refreshStockIntoDatabase()', () => {
 		it('should refresh stock record does not exist', async () => {
-			const result = await service.refreshStockIntoDatabase('TEST');
+			const symbol = 'AAA';
+			const expectedResult: AssetStock = { ...assetMock, id: symbol };
 
+			await service.refreshStockIntoDatabase(symbol);
+
+			expect(financialModelingAPIServiceMock.getStockProfile).toHaveBeenCalledWith(symbol);
 			expect(prismaServiceMock.assetStock.findFirst).toHaveBeenCalled();
 			expect(prismaServiceMock.assetStock.create).toHaveBeenCalledWith({
 				data: {
-					...assetMock,
+					...expectedResult,
 				},
 			});
-			expect(result).toStrictEqual(assetMock);
 		});
 
 		it('should not refresh if record exist and just return value', async () => {

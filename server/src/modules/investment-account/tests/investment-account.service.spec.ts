@@ -2,31 +2,31 @@ import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import { PrismaService } from '../../../prisma';
-import { INVESTMENT_ACCOUNT_ERROR } from '../dto';
+import { INVESTMENT_ACCOUNT_ERROR, INVESTMENT_ACCOUNT_MAX } from '../dto';
 import { InvestmentAccount } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput } from '../inputs';
-import { InvestmentAccountHoldingHistoryService, InvestmentAccountService } from '../services';
-import { investmentAccountMock, INVESTMENT_ACCOUNT_ID, USER_ID_MOCK } from './mocks';
+import { InvestmentAccountService } from '../services';
+import { AssetGeneralService } from './../../asset-manager';
 
 describe('InvestmentAccountService', () => {
 	let service: InvestmentAccountService;
-	const mockUserId = USER_ID_MOCK;
+	const mockUserId = 'USER1';
 	const mockUserId2 = '1234gfdas';
-	const mockInvestmentAccountId = INVESTMENT_ACCOUNT_ID;
+	const mockInvestmentAccountId = '12344321';
 
-	const mockInvestmentAccount: InvestmentAccount = {
+	const investmentAccountMock: InvestmentAccount = {
 		name: 'TEST_1234',
 		userId: mockUserId,
 		holdings: [],
-		lastPortfolioSnapshot: null,
-		cashCurrent: 0,
+		cashChange: [],
+		createdAt: new Date('2022-03-05'),
 		id: mockInvestmentAccountId,
 	};
 
 	const prismaServiceMock: PrismaService = createMock<PrismaService>({
 		investmentAccount: {
 			findMany: jest.fn(),
-			create: jest.fn().mockResolvedValue(mockInvestmentAccount),
+			create: jest.fn().mockResolvedValue(investmentAccountMock),
 			findFirst: jest.fn(),
 			count: jest.fn(),
 			update: jest.fn(),
@@ -34,14 +34,14 @@ describe('InvestmentAccountService', () => {
 		},
 	});
 
-	const investmentAccountHistoryServiceMock = createMock<InvestmentAccountHoldingHistoryService>();
+	const assetGeneralServiceMock = createMock<AssetGeneralService>();
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				InvestmentAccountService,
 				{ provide: PrismaService, useValue: prismaServiceMock },
-				{ provide: InvestmentAccountHoldingHistoryService, useValue: investmentAccountHistoryServiceMock },
+				{ provide: AssetGeneralService, useValue: assetGeneralServiceMock },
 			],
 		}).compile();
 
@@ -53,13 +53,29 @@ describe('InvestmentAccountService', () => {
 					userId: mockUserId,
 				},
 			})
-			.mockResolvedValue(4)
+			.mockResolvedValue(INVESTMENT_ACCOUNT_MAX - 1)
 			.calledWith({
 				where: {
 					userId: mockUserId2,
 				},
 			})
-			.mockResolvedValue(5);
+			.mockResolvedValue(INVESTMENT_ACCOUNT_MAX);
+
+		when(prismaServiceMock.investmentAccount.count)
+			.calledWith({
+				where: {
+					id: mockInvestmentAccountId,
+					userId: mockUserId,
+				},
+			})
+			.mockResolvedValue(1)
+			.calledWith({
+				where: {
+					id: mockInvestmentAccountId,
+					userId: mockUserId2,
+				},
+			})
+			.mockResolvedValue(0);
 
 		when(prismaServiceMock.investmentAccount.findMany)
 			.calledWith({
@@ -128,12 +144,17 @@ describe('InvestmentAccountService', () => {
 			});
 
 			// test save
-			const databaseData = { ...mockInvestmentAccount, id: undefined };
+			const databaseData = {
+				name: input.name,
+				userId: mockUserId,
+				holdings: [],
+				cashChange: [],
+			};
 			expect(prismaServiceMock.investmentAccount.create).toHaveBeenCalledWith({ data: databaseData });
-			expect(result).toStrictEqual(mockInvestmentAccount);
+			expect(result).toStrictEqual(investmentAccountMock);
 		});
 
-		it('should throw an error if more than 4 accounts is created', async () => {
+		it(`should throw an error if more than ${INVESTMENT_ACCOUNT_MAX} accounts is created`, async () => {
 			await expect(service.createInvestmentAccount(input, mockUserId2)).rejects.toThrowError(
 				INVESTMENT_ACCOUNT_ERROR.NOT_ALLOWED_TO_CTEATE
 			);
@@ -142,34 +163,18 @@ describe('InvestmentAccountService', () => {
 
 	describe('Test: editInvestmentAccount()', () => {
 		const input: InvestmentAccountEditInput = {
-			cashCurrent: 10000,
 			investmentAccountId: mockInvestmentAccountId,
 			name: 'Test 1234',
 		};
-		const expectedEditResult = {
+		const expectedEditResult: InvestmentAccount = {
 			name: input.name,
 			userId: mockUserId,
 			holdings: [],
-			lastPortfolioSnapshot: null,
-			cashCurrent: input.cashCurrent,
+			cashChange: [],
+			createdAt: new Date('2022-04-04'),
 			id: mockInvestmentAccountId,
 		};
 
-		when(prismaServiceMock.investmentAccount.count)
-			.calledWith({
-				where: {
-					id: mockInvestmentAccountId,
-					userId: mockUserId,
-				},
-			})
-			.mockResolvedValue(1)
-			.calledWith({
-				where: {
-					id: mockInvestmentAccountId,
-					userId: mockUserId2,
-				},
-			})
-			.mockResolvedValue(0);
 		when(prismaServiceMock.investmentAccount.update).mockResolvedValue({
 			...expectedEditResult,
 		});
@@ -181,7 +186,6 @@ describe('InvestmentAccountService', () => {
 			expect(prismaServiceMock.investmentAccount.update).toHaveBeenCalledWith({
 				data: {
 					name: input.name,
-					cashCurrent: input.cashCurrent,
 				},
 				where: {
 					id: input.investmentAccountId,
@@ -202,15 +206,15 @@ describe('InvestmentAccountService', () => {
 	describe('Test: deleteInvestmentAccount()', () => {
 		it('should delete an investment account', async () => {
 			when(prismaServiceMock.investmentAccount.count).mockResolvedValue(1);
-			when(prismaServiceMock.investmentAccount.delete).mockResolvedValue(mockInvestmentAccount);
+			when(prismaServiceMock.investmentAccount.delete).mockResolvedValue(investmentAccountMock);
 
-			const result = await service.deleteInvestmentAccount('12133113', '333333');
-			expect(result).toStrictEqual(mockInvestmentAccount);
+			const result = await service.deleteInvestmentAccount(investmentAccountMock.id, mockUserId);
+			expect(result).toStrictEqual(investmentAccountMock);
 		});
 
 		it('should thrown an error if investment account does not exist', async () => {
 			when(prismaServiceMock.investmentAccount.count).mockResolvedValue(0);
-			await expect(service.deleteInvestmentAccount('123231123321', mockUserId2)).rejects.toThrowError(
+			await expect(service.deleteInvestmentAccount(investmentAccountMock.id, mockUserId2)).rejects.toThrowError(
 				INVESTMENT_ACCOUNT_ERROR.NOT_FOUND
 			);
 		});

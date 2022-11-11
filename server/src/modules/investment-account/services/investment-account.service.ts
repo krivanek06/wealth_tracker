@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma';
 import { AssetGeneralService } from '../../asset-manager';
-import { INVESTMENT_ACCOUNT_ERROR } from '../dto';
+import { INVESTMENT_ACCOUNT_ERROR, INVESTMENT_ACCOUNT_MAX } from '../dto';
 import { InvestmentAccount } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
 import { InvestmentAccountGrowth } from '../outputs';
@@ -155,7 +155,7 @@ export class InvestmentAccountService {
 		});
 
 		// prevent creating more than 5 investment accounts per user
-		if (investmentAccountCount > 4) {
+		if (investmentAccountCount >= INVESTMENT_ACCOUNT_MAX) {
 			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_ALLOWED_TO_CTEATE, HttpStatus.FORBIDDEN);
 		}
 

@@ -5,6 +5,14 @@ export class AssetGeneralUtil {
 	static convertFMQuoteToAssetGeneralQuote = (quote: FMQuote): AssetGeneralQuote => {
 		const result: AssetGeneralQuote = {
 			name: quote.name,
+			symbolImageURL: quote.symbolImage,
+			change: quote.change,
+			changesPercentage: quote.changesPercentage,
+			dayHigh: quote.dayHigh,
+			dayLow: quote.dayLow,
+			price: quote.price,
+			symbol: quote.symbol,
+			volume: quote.volume,
 			timestamp: quote.timestamp,
 			yearHigh: quote.yearHigh,
 			yearLow: quote.yearLow,

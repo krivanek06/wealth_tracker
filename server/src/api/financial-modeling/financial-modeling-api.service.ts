@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
-import { MomentServiceUtil } from './../../utils';
+import { LodashServiceUtil, MomentServiceUtil } from './../../utils';
 import {
 	FMAssetHistoricalPricesLine,
 	FMProfile,
@@ -39,7 +39,7 @@ export class FinancialModelingAPIService {
 			this.httpService.get<FMSearch[]>(`${this.endpointV3}/search-name`, requestConfig).pipe(
 				map((res) =>
 					res.data.map((d) => {
-						return { ...d, image: `${this.endpointImage}/${modifiedPrefix}.png` };
+						return { ...d, image: `${this.endpointImage}/${d.symbol}.png` };
 					})
 				)
 			)
@@ -141,25 +141,36 @@ export class FinancialModelingAPIService {
 	 * @param symbol
 	 * @returns
 	 */
-	getAssetQuotes(symbols: string[]): Promise<FMQuote[]> {
-		const formattedSymbols = symbols.map((d) => d.toUpperCase()).join(',');
+	async getAssetQuotes(inputSymbols: string[]): Promise<FMQuote[]> {
+		const formattedSymbols = inputSymbols.map((d) => d.toUpperCase());
 		const requestConfig: AxiosRequestConfig = {
 			params: {
 				apikey: this.apiKey,
 			},
 		};
-		return lastValueFrom(
-			this.httpService.get<FMQuote[]>(`${this.endpointV3}/quote/${formattedSymbols}`, requestConfig).pipe(
-				map((res) => {
-					if (res.data.length > 0) {
-						return res.data.map((d) => {
-							return { ...d, image: `${this.endpointImage}/${d.symbol}.png` };
-						});
-					}
-					throw new HttpException(FINANCIAL_MODELING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
-				})
-			)
+
+		// create chunks of symbol to not
+		const symbolsChunks = LodashServiceUtil.chunk(formattedSymbols, 20);
+
+		// load FMQuote from API
+		const results = await Promise.all(
+			symbolsChunks.map((symbols) => {
+				const formattedSymbols = symbols.map((symbol) => symbol.toUpperCase()).join(',');
+
+				return lastValueFrom(
+					this.httpService.get<FMQuote[]>(`${this.endpointV3}/quote/${formattedSymbols}`, requestConfig).pipe(
+						map((res) =>
+							res.data.map((d) => {
+								const data: FMQuote = { ...d, symbolImage: `${this.endpointImage}/${d.symbol}.png` };
+								return data;
+							})
+						)
+					)
+				);
+			})
 		);
+
+		return results.reduce((acc, curr) => [...acc, ...curr]);
 	}
 
 	/**

@@ -4,7 +4,33 @@ import { AssetGeneral as AssetGeneralClient, AssetGeneralQuote as AssetGeneralQu
 @ObjectType()
 export class AssetGeneralQuote implements AssetGeneralQuoteClient {
 	@Field(() => String)
+	symbol: string;
+
+	@Field(() => String, {
+		nullable: true,
+	})
+	symbolImageURL: string;
+
+	@Field(() => String)
 	name: string;
+
+	@Field(() => Float)
+	price: number;
+
+	@Field(() => Float)
+	changesPercentage: number;
+
+	@Field(() => Float)
+	change: number;
+
+	@Field(() => Float)
+	dayLow: number;
+
+	@Field(() => Float)
+	dayHigh: number;
+
+	@Field(() => Float)
+	volume: number;
 
 	@Field(() => Float)
 	yearLow: number;
@@ -59,7 +85,9 @@ export class AssetGeneral implements AssetGeneralClient {
 	@Field(() => String)
 	name: string;
 
-	@Field(() => String)
+	@Field(() => String, {
+		nullable: true,
+	})
 	symbolImageURL: string;
 
 	@Field(() => String)

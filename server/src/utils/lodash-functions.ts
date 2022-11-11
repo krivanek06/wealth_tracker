@@ -1,4 +1,5 @@
 import { Dictionary, List, ValueIteratee } from 'lodash';
+import chunks from 'lodash/chunk';
 import cloneDeep from 'lodash/cloneDeep';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
@@ -18,6 +19,10 @@ export class LodashServiceUtil {
 
 	static cloneDeep<T>(value: T): T {
 		return cloneDeep(value);
+	}
+
+	static chunk<T>(array: List<T> | null | undefined, size?: number): T[][] {
+		return chunks(array, size);
 	}
 
 	static takeRight<T>(array: T[] | null | undefined, n?: number): T[] {

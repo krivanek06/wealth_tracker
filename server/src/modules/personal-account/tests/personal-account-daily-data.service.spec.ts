@@ -5,15 +5,17 @@ import { MomentServiceUtil, SharedServiceUtil } from './../../../utils';
 import { when } from 'jest-when';
 import { PersonalAccountDailyData, PersonalAccountMonthlyData } from '../entities';
 
+import { PubSubEngine } from 'graphql-subscriptions';
+import { GraphQLPubsubBackendModule, PUB_SUB } from '../../../graphql';
 import { PrismaService } from '../../../prisma';
-import { PERSONAL_ACCOUNT_ERROR_DAILY_DATA, PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA } from '../dto';
+import { CREATED_MONTHLY_DATA, PERSONAL_ACCOUNT_ERROR_DAILY_DATA, PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA } from '../dto';
 import {
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
 } from '../inputs';
 import { PersonalAccountDailyDataEditOutput } from '../outputs';
-import { PersonalAccountDailyService } from '../services';
+import { PersonalAccountDailyService, PersonalAccountTagService } from '../services';
 
 describe('PersonalAccountDailyService', () => {
 	let service: PersonalAccountDailyService;
@@ -79,17 +81,31 @@ describe('PersonalAccountDailyService', () => {
 		personalAccountMonthlyData: {
 			findFirst: jest.fn(),
 			// create: jest.fn(),
-			update: jest.fn(),
+			update: jest.fn().mockResolvedValue({ ...TEST_MONTHLY_NOV, dailyData: [TEST_DAILY_DATA_OCT_2] }),
 			create: jest.fn().mockResolvedValue(TEST_MONTHLY_NOV),
 		},
 	});
 	SharedServiceUtil.getUUID = jest.fn().mockReturnValue(MOCK_UUID);
 
+	const personalAccountTagServiceMock: PersonalAccountTagService = createMock<PersonalAccountTagService>({
+		getDefaultTagById: jest.fn(),
+	});
+	const pubSubMock: PubSubEngine = createMock<PubSubEngine>({
+		publish: jest.fn(),
+	});
+
+	SharedServiceUtil.getUUID = jest.fn().mockReturnValue(MOCK_UUID);
+
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [PersonalAccountDailyService, { provide: PrismaService, useValue: prismaServiceMock }],
+			imports: [GraphQLPubsubBackendModule],
+			providers: [
+				PersonalAccountDailyService,
+				{ provide: PrismaService, useValue: prismaServiceMock },
+				{ provide: PersonalAccountTagService, useValue: personalAccountTagServiceMock },
+				{ provide: PUB_SUB, useValue: pubSubMock },
+			],
 		}).compile();
-
 		service = module.get<PersonalAccountDailyService>(PersonalAccountDailyService);
 
 		when(prismaServiceMock.personalAccountMonthlyData.findFirst)
@@ -160,7 +176,7 @@ describe('PersonalAccountDailyService', () => {
 					month: TEST_DATE_OCT_DETAILS.month,
 				},
 			});
-
+			expect(prismaServiceMock.personalAccountMonthlyData.create).not.toBeCalled();
 			// test saving new dailyData for October
 			expect(prismaServiceMock.personalAccountMonthlyData.update).toBeCalledWith({
 				data: {
@@ -172,6 +188,9 @@ describe('PersonalAccountDailyService', () => {
 					id: TEST_MONTHLY_OCT.id,
 				},
 			});
+
+			// no publishment
+			expect(pubSubMock.publish).not.toHaveBeenCalled();
 
 			// test result
 			expect(result).toStrictEqual(expectedResult);
@@ -208,6 +227,10 @@ describe('PersonalAccountDailyService', () => {
 					month,
 					dailyData: [],
 				},
+			});
+
+			expect(pubSubMock.publish).toHaveBeenCalledWith(CREATED_MONTHLY_DATA, {
+				[CREATED_MONTHLY_DATA]: { ...TEST_MONTHLY_NOV, dailyData: [TEST_DAILY_DATA_OCT_2] },
 			});
 		});
 	});

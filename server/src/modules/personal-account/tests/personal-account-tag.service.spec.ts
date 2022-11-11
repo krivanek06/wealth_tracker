@@ -1,26 +1,34 @@
 import { createMock } from '@golevelup/ts-jest';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../../prisma';
-import { PERSONAL_ACCOUNT_DEFAULT_TAGS } from '../dto';
+import { PERSONAL_ACCOUNT_DEFAULT_TAGS, PERSONAL_ACCOUNT_TAG_ERROR } from '../dto';
+import { PersonalAccountTag } from '../entities';
 import { PersonalAccountTagService } from '../services';
 
 describe('PersonalAccountTagService', () => {
 	let service: PersonalAccountTagService;
-	const mockTags = [
+	const mockTags: PersonalAccountTag[] = [
 		{
-			_id: 'AAA',
-			createdAt: '1665816040794',
-			modifiedAt: '1665816040794',
+			id: 'AAA',
+			createdAt: new Date('1665816040794'),
+			modifiedAt: new Date('1665816040794'),
 			name: 'Shoping',
 			type: 'EXPENSE',
+			color: 'red',
+			personalAccountId: 'EEEEEE',
+			userId: null,
 			isDefault: true,
 		},
 		{
-			_id: 'BBB',
-			createdAt: '1665816040794',
-			modifiedAt: '1665816040794',
+			id: 'BBB',
+			createdAt: new Date('1665816040794'),
+			modifiedAt: new Date('1665816040794'),
 			name: 'Pets',
-			type: 'EXPENSE',
+			type: 'INCOME',
+			color: 'red',
+			personalAccountId: 'EEEEEE',
+			userId: null,
 			isDefault: true,
 		},
 	];
@@ -98,6 +106,21 @@ describe('PersonalAccountTagService', () => {
 			service.getDefaultTags();
 			service.getDefaultTags();
 			expect(prismaServiceMock.personalAccountTag.findMany).toHaveBeenCalledTimes(1);
+		});
+	});
+
+	describe('Test: getDefaultTagById()', () => {
+		it('should find tag by tagId', () => {
+			const tag = service.getDefaultTagById(mockTags[0].id);
+			const expectedResult = mockTags[0];
+
+			expect(tag).toStrictEqual(expectedResult);
+		});
+
+		it('should thrown an error if tag not found by tagId', () => {
+			expect(service.getDefaultTagById('NOT_EXISTS')).toThrowError(
+				new HttpException(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND_BY_ID, HttpStatus.NOT_FOUND)
+			);
 		});
 	});
 });

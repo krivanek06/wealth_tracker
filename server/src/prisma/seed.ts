@@ -1,4 +1,5 @@
 import { addDays } from 'date-fns';
+import { PubSub } from 'graphql-subscriptions';
 import { PersonalAccount } from './../modules/personal-account/entities/personal-account.entity';
 import { PersonalAccountCreateInput } from './../modules/personal-account/inputs/personal-account-create.input';
 import { PersonalAccountDailyDataCreate } from './../modules/personal-account/inputs/personal-account-daily-data-create.input';
@@ -10,8 +11,10 @@ import { PersonalAccountService } from './../modules/personal-account/services/p
 import { PrismaService } from './prisma.service';
 
 const prisma = new PrismaService();
-const personalAccountDailyService = new PersonalAccountDailyService(prisma);
+const pubsub = new PubSub();
+
 const personalAccountTagService = new PersonalAccountTagService(prisma);
+const personalAccountDailyService = new PersonalAccountDailyService(prisma, personalAccountTagService, pubsub);
 const personalAccountMonthlyService = new PersonalAccountMonthlyService(prisma, personalAccountTagService);
 const personalAccountService = new PersonalAccountService(prisma, personalAccountMonthlyService);
 

@@ -1,7 +1,14 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { PubSubEngine } from 'graphql-subscriptions';
+import { PUB_SUB } from '../../../graphql/graphql.types';
 import { PrismaService } from '../../../prisma';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
-import { PERSONAL_ACCOUNT_ERROR_DAILY_DATA, PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA } from '../dto';
+import {
+	CREATED_MONTHLY_DATA,
+	PERSONAL_ACCOUNT_ERROR_DAILY_DATA,
+	PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA,
+	PERSONAL_ACCOUNT_TAG_ERROR,
+} from '../dto';
 import { PersonalAccountDailyData } from '../entities';
 import {
 	PersonalAccountDailyDataCreate,
@@ -9,18 +16,20 @@ import {
 	PersonalAccountDailyDataEdit,
 } from '../inputs';
 import { PersonalAccountDailyDataEditOutput } from '../outputs';
+import { PersonalAccountTagService } from './personal-account-tag.service';
 
 @Injectable()
 export class PersonalAccountDailyService {
-	constructor(private prisma: PrismaService) {}
+	constructor(
+		private prisma: PrismaService,
+		private personalAccountTagService: PersonalAccountTagService,
+		@Inject(PUB_SUB) private pubSub: PubSubEngine
+	) {}
 
 	/**
 	 * From the PersonalAccountDailyDataCreate.date we calculate what year and month monthlyData
 	 * we are working with.
-	 * User can create PersonalAccountDailyDataCreate to the past days, months, but we restrics it to
-	 * 	- not allowing creating PersonalAccountDailyDataCreate to the future months
-	 * 	- not allowing creating PersonalAccountDailyDataCreate to the previous months before user was registered
-	 *
+	 * If monthly data does not exist, create one - user may add entry to the future
 	 *
 	 * @param input {PersonalAccountDailyDataCreate} input data to create {PersonalAccountDailyData}
 	 * @param userId {string} of the user who to associate the new PersonalAccountDailyData
@@ -32,6 +41,12 @@ export class PersonalAccountDailyService {
 	): Promise<PersonalAccountDailyData> {
 		const inputDate = new Date(input.date);
 		const uuid = SharedServiceUtil.getUUID();
+
+		// check if tag exists
+		if (!this.personalAccountTagService.getDefaultTagById(input.tagId)) {
+			throw new HttpException(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND_BY_ID, HttpStatus.NOT_FOUND);
+		}
+
 		// calculate date details
 		const { year, month, week } = MomentServiceUtil.getDetailsInformationFromDate(inputDate);
 
@@ -43,9 +58,10 @@ export class PersonalAccountDailyService {
 				month,
 			},
 		});
+		const isMonthlyDataExist = !!monthlyData;
 
 		// create new monthly data for the new daily data
-		if (!monthlyData) {
+		if (!isMonthlyDataExist) {
 			monthlyData = await this.prisma.personalAccountMonthlyData.create({
 				data: {
 					personalAccountId: input.personalAccountId,
@@ -69,7 +85,7 @@ export class PersonalAccountDailyService {
 		};
 
 		// save entry
-		await this.prisma.personalAccountMonthlyData.update({
+		monthlyData = await this.prisma.personalAccountMonthlyData.update({
 			data: {
 				dailyData: {
 					push: [dailyData],
@@ -79,6 +95,11 @@ export class PersonalAccountDailyService {
 				id: monthlyData.id,
 			},
 		});
+
+		// subscriptions to publish information about newly created monthly data
+		if (!isMonthlyDataExist) {
+			this.pubSub.publish(CREATED_MONTHLY_DATA, { [CREATED_MONTHLY_DATA]: monthlyData });
+		}
 
 		return dailyData;
 	}

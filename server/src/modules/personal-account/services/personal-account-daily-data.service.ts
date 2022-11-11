@@ -3,12 +3,7 @@ import { PubSubEngine } from 'graphql-subscriptions';
 import { PUB_SUB } from '../../../graphql/graphql.types';
 import { PrismaService } from '../../../prisma';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
-import {
-	CREATED_MONTHLY_DATA,
-	PERSONAL_ACCOUNT_ERROR_DAILY_DATA,
-	PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA,
-	PERSONAL_ACCOUNT_TAG_ERROR,
-} from '../dto';
+import { CREATED_MONTHLY_DATA, PERSONAL_ACCOUNT_ERROR_DAILY_DATA, PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA } from '../dto';
 import { PersonalAccountDailyData } from '../entities';
 import {
 	PersonalAccountDailyDataCreate,
@@ -43,9 +38,7 @@ export class PersonalAccountDailyService {
 		const uuid = SharedServiceUtil.getUUID();
 
 		// check if tag exists
-		if (!this.personalAccountTagService.getDefaultTagById(input.tagId)) {
-			throw new HttpException(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND_BY_ID, HttpStatus.NOT_FOUND);
-		}
+		this.personalAccountTagService.getDefaultTagById(input.tagId);
 
 		// calculate date details
 		const { year, month, week } = MomentServiceUtil.getDetailsInformationFromDate(inputDate);
@@ -85,7 +78,7 @@ export class PersonalAccountDailyService {
 		};
 
 		// save entry
-		monthlyData = await this.prisma.personalAccountMonthlyData.update({
+		const monthlyDataPublish = await this.prisma.personalAccountMonthlyData.update({
 			data: {
 				dailyData: {
 					push: [dailyData],
@@ -98,7 +91,7 @@ export class PersonalAccountDailyService {
 
 		// subscriptions to publish information about newly created monthly data
 		if (!isMonthlyDataExist) {
-			this.pubSub.publish(CREATED_MONTHLY_DATA, { [CREATED_MONTHLY_DATA]: monthlyData });
+			this.pubSub.publish(CREATED_MONTHLY_DATA, { [CREATED_MONTHLY_DATA]: monthlyDataPublish });
 		}
 
 		return dailyData;

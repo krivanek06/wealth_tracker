@@ -19,13 +19,20 @@ export class AssetGeneralResolver {
 		return this.assetGeneralService.searchAssetBySymbol(input.symbolPrefix, input.isCrypto);
 	}
 
+	@Query(() => AssetGeneral, {
+		nullable: true,
+	})
+	getAssetGeneralForSymbol(@Input() symbol: string): Promise<AssetGeneral | null> {
+		return this.assetGeneralService.getAssetGeneralForSymbol(symbol);
+	}
+
 	@Query(() => [AssetGeneral], {
 		defaultValue: [],
 	})
-	getAssetGeneralInformationForSymbols(
+	getAssetGeneralForSymbols(
 		@Args({ name: 'symbols', type: () => [String] }) symbols: string[]
 	): Promise<AssetGeneral[]> {
-		return this.assetGeneralService.getAssetGeneralInformationForSymbols(symbols);
+		return this.assetGeneralService.getAssetGeneralForSymbols(symbols);
 	}
 
 	@Query(() => AssetGeneralHistoricalPrices, {

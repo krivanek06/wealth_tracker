@@ -231,7 +231,7 @@ describe('InvestmentAccountHoldingService', () => {
 				},
 			} as InvestmentAccounHoldingCreateInput;
 			await expect(service.modifyInvestmentAccountHolding(input, mockUserId)).rejects.toThrowError(
-				INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTRED_DATE_RANGE
+				INVESTMENT_ACCOUNT_HOLDING_ERROR.IS_WEEKEND
 			);
 		});
 

@@ -1,0 +1,63 @@
+### Investment account
+
+query GetInvestmentAccountsById($input: String!) {
+	getInvestmentAccountsById(input: $input) {
+		...InvestmentAccount
+	}
+}
+
+query GetInvestmentAccounts {
+	getInvestmentAccounts {
+		...InvestmentAccountOverview
+	}
+}
+
+mutation EditInvestmentAccount($input: InvestmentAccountEditInput!) {
+	editInvestmentAccount(input: $input) {
+		id
+		name
+		createdAt
+	}
+}
+
+mutation DeleteInvestmentAccount($input: String!) {
+	deleteInvestmentAccount(input: $input) {
+		id
+		name
+		createdAt
+	}
+}
+
+### Investment account holding
+
+mutation CreateInvestmentAccountHolding($input: InvestmentAccounHoldingCreateInput!) {
+	createInvestmentAccountHolding(input: $input) {
+		...InvestmentAccountHolding
+	}
+}
+
+mutation DeleteInvestmentAccountHolding($input: InvestmentAccounHoldingHistoryDeleteInput!) {
+	deleteInvestmentAccountHolding(input: $input) {
+		...InvestmentAccountHoldingHistory
+	}
+}
+
+### Investment account cash
+
+mutation CreateInvestmentAccountCashe($input: InvestmentAccountCashCreateInput!) {
+	createInvestmentAccountCashe(input: $input) {
+		...InvestmentAccountCashChange
+	}
+}
+
+mutation EditInvestmentAccountCashe($input: InvestmentAccountCashEditInput!) {
+	editInvestmentAccountCashe(input: $input) {
+		...InvestmentAccountCashChange
+	}
+}
+
+mutation DeleteInvestmentAccountCashe($input: InvestmentAccountCashDeleteInput!) {
+	deleteInvestmentAccountCashe(input: $input) {
+		...InvestmentAccountCashChange
+	}
+}

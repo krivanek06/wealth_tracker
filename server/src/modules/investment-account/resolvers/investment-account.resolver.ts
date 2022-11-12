@@ -2,26 +2,39 @@ import { UseGuards } from '@nestjs/common';
 import { Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql';
-import { InvestmentAccount, InvestmentAccountHolding } from '../entities';
+import { AssetGeneralService } from '../../asset-manager';
+import { InvestmentAccount } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
-import { InvestmentAccountGrowth } from '../outputs';
+import { InvestmentAccountActiveHoldingOutput, InvestmentAccountGrowth } from '../outputs';
 import { InvestmentAccountService } from '../services';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccount)
 export class InvestmentAccountResolver {
-	constructor(private investmentAccountService: InvestmentAccountService) {}
+	constructor(
+		private investmentAccountService: InvestmentAccountService,
+		private assetGeneralService: AssetGeneralService
+	) {}
 
 	/* Queries */
 
 	@Query(() => [InvestmentAccount], {
-		description: 'Returns all personal accounts for the requester',
+		description: 'Returns all investment accounts for the requester',
 		defaultValue: [],
 	})
 	getInvestmentAccounts(@ReqUser() authUser: RequestUser): Promise<InvestmentAccount[]> {
 		return this.investmentAccountService.getInvestmentAccounts(authUser.id);
 	}
 
+	@Query(() => InvestmentAccount, {
+		description: 'Returns investment account by id',
+		defaultValue: [],
+	})
+	getInvestmentAccountsById(@ReqUser() authUser: RequestUser, @Input() input: string): Promise<InvestmentAccount> {
+		return this.investmentAccountService.getInvestmentAccountsById(input);
+	}
+
+	// TODO: remove - will be calculated on the UI
 	@Query(() => [InvestmentAccountGrowth], {
 		description: 'Returns the investment account history growth, based on the input values',
 		defaultValue: [],
@@ -66,11 +79,11 @@ export class InvestmentAccountResolver {
 	/**
 	 * it is used to filter our in-active holdings from InvestmentAccount.holdings
 	 */
-	@ResolveField('activeHoldings', () => [InvestmentAccountHolding], {
-		description: 'Returns holdings from an investment account that are active, meaning user has not solved them all',
+	@ResolveField('activeHoldings', () => [InvestmentAccountActiveHoldingOutput], {
+		description: 'Returns active holdings from an investment account, at least one unit is owned',
 		defaultValue: [],
 	})
-	getActiveHoldings(@Parent() investmentAccount: InvestmentAccount): InvestmentAccountHolding[] {
-		return investmentAccount.holdings.filter((d) => d.holdingHistory[d.holdingHistory.length - 1].units > 0);
+	getActiveHoldings(@Parent() investmentAccount: InvestmentAccount): Promise<InvestmentAccountActiveHoldingOutput[]> {
+		return this.investmentAccountService.getActiveHoldings(investmentAccount);
 	}
 }

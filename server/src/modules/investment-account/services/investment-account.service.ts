@@ -6,10 +6,19 @@ import { InvestmentAccount } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
 import { InvestmentAccountGrowth } from '../outputs';
 import { MomentServiceUtil } from './../../../utils/date-functionts';
+import { InvestmentAccountActiveHoldingOutput } from './../outputs/investment-account-active-holding.output';
 
 @Injectable()
 export class InvestmentAccountService {
 	constructor(private prisma: PrismaService, private assetGeneralService: AssetGeneralService) {}
+
+	getInvestmentAccountsById(investmentAccountId: string): Promise<InvestmentAccount> {
+		return this.prisma.investmentAccount.findFirstOrThrow({
+			where: {
+				id: investmentAccountId,
+			},
+		});
+	}
 
 	getInvestmentAccounts(userId: string): Promise<InvestmentAccount[]> {
 		return this.prisma.investmentAccount.findMany({
@@ -17,6 +26,33 @@ export class InvestmentAccountService {
 				userId,
 			},
 		});
+	}
+
+	/**
+	 *
+	 * @param investmentAccount
+	 * @returns loaded assetGeneral info for all active symbol
+	 */
+	async getActiveHoldings(investmentAccount: InvestmentAccount): Promise<InvestmentAccountActiveHoldingOutput[]> {
+		const activeHoldings = investmentAccount.holdings.filter(
+			(d) => d.holdingHistory[d.holdingHistory.length - 1].units > 0
+		);
+		const activeHoldingAssetIds = activeHoldings.map((d) => d.assetId);
+
+		// load asset general
+		const activeHoldingAssetGeneral = await this.assetGeneralService.getAssetGeneralForSymbols(activeHoldingAssetIds);
+
+		// create result
+		const result = activeHoldings.map((holding) => {
+			const assetGeneral = activeHoldingAssetGeneral.find((asset) => asset.id === holding.assetId);
+			const merge: InvestmentAccountActiveHoldingOutput = {
+				...holding,
+				assetGeneral,
+			};
+			return merge;
+		});
+
+		return result;
 	}
 
 	/**

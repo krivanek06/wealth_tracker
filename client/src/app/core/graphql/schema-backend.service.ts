@@ -13,6 +13,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+  DateTime: any;
 };
 
 export enum Authentication_Providers {
@@ -22,7 +24,7 @@ export enum Authentication_Providers {
 
 export type AssetGeneral = {
   __typename?: 'AssetGeneral';
-  assetIntoLastUpdate: Scalars['String'];
+  assetIntoLastUpdate: Scalars['DateTime'];
   assetQuote: AssetGeneralQuote;
   id: Scalars['String'];
   name: Scalars['String'];
@@ -60,7 +62,7 @@ export type AssetGeneralQuote = {
   dayHigh: Scalars['Float'];
   dayLow: Scalars['Float'];
   /** Only present for stocks */
-  earningsAnnouncement: Scalars['Float'];
+  earningsAnnouncement: Scalars['String'];
   /** Only present for stocks */
   eps: Scalars['Float'];
   exchange: Scalars['String'];
@@ -145,8 +147,8 @@ export type InvestmentAccounHoldingHistoryDeleteInput = {
 
 export type InvestmentAccount = {
   __typename?: 'InvestmentAccount';
-  /** Returns holdings from an investment account that are active, meaning user has not solved them all */
-  activeHoldings: Array<InvestmentAccountHolding>;
+  /** Returns active holdings from an investment account, at least one unit is owned */
+  activeHoldings: Array<InvestmentAccountActiveHoldingOutput>;
   /** History of changed cash value */
   cashChange: Array<InvestmentAccountCashChange>;
   /** Date time when account was created */
@@ -158,6 +160,24 @@ export type InvestmentAccount = {
   name: Scalars['String'];
   /** Reference to User.ID who created this investment account */
   userId: Scalars['String'];
+};
+
+export type InvestmentAccountActiveHoldingOutput = {
+  __typename?: 'InvestmentAccountActiveHoldingOutput';
+  assetGeneral: AssetGeneral;
+  /** Symbol ID -> AAPL, MSFT, BTC */
+  assetId: Scalars['String'];
+  /** Return historical data for a symbol starting from  */
+  historicalPrices: Array<AssetGeneralHistoricalPricesData>;
+  /** How many units of this symbol user has */
+  holdingHistory: Array<InvestmentAccountHoldingHistory>;
+  /** Symbol ID -> AAPL, MSFT, BTC */
+  id: Scalars['String'];
+  /** Associated InvestmentAccount.id */
+  investmentAccountId: Scalars['String'];
+  isActive: Scalars['Boolean'];
+  sector: Scalars['String'];
+  type: InvestmentAccountHoldingType;
 };
 
 export type InvestmentAccountCashChange = {
@@ -511,8 +531,10 @@ export type Query = {
   getDefaultTags: Array<PersonalAccountTag>;
   /** Returns the investment account history growth, based on the input values */
   getInvestmentAccountGrowth: Array<InvestmentAccountGrowth>;
-  /** Returns all personal accounts for the requester */
+  /** Returns all investment accounts for the requester */
   getInvestmentAccounts: Array<InvestmentAccount>;
+  /** Returns investment account by id */
+  getInvestmentAccountsById: InvestmentAccount;
   /** Returns personal accounts by Id */
   getPersonalAccountById: PersonalAccount;
   /** Returns monthly data by id */
@@ -542,6 +564,11 @@ export type QueryGetAssetHistoricalPricesStartToEndArgs = {
 
 export type QueryGetInvestmentAccountGrowthArgs = {
   input: InvestmentAccountGrowthInput;
+};
+
+
+export type QueryGetInvestmentAccountsByIdArgs = {
+  input: Scalars['String'];
 };
 
 
@@ -584,6 +611,108 @@ export type User = {
   lastSingInDate: Scalars['String'];
   username: Scalars['String'];
 };
+
+export type AssetGeneralHistoricalPricesDataFragment = { __typename?: 'AssetGeneralHistoricalPricesData', date: string, close: number };
+
+export type AssetGeneralHistoricalPricesFragment = { __typename?: 'AssetGeneralHistoricalPrices', id: string, dateStart: string, dateEnd: string, assetHistoricalPricesData: Array<{ __typename?: 'AssetGeneralHistoricalPricesData', date: string, close: number }> };
+
+export type AssetGeneralQuoteFragment = { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps: number, pe: number, earningsAnnouncement: string };
+
+export type AssetGeneralFragment = { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps: number, pe: number, earningsAnnouncement: string } };
+
+export type GetAssetHistoricalPricesStartToEndQueryVariables = Exact<{
+  input: AssetGeneralHistoricalPricesInput;
+}>;
+
+
+export type GetAssetHistoricalPricesStartToEndQuery = { __typename?: 'Query', getAssetHistoricalPricesStartToEnd: { __typename?: 'AssetGeneralHistoricalPrices', id: string, dateStart: string, dateEnd: string, assetHistoricalPricesData: Array<{ __typename?: 'AssetGeneralHistoricalPricesData', date: string, close: number }> } };
+
+export type SearchAssetBySymbolQueryVariables = Exact<{
+  input: AssetGeneralSearchInput;
+}>;
+
+
+export type SearchAssetBySymbolQuery = { __typename?: 'Query', searchAssetBySymbol: Array<{ __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps: number, pe: number, earningsAnnouncement: string } }> };
+
+export type GetAssetGeneralForSymbolQueryVariables = Exact<{
+  input: Scalars['String'];
+}>;
+
+
+export type GetAssetGeneralForSymbolQuery = { __typename?: 'Query', getAssetGeneralForSymbol?: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps: number, pe: number, earningsAnnouncement: string } } | null };
+
+export type InvestmentAccountHoldingHistoryFragment = { __typename?: 'InvestmentAccountHoldingHistory', itemId: string, date: string, units: number, investedAmount: number };
+
+export type InvestmentAccountCashChangeFragment = { __typename?: 'InvestmentAccountCashChange', itemId: string, cashCurrent: number, date: string };
+
+export type InvestmentAccountHoldingFragment = { __typename?: 'InvestmentAccountHolding', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, isActive: boolean, holdingHistory: Array<{ __typename?: 'InvestmentAccountHoldingHistory', itemId: string, date: string, units: number, investedAmount: number }> };
+
+export type InvestmentAccountOverviewFragment = { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string };
+
+export type InvestmentAccountActiveHoldingOutputFragment = { __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, isActive: boolean, holdingHistory: Array<{ __typename?: 'InvestmentAccountHoldingHistory', itemId: string, date: string, units: number, investedAmount: number }>, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps: number, pe: number, earningsAnnouncement: string } } };
+
+export type InvestmentAccountFragment = { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, holdings: Array<{ __typename?: 'InvestmentAccountHolding', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, isActive: boolean, holdingHistory: Array<{ __typename?: 'InvestmentAccountHoldingHistory', itemId: string, date: string, units: number, investedAmount: number }> }>, cashChange: Array<{ __typename?: 'InvestmentAccountCashChange', itemId: string, cashCurrent: number, date: string }>, activeHoldings: Array<{ __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, isActive: boolean, holdingHistory: Array<{ __typename?: 'InvestmentAccountHoldingHistory', itemId: string, date: string, units: number, investedAmount: number }>, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps: number, pe: number, earningsAnnouncement: string } } }> };
+
+export type GetInvestmentAccountsByIdQueryVariables = Exact<{
+  input: Scalars['String'];
+}>;
+
+
+export type GetInvestmentAccountsByIdQuery = { __typename?: 'Query', getInvestmentAccountsById: { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, holdings: Array<{ __typename?: 'InvestmentAccountHolding', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, isActive: boolean, holdingHistory: Array<{ __typename?: 'InvestmentAccountHoldingHistory', itemId: string, date: string, units: number, investedAmount: number }> }>, cashChange: Array<{ __typename?: 'InvestmentAccountCashChange', itemId: string, cashCurrent: number, date: string }>, activeHoldings: Array<{ __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, isActive: boolean, holdingHistory: Array<{ __typename?: 'InvestmentAccountHoldingHistory', itemId: string, date: string, units: number, investedAmount: number }>, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps: number, pe: number, earningsAnnouncement: string } } }> } };
+
+export type GetInvestmentAccountsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetInvestmentAccountsQuery = { __typename?: 'Query', getInvestmentAccounts: Array<{ __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string }> };
+
+export type EditInvestmentAccountMutationVariables = Exact<{
+  input: InvestmentAccountEditInput;
+}>;
+
+
+export type EditInvestmentAccountMutation = { __typename?: 'Mutation', editInvestmentAccount: { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string } };
+
+export type DeleteInvestmentAccountMutationVariables = Exact<{
+  input: Scalars['String'];
+}>;
+
+
+export type DeleteInvestmentAccountMutation = { __typename?: 'Mutation', deleteInvestmentAccount: { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string } };
+
+export type CreateInvestmentAccountHoldingMutationVariables = Exact<{
+  input: InvestmentAccounHoldingCreateInput;
+}>;
+
+
+export type CreateInvestmentAccountHoldingMutation = { __typename?: 'Mutation', createInvestmentAccountHolding: { __typename?: 'InvestmentAccountHolding', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, isActive: boolean, holdingHistory: Array<{ __typename?: 'InvestmentAccountHoldingHistory', itemId: string, date: string, units: number, investedAmount: number }> } };
+
+export type DeleteInvestmentAccountHoldingMutationVariables = Exact<{
+  input: InvestmentAccounHoldingHistoryDeleteInput;
+}>;
+
+
+export type DeleteInvestmentAccountHoldingMutation = { __typename?: 'Mutation', deleteInvestmentAccountHolding: { __typename?: 'InvestmentAccountHoldingHistory', itemId: string, date: string, units: number, investedAmount: number } };
+
+export type CreateInvestmentAccountCasheMutationVariables = Exact<{
+  input: InvestmentAccountCashCreateInput;
+}>;
+
+
+export type CreateInvestmentAccountCasheMutation = { __typename?: 'Mutation', createInvestmentAccountCashe: { __typename?: 'InvestmentAccountCashChange', itemId: string, cashCurrent: number, date: string } };
+
+export type EditInvestmentAccountCasheMutationVariables = Exact<{
+  input: InvestmentAccountCashEditInput;
+}>;
+
+
+export type EditInvestmentAccountCasheMutation = { __typename?: 'Mutation', editInvestmentAccountCashe: { __typename?: 'InvestmentAccountCashChange', itemId: string, cashCurrent: number, date: string } };
+
+export type DeleteInvestmentAccountCasheMutationVariables = Exact<{
+  input: InvestmentAccountCashDeleteInput;
+}>;
+
+
+export type DeleteInvestmentAccountCasheMutation = { __typename?: 'Mutation', deleteInvestmentAccountCashe: { __typename?: 'InvestmentAccountCashChange', itemId: string, cashCurrent: number, date: string } };
 
 export type PersonalAccountTagFragment = { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string };
 
@@ -672,6 +801,125 @@ export type EditPersonalAccountDailyEntryMutationVariables = Exact<{
 
 export type EditPersonalAccountDailyEntryMutation = { __typename?: 'Mutation', editPersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyDataEditOutput', originalDailyData: { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }, modifiedDailyData: { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } } } };
 
+export const AssetGeneralHistoricalPricesDataFragmentDoc = gql`
+    fragment AssetGeneralHistoricalPricesData on AssetGeneralHistoricalPricesData {
+  date
+  close
+}
+    `;
+export const AssetGeneralHistoricalPricesFragmentDoc = gql`
+    fragment AssetGeneralHistoricalPrices on AssetGeneralHistoricalPrices {
+  id
+  dateStart
+  dateEnd
+  assetHistoricalPricesData {
+    ...AssetGeneralHistoricalPricesData
+  }
+}
+    ${AssetGeneralHistoricalPricesDataFragmentDoc}`;
+export const InvestmentAccountOverviewFragmentDoc = gql`
+    fragment InvestmentAccountOverview on InvestmentAccount {
+  id
+  name
+  createdAt
+  userId
+}
+    `;
+export const InvestmentAccountHoldingHistoryFragmentDoc = gql`
+    fragment InvestmentAccountHoldingHistory on InvestmentAccountHoldingHistory {
+  itemId
+  date
+  units
+  investedAmount
+}
+    `;
+export const InvestmentAccountHoldingFragmentDoc = gql`
+    fragment InvestmentAccountHolding on InvestmentAccountHolding {
+  id
+  assetId
+  investmentAccountId
+  type
+  sector
+  isActive
+  holdingHistory {
+    ...InvestmentAccountHoldingHistory
+  }
+}
+    ${InvestmentAccountHoldingHistoryFragmentDoc}`;
+export const InvestmentAccountCashChangeFragmentDoc = gql`
+    fragment InvestmentAccountCashChange on InvestmentAccountCashChange {
+  itemId
+  cashCurrent
+  date
+}
+    `;
+export const AssetGeneralQuoteFragmentDoc = gql`
+    fragment AssetGeneralQuote on AssetGeneralQuote {
+  symbol
+  symbolImageURL
+  name
+  price
+  changesPercentage
+  change
+  dayLow
+  dayHigh
+  volume
+  yearLow
+  yearHigh
+  marketCap
+  avgVolume
+  sharesOutstanding
+  timestamp
+  eps
+  pe
+  earningsAnnouncement
+}
+    `;
+export const AssetGeneralFragmentDoc = gql`
+    fragment AssetGeneral on AssetGeneral {
+  id
+  name
+  symbolImageURL
+  assetIntoLastUpdate
+  assetQuote {
+    ...AssetGeneralQuote
+  }
+}
+    ${AssetGeneralQuoteFragmentDoc}`;
+export const InvestmentAccountActiveHoldingOutputFragmentDoc = gql`
+    fragment InvestmentAccountActiveHoldingOutput on InvestmentAccountActiveHoldingOutput {
+  id
+  assetId
+  investmentAccountId
+  type
+  sector
+  isActive
+  holdingHistory {
+    ...InvestmentAccountHoldingHistory
+  }
+  assetGeneral {
+    ...AssetGeneral
+  }
+}
+    ${InvestmentAccountHoldingHistoryFragmentDoc}
+${AssetGeneralFragmentDoc}`;
+export const InvestmentAccountFragmentDoc = gql`
+    fragment InvestmentAccount on InvestmentAccount {
+  ...InvestmentAccountOverview
+  holdings {
+    ...InvestmentAccountHolding
+  }
+  cashChange {
+    ...InvestmentAccountCashChange
+  }
+  activeHoldings {
+    ...InvestmentAccountActiveHoldingOutput
+  }
+}
+    ${InvestmentAccountOverviewFragmentDoc}
+${InvestmentAccountHoldingFragmentDoc}
+${InvestmentAccountCashChangeFragmentDoc}
+${InvestmentAccountActiveHoldingOutputFragmentDoc}`;
 export const PersonalAccountMonthlyDataOverviewFragmentDoc = gql`
     fragment PersonalAccountMonthlyDataOverview on PersonalAccountMonthlyData {
   id
@@ -761,6 +1009,226 @@ export const PersonalAccountOverviewFragmentDoc = gql`
 ${PersonalAccountAggregationDataFragmentDoc}
 ${PersonalAccountWeeklyAggregationFragmentDoc}
 ${PersonalAccountMonthlyDataOverviewFragmentDoc}`;
+export const GetAssetHistoricalPricesStartToEndDocument = gql`
+    query GetAssetHistoricalPricesStartToEnd($input: AssetGeneralHistoricalPricesInput!) {
+  getAssetHistoricalPricesStartToEnd(input: $input) {
+    ...AssetGeneralHistoricalPrices
+  }
+}
+    ${AssetGeneralHistoricalPricesFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetAssetHistoricalPricesStartToEndGQL extends Apollo.Query<GetAssetHistoricalPricesStartToEndQuery, GetAssetHistoricalPricesStartToEndQueryVariables> {
+    override document = GetAssetHistoricalPricesStartToEndDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const SearchAssetBySymbolDocument = gql`
+    query SearchAssetBySymbol($input: AssetGeneralSearchInput!) {
+  searchAssetBySymbol(input: $input) {
+    ...AssetGeneral
+  }
+}
+    ${AssetGeneralFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class SearchAssetBySymbolGQL extends Apollo.Query<SearchAssetBySymbolQuery, SearchAssetBySymbolQueryVariables> {
+    override document = SearchAssetBySymbolDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetAssetGeneralForSymbolDocument = gql`
+    query GetAssetGeneralForSymbol($input: String!) {
+  getAssetGeneralForSymbol(input: $input) {
+    ...AssetGeneral
+  }
+}
+    ${AssetGeneralFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetAssetGeneralForSymbolGQL extends Apollo.Query<GetAssetGeneralForSymbolQuery, GetAssetGeneralForSymbolQueryVariables> {
+    override document = GetAssetGeneralForSymbolDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetInvestmentAccountsByIdDocument = gql`
+    query GetInvestmentAccountsById($input: String!) {
+  getInvestmentAccountsById(input: $input) {
+    ...InvestmentAccount
+  }
+}
+    ${InvestmentAccountFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetInvestmentAccountsByIdGQL extends Apollo.Query<GetInvestmentAccountsByIdQuery, GetInvestmentAccountsByIdQueryVariables> {
+    override document = GetInvestmentAccountsByIdDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetInvestmentAccountsDocument = gql`
+    query GetInvestmentAccounts {
+  getInvestmentAccounts {
+    ...InvestmentAccountOverview
+  }
+}
+    ${InvestmentAccountOverviewFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetInvestmentAccountsGQL extends Apollo.Query<GetInvestmentAccountsQuery, GetInvestmentAccountsQueryVariables> {
+    override document = GetInvestmentAccountsDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const EditInvestmentAccountDocument = gql`
+    mutation EditInvestmentAccount($input: InvestmentAccountEditInput!) {
+  editInvestmentAccount(input: $input) {
+    id
+    name
+    createdAt
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class EditInvestmentAccountGQL extends Apollo.Mutation<EditInvestmentAccountMutation, EditInvestmentAccountMutationVariables> {
+    override document = EditInvestmentAccountDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const DeleteInvestmentAccountDocument = gql`
+    mutation DeleteInvestmentAccount($input: String!) {
+  deleteInvestmentAccount(input: $input) {
+    id
+    name
+    createdAt
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DeleteInvestmentAccountGQL extends Apollo.Mutation<DeleteInvestmentAccountMutation, DeleteInvestmentAccountMutationVariables> {
+    override document = DeleteInvestmentAccountDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const CreateInvestmentAccountHoldingDocument = gql`
+    mutation CreateInvestmentAccountHolding($input: InvestmentAccounHoldingCreateInput!) {
+  createInvestmentAccountHolding(input: $input) {
+    ...InvestmentAccountHolding
+  }
+}
+    ${InvestmentAccountHoldingFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CreateInvestmentAccountHoldingGQL extends Apollo.Mutation<CreateInvestmentAccountHoldingMutation, CreateInvestmentAccountHoldingMutationVariables> {
+    override document = CreateInvestmentAccountHoldingDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const DeleteInvestmentAccountHoldingDocument = gql`
+    mutation DeleteInvestmentAccountHolding($input: InvestmentAccounHoldingHistoryDeleteInput!) {
+  deleteInvestmentAccountHolding(input: $input) {
+    ...InvestmentAccountHoldingHistory
+  }
+}
+    ${InvestmentAccountHoldingHistoryFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DeleteInvestmentAccountHoldingGQL extends Apollo.Mutation<DeleteInvestmentAccountHoldingMutation, DeleteInvestmentAccountHoldingMutationVariables> {
+    override document = DeleteInvestmentAccountHoldingDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const CreateInvestmentAccountCasheDocument = gql`
+    mutation CreateInvestmentAccountCashe($input: InvestmentAccountCashCreateInput!) {
+  createInvestmentAccountCashe(input: $input) {
+    ...InvestmentAccountCashChange
+  }
+}
+    ${InvestmentAccountCashChangeFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CreateInvestmentAccountCasheGQL extends Apollo.Mutation<CreateInvestmentAccountCasheMutation, CreateInvestmentAccountCasheMutationVariables> {
+    override document = CreateInvestmentAccountCasheDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const EditInvestmentAccountCasheDocument = gql`
+    mutation EditInvestmentAccountCashe($input: InvestmentAccountCashEditInput!) {
+  editInvestmentAccountCashe(input: $input) {
+    ...InvestmentAccountCashChange
+  }
+}
+    ${InvestmentAccountCashChangeFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class EditInvestmentAccountCasheGQL extends Apollo.Mutation<EditInvestmentAccountCasheMutation, EditInvestmentAccountCasheMutationVariables> {
+    override document = EditInvestmentAccountCasheDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const DeleteInvestmentAccountCasheDocument = gql`
+    mutation DeleteInvestmentAccountCashe($input: InvestmentAccountCashDeleteInput!) {
+  deleteInvestmentAccountCashe(input: $input) {
+    ...InvestmentAccountCashChange
+  }
+}
+    ${InvestmentAccountCashChangeFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DeleteInvestmentAccountCasheGQL extends Apollo.Mutation<DeleteInvestmentAccountCasheMutation, DeleteInvestmentAccountCasheMutationVariables> {
+    override document = DeleteInvestmentAccountCasheDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const GetPersonalAccountsDocument = gql`
     query getPersonalAccounts {
   getPersonalAccounts {

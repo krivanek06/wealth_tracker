@@ -71,7 +71,7 @@ export class AssetGeneralQuote implements AssetGeneralQuoteClient {
 	})
 	pe: number;
 
-	@Field(() => Float, {
+	@Field(() => String, {
 		description: 'Only present for stocks',
 	})
 	earningsAnnouncement: string;
@@ -90,7 +90,7 @@ export class AssetGeneral implements AssetGeneralClient {
 	})
 	symbolImageURL: string;
 
-	@Field(() => String)
+	@Field(() => Date)
 	assetIntoLastUpdate: Date;
 
 	@Field(() => AssetGeneralQuote)

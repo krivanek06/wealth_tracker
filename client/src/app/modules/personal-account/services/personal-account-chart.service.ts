@@ -48,8 +48,8 @@ export class PersonalAccountChartService {
 	}
 
 	/**
-	 * Aggregates incomes and expenses into a chart format
-	 * for account growth overview
+	 * Aggregates incomes and expenses into a chart format for account growth overview
+	 * Aggregation use historical data, tomorrow is calculated from today's 'total'
 	 *
 	 * @param data aggregation from personal account
 	 * @param aggregation type of aggreation
@@ -62,8 +62,8 @@ export class PersonalAccountChartService {
 	): GenericChartSeries {
 		const activeTagIds = activeTags.map((d) => d.id);
 
-		// add together weekly income and expense
-		const weeklyIncomeSeries: number[] = data.weeklyAggregaton.map((d) =>
+		// aggregates total income / expenses on a weekly bases
+		const weeklyAggregation: number[] = data.weeklyAggregaton.map((d) =>
 			d.data.reduce((acc, curr) => {
 				if (curr.tag.type === TagDataType.Income) {
 					return acc + curr.value;
@@ -74,9 +74,14 @@ export class PersonalAccountChartService {
 			}, 0)
 		);
 
+		// transforms weeklyAggregation so that each data is depended on the previous
+		const weeklyTotalSeries = weeklyAggregation.reduce((acc, curr) => {
+			return acc.length === 0 ? [curr] : [...acc, acc[acc.length - 1] + curr];
+		}, [] as number[]);
+
 		const series: GenericChartSeries = {
 			name: 'Total',
-			data: weeklyIncomeSeries,
+			data: weeklyTotalSeries,
 			type: ChartType.line,
 		};
 
@@ -114,7 +119,7 @@ export class PersonalAccountChartService {
 		const expenseSeries: GenericChartSeries = {
 			name: 'Expense',
 			data: expense,
-			type: ChartType.column,
+			type: ChartType.line,
 			color: '#d8270a77',
 		};
 
@@ -153,6 +158,7 @@ export class PersonalAccountChartService {
 							name: curr.name,
 							data: [weeklyDataValueForTag],
 							color: curr.color,
+							type: ChartType.column,
 						};
 
 						return [...acc, result];

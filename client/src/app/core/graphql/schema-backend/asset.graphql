@@ -1,0 +1,17 @@
+query GetAssetHistoricalPricesStartToEnd($input: AssetGeneralHistoricalPricesInput!) {
+	getAssetHistoricalPricesStartToEnd(input: $input) {
+		...AssetGeneralHistoricalPrices
+	}
+}
+
+query SearchAssetBySymbol($input: AssetGeneralSearchInput!) {
+	searchAssetBySymbol(input: $input) {
+		...AssetGeneral
+	}
+}
+
+query GetAssetGeneralForSymbol($input: String!) {
+	getAssetGeneralForSymbol(input: $input) {
+		...AssetGeneral
+	}
+}

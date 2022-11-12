@@ -10,7 +10,7 @@ import {
 	PersonalAccountTagFragment,
 	TagDataType,
 } from './../../../../core/graphql';
-import { GenericChartSeries } from './../../../../shared/models';
+import { ChartType, GenericChartSeries } from './../../../../shared/models';
 
 @Component({
 	selector: 'app-personal-account',
@@ -39,6 +39,8 @@ export class PersonalAccountComponent implements OnInit {
 	// keeps track of visible tags, if empty -> all is visible
 	expenseFormControl = new FormControl<PersonalAccountTagFragment[]>([], { nonNullable: true });
 
+	ChartType = ChartType;
+
 	constructor(
 		private personalAccountApiService: PersonalAccountApiService,
 		private personalAccountChartService: PersonalAccountChartService
@@ -65,15 +67,24 @@ export class PersonalAccountComponent implements OnInit {
 			.getPersonalAccountOverviewById(this.personalAccountBasic.id)
 			.pipe(map((account) => this.personalAccountChartService.getChartCategories(account)));
 
+		this.categories$.subscribe((c) => console.log('categories', c));
+
 		// construct expense chart by the selected expenses tags
 		this.expenseTagsChartData$ = combineLatest([
 			// selected expenses
 			this.expenseFormControl.valueChanges.pipe(startWith(this.expenseFormControl.value)),
 			// account
 			this.personalAccountApiService.getPersonalAccountOverviewById(this.personalAccountBasic.id),
+			// passing all avilable expense tags to create chart
+			this.yearlyExpenseTags$.pipe(map((yearlyExpenseTags) => yearlyExpenseTags.map((d) => d.tag))),
 		]).pipe(
-			map(([activeExpenses, account]) =>
-				this.personalAccountChartService.getWeeklyExpenseChartData(account, 'week', activeExpenses)
+			map(([activeExpenses, account, availableExpenseTags]) =>
+				this.personalAccountChartService.getWeeklyExpenseChartData(
+					account,
+					'week',
+					availableExpenseTags,
+					activeExpenses
+				)
 			)
 		);
 

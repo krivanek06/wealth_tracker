@@ -73,7 +73,12 @@ export class PersonalAccountChartService {
 				return acc - (activeTagIds.length == 0 || activeTagIds.includes(curr.tag.id) ? curr.value : 0);
 			}, 0)
 		);
-		const series: GenericChartSeries = { name: 'Total', data: weeklyIncomeSeries, type: ChartType.line };
+
+		const series: GenericChartSeries = {
+			name: 'Total',
+			data: weeklyIncomeSeries,
+			type: ChartType.line,
+		};
 
 		return series;
 	}
@@ -121,40 +126,53 @@ export class PersonalAccountChartService {
 	 *
 	 * @param data aggregation from personal account
 	 * @param aggregation type of aggreation
+	 * @param availableExpenseTags - helps to create stacked chart so we know by which tags to stack by
 	 * @returns GenericChartSeries data type
 	 */
 	getWeeklyExpenseChartData(
 		data: PersonalAccountOverviewFragment,
 		aggregation: 'week' | 'month' = 'week',
+		availableExpenseTags: PersonalAccountTagFragment[] = [],
 		activeTags: PersonalAccountTagFragment[] = []
 	): GenericChartSeries[] {
 		const activeTagIds = activeTags.map((d) => d.id);
 
-		const series = data.weeklyAggregaton.reduce((acc, curr) => {
-			curr.data
-				.filter(
-					(d) => d.tag.type === TagDataType.Expense && (activeTagIds.length === 0 || activeTagIds.includes(d.tag.id))
-				)
-				.forEach((d, index) => {
-					// index of tagName in accumulation
-					const savedTagIndex = acc.findIndex((accData) => accData.name === d.tag.name);
+		// go through all weekly data and for each availableExpenseTags save a value
+		// if tag not exist for the specifc week, put 0
+		const series = data.weeklyAggregaton
+			.map((weeklyData) =>
+				availableExpenseTags
+					// filter out only active tags
+					.filter(
+						(tag) => tag.type === TagDataType.Expense && (activeTagIds.length === 0 || activeTagIds.includes(tag.id))
+					)
+					.reduce((acc, curr) => {
+						// find TAG daily data value (or 0) in selected week
+						const weeklyDataValueForTag = weeklyData.data.find((d) => d.tag.id === curr.id)?.value ?? 0;
+						const result: GenericChartSeries = {
+							name: curr.name,
+							data: [weeklyDataValueForTag],
+							color: curr.color,
+						};
 
-					if (savedTagIndex === -1) {
-						// tag not yet save = new data
-						acc.push({
-							name: d.tag.name,
-							data: [d.value],
-							color: d.tag.color,
-							type: ChartType.line,
-						} as GenericChartSeries);
-					} else {
-						// add another series into saved tag array
-						acc[savedTagIndex].data.push(d.value);
-					}
+						return [...acc, result];
+					}, [] as GenericChartSeries[])
+			)
+			.reduce((acc, curr) => {
+				// first loop
+				if (acc.length === 0) {
+					return curr;
+				}
+				// merge curr into acc
+				curr.forEach((tagChartData, index) => {
+					acc[index].data = [...acc[index].data, tagChartData.data[0]];
 				});
 
-			return acc;
-		}, [] as GenericChartSeries[]);
+				return acc;
+			}, [] as GenericChartSeries[]);
+
+		// TODO: remove
+		console.log(series);
 
 		return series;
 	}

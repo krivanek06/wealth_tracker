@@ -113,7 +113,20 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 				enabled: false,
 			},
 			legend: {
-				enabled: false,
+				enabled: true,
+				itemStyle: {
+					color: '#acacac',
+					cursor: 'pointer',
+				},
+				itemHoverStyle: {
+					color: '#241eaa',
+				},
+				itemHiddenStyle: {
+					color: '#494949',
+				},
+				verticalAlign: 'top',
+				align: 'right',
+				layout: 'horizontal',
 			},
 			tooltip: {
 				outside: true,
@@ -131,8 +144,14 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 				pointFormatter: function () {
 					const that = this as any;
 					const value = that.y;
+
+					// do not show 0 value in tooltip
+					if (value === 0) {
+						return '';
+					}
+
 					const line1 = `<tr><td style="color: ${that.series.color}">● ${that.series.name} </td>`;
-					const line2 = `<td style="text-align: right"><b>${that.y} USD</b></td></tr>`;
+					const line2 = `<td style="text-align: right"><b>$${that.y} USD</b></td></tr>`;
 					return `${line1} ${line2}`;
 				},
 				footerFormat: '</table>',

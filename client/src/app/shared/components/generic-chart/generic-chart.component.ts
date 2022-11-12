@@ -175,6 +175,7 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 			},
 			xAxis: {
 				visible: this.showXAxis,
+				crosshair: true,
 				type: 'datetime',
 				dateTimeLabelFormats: {
 					day: '%e of %b',
@@ -239,8 +240,14 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 				pointFormatter: function () {
 					const that = this as any;
 					const value = that.y;
+
+					// do not show 0 value in tooltip
+					if (value === 0) {
+						return '';
+					}
+
 					const line1 = `<tr><td style="color: ${that.series.color}">● ${that.series.name} </td>`;
-					const line2 = `<td style="text-align: right"><b>${that.y} USD</b></td></tr>`;
+					const line2 = `<td style="text-align: right"><b>$${that.y} USD</b></td></tr>`;
 					return `${line1} ${line2}`;
 				},
 				footerFormat: '</table>',
@@ -264,6 +271,10 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 				},
 				column: {
 					pointPadding: 0.2,
+					stacking: this.chartType === ChartType.columnStack ? 'normal' : undefined,
+					dataLabels: {
+						enabled: this.showDataLabel,
+					},
 				},
 				series: {
 					headerFormat: null,

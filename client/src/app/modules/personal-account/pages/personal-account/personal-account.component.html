@@ -36,6 +36,8 @@
 		*ngIf="expenseTagsChartData$ | async as chartData"
 		chartTitle="Expense by tag"
 		[heightPx]="400"
+		[chartType]="ChartType.columnStack"
+		[showDataLabel]="false"
 		[series]="chartData"
 		[categories]="categories"
 	></app-generic-chart>

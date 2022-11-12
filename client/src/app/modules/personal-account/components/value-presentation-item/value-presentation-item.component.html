@@ -13,7 +13,9 @@
 			</div>
 			<div class="flex flex-row gap-2">
 				<div class="text-base text-gray-400">{{ item.value | currency}}</div>
-				<div class="text-gray-500 text-base">({{ item.value / yearlyExpenseTotal| percent: '1.2-2' }})</div>
+				<div *ngIf="yearlyExpenseTotal" class="text-gray-500 text-base">
+					({{ item.value / yearlyExpenseTotal| percent: '1.2-2' }})
+				</div>
 			</div>
 		</div>
 	</button>

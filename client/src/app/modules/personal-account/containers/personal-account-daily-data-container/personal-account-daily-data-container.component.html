@@ -1,7 +1,7 @@
 <!-- table filter -->
 <app-personal-account-daily-entries-filter
 	[formControl]="filterControl"
-	[weeklyIds]="weeklyIds"
+	[weeklyIds]="weeklyIds$ | async"
 	[selectedMonthlyDataDetail]="monthlyDataDetail$ | async"
 ></app-personal-account-daily-entries-filter>
 

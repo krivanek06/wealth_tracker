@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { DataProxy, FetchResult } from '@apollo/client/core';
 import { Apollo } from 'apollo-angular';
-import { first, map, Observable } from 'rxjs';
+import { first, map, Observable, tap } from 'rxjs';
 import { DateServiceUtil } from './../../shared/utils';
 import {
+	CreatedMonthlyDataSubscriptionGQL,
 	CreatePersonalAccountDailyEntryGQL,
 	CreatePersonalAccountDailyEntryMutation,
 	CreatePersonalAccountGQL,
@@ -34,11 +35,17 @@ import {
 	PersonalAccountMonthlyDataDetailFragmentDoc,
 	PersonalAccountMonthlyDataOverviewFragment,
 	PersonalAccountMonthlyDataOverviewFragmentDoc,
+	PersonalAccountOverviewBasicFragment,
 	PersonalAccountOverviewFragment,
 	PersonalAccountOverviewFragmentDoc,
 	PersonalAccountTag,
 	TagDataType,
 } from './../graphql';
+import {
+	GetPersonalAccountByIdGQL,
+	PersonalAccountAggregationDataOutput,
+	PersonalAccountWeeklyAggregationOutput,
+} from './../graphql/schema-backend.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -46,6 +53,7 @@ import {
 export class PersonalAccountApiService {
 	constructor(
 		private getPersonalAccountsGQL: GetPersonalAccountsGQL,
+		private getPersonalAccountByIdGQL: GetPersonalAccountByIdGQL,
 		private createPersonalAccountGQL: CreatePersonalAccountGQL,
 		private editPersonalAccountGQL: EditPersonalAccountGQL,
 		private deletePersonalAccountGQL: DeletePersonalAccountGQL,
@@ -54,10 +62,12 @@ export class PersonalAccountApiService {
 		private createPersonalAccountDailyEntryGQL: CreatePersonalAccountDailyEntryGQL,
 		private editPersonalAccountDailyEntryGQL: EditPersonalAccountDailyEntryGQL,
 		private deletePersonalAccountDailyEntryGQL: DeletePersonalAccountDailyEntryGQL,
+		private createdMonthlyDataSubscriptionGQL: CreatedMonthlyDataSubscriptionGQL,
 		private apollo: Apollo
 	) {
 		// TODO: load tags &&& personalAccount outside this service
 		this.getDefaultTags().pipe(first()).subscribe();
+		this.createdMonthlyDataSubscription().pipe().subscribe();
 	}
 
 	/* ========= READING FROM CACHE ========= */
@@ -70,7 +80,11 @@ export class PersonalAccountApiService {
 		return query?.getDefaultTags ?? [];
 	}
 
-	getPersonalAccountMonthlyDataByIdFromCache(monthlyDataId: string): PersonalAccountMonthlyDataDetailFragment | null {
+	getPersonalAccountMonthlyDataByIdFromCache(monthlyDataId?: string): PersonalAccountMonthlyDataDetailFragment | null {
+		if (!monthlyDataId) {
+			return null;
+		}
+
 		const fragment = this.apollo.client.readFragment<PersonalAccountMonthlyDataDetailFragment>({
 			id: `PersonalAccountMonthlyData:${monthlyDataId}`,
 			fragmentName: 'PersonalAccountMonthlyDataDetail',
@@ -136,8 +150,16 @@ export class PersonalAccountApiService {
 
 	/* ========= READING FROM API ========= */
 
-	getPersonalAccounts(): Observable<PersonalAccountOverviewFragment[]> {
+	getPersonalAccounts(): Observable<PersonalAccountOverviewBasicFragment[]> {
 		return this.getPersonalAccountsGQL.watch().valueChanges.pipe(map((res) => res.data.getPersonalAccounts));
+	}
+
+	getPersonalAccountOverviewById(input: string): Observable<PersonalAccountOverviewFragment> {
+		return this.getPersonalAccountByIdGQL
+			.watch({
+				input,
+			})
+			.valueChanges.pipe(map((res) => res.data.getPersonalAccountById));
 	}
 
 	createPersonalAccount(name: string): Observable<FetchResult<CreatePersonalAccountMutation>> {
@@ -154,9 +176,6 @@ export class PersonalAccountApiService {
 						createdAt: new Date().toDateString(),
 						id: 'account-1234',
 						userId: 'user-1234',
-						monthlyData: [],
-						weeklyAggregaton: [],
-						yearlyAggregaton: [],
 					},
 				},
 				update: (store: DataProxy, { data }) => {
@@ -222,6 +241,36 @@ export class PersonalAccountApiService {
 				input: monthlyDataId,
 			})
 			.valueChanges.pipe(map((res) => res.data.getPersonalAccountMonthlyDataById));
+	}
+
+	createdMonthlyDataSubscription(): Observable<PersonalAccountMonthlyDataOverviewFragment | undefined> {
+		return this.createdMonthlyDataSubscriptionGQL.subscribe().pipe(
+			map((res) => res.data?.createdMonthlyData),
+			tap((createdMonthlyData) => {
+				if (!createdMonthlyData) {
+					return;
+				}
+				console.log('subscription', createdMonthlyData);
+				// save createdMonthlyData into PersonalAccount.monthlyData
+				const personalAccount = this.getPersonalAccountFromCachce(createdMonthlyData.personalAccountId);
+
+				// sort ASC
+				const mergedMonthlyData = [...personalAccount.monthlyData, createdMonthlyData].sort((a, b) =>
+					b.year > a.year ? -1 : b.year === a.year && b.month > a.month ? -1 : 1
+				);
+
+				// save to cache
+				this.apollo.client.writeFragment<PersonalAccountOverviewFragment>({
+					id: `PersonalAccount:${personalAccount.id}`,
+					fragmentName: 'PersonalAccountOverview',
+					fragment: PersonalAccountOverviewFragmentDoc,
+					data: {
+						...personalAccount,
+						monthlyData: mergedMonthlyData,
+					},
+				});
+			})
+		);
 	}
 
 	createPersonalAccountDailyEntry(
@@ -315,9 +364,18 @@ export class PersonalAccountApiService {
 		);
 	}
 
+	/**
+	 * Persist daily data into monthly.dailyData array
+	 * if monthly data not loaded, skip the operation, daily data will be loaded by getPersonalAccountMonthlyDataById
+	 *
+	 * @param dailyData
+	 * @param operation
+	 * @returns
+	 */
 	private updateMonthlyDailyData(dailyData: PersonalAccountDailyDataFragment, operation: 'add' | 'remove'): void {
 		const monthlyDetails = this.getPersonalAccountMonthlyDataByIdFromCache(dailyData.monthlyDataId);
 
+		// happens when creating a daily data to the future/past months - information received by subscriptions
 		if (!monthlyDetails) {
 			return;
 		}
@@ -343,16 +401,24 @@ export class PersonalAccountApiService {
 		});
 	}
 
+	/**
+	 *
+	 * @param personalAccountId
+	 * @param dailyData
+	 * @param operation - increase add dailyData.value (create), 'decrease' removes the value (delete)
+	 */
 	private updateAggregations(
 		personalAccountId: string,
 		dailyData: PersonalAccountDailyDataFragment,
 		operation: 'increase' | 'decrease'
 	): void {
 		const personalAccount = this.getPersonalAccountFromCachce(personalAccountId);
-		const dateDetails = DateServiceUtil.getDetailsInformationFromDate(dailyData.date);
-		const multiplyer = operation === 'increase' ? 1 : -1;
+		const dateDetails = DateServiceUtil.getDetailsInformationFromDate(Number(dailyData.date));
+		const multiplyer = operation === 'increase' ? 1 : -1; // add or remove data from aggregation
 
 		// update yearlyAggregaton that match tagId
+		// TODO: check if tag exists
+		// TODO - removing item to update chart data - OK
 		const yearlyAggregaton = personalAccount.yearlyAggregaton.map((data) => {
 			if (data.tag.id === dailyData.tagId) {
 				return { ...data, value: data.value + dailyData.value * multiplyer, entries: data.entries + 1 * multiplyer };
@@ -360,26 +426,123 @@ export class PersonalAccountApiService {
 			return data;
 		});
 
-		// update weeklyAggregaton that match tagId and month & weej
-		const weeklyAggregaton = personalAccount.weeklyAggregaton.map((data) => {
-			// find specific week that needs to be updated
-			if (data.year === dateDetails.year && data.month === dateDetails.month && data.week === dateDetails.week) {
-				// update data in array that match tagId
-				const weeklyAggregatonDailyData = data.data.map((d) => {
-					if (d.tag.id === dailyData.tagId) {
-						return { ...d, entries: d.entries + 1 * multiplyer, value: d.value + dailyData.value * multiplyer };
-					}
+		// if -1 means dailyData was created for not yet saved monthly data
+		const weeklyAggregatonIndex = personalAccount.weeklyAggregaton.findIndex(
+			(weeklyData) =>
+				weeklyData.year === dateDetails.year &&
+				weeklyData.month === dateDetails.month &&
+				weeklyData.week === dateDetails.week
+		);
+		// if -f means there is not weekly aggregation for specific tag
+		const weeklyAggregatonDataIndex = personalAccount.weeklyAggregaton[weeklyAggregatonIndex]?.data?.findIndex(
+			(d) => d.tag.id === dailyData.tag.id
+		);
 
-					// not upadted daily data
-					return d;
-				});
-				// upadted weekly data
-				return { ...data, data: weeklyAggregatonDailyData };
-			}
+		// only used when monthly data not exists
+		const weeklyAggregationData: PersonalAccountWeeklyAggregationOutput = {
+			__typename: 'PersonalAccountWeeklyAggregationOutput',
+			id: `${dateDetails.year}-${dateDetails.month}-${dateDetails.week}`,
+			year: dateDetails.year,
+			month: dateDetails.month,
+			week: dateDetails.week,
+			data: [
+				{
+					__typename: 'PersonalAccountAggregationDataOutput',
+					entries: 1,
+					tag: dailyData.tag,
+					value: dailyData.value,
+				},
+			],
+		};
 
-			// not updated weekly data
-			return data;
-		});
+		// only used when no tag for specific week
+		const aggregationDailyData: PersonalAccountAggregationDataOutput = {
+			__typename: 'PersonalAccountAggregationDataOutput',
+			entries: 1,
+			tag: dailyData.tag,
+			value: dailyData.value,
+		};
+
+		const weeklyAggregaton =
+			weeklyAggregatonIndex === -1 // append weeklyAggregationData to other
+				? [...personalAccount.weeklyAggregaton, weeklyAggregationData]
+				: weeklyAggregatonDataIndex === -1 // new tag for existing week
+				? personalAccount.weeklyAggregaton.map((d) =>
+						d.id === weeklyAggregationData.id ? { ...d, data: [aggregationDailyData] } : { ...d }
+				  )
+				: // increase value for saved tag
+				  personalAccount.weeklyAggregaton.map((d) =>
+						d.id === weeklyAggregationData.id
+							? {
+									...d,
+									data: d.data.map((dDaily) =>
+										dDaily.tag.id === dailyData.tag.id
+											? {
+													...dDaily,
+													entries: dDaily.entries + 1 * multiplyer,
+													value: dDaily.value + dailyData.value * multiplyer,
+											  }
+											: { ...dDaily }
+									),
+							  }
+							: { ...d }
+				  );
+
+		// update weeklyAggregaton that match tagId and month & week
+		// will not update if weeklyAggregatonIndex === -1 or weeklyAggregatonDataIndex === -1
+		// const weeklyAggregaton = personalAccount.weeklyAggregaton.map((weeklyData) => {
+		// 	// find specific week that needs to be updated
+		// 	if (weeklyData.year === dateDetails.year && weeklyData.month === dateDetails.month && weeklyData.week === dateDetails.week) {
+		// 		// update data in array that match tagId
+		// 		const weeklyAggregatonDailyData = weeklyData.data.map((d) => {
+		// 			if (d.tag.id === dailyData.tagId) {
+		// 				return { ...d, entries: d.entries + 1 * multiplyer, value: d.value + dailyData.value * multiplyer };
+		// 			}
+
+		// 			// not upadted daily data
+		// 			return d;
+		// 		});
+		// 		// upadted weekly data
+		// 		return { ...weeklyData, data: weeklyAggregatonDailyData };
+
+		// 	}
+
+		// 	// not updated weekly data
+		// 	return weeklyData;
+		// });
+
+		// const weeklyAggregaton = [...personalAccount.weeklyAggregaton];
+
+		// if (weeklyAggregatonIndex === -1) {
+		// 	// dailyData for not yet saved weekly data
+		// 	weeklyAggregaton.push({
+		// 		__typename: 'PersonalAccountWeeklyAggregationOutput',
+		// 		id: `${dateDetails.year}-${dateDetails.month}-${dateDetails.week}`,
+		// 		year: dateDetails.year,
+		// 		month: dateDetails.month,
+		// 		week: dateDetails.week,
+		// 		data: [
+		// 			{
+		// 				__typename: 'PersonalAccountAggregationDataOutput',
+		// 				entries: 1,
+		// 				tag: dailyData.tag,
+		// 				value: dailyData.value,
+		// 			},
+		// 		],
+		// 	});
+		// 	// sort ASC
+		// 	weeklyAggregaton.sort((a, b) => (a.id < b.id ? 1 : -1));
+		// } else if (weeklyAggregatonDataIndex === -1) {
+		// 	weeklyAggregaton[weeklyAggregatonIndex].data.push({
+		// 		__typename: 'PersonalAccountAggregationDataOutput',
+		// 		entries: 1,
+		// 		tag: dailyData.tag,
+		// 		value: dailyData.value,
+		// 	});
+		// } else {
+		// 	weeklyAggregaton[weeklyAggregatonIndex].data[weeklyAggregatonDataIndex].entries += 1 * multiplyer;
+		// 	weeklyAggregaton[weeklyAggregatonIndex].data[weeklyAggregatonDataIndex].value += dailyData.value * multiplyer;
+		// }
 
 		// update monthly data entries + income/expense
 		const newMonthlyIncome = (dailyData.tag.type === TagDataType.Income ? dailyData.value : 0) * multiplyer;

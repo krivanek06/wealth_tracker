@@ -21,10 +21,10 @@ import { DateServiceUtil } from './../../../../shared/utils';
 })
 export class PersonalAccountDailyEntriesFilterComponent implements OnInit, ControlValueAccessor {
 	// 2022-7-32, 2022-7-33,
-	@Input() set weeklyIds(ids: string[]) {
+	@Input() set weeklyIds(ids: string[] | null) {
 		this.displayYearsAndMonths = [
 			...new Set(
-				ids.map((d) => {
+				(ids ?? []).map((d) => {
 					const [year, month] = d.split('-');
 					return `${year}-${month}`;
 				})

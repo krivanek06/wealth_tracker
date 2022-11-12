@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PersonalAccountApiService } from './../../core/api/personal-account-api.service';
-import { PersonalAccountOverviewFragment } from './../../core/graphql/schema-backend.service';
+import { PersonalAccountOverviewBasicFragment } from './../../core/graphql/schema-backend.service';
 
 @Component({
 	selector: 'app-dashboard',
@@ -10,11 +10,10 @@ import { PersonalAccountOverviewFragment } from './../../core/graphql/schema-bac
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit {
-	personalAccounts$!: Observable<PersonalAccountOverviewFragment[]>;
+	personalAccountBasic$!: Observable<PersonalAccountOverviewBasicFragment[]>;
 	constructor(private personalAccountApiService: PersonalAccountApiService) {}
 
 	ngOnInit(): void {
-		this.personalAccounts$ = this.personalAccountApiService.getPersonalAccounts();
-		this.personalAccounts$.subscribe(console.log);
+		this.personalAccountBasic$ = this.personalAccountApiService.getPersonalAccounts();
 	}
 }

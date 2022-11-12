@@ -14,4 +14,5 @@ export enum PERSONAL_ACCOUNT_ERROR {
 
 export enum PERSONAL_ACCOUNT_TAG_ERROR {
 	NOT_FOUND = 'Tags were not loaded for the personal account, please contact administartor',
+	NOT_FOUND_BY_ID = 'Tag you are looking for was not found, please choose another one',
 }

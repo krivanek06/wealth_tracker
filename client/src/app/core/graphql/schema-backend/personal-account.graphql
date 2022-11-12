@@ -1,25 +1,31 @@
 ### Personal account
 query getPersonalAccounts {
 	getPersonalAccounts {
+		...PersonalAccountOverviewBasic
+	}
+}
+
+query getPersonalAccountById($input: String!) {
+	getPersonalAccountById(input: $input) {
 		...PersonalAccountOverview
 	}
 }
 
 mutation CreatePersonalAccount($name: String!) {
 	createPersonalAccount(input: { name: $name }) {
-		...PersonalAccountOverview
+		...PersonalAccountOverviewBasic
 	}
 }
 
 mutation EditPersonalAccount($input: PersonalAccountEditInput!) {
 	editPersonalAccount(input: $input) {
-		...PersonalAccountOverview
+		...PersonalAccountOverviewBasic
 	}
 }
 
 mutation DeletePersonalAccount($accountId: String!) {
 	deletePersonalAccount(input: $accountId) {
-		...PersonalAccountOverview
+		...PersonalAccountOverviewBasic
 	}
 }
 
@@ -34,6 +40,12 @@ query getDefaultTags {
 query getPersonalAccountMonthlyDataById($input: String!) {
 	getPersonalAccountMonthlyDataById(input: $input) {
 		...PersonalAccountMonthlyDataDetail
+	}
+}
+
+subscription createdMonthlyDataSubscription {
+	createdMonthlyData {
+		...PersonalAccountMonthlyDataOverview
 	}
 }
 

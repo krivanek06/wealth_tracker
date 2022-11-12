@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, forwardRef, Input, OnInit } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { PersonalAccountAggregationDataOutput, PersonalAccountTagFragment } from './../../../../core/graphql';
+import {
+	PersonalAccountAggregationDataOutput,
+	PersonalAccountTagFragment,
+	TagDataType,
+} from './../../../../core/graphql';
 
 @Component({
 	selector: 'app-value-presentation-item',
@@ -16,10 +20,12 @@ import { PersonalAccountAggregationDataOutput, PersonalAccountTagFragment } from
 	],
 })
 export class ValuePresentationItemComponent implements OnInit, ControlValueAccessor {
-	@Input() yearlyExpenseTags!: PersonalAccountAggregationDataOutput[];
-	@Input() yearlyExpenseTotal!: number;
+	@Input() yearlyExpenseTags: PersonalAccountAggregationDataOutput[] | null = null;
+	@Input() yearlyExpenseTotal: number | null = null;
 
 	activeTags: PersonalAccountTagFragment[] = [];
+
+	TagDataType = TagDataType;
 
 	onChange: (data?: PersonalAccountTagFragment[]) => void = () => {};
 	onTouched = () => {};

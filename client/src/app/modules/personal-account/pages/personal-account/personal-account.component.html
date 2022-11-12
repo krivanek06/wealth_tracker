@@ -1,5 +1,8 @@
 <!-- present yearly expenses -->
-<div class="px-4 flex flex-col md:flex-row justify-between md:justify-around mb-4">
+<div
+	*ngIf="accountState$ | async as accountState"
+	class="px-4 flex flex-col md:flex-row justify-between md:justify-around mb-4"
+>
 	<div class="g-color-primary text-2xl flex justify-between md:justify-start gap-2">
 		<span>● Balance:</span> <span>{{ accountState.total | currency }}</span>
 	</div>
@@ -14,31 +17,29 @@
 <!-- tag expense legend -->
 <app-scroll-wrapper>
 	<app-value-presentation-item
-		[formControl]="activeItemsFormControl"
-		[yearlyExpenseTotal]="yearlyExpenseTotal"
-		[yearlyExpenseTags]="yearlyExpenseTags"
+		[formControl]="expenseFormControl"
+		[yearlyExpenseTotal]="yearlyExpenseTotal$ | async"
+		[yearlyExpenseTags]="yearlyExpenseTags$ | async"
 	></app-value-presentation-item>
 </app-scroll-wrapper>
 
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+<div
+	*ngIf="{
+  categories: categories$ | async,
+  expenseTagsChartData : expenseTagsChartData$ | async ,
+  accountOverviewChartData: accountOverviewChartData$ | async
+} as obs"
+>
 	<!-- account overview -->
 	<app-personal-account-overview-chart
-		*ngIf="accountOverviewChartData$ | async as chartData"
-		[chartData]="chartData"
-		[categories]="categories"
+		*ngIf="obs.accountOverviewChartData && obs.categories && obs.expenseTagsChartData"
+		[accountOverviewChartData]="obs.accountOverviewChartData"
+		[expenseTagsChartData]="obs.expenseTagsChartData"
+		[categories]="obs.categories"
 	></app-personal-account-overview-chart>
-
-	<!-- expenses by tags -->
-	<app-generic-chart
-		*ngIf="expenseTagsChartData$ | async as chartData"
-		chartTitle="Expense by tag"
-		[heightPx]="400"
-		[series]="chartData"
-		[categories]="categories"
-	></app-generic-chart>
 </div>
 
 <!-- daily data filter + table + spending allocation -->
 <app-personal-account-daily-data-container
-	[personalAccount]="personalAccount"
+	[personalAccountBasic]="personalAccountBasic"
 ></app-personal-account-daily-data-container>

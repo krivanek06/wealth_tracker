@@ -69,6 +69,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			throw new Error('PersonalAccountDailyDataEntryComponent, removing unexisting item');
 		}
 		this.isRemoving = true;
+		DialogServiceUtil.showNotificationBar(`Operation sent to the server side`, 'notification');
 		this.personalAccountApiService
 			.deletePersonalAccountDailyEntry({
 				dailyDataId: this.data.dailyData.id,
@@ -106,6 +107,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		const editedDailyData = this.data.dailyData;
 		of(editedDailyData)
 			.pipe(
+				tap(() => DialogServiceUtil.showNotificationBar(`Operation sent to the server side`, 'notification')),
 				switchMap(() =>
 					!editedDailyData
 						? this.personalAccountApiService.createPersonalAccountDailyEntry(dailyDataCreate)

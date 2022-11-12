@@ -20,15 +20,70 @@ export enum Authentication_Providers {
   Google = 'GOOGLE'
 }
 
-export type AssetStock = {
-  __typename?: 'AssetStock';
-  assetStockProfile: AssetStockProfile;
-  assetStockQuote: AssetStockQuote;
-  /** Last time the information was updated for this stock */
-  infoUpdateTimestamp: Scalars['Float'];
-  /** Last time the price was updated for this stock */
-  priceUpdateTimestamp: Scalars['Float'];
+export type AssetGeneral = {
+  __typename?: 'AssetGeneral';
+  assetIntoLastUpdate: Scalars['String'];
+  assetQuote: AssetGeneralQuote;
+  id: Scalars['String'];
+  name: Scalars['String'];
+  symbolImageURL?: Maybe<Scalars['String']>;
+};
+
+export type AssetGeneralHistoricalPrices = {
+  __typename?: 'AssetGeneralHistoricalPrices';
+  /** Historical prices to create charts for portoflio */
+  assetHistoricalPricesData: Array<AssetGeneralHistoricalPricesData>;
+  dateEnd: Scalars['String'];
+  dateStart: Scalars['String'];
+  /** Symbol Id - AAPL, MSFT, BTCUSD */
+  id: Scalars['String'];
+};
+
+export type AssetGeneralHistoricalPricesData = {
+  __typename?: 'AssetGeneralHistoricalPricesData';
+  close: Scalars['Float'];
+  /** Format YYYY-MM-DD, i.e: 2022-03-12 */
+  date: Scalars['String'];
+};
+
+export type AssetGeneralHistoricalPricesInput = {
+  end: Scalars['String'];
+  start: Scalars['String'];
   symbol: Scalars['String'];
+};
+
+export type AssetGeneralQuote = {
+  __typename?: 'AssetGeneralQuote';
+  avgVolume: Scalars['Float'];
+  change: Scalars['Float'];
+  changesPercentage: Scalars['Float'];
+  dayHigh: Scalars['Float'];
+  dayLow: Scalars['Float'];
+  /** Only present for stocks */
+  earningsAnnouncement: Scalars['Float'];
+  /** Only present for stocks */
+  eps: Scalars['Float'];
+  exchange: Scalars['String'];
+  marketCap: Scalars['Float'];
+  name: Scalars['String'];
+  /** Only present for stocks */
+  pe: Scalars['Float'];
+  price: Scalars['Float'];
+  priceAvg50: Scalars['Float'];
+  priceAvg200: Scalars['Float'];
+  /** For crypto it is current supply */
+  sharesOutstanding: Scalars['Float'];
+  symbol: Scalars['String'];
+  symbolImageURL?: Maybe<Scalars['String']>;
+  timestamp: Scalars['Float'];
+  volume: Scalars['Float'];
+  yearHigh: Scalars['Float'];
+  yearLow: Scalars['Float'];
+};
+
+export type AssetGeneralSearchInput = {
+  isCrypto?: InputMaybe<Scalars['Boolean']>;
+  symbolPrefix: Scalars['String'];
 };
 
 export type AssetStockProfile = {
@@ -61,87 +116,78 @@ export type AssetStockProfile = {
   zip: Scalars['String'];
 };
 
-export type AssetStockQuote = {
-  __typename?: 'AssetStockQuote';
-  avgVolume: Scalars['Float'];
-  change: Scalars['Float'];
-  changesPercentage: Scalars['Float'];
-  dayHigh: Scalars['Float'];
-  dayLow: Scalars['Float'];
-  earningsAnnouncement?: Maybe<Scalars['String']>;
-  eps?: Maybe<Scalars['Float']>;
-  exchange: Scalars['String'];
-  marketCap: Scalars['Float'];
-  name: Scalars['String'];
-  open: Scalars['Float'];
-  pe?: Maybe<Scalars['Float']>;
-  previousClose: Scalars['Float'];
-  price: Scalars['Float'];
-  priceAvg50: Scalars['Float'];
-  priceAvg200: Scalars['Float'];
-  sharesOutstanding: Scalars['Float'];
-  symbol: Scalars['String'];
-  timestamp: Scalars['Float'];
-  volume: Scalars['Float'];
-  yearHigh: Scalars['Float'];
-  yearLow: Scalars['Float'];
-};
-
-export type AssetStockSearch = {
-  __typename?: 'AssetStockSearch';
-  currency: Scalars['String'];
-  exchangeShortName: Scalars['String'];
-  name: Scalars['String'];
-  stockExchange: Scalars['String'];
-  symbol: Scalars['String'];
+export type HoldingInputData = {
+  /** Date when we added this holding to our investment account */
+  date: Scalars['String'];
+  /** Amount the user invested into this symbol */
+  investedAmount: Scalars['Float'];
+  /** How many units of this symbol user has */
+  units: Scalars['Int'];
 };
 
 export type InvestmentAccounHoldingCreateInput = {
-  /** Amount the user invested into this symbol */
-  investedAlready: Scalars['Float'];
+  holdingInputData: HoldingInputData;
   /** Investment account associated with the asset */
   investmentAccountId: Scalars['String'];
   /** Symbol ID */
   symbol: Scalars['String'];
   type: InvestmentAccountHoldingType;
-  /** How many units of this symbol user has */
-  units: Scalars['Float'];
 };
 
-export type InvestmentAccounHoldingDeleteInput = {
-  /** Investment account from which we will remove the symbol */
-  investmentAccountId: Scalars['String'];
-  /** Symbol ID */
-  symbol: Scalars['String'];
-};
-
-export type InvestmentAccounHoldingEditInput = {
-  /** Amount the user invested into this symbol */
-  investedAlready: Scalars['Float'];
+export type InvestmentAccounHoldingHistoryDeleteInput = {
   /** Investment account associated with the asset */
   investmentAccountId: Scalars['String'];
+  /** Id of the item the user wants to remove */
+  itemId: Scalars['String'];
   /** Symbol ID */
   symbol: Scalars['String'];
-  /** How many units of this symbol user has */
-  units: Scalars['Float'];
 };
 
 export type InvestmentAccount = {
   __typename?: 'InvestmentAccount';
-  accountHistory: InvestmentAccountHistory;
-  /** How much cash on hand is on this investment account */
-  cashCurrent: Scalars['Float'];
-  holdingCrypto: Array<InvestmentAccountHoldingCrypto>;
-  holdingStocks: Array<InvestmentAccountHoldingStock>;
+  /** Returns holdings from an investment account that are active, meaning user has not solved them all */
+  activeHoldings: Array<InvestmentAccountHolding>;
+  /** History of changed cash value */
+  cashChange: Array<InvestmentAccountCashChange>;
+  /** Date time when account was created */
+  createdAt: Scalars['String'];
+  /** Holding history of this asset */
+  holdings: Array<InvestmentAccountHolding>;
   id: Scalars['String'];
-  investedAlreadyTotal: Scalars['Float'];
-  /** Last inserted data in InvestmentAccountHistory.portfolioSnapshots */
-  lastPortfolioSnapshot?: Maybe<InvestmentAccountPortfolioSnapshot>;
   /** custom name for personal account */
   name: Scalars['String'];
-  portfolioBalanceTotal: Scalars['Float'];
   /** Reference to User.ID who created this investment account */
   userId: Scalars['String'];
+};
+
+export type InvestmentAccountCashChange = {
+  __typename?: 'InvestmentAccountCashChange';
+  cashCurrent: Scalars['Float'];
+  /** Format yyyy-MM-DD */
+  date: Scalars['String'];
+  itemId: Scalars['String'];
+};
+
+export type InvestmentAccountCashCreateInput = {
+  cashCurrent: Scalars['Float'];
+  /** What date to associate cash account change */
+  date: Scalars['String'];
+  investmentAccountId: Scalars['String'];
+};
+
+export type InvestmentAccountCashDeleteInput = {
+  investmentAccountId: Scalars['String'];
+  /** If value is assigned, it will change existing cash value or create a new entry */
+  itemId: Scalars['String'];
+};
+
+export type InvestmentAccountCashEditInput = {
+  cashCurrent: Scalars['Float'];
+  /** What date to associate cash account change */
+  date: Scalars['String'];
+  investmentAccountId: Scalars['String'];
+  /** If value is assigned, it will change existing cash value or create a new entry */
+  itemId: Scalars['String'];
 };
 
 export type InvestmentAccountCreateInput = {
@@ -149,77 +195,57 @@ export type InvestmentAccountCreateInput = {
 };
 
 export type InvestmentAccountEditInput = {
-  cashCurrent: Scalars['Int'];
   investmentAccountId: Scalars['String'];
   name: Scalars['String'];
 };
 
-export type InvestmentAccountHistory = {
-  __typename?: 'InvestmentAccountHistory';
-  id: Scalars['String'];
-  /** Reference to InvestmentAccount.ID who for 1-o-1 relashion */
-  investmentAccountId: Scalars['String'];
-  /** Total portfolioSnapshot.length */
-  portfolioSnapshotTotal: Scalars['Int'];
-  /** Historical snapshots of portfolio change */
-  portfolioSnapshots: Array<InvestmentAccountPortfolioSnapshot>;
+export type InvestmentAccountGrowth = {
+  __typename?: 'InvestmentAccountGrowth';
+  cash: Scalars['Float'];
+  date: Scalars['String'];
+  /** Accumulation of all invested assets in that specific date */
+  invested: Scalars['Float'];
+  ownedAssets: Scalars['Float'];
+};
+
+export type InvestmentAccountGrowthInput = {
+  investmenAccountId: Scalars['String'];
+  /** Sectors which to filter by. If empty, no filtering */
+  sectors?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type InvestmentAccountHolding = {
   __typename?: 'InvestmentAccountHolding';
   /** Symbol ID -> AAPL, MSFT, BTC */
-  id: Scalars['String'];
-  /** Amount the user invested into this symbol */
-  investedAlready: Scalars['Float'];
-  /** Associated InvestmentAccount.id */
-  investmentAccountId: Scalars['String'];
-  type: InvestmentAccountHoldingType;
+  assetId: Scalars['String'];
+  /** Return historical data for a symbol starting from  */
+  historicalPrices: Array<AssetGeneralHistoricalPricesData>;
   /** How many units of this symbol user has */
-  units: Scalars['Float'];
-};
-
-export type InvestmentAccountHoldingCrypto = {
-  __typename?: 'InvestmentAccountHoldingCrypto';
+  holdingHistory: Array<InvestmentAccountHoldingHistory>;
   /** Symbol ID -> AAPL, MSFT, BTC */
   id: Scalars['String'];
-  /** Amount the user invested into this symbol */
-  investedAlready: Scalars['Float'];
   /** Associated InvestmentAccount.id */
   investmentAccountId: Scalars['String'];
+  isActive: Scalars['Boolean'];
+  sector: Scalars['String'];
   type: InvestmentAccountHoldingType;
-  /** How many units of this symbol user has */
-  units: Scalars['Float'];
 };
 
-export type InvestmentAccountHoldingStock = {
-  __typename?: 'InvestmentAccountHoldingStock';
-  assetInfo: AssetStock;
-  breakEvenPrice: Scalars['Float'];
-  /** Symbol ID -> AAPL, MSFT, BTC */
-  id: Scalars['String'];
-  /** Amount the user invested into this symbol */
-  investedAlready: Scalars['Float'];
-  /** Associated InvestmentAccount.id */
-  investmentAccountId: Scalars['String'];
-  type: InvestmentAccountHoldingType;
-  /** How many units of this symbol user has */
+export type InvestmentAccountHoldingHistory = {
+  __typename?: 'InvestmentAccountHoldingHistory';
+  date: Scalars['String'];
+  investedAmount: Scalars['Float'];
+  itemId: Scalars['String'];
   units: Scalars['Float'];
 };
 
 export enum InvestmentAccountHoldingType {
+  Commodity = 'COMMODITY',
   Crypto = 'CRYPTO',
+  Etf = 'ETF',
+  MutualFund = 'MUTUAL_FUND',
   Stock = 'STOCK'
 }
-
-export type InvestmentAccountPortfolioSnapshot = {
-  __typename?: 'InvestmentAccountPortfolioSnapshot';
-  /** how much cash user had on hands during this snapshot */
-  cash: Scalars['Float'];
-  date: Scalars['String'];
-  id: Scalars['String'];
-  /** current price of assets * units */
-  investmentCurrent: Scalars['Float'];
-};
 
 export type LoggedUserOutput = {
   __typename?: 'LoggedUserOutput';
@@ -242,16 +268,18 @@ export type LoginUserInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   createInvestmentAccount: InvestmentAccount;
+  createInvestmentAccountCashe: InvestmentAccountCashChange;
   createInvestmentAccountHolding: InvestmentAccountHolding;
   createPersonalAccount: PersonalAccount;
   createPersonalAccountDailyEntry: PersonalAccountDailyData;
   /** Returns the ID of the removed investment account */
   deleteInvestmentAccount: InvestmentAccount;
-  deleteInvestmentAccountHolding: InvestmentAccountHolding;
+  deleteInvestmentAccountCashe: InvestmentAccountCashChange;
+  deleteInvestmentAccountHolding: InvestmentAccountHoldingHistory;
   deletePersonalAccount: PersonalAccount;
   deletePersonalAccountDailyEntry: PersonalAccountDailyData;
   editInvestmentAccount: InvestmentAccount;
-  editInvestmentAccountHolding: InvestmentAccountHolding;
+  editInvestmentAccountCashe: InvestmentAccountCashChange;
   editPersonalAccount: PersonalAccount;
   editPersonalAccountDailyEntry: PersonalAccountDailyDataEditOutput;
   loginBasic: LoggedUserOutput;
@@ -262,6 +290,11 @@ export type Mutation = {
 
 export type MutationCreateInvestmentAccountArgs = {
   input: InvestmentAccountCreateInput;
+};
+
+
+export type MutationCreateInvestmentAccountCasheArgs = {
+  input: InvestmentAccountCashCreateInput;
 };
 
 
@@ -285,8 +318,13 @@ export type MutationDeleteInvestmentAccountArgs = {
 };
 
 
+export type MutationDeleteInvestmentAccountCasheArgs = {
+  input: InvestmentAccountCashDeleteInput;
+};
+
+
 export type MutationDeleteInvestmentAccountHoldingArgs = {
-  input: InvestmentAccounHoldingDeleteInput;
+  input: InvestmentAccounHoldingHistoryDeleteInput;
 };
 
 
@@ -305,8 +343,8 @@ export type MutationEditInvestmentAccountArgs = {
 };
 
 
-export type MutationEditInvestmentAccountHoldingArgs = {
-  input: InvestmentAccounHoldingEditInput;
+export type MutationEditInvestmentAccountCasheArgs = {
+  input: InvestmentAccountCashEditInput;
 };
 
 
@@ -465,17 +503,50 @@ export type PersonalAccountWeeklyAggregationOutput = {
 
 export type Query = {
   __typename?: 'Query';
+  getAssetGeneralForSymbol?: Maybe<AssetGeneral>;
+  getAssetGeneralForSymbols: Array<AssetGeneral>;
+  /** Historical prices for an Asset */
+  getAssetHistoricalPricesStartToEnd: AssetGeneralHistoricalPrices;
   /** Returns default tags that are shared cross every user */
   getDefaultTags: Array<PersonalAccountTag>;
+  /** Returns the investment account history growth, based on the input values */
+  getInvestmentAccountGrowth: Array<InvestmentAccountGrowth>;
   /** Returns all personal accounts for the requester */
   getInvestmentAccounts: Array<InvestmentAccount>;
+  /** Returns personal accounts by Id */
+  getPersonalAccountById: PersonalAccount;
   /** Returns monthly data by id */
   getPersonalAccountMonthlyDataById: PersonalAccountMonthlyData;
   /** Returns all personal accounts for the requester */
   getPersonalAccounts: Array<PersonalAccount>;
   healthCheck: Scalars['String'];
-  /** Search stock based on ticker symbol */
-  searchAssetStockSymbol: Array<AssetStockSearch>;
+  /** Search asset based on symbol */
+  searchAssetBySymbol: Array<AssetGeneral>;
+};
+
+
+export type QueryGetAssetGeneralForSymbolArgs = {
+  input: Scalars['String'];
+};
+
+
+export type QueryGetAssetGeneralForSymbolsArgs = {
+  symbols: Array<Scalars['String']>;
+};
+
+
+export type QueryGetAssetHistoricalPricesStartToEndArgs = {
+  input: AssetGeneralHistoricalPricesInput;
+};
+
+
+export type QueryGetInvestmentAccountGrowthArgs = {
+  input: InvestmentAccountGrowthInput;
+};
+
+
+export type QueryGetPersonalAccountByIdArgs = {
+  input: Scalars['String'];
 };
 
 
@@ -484,14 +555,19 @@ export type QueryGetPersonalAccountMonthlyDataByIdArgs = {
 };
 
 
-export type QuerySearchAssetStockSymbolArgs = {
-  input: Scalars['String'];
+export type QuerySearchAssetBySymbolArgs = {
+  input: AssetGeneralSearchInput;
 };
 
 export type RegisterUserInput = {
   email: Scalars['String'];
   password: Scalars['String'];
   passwordRepeat: Scalars['String'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  createdMonthlyData: PersonalAccountMonthlyData;
 };
 
 export enum TagDataType {
@@ -513,11 +589,13 @@ export type PersonalAccountTagFragment = { __typename?: 'PersonalAccountTag', id
 
 export type PersonalAccountDailyDataFragment = { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } };
 
-export type PersonalAccountMonthlyDataOverviewFragment = { __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number };
+export type PersonalAccountMonthlyDataOverviewFragment = { __typename?: 'PersonalAccountMonthlyData', id: string, personalAccountId: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number };
 
-export type PersonalAccountMonthlyDataDetailFragment = { __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number, dailyData: Array<{ __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }> };
+export type PersonalAccountMonthlyDataDetailFragment = { __typename?: 'PersonalAccountMonthlyData', id: string, personalAccountId: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number, dailyData: Array<{ __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }> };
 
-export type PersonalAccountOverviewFragment = { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> };
+export type PersonalAccountOverviewBasicFragment = { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string };
+
+export type PersonalAccountOverviewFragment = { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, personalAccountId: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> };
 
 export type PersonalAccountAggregationDataFragment = { __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } };
 
@@ -526,28 +604,35 @@ export type PersonalAccountWeeklyAggregationFragment = { __typename?: 'PersonalA
 export type GetPersonalAccountsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPersonalAccountsQuery = { __typename?: 'Query', getPersonalAccounts: Array<{ __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> }> };
+export type GetPersonalAccountsQuery = { __typename?: 'Query', getPersonalAccounts: Array<{ __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string }> };
+
+export type GetPersonalAccountByIdQueryVariables = Exact<{
+  input: Scalars['String'];
+}>;
+
+
+export type GetPersonalAccountByIdQuery = { __typename?: 'Query', getPersonalAccountById: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, personalAccountId: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> } };
 
 export type CreatePersonalAccountMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
 
 
-export type CreatePersonalAccountMutation = { __typename?: 'Mutation', createPersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> } };
+export type CreatePersonalAccountMutation = { __typename?: 'Mutation', createPersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string } };
 
 export type EditPersonalAccountMutationVariables = Exact<{
   input: PersonalAccountEditInput;
 }>;
 
 
-export type EditPersonalAccountMutation = { __typename?: 'Mutation', editPersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> } };
+export type EditPersonalAccountMutation = { __typename?: 'Mutation', editPersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string } };
 
 export type DeletePersonalAccountMutationVariables = Exact<{
   accountId: Scalars['String'];
 }>;
 
 
-export type DeletePersonalAccountMutation = { __typename?: 'Mutation', deletePersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> } };
+export type DeletePersonalAccountMutation = { __typename?: 'Mutation', deletePersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string } };
 
 export type GetDefaultTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -559,7 +644,12 @@ export type GetPersonalAccountMonthlyDataByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetPersonalAccountMonthlyDataByIdQuery = { __typename?: 'Query', getPersonalAccountMonthlyDataById: { __typename?: 'PersonalAccountMonthlyData', id: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number, dailyData: Array<{ __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }> } };
+export type GetPersonalAccountMonthlyDataByIdQuery = { __typename?: 'Query', getPersonalAccountMonthlyDataById: { __typename?: 'PersonalAccountMonthlyData', id: string, personalAccountId: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number, dailyData: Array<{ __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }> } };
+
+export type CreatedMonthlyDataSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CreatedMonthlyDataSubscriptionSubscription = { __typename?: 'Subscription', createdMonthlyData: { __typename?: 'PersonalAccountMonthlyData', id: string, personalAccountId: string, month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number } };
 
 export type CreatePersonalAccountDailyEntryMutationVariables = Exact<{
   input: PersonalAccountDailyDataCreate;
@@ -585,6 +675,7 @@ export type EditPersonalAccountDailyEntryMutation = { __typename?: 'Mutation', e
 export const PersonalAccountMonthlyDataOverviewFragmentDoc = gql`
     fragment PersonalAccountMonthlyDataOverview on PersonalAccountMonthlyData {
   id
+  personalAccountId
   month
   year
   dailyEntries
@@ -625,6 +716,14 @@ export const PersonalAccountMonthlyDataDetailFragmentDoc = gql`
 }
     ${PersonalAccountMonthlyDataOverviewFragmentDoc}
 ${PersonalAccountDailyDataFragmentDoc}`;
+export const PersonalAccountOverviewBasicFragmentDoc = gql`
+    fragment PersonalAccountOverviewBasic on PersonalAccount {
+  id
+  name
+  createdAt
+  userId
+}
+    `;
 export const PersonalAccountAggregationDataFragmentDoc = gql`
     fragment PersonalAccountAggregationData on PersonalAccountAggregationDataOutput {
   value
@@ -647,10 +746,7 @@ export const PersonalAccountWeeklyAggregationFragmentDoc = gql`
     ${PersonalAccountAggregationDataFragmentDoc}`;
 export const PersonalAccountOverviewFragmentDoc = gql`
     fragment PersonalAccountOverview on PersonalAccount {
-  id
-  name
-  createdAt
-  userId
+  ...PersonalAccountOverviewBasic
   yearlyAggregaton {
     ...PersonalAccountAggregationData
   }
@@ -661,16 +757,17 @@ export const PersonalAccountOverviewFragmentDoc = gql`
     ...PersonalAccountMonthlyDataOverview
   }
 }
-    ${PersonalAccountAggregationDataFragmentDoc}
+    ${PersonalAccountOverviewBasicFragmentDoc}
+${PersonalAccountAggregationDataFragmentDoc}
 ${PersonalAccountWeeklyAggregationFragmentDoc}
 ${PersonalAccountMonthlyDataOverviewFragmentDoc}`;
 export const GetPersonalAccountsDocument = gql`
     query getPersonalAccounts {
   getPersonalAccounts {
-    ...PersonalAccountOverview
+    ...PersonalAccountOverviewBasic
   }
 }
-    ${PersonalAccountOverviewFragmentDoc}`;
+    ${PersonalAccountOverviewBasicFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
@@ -682,13 +779,31 @@ export const GetPersonalAccountsDocument = gql`
       super(apollo);
     }
   }
-export const CreatePersonalAccountDocument = gql`
-    mutation CreatePersonalAccount($name: String!) {
-  createPersonalAccount(input: {name: $name}) {
+export const GetPersonalAccountByIdDocument = gql`
+    query getPersonalAccountById($input: String!) {
+  getPersonalAccountById(input: $input) {
     ...PersonalAccountOverview
   }
 }
     ${PersonalAccountOverviewFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetPersonalAccountByIdGQL extends Apollo.Query<GetPersonalAccountByIdQuery, GetPersonalAccountByIdQueryVariables> {
+    override document = GetPersonalAccountByIdDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const CreatePersonalAccountDocument = gql`
+    mutation CreatePersonalAccount($name: String!) {
+  createPersonalAccount(input: {name: $name}) {
+    ...PersonalAccountOverviewBasic
+  }
+}
+    ${PersonalAccountOverviewBasicFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
@@ -703,10 +818,10 @@ export const CreatePersonalAccountDocument = gql`
 export const EditPersonalAccountDocument = gql`
     mutation EditPersonalAccount($input: PersonalAccountEditInput!) {
   editPersonalAccount(input: $input) {
-    ...PersonalAccountOverview
+    ...PersonalAccountOverviewBasic
   }
 }
-    ${PersonalAccountOverviewFragmentDoc}`;
+    ${PersonalAccountOverviewBasicFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
@@ -721,10 +836,10 @@ export const EditPersonalAccountDocument = gql`
 export const DeletePersonalAccountDocument = gql`
     mutation DeletePersonalAccount($accountId: String!) {
   deletePersonalAccount(input: $accountId) {
-    ...PersonalAccountOverview
+    ...PersonalAccountOverviewBasic
   }
 }
-    ${PersonalAccountOverviewFragmentDoc}`;
+    ${PersonalAccountOverviewBasicFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
@@ -767,6 +882,24 @@ export const GetPersonalAccountMonthlyDataByIdDocument = gql`
   })
   export class GetPersonalAccountMonthlyDataByIdGQL extends Apollo.Query<GetPersonalAccountMonthlyDataByIdQuery, GetPersonalAccountMonthlyDataByIdQueryVariables> {
     override document = GetPersonalAccountMonthlyDataByIdDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const CreatedMonthlyDataSubscriptionDocument = gql`
+    subscription createdMonthlyDataSubscription {
+  createdMonthlyData {
+    ...PersonalAccountMonthlyDataOverview
+  }
+}
+    ${PersonalAccountMonthlyDataOverviewFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CreatedMonthlyDataSubscriptionGQL extends Apollo.Subscription<CreatedMonthlyDataSubscriptionSubscription, CreatedMonthlyDataSubscriptionSubscriptionVariables> {
+    override document = CreatedMonthlyDataSubscriptionDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

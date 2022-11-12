@@ -8,12 +8,19 @@ import { PersonalAccountTagService } from './personal-account-tag.service';
 export class PersonalAccountMonthlyService {
 	constructor(private prisma: PrismaService, private personalAccountTagService: PersonalAccountTagService) {}
 
-	getMonthlyDataByAccountId({ id }: PersonalAccount): Promise<PersonalAccountMonthlyData[]> {
-		return this.prisma.personalAccountMonthlyData.findMany({
+	async getMonthlyDataByAccountId({ id }: PersonalAccount): Promise<PersonalAccountMonthlyData[]> {
+		const monthlyData = await this.prisma.personalAccountMonthlyData.findMany({
 			where: {
 				personalAccountId: id,
 			},
 		});
+
+		// sort ASC
+		const mergedMonthlyData = monthlyData.sort((a, b) =>
+			b.year > a.year ? -1 : b.year === a.year && b.month > a.month ? -1 : 1
+		);
+
+		return mergedMonthlyData;
 	}
 
 	getMonthlyDataById(monthlyDataId: string, userId: string): Promise<PersonalAccountMonthlyData> {

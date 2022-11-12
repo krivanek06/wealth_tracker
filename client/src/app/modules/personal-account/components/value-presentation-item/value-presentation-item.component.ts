@@ -16,8 +16,8 @@ import { PersonalAccountAggregationDataOutput, PersonalAccountTagFragment } from
 	],
 })
 export class ValuePresentationItemComponent implements OnInit, ControlValueAccessor {
-	@Input() yearlyExpenseTags!: PersonalAccountAggregationDataOutput[];
-	@Input() yearlyExpenseTotal!: number;
+	@Input() yearlyExpenseTags: PersonalAccountAggregationDataOutput[] | null = null;
+	@Input() yearlyExpenseTotal: number | null = null;
 
 	activeTags: PersonalAccountTagFragment[] = [];
 

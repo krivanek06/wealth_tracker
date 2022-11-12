@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { map, Observable, startWith, switchMap } from 'rxjs';
+import { combineLatest, map, Observable, startWith, switchMap } from 'rxjs';
 import { PersonalAccountApiService } from './../../../../core/api';
 import {
 	PersonalAccountDailyDataFragment,
 	PersonalAccountMonthlyDataDetailFragment,
-	PersonalAccountOverviewFragment,
+	PersonalAccountOverviewBasicFragment,
 	TagDataType,
 } from './../../../../core/graphql';
 import { ChartType, GenericChartSeriesData, GenericChartSeriesPie } from './../../../../shared/models';
@@ -20,8 +20,8 @@ import { PersonalAccountDailyDataEntryComponent } from './../../modals';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountDailyDataContainerComponent implements OnInit {
-	@Input() personalAccount!: PersonalAccountOverviewFragment;
-	weeklyIds!: string[]; // 2022-7-32, 2022-7-33, ...
+	@Input() personalAccountBasic!: PersonalAccountOverviewBasicFragment;
+	weeklyIds$!: Observable<string[]>; // 2022-7-32, 2022-7-33, ...
 	monthlyDataDetail$!: Observable<PersonalAccountMonthlyDataDetailFragment>;
 	monthlyDataDetailTable$!: Observable<PersonalAccountMonthlyDataDetailFragment>;
 	expenseAllocationChartData$!: Observable<GenericChartSeriesPie>;
@@ -42,14 +42,22 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(new Date());
 		this.filterControl.patchValue({ yearAndMonth: `${year}-${month}`, tag: [], week: -1 }, { emitEvent: false });
 
-		this.weeklyIds = this.personalAccount.weeklyAggregaton.map((d) => d.id);
+		// select account overview by ID so we are notified by changes
+		const accountOverview$ = this.personalAccountApiService.getPersonalAccountOverviewById(
+			this.personalAccountBasic.id
+		);
+
+		// 2022-7-32, 2022-7-33, ...
+		this.weeklyIds$ = accountOverview$.pipe(map((account) => account.weeklyAggregaton.map((d) => d.id)));
 
 		// load / filter date based on filter change
-		this.monthlyDataDetail$ = this.filterControl.valueChanges.pipe(
-			startWith(this.filterControl.getRawValue()),
-			switchMap((filterValues) => {
+		this.monthlyDataDetail$ = combineLatest([
+			this.filterControl.valueChanges.pipe(startWith(this.filterControl.getRawValue())),
+			accountOverview$,
+		]).pipe(
+			switchMap(([filterValues, account]) => {
 				const [year, month] = filterValues.yearAndMonth.split('-').map((d) => Number(d));
-				const monthlyDataOverview = this.personalAccount.monthlyData.find((d) => d.year === year && d.month === month);
+				const monthlyDataOverview = account.monthlyData.find((d) => d.year === year && d.month === month);
 				if (!monthlyDataOverview) {
 					throw new Error('Currect monthly data not found');
 				}
@@ -88,8 +96,8 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		this.dialog.open(PersonalAccountDailyDataEntryComponent, {
 			data: {
 				dailyData: editingDailyData,
-				personalAccountId: this.personalAccount.id,
-				personalAccountName: this.personalAccount.name,
+				personalAccountId: this.personalAccountBasic.id,
+				personalAccountName: this.personalAccountBasic.name,
 			},
 		});
 	}

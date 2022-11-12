@@ -1,10 +1,10 @@
 import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import { PrismaService } from '../../../prisma';
 import { PersonalAccount, PersonalAccountMonthlyData, PersonalAccountTag } from '../entities';
 import { PersonalAccountAggregationDataOutput, PersonalAccountWeeklyAggregationOutput } from '../outputs';
 import { PersonalAccounDataAggregatorService, PersonalAccountTagService } from '../services';
+import { PersonalAccountMonthlyService } from './../services/personal-account-monthly.service';
 
 describe('PersonalAccounDataAggregatorService', () => {
 	let service: PersonalAccounDataAggregatorService;
@@ -144,15 +144,12 @@ describe('PersonalAccounDataAggregatorService', () => {
 		},
 	];
 
-	// mock prisma service
-	const prismaServiceMock: PrismaService = createMock<PrismaService>({
-		personalAccountMonthlyData: {
-			findMany: jest.fn(),
-		},
-	});
-
 	const personalAccountTagServiceMock: PersonalAccountTagService = createMock<PersonalAccountTagService>({
 		getDefaultTagById: jest.fn(),
+	});
+
+	const personalAccountMonthlyServiceMock: PersonalAccountMonthlyService = createMock<PersonalAccountMonthlyService>({
+		getMonthlyDataByAccountId: jest.fn(),
 	});
 
 	when(personalAccountTagServiceMock.getDefaultTagById)
@@ -165,25 +162,17 @@ describe('PersonalAccounDataAggregatorService', () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				PersonalAccounDataAggregatorService,
-				{ provide: PrismaService, useValue: prismaServiceMock },
+				{ provide: PersonalAccountMonthlyService, useValue: personalAccountMonthlyServiceMock },
 				{ provide: PersonalAccountTagService, useValue: personalAccountTagServiceMock },
 			],
 		}).compile();
 
 		service = module.get<PersonalAccounDataAggregatorService>(PersonalAccounDataAggregatorService);
 
-		when(prismaServiceMock.personalAccountMonthlyData.findMany)
-			.calledWith({
-				where: {
-					personalAccountId: PERSONAL_ACCOUNT_ID_EMPTY.id,
-				},
-			})
+		when(personalAccountMonthlyServiceMock.getMonthlyDataByAccountId)
+			.calledWith(PERSONAL_ACCOUNT_ID_EMPTY)
 			.mockResolvedValue([PERSONAL_ACCOUNT_MONTHLY_DATA_EMPTY])
-			.calledWith({
-				where: {
-					personalAccountId: PERSONAL_ACCOUNT_ID_MULTIPLE_MONTHS.id,
-				},
-			})
+			.calledWith(PERSONAL_ACCOUNT_ID_MULTIPLE_MONTHS)
 			.mockResolvedValue(PERSONAL_ACCOUNT_MONTHLY_DATA_MULTIPLE_MONTHS);
 	});
 
@@ -268,11 +257,9 @@ describe('PersonalAccounDataAggregatorService', () => {
 			const result = await service.getAllWeeklyAggregatedData(PERSONAL_ACCOUNT_ID_MULTIPLE_MONTHS);
 
 			// test loading monthly data
-			expect(prismaServiceMock.personalAccountMonthlyData.findMany).toHaveBeenCalledWith({
-				where: {
-					personalAccountId: PERSONAL_ACCOUNT_ID_MULTIPLE_MONTHS.id,
-				},
-			});
+			expect(personalAccountMonthlyServiceMock.getMonthlyDataByAccountId).toHaveBeenCalledWith(
+				PERSONAL_ACCOUNT_ID_MULTIPLE_MONTHS
+			);
 
 			expect(result).toStrictEqual(aggregatedResult);
 		});

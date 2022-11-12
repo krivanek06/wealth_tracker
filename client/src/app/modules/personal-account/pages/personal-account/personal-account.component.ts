@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { map, merge, Observable, reduce, startWith, switchMap } from 'rxjs';
+import { combineLatest, map, merge, Observable, reduce, startWith, switchMap } from 'rxjs';
 import { AccountState } from '../../models';
 import { PersonalAccountChartService } from '../../services';
 import { PersonalAccountApiService } from './../../../../core/api';
 import {
 	PersonalAccountAggregationDataOutput,
-	PersonalAccountOverviewFragment,
+	PersonalAccountOverviewBasicFragment,
 	PersonalAccountTagFragment,
 	TagDataType,
 } from './../../../../core/graphql';
@@ -19,18 +19,25 @@ import { GenericChartSeries } from './../../../../shared/models';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountComponent implements OnInit {
-	@Input() personalAccount!: PersonalAccountOverviewFragment;
+	@Input() personalAccountBasic!: PersonalAccountOverviewBasicFragment;
 
-	yearlyExpenseTags: PersonalAccountAggregationDataOutput[] = [];
-	yearlyExpenseTotal!: number;
-	accountState!: AccountState;
+	yearlyExpenseTags$!: Observable<PersonalAccountAggregationDataOutput[]>;
+	yearlyExpenseTotal$!: Observable<number>;
 
+	// currect account state totalIncome, totalExpense and difference
+	accountState$!: Observable<AccountState>;
+
+	// growth chart by selected expenses
 	accountOverviewChartData$!: Observable<GenericChartSeries[]>;
+
+	// expense chart by the selected expenses tags
 	expenseTagsChartData$!: Observable<GenericChartSeries[]>;
-	categories!: string[];
+
+	// chart categories for X-axis
+	categories$!: Observable<string[]>;
 
 	// keeps track of visible tags, if empty -> all is visible
-	activeItemsFormControl = new FormControl<PersonalAccountTagFragment[]>([], { nonNullable: true });
+	expenseFormControl = new FormControl<PersonalAccountTagFragment[]>([], { nonNullable: true });
 
 	constructor(
 		private personalAccountApiService: PersonalAccountApiService,
@@ -38,37 +45,53 @@ export class PersonalAccountComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.accountState = this.personalAccountChartService.getAccountState(this.personalAccount);
-		this.yearlyExpenseTags = this.personalAccount.yearlyAggregaton.filter((d) => d.tag.type === TagDataType.Expense);
-		this.yearlyExpenseTotal = this.yearlyExpenseTags.reduce((a, b) => a + b.value, 0);
+		// calculate account state - balance, cash, invested
+		this.accountState$ = this.personalAccountApiService
+			.getPersonalAccountOverviewById(this.personalAccountBasic.id)
+			.pipe(map((account) => this.personalAccountChartService.getAccountState(account)));
 
-		this.categories = this.personalAccountChartService.getChartCategories(this.personalAccount);
+		// filter out expense tags to show them to the user
+		this.yearlyExpenseTags$ = this.personalAccountApiService
+			.getPersonalAccountOverviewById(this.personalAccountBasic.id)
+			.pipe(map((account) => account.yearlyAggregaton.filter((d) => d.tag.type === TagDataType.Expense)));
 
-		// this.chartData$ = this.activeItemsFormControl.valueChanges.pipe(
-		// 	startWith(this.activeItemsFormControl.value),
-		// 	switchMap((activeTags) =>
-		// 		merge(
-		// 			this.personalAccountChartService.getAccountIncomeExpenseChartData(this.personalAccount, 'week', activeTags),
-		// 			this.personalAccountChartService.getWeeklyExpenseChartData(this.personalAccount, 'week', activeTags)
-		// 		).pipe(reduce((acc, curr) => [...acc, curr], [] as GenericChartSeries[]))
-		// 	)
-		// );
+		// construct yearly total expenses
+		this.yearlyExpenseTotal$ = this.yearlyExpenseTags$.pipe(
+			map((expenseTags) => expenseTags.reduce((a, b) => a + b.value, 0))
+		);
 
-		this.expenseTagsChartData$ = this.activeItemsFormControl.valueChanges.pipe(
-			startWith(this.activeItemsFormControl.value),
-			map((activeTags) =>
-				this.personalAccountChartService.getWeeklyExpenseChartData(this.personalAccount, 'week', activeTags)
+		// get chart categoties displayed on X-axis
+		this.categories$ = this.personalAccountApiService
+			.getPersonalAccountOverviewById(this.personalAccountBasic.id)
+			.pipe(map((account) => this.personalAccountChartService.getChartCategories(account)));
+
+		// construct expense chart by the selected expenses tags
+		this.expenseTagsChartData$ = combineLatest([
+			// selected expenses
+			this.expenseFormControl.valueChanges.pipe(startWith(this.expenseFormControl.value)),
+			// account
+			this.personalAccountApiService.getPersonalAccountOverviewById(this.personalAccountBasic.id),
+		]).pipe(
+			map(([activeExpenses, account]) =>
+				this.personalAccountChartService.getWeeklyExpenseChartData(account, 'week', activeExpenses)
 			)
 		);
 
-		this.accountOverviewChartData$ = this.activeItemsFormControl.valueChanges.pipe(
-			startWith(this.activeItemsFormControl.value),
-			switchMap((activeTags) =>
+		// construct account overview vy the selected expense tags
+		this.accountOverviewChartData$ = combineLatest([
+			// selected expenses
+			this.expenseFormControl.valueChanges.pipe(startWith(this.expenseFormControl.value)),
+			// account
+			this.personalAccountApiService.getPersonalAccountOverviewById(this.personalAccountBasic.id),
+		]).pipe(
+			switchMap(([selectedTags, account]) =>
 				merge(
-					[this.personalAccountChartService.getAccountGrowthChartData(this.personalAccount, 'week', activeTags)],
-					this.personalAccountChartService.getAccountIncomeExpenseChartData(this.personalAccount, 'week', activeTags)
+					[this.personalAccountChartService.getAccountGrowthChartData(account, 'week', selectedTags)],
+					this.personalAccountChartService.getAccountIncomeExpenseChartData(account, 'week', selectedTags)
 				).pipe(reduce((acc, curr) => [...acc, curr], [] as GenericChartSeries[]))
 			)
 		);
+
+		this.accountOverviewChartData$.subscribe((x) => console.log('accountOverviewChartData$', x));
 	}
 }

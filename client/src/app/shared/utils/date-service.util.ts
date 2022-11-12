@@ -9,7 +9,7 @@ export type DateServiceUtilDateInformations = {
 type DateInput = string | number | Date;
 
 export class DateServiceUtil {
-	static getDetailsInformationFromDate(input: string | Date): DateServiceUtilDateInformations {
+	static getDetailsInformationFromDate(input: string | Date | number): DateServiceUtilDateInformations {
 		const date = new Date(input);
 
 		return {

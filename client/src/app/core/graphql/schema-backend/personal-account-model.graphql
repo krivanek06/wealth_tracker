@@ -22,6 +22,7 @@ fragment PersonalAccountDailyData on PersonalAccountDailyData {
 
 fragment PersonalAccountMonthlyDataOverview on PersonalAccountMonthlyData {
 	id
+	personalAccountId
 	month
 	year
 	dailyEntries
@@ -36,11 +37,15 @@ fragment PersonalAccountMonthlyDataDetail on PersonalAccountMonthlyData {
 	}
 }
 
-fragment PersonalAccountOverview on PersonalAccount {
+fragment PersonalAccountOverviewBasic on PersonalAccount {
 	id
 	name
 	createdAt
 	userId
+}
+
+fragment PersonalAccountOverview on PersonalAccount {
+	...PersonalAccountOverviewBasic
 
 	yearlyAggregaton {
 		...PersonalAccountAggregationData

@@ -7,3 +7,5 @@ export const Void = new GraphQLScalarType({
 	parseValue: () => null,
 	serialize: () => null,
 });
+
+export const PUB_SUB = 'PUB_SUB';

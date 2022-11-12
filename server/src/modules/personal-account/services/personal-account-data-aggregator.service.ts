@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../prisma';
 import { LodashServiceUtil } from '../../../utils';
 import { PersonalAccount, PersonalAccountDailyData } from '../entities';
 import {
@@ -7,19 +6,19 @@ import {
 	PersonalAccountDailyDataExtended,
 	PersonalAccountWeeklyAggregationOutput,
 } from '../outputs';
+import { PersonalAccountMonthlyService } from './personal-account-monthly.service';
 import { PersonalAccountTagService } from './personal-account-tag.service';
 
 @Injectable()
 export class PersonalAccounDataAggregatorService {
-	constructor(private prisma: PrismaService, private personalAccountTagService: PersonalAccountTagService) {}
+	constructor(
+		private personalAccountTagService: PersonalAccountTagService,
+		private personalAccountMonthlyService: PersonalAccountMonthlyService
+	) {}
 
-	async getAllYearlyAggregatedData({ id }: PersonalAccount): Promise<PersonalAccountAggregationDataOutput[]> {
+	async getAllYearlyAggregatedData(personalAccount: PersonalAccount): Promise<PersonalAccountAggregationDataOutput[]> {
 		// load user all monthly data - already grouped by YEAR and MONTH
-		const monthlyData = await this.prisma.personalAccountMonthlyData.findMany({
-			where: {
-				personalAccountId: id,
-			},
-		});
+		const monthlyData = await this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount);
 
 		// merge together all daily data for each month
 		const allDailyData = monthlyData.reduce(
@@ -54,13 +53,11 @@ export class PersonalAccounDataAggregatorService {
 	 * @returns aggregated daily data (from personalAccountMonthlyData) by how much money was spent/earned
 	 * by each distinct tag in a distinct [year, month, week] period.
 	 * */
-	async getAllWeeklyAggregatedData({ id }: PersonalAccount): Promise<PersonalAccountWeeklyAggregationOutput[]> {
+	async getAllWeeklyAggregatedData(
+		personlaAccount: PersonalAccount
+	): Promise<PersonalAccountWeeklyAggregationOutput[]> {
 		// load user all monthly data - already grouped by YEAR and MONTH
-		const monthlyData = await this.prisma.personalAccountMonthlyData.findMany({
-			where: {
-				personalAccountId: id,
-			},
-		});
+		const monthlyData = await this.personalAccountMonthlyService.getMonthlyDataByAccountId(personlaAccount);
 
 		// adding 'YEAR' and 'MONTH' keys to the daily data for easier manipulation
 		const monthlyDataModified = monthlyData.map((m) => {

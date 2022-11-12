@@ -1,5 +1,6 @@
 <ng-container *ngFor="let item of yearlyExpenseTags">
 	<button
+		*ngIf="item.entries !== 0"
 		mat-button
 		[style.--valueItemColor]="item.tag.color"
 		[style.--valueItemColorActive]="item.tag.color + '44'"
@@ -13,7 +14,9 @@
 			</div>
 			<div class="flex flex-row gap-2">
 				<div class="text-base text-gray-400">{{ item.value | currency}}</div>
-				<div class="text-gray-500 text-base">({{ item.value / yearlyExpenseTotal| percent: '1.2-2' }})</div>
+				<div *ngIf="yearlyExpenseTotal" class="text-gray-500 text-base">
+					({{ item.value / yearlyExpenseTotal| percent: '1.2-2' }})
+				</div>
 			</div>
 		</div>
 	</button>

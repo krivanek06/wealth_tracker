@@ -1,6 +1,7 @@
 export enum ChartType {
 	line = 'line',
 	column = 'column',
+	columnStack = 'column',
 	pie = 'pie',
 	area = 'area',
 	areaChange = 'area-change',

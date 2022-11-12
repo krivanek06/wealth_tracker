@@ -13,7 +13,12 @@ NoDataToDisplay(Highcharts);
 })
 export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges {
 	@Input() categories!: string[];
-	@Input() chartData!: GenericChartSeries[] | null;
+
+	// contains [total growth, total income, total expense]
+	@Input() accountOverviewChartData: GenericChartSeries[] = [];
+
+	// contains expense by tags
+	@Input() expenseTagsChartData: GenericChartSeries[] = [];
 
 	Highcharts: typeof Highcharts = Highcharts;
 	chart: any;
@@ -30,24 +35,35 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 		};
 	}
 	ngOnChanges(changes: SimpleChanges): void {
-		if (changes?.['chartData']?.currentValue) {
+		if (changes?.['accountOverviewChartData']?.currentValue) {
 			this.initChart();
-
-			const chartData = changes?.['chartData']?.currentValue;
-			this.chartOptions.series = [...chartData].map((d, index) => {
-				return {
-					name: d.name,
-					type: d.type,
-					color: d.color,
-					data: d.data,
-					dataLabels: {
-						enabled: index === 0,
-					},
-					yAxis: index === 1 || index === 2 ? 1 : undefined,
-				} as Highcharts.SeriesOptionsType;
-			});
+			this.initSeries();
 			(this.chartOptions.xAxis as any).categories = this.categories;
 		}
+	}
+
+	private initSeries(): void {
+		if (this.accountOverviewChartData.length === 0) {
+			this.chartOptions.series = [];
+			return;
+		}
+
+		this.chartOptions.series = [...this.accountOverviewChartData, ...this.expenseTagsChartData].map((d, index) => {
+			return {
+				name: d.name,
+				type: d.type,
+				color: d.color,
+				data: d.data,
+				zIndex: index === 0 ? 100 : 1, // bring line chart into the front
+				opacity: index <= 3 ? 1 : 0.7,
+				visible: d.name !== 'Income',
+				dataLabels: {
+					enabled: d.name === 'Total' || d.name === 'Expense',
+				},
+				stack: index === 0 ? '' : index == 1 ? 'Income' : index == 2 ? 'Expense' : 'ExpenseByTag',
+				yAxis: index === 0 ? 1 : undefined,
+			} as Highcharts.SeriesOptionsType;
+		});
 	}
 
 	ngOnInit(): void {}
@@ -97,6 +113,13 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 				visible: true,
 				crosshair: true,
 				categories: [],
+				labels: {
+					rotation: -20,
+					style: {
+						color: '#8e8e8e',
+						font: '10px Trebuchet MS, Verdana, sans-serif',
+					},
+				},
 			},
 			title: {
 				text: 'Account overview',
@@ -113,7 +136,20 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 				enabled: false,
 			},
 			legend: {
-				enabled: false,
+				enabled: true,
+				itemStyle: {
+					color: '#acacac',
+					cursor: 'pointer',
+				},
+				itemHoverStyle: {
+					color: '#241eaa',
+				},
+				itemHiddenStyle: {
+					color: '#494949',
+				},
+				verticalAlign: 'top',
+				align: 'right',
+				layout: 'horizontal',
 			},
 			tooltip: {
 				outside: true,
@@ -131,9 +167,25 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 				pointFormatter: function () {
 					const that = this as any;
 					const value = that.y;
-					const line1 = `<tr><td style="color: ${that.series.color}">● ${that.series.name} </td>`;
-					const line2 = `<td style="text-align: right"><b>${that.y} USD</b></td></tr>`;
-					return `${line1} ${line2}`;
+
+					// do not show 0 value in tooltip
+					if (value === 0) {
+						return '';
+					}
+
+					// add divider for better formatting
+					const addDivider = that.series.name === 'Expense' || that.series.name === 'Total';
+					const valueColor = '#b2b2b2'; // that.series.name === 'Expense' || that.series.name === 'Income' ? that.series.color :
+
+					const line = `
+            <tr>
+              <td style="color: ${that.series.color}">● ${that.series.name} </td>
+              <td style="text-align: right"><b style="color: ${valueColor}">$${that.y}</b> USD</td>
+            </tr>
+          `;
+					const lineDivider = addDivider ? `<td colspan="2"><hr/></td>` : '';
+
+					return `${line} ${lineDivider}`;
 				},
 				footerFormat: '</table>',
 				valueDecimals: 2,
@@ -155,7 +207,8 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 					threshold: null,
 				},
 				column: {
-					pointPadding: 0.2,
+					// pointPadding: 0.2,
+					stacking: 'normal',
 				},
 				series: {
 					borderWidth: 0,

@@ -20,9 +20,13 @@ export class PersonalAccountTagService {
 		return this.defaultTags;
 	}
 
-	getDefaultTagById(tagId: string): PersonalAccountTag {
+	getDefaultTagById(tagId: string): PersonalAccountTag | null {
 		const allTags = this.getDefaultTags();
-		return allTags.find((t) => t.id === tagId);
+		const tag = allTags.find((t) => t.id === tagId);
+		if (!tag) {
+			throw new HttpException(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND_BY_ID, HttpStatus.NOT_FOUND);
+		}
+		return tag;
 	}
 
 	getDefaultTagsByTypes(tagType: PersonalAccountTagDataType): PersonalAccountTag[] {

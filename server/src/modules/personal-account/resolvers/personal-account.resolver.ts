@@ -30,6 +30,13 @@ export class PersonalAccountResolver {
 		return this.personalAccountService.getPersonalAccounts(authUser.id);
 	}
 
+	@Query(() => PersonalAccount, {
+		description: 'Returns personal accounts by Id',
+	})
+	getPersonalAccountById(@ReqUser() authUser: RequestUser, @Input() input: string): Promise<PersonalAccount> {
+		return this.personalAccountService.getPersonalAccountById(input);
+	}
+
 	/* Mutation */
 	@Mutation(() => PersonalAccount)
 	createPersonalAccount(

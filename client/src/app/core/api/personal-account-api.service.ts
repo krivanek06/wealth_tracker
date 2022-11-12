@@ -44,6 +44,7 @@ import {
 import {
 	GetPersonalAccountByIdGQL,
 	PersonalAccountAggregationDataOutput,
+	PersonalAccountWeeklyAggregationFragment,
 	PersonalAccountWeeklyAggregationOutput,
 } from './../graphql/schema-backend.service';
 
@@ -110,14 +111,6 @@ export class PersonalAccountApiService {
 		return fragment;
 	}
 
-	getDefaultTagsFromCache(tagId: string): PersonalAccountTag {
-		const tag = this.defaultTagsFromCache.find((t) => t.id == tagId);
-		if (!tag) {
-			throw new Error('Unable to find the correct tag');
-		}
-		return tag;
-	}
-
 	getPersonalAccountFromCachce(personalAccountId: string): PersonalAccountOverviewFragment {
 		const fragment = this.apollo.client.readFragment<PersonalAccountOverviewFragment>({
 			id: `PersonalAccount:${personalAccountId}`,
@@ -131,21 +124,6 @@ export class PersonalAccountApiService {
 		}
 
 		return fragment;
-	}
-
-	getMonthlyDataOverviewFromCache(
-		personalAccountId: string,
-		date: string
-	): PersonalAccountMonthlyDataOverviewFragment | undefined {
-		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(date);
-
-		// load personal account from cache
-		const personalAccount = this.getPersonalAccountFromCachce(personalAccountId);
-
-		// get monthly data from personal account
-		const monthlyData = personalAccount.monthlyData.find((d) => d.year === year && d.month === month);
-
-		return monthlyData;
 	}
 
 	/* ========= READING FROM API ========= */
@@ -276,30 +254,11 @@ export class PersonalAccountApiService {
 	createPersonalAccountDailyEntry(
 		input: PersonalAccountDailyDataCreate
 	): Observable<FetchResult<CreatePersonalAccountDailyEntryMutation>> {
-		const { week } = DateServiceUtil.getDetailsInformationFromDate(input.date);
-		const tag = this.getDefaultTagsFromCache(input.tagId);
-		const monthlyData = this.getMonthlyDataOverviewFromCache(input.personalAccountId, input.date);
-
 		return this.createPersonalAccountDailyEntryGQL.mutate(
 			{
 				input,
 			},
 			{
-				optimisticResponse: {
-					__typename: 'Mutation',
-					createPersonalAccountDailyEntry: {
-						__typename: 'PersonalAccountDailyData',
-						id: new Date().toISOString(),
-						date: new Date().toDateString(),
-						monthlyDataId: monthlyData?.id || '',
-						tagId: input.tagId,
-						value: input.value,
-						week,
-						tag: {
-							...tag,
-						},
-					},
-				},
 				update: (store: DataProxy, { data }) => {
 					const dailyData = data?.createPersonalAccountDailyEntry as PersonalAccountDailyDataFragment;
 					// udpate yearly, monthly, weekly aggregation
@@ -416,24 +375,40 @@ export class PersonalAccountApiService {
 		const dateDetails = DateServiceUtil.getDetailsInformationFromDate(Number(dailyData.date));
 		const multiplyer = operation === 'increase' ? 1 : -1; // add or remove data from aggregation
 
-		// update yearlyAggregaton that match tagId
-		// TODO: check if tag exists
-		// TODO - removing item to update chart data - OK
-		const yearlyAggregaton = personalAccount.yearlyAggregaton.map((data) => {
-			if (data.tag.id === dailyData.tagId) {
-				return { ...data, value: data.value + dailyData.value * multiplyer, entries: data.entries + 1 * multiplyer };
-			}
-			return data;
-		});
+		const isTagInYearlyAggregatopm = personalAccount.yearlyAggregaton.findIndex((d) => d.tag.id === dailyData.tag.id);
+
+		// update yearlyAggregaton that match tagId or add new yearly data if not found
+		const yearlyAggregaton: PersonalAccountAggregationDataOutput[] =
+			isTagInYearlyAggregatopm !== -1
+				? personalAccount.yearlyAggregaton.map((data) => {
+						if (data.tag.id === dailyData.tagId) {
+							return {
+								...data,
+								value: data.value + dailyData.value * multiplyer,
+								entries: data.entries + 1 * multiplyer,
+							};
+						}
+						return data;
+				  })
+				: [
+						...personalAccount.yearlyAggregaton,
+						{
+							__typename: 'PersonalAccountAggregationDataOutput',
+							entries: 1,
+							tag: dailyData.tag,
+							value: dailyData.value,
+						},
+				  ];
+
+		// construct weekly aggregation ID
+		const weeklyAggregationId = `${dateDetails.year}-${dateDetails.month}-${dateDetails.week}`;
 
 		// if -1 means dailyData was created for not yet saved monthly data
 		const weeklyAggregatonIndex = personalAccount.weeklyAggregaton.findIndex(
-			(weeklyData) =>
-				weeklyData.year === dateDetails.year &&
-				weeklyData.month === dateDetails.month &&
-				weeklyData.week === dateDetails.week
+			(weeklyData) => weeklyData.id === weeklyAggregationId
 		);
-		// if -f means there is not weekly aggregation for specific tag
+
+		// if -1 means there is not weekly aggregation for specific TAG
 		const weeklyAggregatonDataIndex = personalAccount.weeklyAggregaton[weeklyAggregatonIndex]?.data?.findIndex(
 			(d) => d.tag.id === dailyData.tag.id
 		);
@@ -441,7 +416,7 @@ export class PersonalAccountApiService {
 		// only used when monthly data not exists
 		const weeklyAggregationData: PersonalAccountWeeklyAggregationOutput = {
 			__typename: 'PersonalAccountWeeklyAggregationOutput',
-			id: `${dateDetails.year}-${dateDetails.month}-${dateDetails.week}`,
+			id: weeklyAggregationId,
 			year: dateDetails.year,
 			month: dateDetails.month,
 			week: dateDetails.week,
@@ -455,27 +430,42 @@ export class PersonalAccountApiService {
 			],
 		};
 
-		// only used when no tag for specific week
-		const aggregationDailyData: PersonalAccountAggregationDataOutput = {
-			__typename: 'PersonalAccountAggregationDataOutput',
-			entries: 1,
-			tag: dailyData.tag,
-			value: dailyData.value,
-		};
-
-		const weeklyAggregaton =
-			weeklyAggregatonIndex === -1 // append weeklyAggregationData to other
-				? [...personalAccount.weeklyAggregaton, weeklyAggregationData]
-				: weeklyAggregatonDataIndex === -1 // new tag for existing week
-				? personalAccount.weeklyAggregaton.map((d) =>
-						d.id === weeklyAggregationData.id ? { ...d, data: [aggregationDailyData] } : { ...d }
+		/**
+		 * update weekly aggregation
+		 * - change value for tag on a specific week
+		 * - add tag value (if not present) for a specific week
+		 * - add whole new week with tag value if week not exist and sort by date
+		 */
+		const weeklyAggregaton: PersonalAccountWeeklyAggregationFragment[] =
+			weeklyAggregatonIndex === -1
+				? // append new weeklyAggregationData to other, sort by date
+				  [...personalAccount.weeklyAggregaton, weeklyAggregationData].sort(
+						(a, b) => new Date(a.year, a.month, a.week).getTime() - new Date(b.year, b.month, b.week).getTime()
 				  )
-				: // increase value for saved tag
+				: weeklyAggregatonDataIndex === -1
+				? // append new weekly TAG aggregation
 				  personalAccount.weeklyAggregaton.map((d) =>
-						d.id === weeklyAggregationData.id
+						d.id === weeklyAggregationId
+							? {
+									...d,
+									data: [
+										{
+											__typename: 'PersonalAccountAggregationDataOutput',
+											entries: 1,
+											tag: dailyData.tag,
+											value: dailyData.value,
+										},
+									],
+							  }
+							: { ...d }
+				  )
+				: // increase value for saved tag on specific week
+				  personalAccount.weeklyAggregaton.map((d) =>
+						d.id === weeklyAggregationId
 							? {
 									...d,
 									data: d.data.map((dDaily) =>
+										// found tag we want to mutate
 										dDaily.tag.id === dailyData.tag.id
 											? {
 													...dDaily,
@@ -487,62 +477,6 @@ export class PersonalAccountApiService {
 							  }
 							: { ...d }
 				  );
-
-		// update weeklyAggregaton that match tagId and month & week
-		// will not update if weeklyAggregatonIndex === -1 or weeklyAggregatonDataIndex === -1
-		// const weeklyAggregaton = personalAccount.weeklyAggregaton.map((weeklyData) => {
-		// 	// find specific week that needs to be updated
-		// 	if (weeklyData.year === dateDetails.year && weeklyData.month === dateDetails.month && weeklyData.week === dateDetails.week) {
-		// 		// update data in array that match tagId
-		// 		const weeklyAggregatonDailyData = weeklyData.data.map((d) => {
-		// 			if (d.tag.id === dailyData.tagId) {
-		// 				return { ...d, entries: d.entries + 1 * multiplyer, value: d.value + dailyData.value * multiplyer };
-		// 			}
-
-		// 			// not upadted daily data
-		// 			return d;
-		// 		});
-		// 		// upadted weekly data
-		// 		return { ...weeklyData, data: weeklyAggregatonDailyData };
-
-		// 	}
-
-		// 	// not updated weekly data
-		// 	return weeklyData;
-		// });
-
-		// const weeklyAggregaton = [...personalAccount.weeklyAggregaton];
-
-		// if (weeklyAggregatonIndex === -1) {
-		// 	// dailyData for not yet saved weekly data
-		// 	weeklyAggregaton.push({
-		// 		__typename: 'PersonalAccountWeeklyAggregationOutput',
-		// 		id: `${dateDetails.year}-${dateDetails.month}-${dateDetails.week}`,
-		// 		year: dateDetails.year,
-		// 		month: dateDetails.month,
-		// 		week: dateDetails.week,
-		// 		data: [
-		// 			{
-		// 				__typename: 'PersonalAccountAggregationDataOutput',
-		// 				entries: 1,
-		// 				tag: dailyData.tag,
-		// 				value: dailyData.value,
-		// 			},
-		// 		],
-		// 	});
-		// 	// sort ASC
-		// 	weeklyAggregaton.sort((a, b) => (a.id < b.id ? 1 : -1));
-		// } else if (weeklyAggregatonDataIndex === -1) {
-		// 	weeklyAggregaton[weeklyAggregatonIndex].data.push({
-		// 		__typename: 'PersonalAccountAggregationDataOutput',
-		// 		entries: 1,
-		// 		tag: dailyData.tag,
-		// 		value: dailyData.value,
-		// 	});
-		// } else {
-		// 	weeklyAggregaton[weeklyAggregatonIndex].data[weeklyAggregatonDataIndex].entries += 1 * multiplyer;
-		// 	weeklyAggregaton[weeklyAggregatonIndex].data[weeklyAggregatonDataIndex].value += dailyData.value * multiplyer;
-		// }
 
 		// update monthly data entries + income/expense
 		const newMonthlyIncome = (dailyData.tag.type === TagDataType.Income ? dailyData.value : 0) * multiplyer;

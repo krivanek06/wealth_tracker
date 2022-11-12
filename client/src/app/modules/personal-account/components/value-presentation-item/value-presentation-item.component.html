@@ -1,5 +1,6 @@
 <ng-container *ngFor="let item of yearlyExpenseTags">
 	<button
+		*ngIf="item.entries !== 0"
 		mat-button
 		[style.--valueItemColor]="item.tag.color"
 		[style.--valueItemColorActive]="item.tag.color + '44'"

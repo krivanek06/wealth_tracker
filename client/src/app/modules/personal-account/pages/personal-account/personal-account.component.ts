@@ -67,8 +67,6 @@ export class PersonalAccountComponent implements OnInit {
 			.getPersonalAccountOverviewById(this.personalAccountBasic.id)
 			.pipe(map((account) => this.personalAccountChartService.getChartCategories(account)));
 
-		this.categories$.subscribe((c) => console.log('categories', c));
-
 		// construct expense chart by the selected expenses tags
 		this.expenseTagsChartData$ = combineLatest([
 			// selected expenses

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { PersonalAccountOverviewFragment, PersonalAccountTagFragment, TagDataType } from '../../../core/graphql';
 import { ChartType, GenericChartSeries } from '../../../shared/models';
 import { DateServiceUtil } from '../../../shared/utils';
-import { AccountState } from '../models';
+import { AccountState, TagColors } from '../models';
 
 @Injectable({
 	providedIn: 'root',
@@ -115,12 +115,17 @@ export class PersonalAccountChartService {
 		);
 
 		// create format
-		const incomeSeries: GenericChartSeries = { name: 'Income', data: income, type: ChartType.column, color: 'green' };
+		const incomeSeries: GenericChartSeries = {
+			name: 'Income',
+			data: income,
+			type: ChartType.column,
+			color: TagColors.income,
+		};
 		const expenseSeries: GenericChartSeries = {
 			name: 'Expense',
 			data: expense,
 			type: ChartType.line,
-			color: '#d8270a77',
+			color: TagColors.expense,
 		};
 
 		return [incomeSeries, expenseSeries];

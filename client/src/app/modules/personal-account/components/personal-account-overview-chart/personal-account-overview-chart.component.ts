@@ -48,13 +48,7 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 			return;
 		}
 
-		// TODO: disable clicking on legend except total & income
-
-		this.chartOptions.series = [
-			...this.accountOverviewChartData,
-			//this.accountOverviewChartData[1],
-			...this.expenseTagsChartData,
-		].map((d, index) => {
+		this.chartOptions.series = [...this.accountOverviewChartData, ...this.expenseTagsChartData].map((d, index) => {
 			return {
 				name: d.name,
 				type: d.type,
@@ -62,8 +56,9 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 				data: d.data,
 				zIndex: index === 0 ? 100 : 1, // bring line chart into the front
 				opacity: index <= 3 ? 1 : 0.7,
+				visible: d.name !== 'Income',
 				dataLabels: {
-					enabled: index === 0,
+					enabled: d.name === 'Total' || d.name === 'Expense',
 				},
 				stack: index === 0 ? '' : index == 1 ? 'Income' : index == 2 ? 'Expense' : 'ExpenseByTag',
 				yAxis: index === 0 ? 1 : undefined,

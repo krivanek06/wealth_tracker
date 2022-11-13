@@ -38,14 +38,11 @@ export class InvestmentAccountActiveHoldingsComponent implements OnInit {
 
 	displayedColumns: string[] = [
 		'symbol',
-		'invested',
-		'units',
-		'bep',
 		'price',
-		'total',
+		'invested',
+		'invested_xs',
 		'volume',
-		'portfolio_prct',
-		'market_cap',
+		'statistics',
 		'52WeekRange',
 		'addditional_info',
 	];

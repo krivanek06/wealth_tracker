@@ -30,7 +30,7 @@ export class PersonalAccountDailyEntriesTableComponent implements OnInit {
 
 	ngOnInit(): void {}
 
-	identify(index: number, item: PersonalAccountDailyDataFragment): string {
+	identity(index: number, item: PersonalAccountDailyDataFragment): string {
 		return item.id;
 	}
 

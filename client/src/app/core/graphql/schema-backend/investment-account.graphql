@@ -1,7 +1,7 @@
 ### Investment account
 
-query GetInvestmentAccountsById($input: String!) {
-	getInvestmentAccountsById(input: $input) {
+query GetInvestmentAccountById($input: String!) {
+	getInvestmentAccountById(input: $input) {
 		...InvestmentAccount
 	}
 }
@@ -12,19 +12,21 @@ query GetInvestmentAccounts {
 	}
 }
 
+mutation CreateInvestmentAccount($input: InvestmentAccountCreateInput!) {
+	createInvestmentAccount(input: $input) {
+		...InvestmentAccountOverview
+	}
+}
+
 mutation EditInvestmentAccount($input: InvestmentAccountEditInput!) {
 	editInvestmentAccount(input: $input) {
-		id
-		name
-		createdAt
+		...InvestmentAccountOverview
 	}
 }
 
 mutation DeleteInvestmentAccount($input: String!) {
 	deleteInvestmentAccount(input: $input) {
-		id
-		name
-		createdAt
+		...InvestmentAccountOverview
 	}
 }
 

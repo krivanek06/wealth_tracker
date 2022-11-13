@@ -17,7 +17,6 @@ fragment InvestmentAccountHolding on InvestmentAccountHolding {
 	investmentAccountId
 	type
 	sector
-	isActive
 	holdingHistory {
 		...InvestmentAccountHoldingHistory
 	}
@@ -36,7 +35,6 @@ fragment InvestmentAccountActiveHoldingOutput on InvestmentAccountActiveHoldingO
 	investmentAccountId
 	type
 	sector
-	isActive
 	holdingHistory {
 		...InvestmentAccountHoldingHistory
 	}

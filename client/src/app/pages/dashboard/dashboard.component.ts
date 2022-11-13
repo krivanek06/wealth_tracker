@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PersonalAccountApiService } from './../../core/api/personal-account-api.service';
-import { PersonalAccountOverviewBasicFragment } from './../../core/graphql/schema-backend.service';
+import { InvestmentAccountApiService, PersonalAccountApiService } from '../../core/api';
+import { InvestmentAccountOverviewFragment, PersonalAccountOverviewBasicFragment } from '../../core/graphql';
 
 @Component({
 	selector: 'app-dashboard',
@@ -11,9 +11,14 @@ import { PersonalAccountOverviewBasicFragment } from './../../core/graphql/schem
 })
 export class DashboardComponent implements OnInit {
 	personalAccountBasic$!: Observable<PersonalAccountOverviewBasicFragment[]>;
-	constructor(private personalAccountApiService: PersonalAccountApiService) {}
+	investmentAccountsOverivew$!: Observable<InvestmentAccountOverviewFragment[]>;
+	constructor(
+		private personalAccountApiService: PersonalAccountApiService,
+		private InvestmentAccountApiService: InvestmentAccountApiService
+	) {}
 
 	ngOnInit(): void {
 		this.personalAccountBasic$ = this.personalAccountApiService.getPersonalAccounts();
+		this.investmentAccountsOverivew$ = this.InvestmentAccountApiService.getInvestmentAccounts();
 	}
 }

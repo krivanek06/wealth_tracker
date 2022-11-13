@@ -8,7 +8,11 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { ProgressItemModule } from '../../../../shared/components';
 import { LargeNumberFormatterPipe } from '../../../../shared/pipes';
-import { DefaultImgDirective, StylePaginatorDirective } from './../../../../shared/directives';
+import {
+	DefaultImgDirective,
+	PerceptageIncreaseDirective,
+	StylePaginatorDirective,
+} from './../../../../shared/directives';
 import { InvestmentAccountActiveHoldingsComponent } from './investment-account-active-holdings.component';
 
 @NgModule({
@@ -25,6 +29,7 @@ import { InvestmentAccountActiveHoldingsComponent } from './investment-account-a
 		DefaultImgDirective,
 		LargeNumberFormatterPipe,
 		ProgressItemModule,
+		PerceptageIncreaseDirective,
 	],
 	exports: [InvestmentAccountActiveHoldingsComponent],
 })

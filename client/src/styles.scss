@@ -21,6 +21,11 @@ body {
 
 	@screen lg {
 		margin: auto;
+		width: 95%;
+	}
+
+	@screen xl {
+		margin: auto;
 		width: 85%;
 	}
 }

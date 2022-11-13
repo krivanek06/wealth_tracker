@@ -9,6 +9,11 @@ export class InvestmentAccountHoldingHistory implements InvestmentAccountHolding
 	@Field(() => String)
 	date: string;
 
+	@Field(() => Date, {
+		description: 'Date when entry was created',
+	})
+	createdAt: Date;
+
 	@Field(() => Float)
 	units: number;
 

@@ -15,6 +15,17 @@ export class InvestmentAccountHoldingResolver {
 		private investmentAccountHoldingService: InvestmentAccountHoldingService,
 		private assetGeneralService: AssetGeneralService
 	) {}
+	/* Queries */
+
+	/**
+	 * TODO complete
+	 * @param input
+	 * @param authUser
+	 * @returns active holdings for some specific date
+	 */
+	// getInvestmentAccountActiveHoldingsForDate(): Promise<InvestmentAccountHolding[]> {}
+
+	/* Mutations */
 
 	@Mutation(() => InvestmentAccountHolding)
 	createInvestmentAccountHolding(

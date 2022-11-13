@@ -12,6 +12,15 @@ query GetInvestmentAccounts {
 	}
 }
 
+query GetInvestmentAccountGrowth($input: InvestmentAccountGrowthInput!) {
+	getInvestmentAccountGrowth(input: $input) {
+		invested
+		cash
+		date
+		ownedAssets
+	}
+}
+
 mutation CreateInvestmentAccount($input: InvestmentAccountCreateInput!) {
 	createInvestmentAccount(input: $input) {
 		...InvestmentAccountOverview

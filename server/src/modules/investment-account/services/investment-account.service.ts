@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma';
 import { AssetGeneralService } from '../../asset-manager';
 import { INVESTMENT_ACCOUNT_ERROR, INVESTMENT_ACCOUNT_MAX } from '../dto';
-import { InvestmentAccount } from '../entities';
+import { InvestmentAccount, InvestmentAccountHoldingHistory } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
 import { InvestmentAccountGrowth } from '../outputs';
 import { MomentServiceUtil } from './../../../utils/date-functionts';
@@ -44,9 +44,27 @@ export class InvestmentAccountService {
 
 		// create result
 		const result = activeHoldings.map((holding) => {
+			// get index from which we will aggregate currentHistory
+			// reason: user may have added N stock on one date then M another -> N + M
+			const currentHistoryIndex = holding.holdingHistory.map((d) => d.units).lastIndexOf(0);
+			// if never sold, index is -1
+			const currentHistoryIndexStart = currentHistoryIndex === -1 ? 0 : currentHistoryIndex;
+			// aggregates units & investedAmount
+			const currentHistory = holding.holdingHistory.slice(currentHistoryIndexStart).reduce((acc, curr) => {
+				if (!acc?.itemId) {
+					return { ...curr };
+				}
+				return { ...curr, units: acc.units + curr.units, investedAmount: acc.investedAmount + curr.investedAmount };
+			}, {} as InvestmentAccountHoldingHistory);
+
 			const assetGeneral = activeHoldingAssetGeneral.find((asset) => asset.id === holding.assetId);
 			const merge: InvestmentAccountActiveHoldingOutput = {
-				...holding,
+				id: holding.id,
+				assetId: holding.assetId,
+				type: holding.type,
+				sector: holding.sector,
+				investmentAccountId: holding.investmentAccountId,
+				currentHistory: currentHistory,
 				assetGeneral,
 			};
 			return merge;
@@ -56,8 +74,6 @@ export class InvestmentAccountService {
 	}
 
 	/**
-	 * TODO: maybe move this to the FE ? - what if I will add/remove stocks
-	 * TODO: then this has to always recalculated
 	 * Returns the investment account history growth, based
 	 * on the input values
 	 *

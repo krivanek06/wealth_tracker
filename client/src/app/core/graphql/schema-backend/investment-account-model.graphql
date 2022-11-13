@@ -35,7 +35,7 @@ fragment InvestmentAccountActiveHoldingOutput on InvestmentAccountActiveHoldingO
 	investmentAccountId
 	type
 	sector
-	holdingHistory {
+	currentHistory {
 		...InvestmentAccountHoldingHistory
 	}
 	assetGeneral {
@@ -45,9 +45,6 @@ fragment InvestmentAccountActiveHoldingOutput on InvestmentAccountActiveHoldingO
 
 fragment InvestmentAccount on InvestmentAccount {
 	...InvestmentAccountOverview
-	holdings {
-		...InvestmentAccountHolding
-	}
 	cashChange {
 		...InvestmentAccountCashChange
 	}

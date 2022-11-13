@@ -17,7 +17,7 @@
 					<div class="flex flex-row sm:flex-col gap-x-2">
 						<span class="g-color-text-normal flex gap-1 items-center">
 							<span>{{ row.assetId }}</span>
-							<span class="hidden sm:table-cell">({{ row.holdingHistory[row.holdingHistory.length -1].units }})</span>
+							<span class="hidden sm:table-cell">({{ row.currentHistory.units }})</span>
 						</span>
 						<span class="text-gray-500 hidden xs:table-cell sm:hidden">|</span>
 						<span class="text-gray-500 hidden xs:table-cell sm:hidden">{{ row.sector }}</span>
@@ -25,9 +25,8 @@
 
 					<!-- Price * units | BEP  -->
 					<div class="text-xs text-gray-500 table-cell sm:hidden">
-						{{ row.assetGeneral.assetQuote.price | currency }} * {{
-						row.holdingHistory[row.holdingHistory.length-1].units }} | {{ (row.holdingHistory[row.holdingHistory.length
-						-1].investedAmount / row.holdingHistory[row.holdingHistory.length-1].units) | currency }}
+						{{ row.assetGeneral.assetQuote.price | currency }} * {{ row.currentHistory.units }} | {{
+						(row.currentHistory.investedAmount / row.currentHistory.units) | currency }}
 					</div>
 				</div>
 			</div>
@@ -55,16 +54,16 @@
 		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Invested +/-</th>
 		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">
 			<ng-container
-				*ngIf="row.holdingHistory[row.holdingHistory.length -1].investedAmount /
-		      	row.holdingHistory[row.holdingHistory.length-1].units as BEP"
+				*ngIf="row.currentHistory.investedAmount /
+		      	row.currentHistory.units as BEP"
 			>
-				<div>{{ row.holdingHistory[row.holdingHistory.length -1].investedAmount | currency }}</div>
+				<div>{{ row.currentHistory.investedAmount | currency }}</div>
 				<div
 					appPerceptageIncrease
 					[useCurrencySign]="true"
 					[currentValues]="{
-            value: row.assetGeneral.assetQuote.price  * row.holdingHistory[row.holdingHistory.length-1].units,
-            valueToCompare: BEP  * row.holdingHistory[row.holdingHistory.length-1].units
+            value: row.assetGeneral.assetQuote.price  * row.currentHistory.units,
+            valueToCompare: BEP  * row.currentHistory.units
         }"
 				></div>
 			</ng-container>
@@ -78,17 +77,17 @@
 			<!-- show invested amount -->
 			<ng-container *ngIf="!showDailyChange">
 				<ng-container
-					*ngIf="row.holdingHistory[row.holdingHistory.length -1].investedAmount /
-			      row.holdingHistory[row.holdingHistory.length-1].units as BEP"
+					*ngIf="row.currentHistory.investedAmount /
+			      row.currentHistory.units as BEP"
 				>
-					<div class="text-end">{{ row.holdingHistory[row.holdingHistory.length -1].investedAmount | currency }}</div>
+					<div class="text-end">{{ row.currentHistory.investedAmount | currency }}</div>
 					<div
 						class="justify-end"
 						appPerceptageIncrease
 						[useCurrencySign]="true"
 						[currentValues]="{
-            value: row.assetGeneral.assetQuote.price  * row.holdingHistory[row.holdingHistory.length-1].units,
-            valueToCompare: BEP  * row.holdingHistory[row.holdingHistory.length-1].units
+            value: row.assetGeneral.assetQuote.price  * row.currentHistory.units,
+            valueToCompare: BEP  * row.currentHistory.units
         }"
 					></div>
 				</ng-container>
@@ -132,10 +131,7 @@
 			<!-- BEP -->
 			<div class="flex items-center gap-2">
 				<span class="text-gray-500">BEP:</span>
-				<span>
-					{{ (row.holdingHistory[row.holdingHistory.length -1].investedAmount /
-					row.holdingHistory[row.holdingHistory.length -1].units ) | currency }}</span
-				>
+				<span> {{ (row.currentHistory.investedAmount / row.currentHistory.units ) | currency }}</span>
 			</div>
 
 			<!-- Profolio % -->

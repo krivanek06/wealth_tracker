@@ -34,7 +34,7 @@ export class InvestmentAccountResolver {
 		return this.investmentAccountService.getInvestmentAccountsById(input);
 	}
 
-	// TODO: remove - will be calculated on the UI
+	// TODO: implement caching for assets historical prices: https://docs.nestjs.com/techniques/caching
 	@Query(() => [InvestmentAccountGrowth], {
 		description: 'Returns the investment account history growth, based on the input values',
 		defaultValue: [],

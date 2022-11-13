@@ -1,9 +1,17 @@
 import { Injectable } from '@angular/core';
+import {
+	GetAssetGeneralForSymbolGQL,
+	GetAssetHistoricalPricesStartToEndGQL,
+	SearchAssetBySymbolGQL,
+} from './../graphql/schema-backend.service';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class AssetApiService {
-
-  constructor() { }
+	constructor(
+		private searchAssetBySymbolGQL: SearchAssetBySymbolGQL,
+		private getAssetHistoricalPricesStartToEndGQL: GetAssetHistoricalPricesStartToEndGQL,
+		private getAssetGeneralForSymbolGQL: GetAssetGeneralForSymbolGQL
+	) {}
 }

@@ -33,12 +33,6 @@ export class InvestmentAccountHoldingResolver {
 	}
 
 	/* Resolvers */
-
-	@ResolveField('isActive', () => Boolean)
-	isHoldingActive(@Parent() holding: InvestmentAccountHolding): boolean {
-		return holding.holdingHistory[holding.holdingHistory.length - 1]?.units > 0;
-	}
-
 	@ResolveField('historicalPrices', () => [AssetGeneralHistoricalPricesData], {
 		description: 'Return historical data for a symbol starting from ',
 	})

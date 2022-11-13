@@ -1,0 +1,26 @@
+:host {
+	.mat-column-symbol {
+		min-width: 75px;
+		width: 50%;
+
+		@screen xs {
+			width: 60%;
+		}
+		@screen sm {
+			width: auto;
+			max-width: 80px;
+		}
+	}
+
+	.mat-column-price {
+		min-width: 75px;
+	}
+
+	.mat-column-bep {
+		min-width: 75px;
+	}
+
+	.mat-column-units {
+		min-width: 50px;
+	}
+}

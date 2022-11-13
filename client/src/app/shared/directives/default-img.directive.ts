@@ -8,7 +8,7 @@ export class DefaultImgDirective {
 	@Input() set src(location: string | null | undefined) {
 		this.setImage(this.resolveImage(location));
 	}
-	@Input() imageType: 'default' | 'tags' = 'default';
+	@Input() imageType: 'default' | 'tags' | 'url' = 'default';
 
 	constructor(private imageRef: ElementRef) {}
 
@@ -25,6 +25,10 @@ export class DefaultImgDirective {
 			const formattedName = location.toLowerCase().split(' ').join('_');
 			return `assets/personal-account-tags/${formattedName}.svg`;
 		}
+		if (this.imageType === 'url') {
+			return location;
+		}
+
 		return 'assets/image-placeholder.jpg';
 	}
 }

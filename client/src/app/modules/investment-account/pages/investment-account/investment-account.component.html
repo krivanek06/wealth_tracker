@@ -1,0 +1,5 @@
+<ng-container *ngIf="investmentAccount$ | async as investmentAccount">
+	<app-investment-account-active-holdings
+		[activeHoldings]="investmentAccount.activeHoldings"
+	></app-investment-account-active-holdings>
+</ng-container>

@@ -30,7 +30,7 @@ export class InvestmentAccountResolver {
 		description: 'Returns investment account by id',
 		defaultValue: [],
 	})
-	getInvestmentAccountsById(@ReqUser() authUser: RequestUser, @Input() input: string): Promise<InvestmentAccount> {
+	getInvestmentAccountById(@ReqUser() authUser: RequestUser, @Input() input: string): Promise<InvestmentAccount> {
 		return this.investmentAccountService.getInvestmentAccountsById(input);
 	}
 
@@ -82,6 +82,7 @@ export class InvestmentAccountResolver {
 	@ResolveField('activeHoldings', () => [InvestmentAccountActiveHoldingOutput], {
 		description: 'Returns active holdings from an investment account, at least one unit is owned',
 		defaultValue: [],
+		nullable: false,
 	})
 	getActiveHoldings(@Parent() investmentAccount: InvestmentAccount): Promise<InvestmentAccountActiveHoldingOutput[]> {
 		return this.investmentAccountService.getActiveHoldings(investmentAccount);

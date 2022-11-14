@@ -13,14 +13,23 @@ export class InvestmentAccountComponent implements OnInit {
 	@Input() investmentAccountsOverivew!: InvestmentAccountOverviewFragment;
 
 	investmentAccount$!: Observable<InvestmentAccountFragment>;
+	totalInvestedAmount$!: Observable<number>;
+	currentInvestedAmout$!: Observable<number>;
 
 	constructor(private investmentAccountApiService: InvestmentAccountApiService) {}
 
 	ngOnInit(): void {
-		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(
-			this.investmentAccountsOverivew.id
-		);
+		const investmentId = this.investmentAccountsOverivew.id;
+		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(investmentId);
 
+		this.totalInvestedAmount$ =
+			this.investmentAccountApiService.getInvestmentAccountByIdTotalInvestedAmount(investmentId);
+		this.currentInvestedAmout$ =
+			this.investmentAccountApiService.getInvestmentAccountByIdCurrentInvestedAmout(investmentId);
+
+		// TODO remove
+		this.totalInvestedAmount$.subscribe(console.log);
+		this.currentInvestedAmout$.subscribe(console.log);
 		this.investmentAccount$.subscribe(console.log);
 	}
 }

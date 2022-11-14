@@ -19,8 +19,8 @@
 							<span>{{ row.assetId }}</span>
 							<span class="hidden sm:table-cell">({{ row.currentHistory.units }})</span>
 						</span>
-						<span class="text-gray-500 hidden xs:table-cell sm:hidden">|</span>
-						<span class="text-gray-500 hidden xs:table-cell sm:hidden">{{ row.sector }}</span>
+						<span class="text-gray-500 table-cell sm:hidden">|</span>
+						<span class="text-gray-500 table-cell">{{ row.sector }}</span>
 					</div>
 
 					<!-- Price * units | BEP  -->
@@ -127,7 +127,7 @@
 	<!-- Statistics -->
 	<ng-container matColumnDef="statistics">
 		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Statistics</th>
-		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">
+		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell text-[13px]">
 			<!-- BEP -->
 			<div class="flex items-center gap-2">
 				<span class="text-gray-500">BEP:</span>
@@ -136,10 +136,12 @@
 
 			<!-- Profolio % -->
 			<div class="flex items-center gap-2">
-				<span class="text-gray-500">Portfolio %:</span>
+				<span class="text-gray-500">Portfolio:</span>
 				<span>
-					TODO
-					<!-- 		{{ totalPortfolio ? ((row.summary.marketPrice * row.units / totalPortfolio | percent: '1.2-2')) : 'N/A' }} -->
+					<ng-container *ngIf="totalInvestedAmount">
+						{{ row.currentHistory.investedAmount / totalInvestedAmount | percent: '1.2-2'}}
+					</ng-container>
+					<ng-container *ngIf="!totalInvestedAmount">N/A</ng-container>
 				</span>
 			</div>
 		</td>
@@ -162,7 +164,31 @@
 
 	<ng-container matColumnDef="addditional_info">
 		<th mat-header-cell *matHeaderCellDef class="hidden xl:table-cell">Additional info</th>
-		<td mat-cell *matCellDef="let row" class="hidden xl:table-cell">TODO</td>
+		<td mat-cell *matCellDef="let row" class="hidden xl:table-cell text-[13px]">
+			<div class="flex items-center gap-2">
+				<!-- PE -->
+				<div>
+					<span class="text-gray-500">PE:</span>
+					<span>
+						{{row.assetGeneral.assetQuote.pe ? ( row.assetGeneral.assetQuote.pe | number: '1.2-2' ) : 'N/A' }}</span
+					>
+				</div>
+				<div>|</div>
+				<!-- EPS -->
+				<div>
+					<span class="text-gray-500">EPS:</span>
+					<span>
+						{{ row.assetGeneral.assetQuote.eps ? ( row.assetGeneral.assetQuote.eps | number: '1.2-2') : 'N/A' }}</span
+					>
+				</div>
+			</div>
+
+			<!-- Shares outstanding -->
+			<div class="flex items-center gap-2">
+				<span class="text-gray-500">Shares outstanding:</span>
+				<span> {{ row.assetGeneral.assetQuote.sharesOutstanding | largeNumberFormatter }}</span>
+			</div>
+		</td>
 	</ng-container>
 
 	<tr mat-header-row *matHeaderRowDef="displayedColumns" class="hidden sm:contents"></tr>

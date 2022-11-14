@@ -15,6 +15,17 @@ export class InvestmentAccountHoldingResolver {
 		private investmentAccountHoldingService: InvestmentAccountHoldingService,
 		private assetGeneralService: AssetGeneralService
 	) {}
+	/* Queries */
+
+	/**
+	 * TODO complete
+	 * @param input
+	 * @param authUser
+	 * @returns active holdings for some specific date
+	 */
+	// getInvestmentAccountActiveHoldingsForDate(): Promise<InvestmentAccountHolding[]> {}
+
+	/* Mutations */
 
 	@Mutation(() => InvestmentAccountHolding)
 	createInvestmentAccountHolding(
@@ -33,12 +44,6 @@ export class InvestmentAccountHoldingResolver {
 	}
 
 	/* Resolvers */
-
-	@ResolveField('isActive', () => Boolean)
-	isHoldingActive(@Parent() holding: InvestmentAccountHolding): boolean {
-		return holding.holdingHistory[holding.holdingHistory.length - 1]?.units > 0;
-	}
-
 	@ResolveField('historicalPrices', () => [AssetGeneralHistoricalPricesData], {
 		description: 'Return historical data for a symbol starting from ',
 	})

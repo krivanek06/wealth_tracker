@@ -122,7 +122,7 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 				},
 			},
 			title: {
-				text: 'Account overview',
+				text: '',
 				align: 'left',
 				style: {
 					color: '#bababa',

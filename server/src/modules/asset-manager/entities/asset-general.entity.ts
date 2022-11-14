@@ -63,18 +63,21 @@ export class AssetGeneralQuote implements AssetGeneralQuoteClient {
 
 	@Field(() => Float, {
 		description: 'Only present for stocks',
+		nullable: true,
 	})
-	eps: number;
+	eps: number | null;
 
 	@Field(() => Float, {
 		description: 'Only present for stocks',
+		nullable: true,
 	})
-	pe: number;
+	pe: number | null;
 
-	@Field(() => Float, {
+	@Field(() => String, {
 		description: 'Only present for stocks',
+		nullable: true,
 	})
-	earningsAnnouncement: string;
+	earningsAnnouncement: string | null;
 }
 
 @ObjectType()
@@ -90,7 +93,7 @@ export class AssetGeneral implements AssetGeneralClient {
 	})
 	symbolImageURL: string;
 
-	@Field(() => String)
+	@Field(() => Date)
 	assetIntoLastUpdate: Date;
 
 	@Field(() => AssetGeneralQuote)

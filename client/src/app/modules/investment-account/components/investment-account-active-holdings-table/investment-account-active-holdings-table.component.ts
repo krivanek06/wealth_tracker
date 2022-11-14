@@ -17,12 +17,12 @@ import {
 } from '../../../../core/graphql';
 
 @Component({
-	selector: 'app-investment-account-active-holdings',
-	templateUrl: './investment-account-active-holdings.component.html',
-	styleUrls: ['./investment-account-active-holdings.component.scss'],
+	selector: 'app-investment-account-active-holdings-table',
+	templateUrl: './investment-account-active-holdings-table.component.html',
+	styleUrls: ['./investment-account-active-holdings-table.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InvestmentAccountActiveHoldingsComponent implements OnInit {
+export class InvestmentAccountActiveHoldingsTableComponent implements OnInit {
 	@Output() holdingClickedEmitter = new EventEmitter<InvestmentAccountActiveHoldingOutputFragment>();
 
 	@ViewChild(MatPaginator) paginator!: MatPaginator;

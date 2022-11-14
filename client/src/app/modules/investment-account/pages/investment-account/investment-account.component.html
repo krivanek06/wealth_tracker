@@ -1,6 +1,6 @@
 <ng-container *ngIf="investmentAccount$ | async as investmentAccount">
-	<app-investment-account-active-holdings
+	<app-investment-account-active-holdings-table
 		[totalInvestedAmount]="totalInvestedAmount$ | async"
 		[activeHoldings]="investmentAccount.activeHoldings"
-	></app-investment-account-active-holdings>
+	></app-investment-account-active-holdings-table>
 </ng-container>

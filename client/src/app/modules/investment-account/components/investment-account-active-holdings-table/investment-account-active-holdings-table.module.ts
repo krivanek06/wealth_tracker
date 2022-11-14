@@ -7,16 +7,16 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { ProgressItemModule } from '../../../../shared/components';
-import { LargeNumberFormatterPipe } from '../../../../shared/pipes';
 import {
 	DefaultImgDirective,
 	PerceptageIncreaseDirective,
 	StylePaginatorDirective,
-} from './../../../../shared/directives';
-import { InvestmentAccountActiveHoldingsComponent } from './investment-account-active-holdings.component';
+} from '../../../../shared/directives';
+import { LargeNumberFormatterPipe } from '../../../../shared/pipes';
+import { InvestmentAccountActiveHoldingsTableComponent } from './investment-account-active-holdings-table.component';
 
 @NgModule({
-	declarations: [InvestmentAccountActiveHoldingsComponent],
+	declarations: [InvestmentAccountActiveHoldingsTableComponent],
 	imports: [
 		CommonModule,
 		MatTableModule,
@@ -31,6 +31,6 @@ import { InvestmentAccountActiveHoldingsComponent } from './investment-account-a
 		ProgressItemModule,
 		PerceptageIncreaseDirective,
 	],
-	exports: [InvestmentAccountActiveHoldingsComponent],
+	exports: [InvestmentAccountActiveHoldingsTableComponent],
 })
-export class InvestmentAccountActiveHoldingsModule {}
+export class InvestmentAccountActiveHoldingsTableModule {}

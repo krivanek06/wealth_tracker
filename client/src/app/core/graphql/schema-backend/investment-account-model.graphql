@@ -1,0 +1,54 @@
+fragment InvestmentAccountHoldingHistory on InvestmentAccountHoldingHistory {
+	itemId
+	date
+	units
+	investedAmount
+}
+
+fragment InvestmentAccountCashChange on InvestmentAccountCashChange {
+	itemId
+	cashCurrent
+	date
+}
+
+fragment InvestmentAccountHolding on InvestmentAccountHolding {
+	id
+	assetId
+	investmentAccountId
+	type
+	sector
+	holdingHistory {
+		...InvestmentAccountHoldingHistory
+	}
+}
+
+fragment InvestmentAccountOverview on InvestmentAccount {
+	id
+	name
+	createdAt
+	userId
+}
+
+fragment InvestmentAccountActiveHoldingOutput on InvestmentAccountActiveHoldingOutput {
+	id
+	assetId
+	investmentAccountId
+	type
+	sector
+	currentHistory {
+		...InvestmentAccountHoldingHistory
+	}
+	assetGeneral {
+		...AssetGeneral
+	}
+}
+
+fragment InvestmentAccount on InvestmentAccount {
+	...InvestmentAccountOverview
+	cashChange {
+		...InvestmentAccountCashChange
+	}
+	activeHoldings {
+		...InvestmentAccountActiveHoldingOutput
+	}
+}

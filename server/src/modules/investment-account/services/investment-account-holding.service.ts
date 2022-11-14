@@ -68,6 +68,7 @@ export class InvestmentAccountHoldingService {
 			units: input.holdingInputData.units,
 			investedAmount: input.holdingInputData.investedAmount,
 			date: MomentServiceUtil.format(input.holdingInputData.date),
+			createdAt: new Date(),
 		};
 
 		// merge and sort ASC, because user may add newHoldingHistory sooner than existingHoldingHistories[-1]

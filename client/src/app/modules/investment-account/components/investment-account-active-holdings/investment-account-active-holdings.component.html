@@ -1,0 +1,201 @@
+<div class="flex justify-end sm:hidden p-2">
+	<button mat-button class="g-color-primary" (click)="toggleDailyChange()">
+		{{ showDailyChange ? 'Daily +/-' : 'Invested +/-'}}
+	</button>
+</div>
+
+<table mat-table [dataSource]="dataSource" matSort class="w-full" [trackBy]="identity">
+	<!-- image & name -->
+	<ng-container matColumnDef="symbol">
+		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Symbol</th>
+		<td mat-cell *matCellDef="let row">
+			<!-- logo + symbol -->
+			<div class="flex items-center gap-2">
+				<img [src]="row.assetGeneral.assetQuote.symbolImageURL" imageType="url" appDefaultImg class="h-8" />
+				<div class="flex flex-col">
+					<!-- asset symbol + sector -->
+					<div class="flex flex-row sm:flex-col gap-x-2">
+						<span class="g-color-text-normal flex gap-1 items-center">
+							<span>{{ row.assetId }}</span>
+							<span class="hidden sm:table-cell">({{ row.currentHistory.units }})</span>
+						</span>
+						<span class="text-gray-500 table-cell sm:hidden">|</span>
+						<span class="text-gray-500 table-cell">{{ row.sector }}</span>
+					</div>
+
+					<!-- Price * units | BEP  -->
+					<div class="text-xs text-gray-500 table-cell sm:hidden">
+						{{ row.assetGeneral.assetQuote.price | currency }} * {{ row.currentHistory.units }} | {{
+						(row.currentHistory.investedAmount / row.currentHistory.units) | currency }}
+					</div>
+				</div>
+			</div>
+		</td>
+	</ng-container>
+
+	<!-- price -->
+	<ng-container matColumnDef="price">
+		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Price +/-</th>
+		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">
+			<div>{{ row.assetGeneral.assetQuote.price | currency }}</div>
+			<div
+				appPerceptageIncrease
+				[useCurrencySign]="true"
+				[changeValues]="{
+          change: row.assetGeneral.assetQuote.change,
+          changesPercentage: row.assetGeneral.assetQuote.changesPercentage
+        }"
+			></div>
+		</td>
+	</ng-container>
+
+	<!-- Invested -->
+	<ng-container matColumnDef="invested">
+		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Invested +/-</th>
+		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">
+			<ng-container
+				*ngIf="row.currentHistory.investedAmount /
+		      	row.currentHistory.units as BEP"
+			>
+				<div>{{ row.currentHistory.investedAmount | currency }}</div>
+				<div
+					appPerceptageIncrease
+					[useCurrencySign]="true"
+					[currentValues]="{
+            value: row.assetGeneral.assetQuote.price  * row.currentHistory.units,
+            valueToCompare: BEP  * row.currentHistory.units
+        }"
+				></div>
+			</ng-container>
+		</td>
+	</ng-container>
+
+	<!-- Invested on small scree -->
+	<ng-container matColumnDef="invested_xs">
+		<th mat-header-cell *matHeaderCellDef class="table-cell sm:hidden"></th>
+		<td mat-cell *matCellDef="let row" class="table-cell sm:hidden">
+			<!-- show invested amount -->
+			<ng-container *ngIf="!showDailyChange">
+				<ng-container
+					*ngIf="row.currentHistory.investedAmount /
+			      row.currentHistory.units as BEP"
+				>
+					<div class="text-end">{{ row.currentHistory.investedAmount | currency }}</div>
+					<div
+						class="justify-end"
+						appPerceptageIncrease
+						[useCurrencySign]="true"
+						[currentValues]="{
+            value: row.assetGeneral.assetQuote.price  * row.currentHistory.units,
+            valueToCompare: BEP  * row.currentHistory.units
+        }"
+					></div>
+				</ng-container>
+			</ng-container>
+
+			<!-- show daily change -->
+			<ng-container *ngIf="showDailyChange">
+				<div class="text-end">{{ row.assetGeneral.assetQuote.price | currency }}</div>
+				<div
+					class="justify-end"
+					appPerceptageIncrease
+					[useCurrencySign]="true"
+					[changeValues]="{
+            change: row.assetGeneral.assetQuote.change,
+            changesPercentage: row.assetGeneral.assetQuote.changesPercentage
+          }"
+				></div>
+			</ng-container>
+		</td>
+	</ng-container>
+
+	<!-- volume -->
+	<ng-container matColumnDef="volume">
+		<th mat-header-cell *matHeaderCellDef class="hidden md:table-cell">Volume +/-</th>
+		<td mat-cell *matCellDef="let row" class="hidden md:table-cell">
+			<div>{{ row.assetGeneral.assetQuote.avgVolume | largeNumberFormatter }}</div>
+			<div
+				appPerceptageIncrease
+				[currentValues]="{
+          value: row.assetGeneral.assetQuote.avgVolume,
+          valueToCompare: row.assetGeneral.assetQuote.volume
+      }"
+			></div>
+		</td>
+	</ng-container>
+
+	<!-- Statistics -->
+	<ng-container matColumnDef="statistics">
+		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Statistics</th>
+		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell text-[13px]">
+			<!-- BEP -->
+			<div class="flex items-center gap-2">
+				<span class="text-gray-500">BEP:</span>
+				<span> {{ (row.currentHistory.investedAmount / row.currentHistory.units ) | currency }}</span>
+			</div>
+
+			<!-- Profolio % -->
+			<div class="flex items-center gap-2">
+				<span class="text-gray-500">Portfolio:</span>
+				<span>
+					<ng-container *ngIf="totalInvestedAmount">
+						{{ row.currentHistory.investedAmount / totalInvestedAmount | percent: '1.2-2'}}
+					</ng-container>
+					<ng-container *ngIf="!totalInvestedAmount">N/A</ng-container>
+				</span>
+			</div>
+		</td>
+	</ng-container>
+
+	<!-- 52 week change -->
+	<ng-container matColumnDef="52WeekRange">
+		<th mat-header-cell *matHeaderCellDef class="hidden lg:table-cell">52 Week range</th>
+		<td mat-cell *matCellDef="let row" class="hidden lg:table-cell">
+			<div style="width: 90%">
+				<app-progress-item
+					[max]="row.assetGeneral.assetQuote.yearHigh"
+					[min]="row.assetGeneral.assetQuote.yearLow"
+					[value]="row.assetGeneral.assetQuote.price"
+				>
+				</app-progress-item>
+			</div>
+		</td>
+	</ng-container>
+
+	<ng-container matColumnDef="addditional_info">
+		<th mat-header-cell *matHeaderCellDef class="hidden xl:table-cell">Additional info</th>
+		<td mat-cell *matCellDef="let row" class="hidden xl:table-cell text-[13px]">
+			<div class="flex items-center gap-2">
+				<!-- PE -->
+				<div>
+					<span class="text-gray-500">PE:</span>
+					<span>
+						{{row.assetGeneral.assetQuote.pe ? ( row.assetGeneral.assetQuote.pe | number: '1.2-2' ) : 'N/A' }}</span
+					>
+				</div>
+				<div>|</div>
+				<!-- EPS -->
+				<div>
+					<span class="text-gray-500">EPS:</span>
+					<span>
+						{{ row.assetGeneral.assetQuote.eps ? ( row.assetGeneral.assetQuote.eps | number: '1.2-2') : 'N/A' }}</span
+					>
+				</div>
+			</div>
+
+			<!-- Shares outstanding -->
+			<div class="flex items-center gap-2">
+				<span class="text-gray-500">Shares outstanding:</span>
+				<span> {{ row.assetGeneral.assetQuote.sharesOutstanding | largeNumberFormatter }}</span>
+			</div>
+		</td>
+	</ng-container>
+
+	<tr mat-header-row *matHeaderRowDef="displayedColumns" class="hidden sm:contents"></tr>
+	<tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="onItemClicked(row)"></tr>
+
+	<!-- Row shown when there is no matching data. -->
+	<tr class="mat-row" *matNoDataRow>
+		<td class="mat-cell text-center" colspan="10">No holdings to be found</td>
+	</tr>
+</table>

@@ -1,0 +1,46 @@
+fragment AssetGeneralHistoricalPricesData on AssetGeneralHistoricalPricesData {
+	date
+	close
+}
+
+fragment AssetGeneralHistoricalPrices on AssetGeneralHistoricalPrices {
+	id
+	dateStart
+	dateEnd
+	assetHistoricalPricesData {
+		...AssetGeneralHistoricalPricesData
+	}
+}
+
+fragment AssetGeneralQuote on AssetGeneralQuote {
+	symbol
+	symbolImageURL
+	name
+	price
+	changesPercentage
+	change
+	dayLow
+	dayHigh
+	volume
+	yearLow
+	yearHigh
+	marketCap
+	# priceAvg50
+	# priceAvg200
+	avgVolume
+	sharesOutstanding
+	timestamp
+	eps
+	pe
+	earningsAnnouncement
+}
+
+fragment AssetGeneral on AssetGeneral {
+	id
+	name
+	symbolImageURL
+	assetIntoLastUpdate
+	assetQuote {
+		...AssetGeneralQuote
+	}
+}

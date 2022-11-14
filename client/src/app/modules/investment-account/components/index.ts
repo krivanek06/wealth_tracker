@@ -1,1 +1,1 @@
-export * from './investment-account-active-holdings/investment-account-active-holdings.module';
+export * from './investment-account-active-holdings-table/investment-account-active-holdings-table.module';

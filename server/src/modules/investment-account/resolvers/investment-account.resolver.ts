@@ -87,4 +87,7 @@ export class InvestmentAccountResolver {
 	getActiveHoldings(@Parent() investmentAccount: InvestmentAccount): Promise<InvestmentAccountActiveHoldingOutput[]> {
 		return this.investmentAccountService.getActiveHoldings(investmentAccount);
 	}
+
+	// TODO resolver for transaction history
+	// TODO: return from Holding.createdAt DESC
 }

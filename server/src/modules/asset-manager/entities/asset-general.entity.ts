@@ -63,18 +63,21 @@ export class AssetGeneralQuote implements AssetGeneralQuoteClient {
 
 	@Field(() => Float, {
 		description: 'Only present for stocks',
+		nullable: true,
 	})
-	eps: number;
+	eps: number | null;
 
 	@Field(() => Float, {
 		description: 'Only present for stocks',
+		nullable: true,
 	})
-	pe: number;
+	pe: number | null;
 
 	@Field(() => String, {
 		description: 'Only present for stocks',
+		nullable: true,
 	})
-	earningsAnnouncement: string;
+	earningsAnnouncement: string | null;
 }
 
 @ObjectType()

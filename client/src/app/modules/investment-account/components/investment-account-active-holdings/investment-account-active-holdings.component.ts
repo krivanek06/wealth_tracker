@@ -34,6 +34,8 @@ export class InvestmentAccountActiveHoldingsComponent implements OnInit {
 		this.dataSource.sort = this.sort;
 	}
 
+	@Input() totalInvestedAmount: number | null = null;
+
 	showDailyChange = false;
 
 	displayedColumns: string[] = [

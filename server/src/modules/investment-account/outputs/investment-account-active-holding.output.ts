@@ -31,6 +31,8 @@ export class InvestmentAccountActiveHoldingOutput {
 	})
 	currentHistory: InvestmentAccountHoldingHistory;
 
+	// TODO calculated BEP
+
 	@Field(() => AssetGeneral)
 	assetGeneral: AssetGeneral;
 }

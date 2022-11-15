@@ -1,0 +1,19 @@
+:host {
+	display: block;
+
+	.c-wrapper {
+		@apply flex flex-row items-center max-md:text-center max-md:justify-between md:flex-col;
+
+		.c-title {
+			@apply text-gray-400 text-xs;
+		}
+
+		.c-body {
+			@apply flex gap-2 items-center;
+
+			.c-body-value {
+				@apply text-base sm:text-lg md:text-2xl text-gray-300;
+			}
+		}
+	}
+}

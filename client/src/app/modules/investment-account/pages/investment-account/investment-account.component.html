@@ -1,4 +1,13 @@
 <ng-container *ngIf="investmentAccount$ | async as investmentAccount">
+	<!-- account state -->
+	<app-investment-account-state
+		[currentInvestedAmout]="(currentInvestedAmout$ | async) ?? 0"
+		[totalInvestedAmount]="(totalInvestedAmount$ | async) ?? 0"
+		[dailyInvestmentChange]="dailyInvestmentChange$ | async"
+		[cashAmount]="investmentAccount.cashChange[investmentAccount.cashChange.length -1]?.cashCurrent ?? 0"
+	></app-investment-account-state>
+
+	<!-- active investmnts table -->
 	<app-investment-account-active-holdings-table
 		[totalInvestedAmount]="totalInvestedAmount$ | async"
 		[activeHoldings]="investmentAccount.activeHoldings"

@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
 import { Observable } from 'rxjs';
 import { InvestmentAccountApiService } from '../../../../core/api';
 import { InvestmentAccountFragment, InvestmentAccountOverviewFragment } from '../../../../core/graphql';
+import { DailyInvestmentChange } from '../../models';
+import { InvestmentAccountCalculatorService } from '../../services';
 
 @Component({
 	selector: 'app-investment-account',
@@ -13,23 +15,40 @@ export class InvestmentAccountComponent implements OnInit {
 	@Input() investmentAccountsOverivew!: InvestmentAccountOverviewFragment;
 
 	investmentAccount$!: Observable<InvestmentAccountFragment>;
+
+	/**
+	 * Total invested amount by the user
+	 */
 	totalInvestedAmount$!: Observable<number>;
+
+	/**
+	 * Current state of investments -> holding.price * units
+	 */
 	currentInvestedAmout$!: Observable<number>;
 
-	constructor(private investmentAccountApiService: InvestmentAccountApiService) {}
+	/**
+	 * Daily sum and percentage change for investment account
+	 */
+	dailyInvestmentChange$!: Observable<DailyInvestmentChange>;
+
+	constructor(
+		private investmentAccountApiService: InvestmentAccountApiService,
+		private investmentAccountCalculatorService: InvestmentAccountCalculatorService
+	) {}
 
 	ngOnInit(): void {
 		const investmentId = this.investmentAccountsOverivew.id;
 		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(investmentId);
 
 		this.totalInvestedAmount$ =
-			this.investmentAccountApiService.getInvestmentAccountByIdTotalInvestedAmount(investmentId);
+			this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(investmentId);
 		this.currentInvestedAmout$ =
-			this.investmentAccountApiService.getInvestmentAccountByIdCurrentInvestedAmout(investmentId);
+			this.investmentAccountCalculatorService.getInvestmentAccountByIdCurrentInvestedAmout(investmentId);
+		this.dailyInvestmentChange$ = this.investmentAccountCalculatorService.getDailyInvestmentChange(investmentId);
 
 		// TODO remove
-		this.totalInvestedAmount$.subscribe(console.log);
+		this.dailyInvestmentChange$.subscribe(console.log);
 		this.currentInvestedAmout$.subscribe(console.log);
-		this.investmentAccount$.subscribe(console.log);
+		this.totalInvestedAmount$.subscribe(console.log);
 	}
 }

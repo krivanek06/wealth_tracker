@@ -14,10 +14,7 @@ query GetInvestmentAccounts {
 
 query GetInvestmentAccountGrowth($input: InvestmentAccountGrowthInput!) {
 	getInvestmentAccountGrowth(input: $input) {
-		invested
-		cash
-		date
-		ownedAssets
+		...InvestmentAccountGrowth
 	}
 }
 

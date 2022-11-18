@@ -52,3 +52,10 @@ fragment InvestmentAccount on InvestmentAccount {
 		...InvestmentAccountActiveHoldingOutput
 	}
 }
+
+fragment InvestmentAccountGrowth on InvestmentAccountGrowth {
+	invested
+	cash
+	date
+	ownedAssets
+}

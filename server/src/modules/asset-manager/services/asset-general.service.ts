@@ -119,8 +119,8 @@ export class AssetGeneralService {
 		}
 
 		// always increase the range to save the historical data
-		const newStart = MomentServiceUtil.isBefore(start, savedData.dateStart) ? start : savedData.dateStart;
-		const newEnd = MomentServiceUtil.isBefore(savedData.dateEnd, end) ? end : savedData.dateEnd;
+		const newStart = !savedData || MomentServiceUtil.isBefore(start, savedData.dateStart) ? start : savedData.dateStart;
+		const newEnd = !savedData || MomentServiceUtil.isBefore(savedData.dateEnd, end) ? end : savedData.dateEnd;
 
 		// load data from API
 		const apiData = await this.financialModelingAPIService.getAssetHistoricalPrices(symbol, newStart, newEnd);

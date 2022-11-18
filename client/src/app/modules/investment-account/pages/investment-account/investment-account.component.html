@@ -7,6 +7,16 @@
 		[cashAmount]="investmentAccount.cashChange[investmentAccount.cashChange.length -1]?.cashCurrent ?? 0"
 	></app-investment-account-state>
 
+	<div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+		<!-- account growth -->
+		<app-investment-account-portfolio-growth-chart
+			class="col-span-1 xl:col-span-2"
+			[investmentAccountGrowth]="investmentAccountGrowth$ | async"
+		></app-investment-account-portfolio-growth-chart>
+
+		<div>Sector allocation</div>
+	</div>
+
 	<!-- active investmnts table -->
 	<app-investment-account-active-holdings-table
 		[totalInvestedAmount]="totalInvestedAmount$ | async"

@@ -1,7 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { InvestmentAccountApiService } from '../../../../core/api';
-import { InvestmentAccountFragment, InvestmentAccountOverviewFragment } from '../../../../core/graphql';
+import {
+	InvestmentAccountFragment,
+	InvestmentAccountGrowth,
+	InvestmentAccountOverviewFragment,
+} from '../../../../core/graphql';
 import { DailyInvestmentChange } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
@@ -31,6 +35,11 @@ export class InvestmentAccountComponent implements OnInit {
 	 */
 	dailyInvestmentChange$!: Observable<DailyInvestmentChange>;
 
+	/**
+	 * Growth of the investment account + cash
+	 */
+	investmentAccountGrowth$!: Observable<InvestmentAccountGrowth[]>;
+
 	constructor(
 		private investmentAccountApiService: InvestmentAccountApiService,
 		private investmentAccountCalculatorService: InvestmentAccountCalculatorService
@@ -39,6 +48,7 @@ export class InvestmentAccountComponent implements OnInit {
 	ngOnInit(): void {
 		const investmentId = this.investmentAccountsOverivew.id;
 		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(investmentId);
+		this.investmentAccountGrowth$ = this.investmentAccountApiService.getInvestmentAccountGrowth(investmentId);
 
 		this.totalInvestedAmount$ =
 			this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(investmentId);

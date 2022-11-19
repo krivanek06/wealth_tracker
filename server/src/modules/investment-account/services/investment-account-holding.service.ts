@@ -15,7 +15,7 @@ export class InvestmentAccountHoldingService {
 		private assetStockService: AssetStockService
 	) {}
 
-	async modifyInvestmentAccountHolding(
+	async createInvestmentAccountHolding(
 		input: InvestmentAccounHoldingCreateInput,
 		userId: string
 	): Promise<InvestmentAccountHolding> {

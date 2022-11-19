@@ -179,7 +179,11 @@ export class InvestmentAccountService {
 			return data;
 		});
 
-		return result;
+		// filter out if cash and investment is 0
+		// happens because there is a hollyday data, but we create custom range by MomentServiceUtil.getDates(soonestDate, new Date())
+		const nonZeroResult = result.filter((d) => d.cash + d.invested !== 0);
+
+		return nonZeroResult;
 	}
 
 	async getInvestmentAccountById(investmentAccountId: string, userId: string): Promise<InvestmentAccount> {

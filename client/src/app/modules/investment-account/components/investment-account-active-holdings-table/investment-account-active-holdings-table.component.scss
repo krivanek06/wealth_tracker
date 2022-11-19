@@ -1,13 +1,24 @@
 :host {
+	tr {
+		height: 55px;
+	}
 	.mat-column-symbol {
 		min-width: 75px;
+
 		width: 50%;
+		div {
+			div {
+				margin-right: 16px;
+			}
+		}
 
 		@screen xs {
 			width: 60%;
+			max-width: 120px;
 		}
 		@screen sm {
 			width: auto;
+			max-width: 150px;
 			//max-width: 140px;
 		}
 	}

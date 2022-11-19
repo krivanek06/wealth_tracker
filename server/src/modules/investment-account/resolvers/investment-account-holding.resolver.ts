@@ -32,7 +32,7 @@ export class InvestmentAccountHoldingResolver {
 		@Input() input: InvestmentAccounHoldingCreateInput,
 		@ReqUser() authUser: RequestUser
 	): Promise<InvestmentAccountHolding> {
-		return this.investmentAccountHoldingService.modifyInvestmentAccountHolding(input, authUser.id);
+		return this.investmentAccountHoldingService.createInvestmentAccountHolding(input, authUser.id);
 	}
 
 	@Mutation(() => InvestmentAccountHoldingHistory)

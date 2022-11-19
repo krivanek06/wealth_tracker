@@ -20,12 +20,14 @@ import {
 	GetDefaultTagsDocument,
 	GetDefaultTagsGQL,
 	GetDefaultTagsQuery,
+	GetPersonalAccountByIdGQL,
 	GetPersonalAccountMonthlyDataByIdDocument,
 	GetPersonalAccountMonthlyDataByIdGQL,
 	GetPersonalAccountMonthlyDataByIdQuery,
 	GetPersonalAccountsDocument,
 	GetPersonalAccountsGQL,
 	GetPersonalAccountsQuery,
+	PersonalAccountAggregationDataOutput,
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
@@ -39,14 +41,10 @@ import {
 	PersonalAccountOverviewFragment,
 	PersonalAccountOverviewFragmentDoc,
 	PersonalAccountTag,
-	TagDataType,
-} from './../graphql';
-import {
-	GetPersonalAccountByIdGQL,
-	PersonalAccountAggregationDataOutput,
 	PersonalAccountWeeklyAggregationFragment,
 	PersonalAccountWeeklyAggregationOutput,
-} from './../graphql/schema-backend.service';
+	TagDataType,
+} from './../graphql';
 
 @Injectable({
 	providedIn: 'root',

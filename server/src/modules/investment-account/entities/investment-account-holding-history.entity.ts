@@ -1,6 +1,12 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql';
-import { InvestmentAccountHoldingHistory as InvestmentAccountHoldingHistoryClient } from '@prisma/client';
+import { Field, Float, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+	InvestmentAccountHoldingHistory as InvestmentAccountHoldingHistoryClient,
+	InvestmentAccountHoldingHistoryType,
+} from '@prisma/client';
 
+registerEnumType(InvestmentAccountHoldingHistoryType, {
+	name: 'InvestmentAccountHoldingHistoryType',
+});
 @ObjectType()
 export class InvestmentAccountHoldingHistory implements InvestmentAccountHoldingHistoryClient {
 	@Field(() => String)
@@ -18,5 +24,18 @@ export class InvestmentAccountHoldingHistory implements InvestmentAccountHolding
 	units: number;
 
 	@Field(() => Float)
-	investedAmount: number;
+	unitValue: number;
+
+	@Field(() => Float)
+	type: InvestmentAccountHoldingHistoryType;
+
+	@Field(() => Float, {
+		nullable: true,
+	})
+	return: number;
+
+	@Field(() => Float, {
+		nullable: true,
+	})
+	returnChange: number;
 }

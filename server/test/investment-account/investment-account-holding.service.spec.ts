@@ -120,7 +120,7 @@ describe('InvestmentAccountHoldingService', () => {
 		expect(service).toBeDefined();
 	});
 
-	describe('Test: createInvestmentAccountHolding()', () => {
+	describe('Test: modifyInvestmentAccountHolding()', () => {
 		it('should create an investment account holding', async () => {
 			const holdingInput: HoldingInputData = {
 				units: 111,
@@ -149,7 +149,7 @@ describe('InvestmentAccountHoldingService', () => {
 				],
 			};
 
-			const result = await service.createInvestmentAccountHolding(input, investmentAccountMock1.userId);
+			const result = await service.modifyInvestmentAccountHolding(input, investmentAccountMock1.userId);
 
 			expect(result).toStrictEqual(expectedResult);
 			expect(prismaServiceMock.investmentAccount.update).toHaveBeenCalledWith({
@@ -191,7 +191,7 @@ describe('InvestmentAccountHoldingService', () => {
 			};
 			const expectedResultDbUpdate: InvestmentAccountHolding[] = [{ ...expectedResult }, { ...mockHoldings[1] }];
 
-			const result = await service.createInvestmentAccountHolding(input, investmentAccountMock1.userId);
+			const result = await service.modifyInvestmentAccountHolding(input, investmentAccountMock1.userId);
 
 			expect(result).toStrictEqual(expectedResult);
 			expect(prismaServiceMock.investmentAccount.update).toHaveBeenCalledWith({
@@ -205,8 +205,8 @@ describe('InvestmentAccountHoldingService', () => {
 		});
 
 		it('should call assetStockService.refreshStockIntoDatabase when input.type is STOCK', async () => {
-			await service.createInvestmentAccountHolding(mockInput, mockUserId);
-			await service.createInvestmentAccountHolding({ ...mockInput, type: 'CRYPTO' }, mockUserId);
+			await service.modifyInvestmentAccountHolding(mockInput, mockUserId);
+			await service.modifyInvestmentAccountHolding({ ...mockInput, type: 'CRYPTO' }, mockUserId);
 
 			expect(assetStockServiceMock.refreshStockIntoDatabase).toHaveBeenCalledWith(mockInput.symbol);
 			expect(assetStockServiceMock.refreshStockIntoDatabase).toHaveBeenCalledTimes(1);
@@ -218,7 +218,7 @@ describe('InvestmentAccountHoldingService', () => {
 					units: -1,
 				},
 			} as InvestmentAccounHoldingCreateInput;
-			await expect(service.createInvestmentAccountHolding(input, mockUserId)).rejects.toThrowError(
+			await expect(service.modifyInvestmentAccountHolding(input, mockUserId)).rejects.toThrowError(
 				INVESTMENT_ACCOUNT_HOLDING_ERROR.MIN_UNIT_VALUE
 			);
 		});
@@ -230,7 +230,7 @@ describe('InvestmentAccountHoldingService', () => {
 					date: tomorrow.toISOString(),
 				},
 			} as InvestmentAccounHoldingCreateInput;
-			await expect(service.createInvestmentAccountHolding(input, mockUserId)).rejects.toThrowError(
+			await expect(service.modifyInvestmentAccountHolding(input, mockUserId)).rejects.toThrowError(
 				INVESTMENT_ACCOUNT_HOLDING_ERROR.IS_WEEKEND
 			);
 		});
@@ -241,7 +241,7 @@ describe('InvestmentAccountHoldingService', () => {
 					date: '2011-10-05',
 				},
 			} as InvestmentAccounHoldingCreateInput;
-			await expect(service.createInvestmentAccountHolding(input, mockUserId)).rejects.toThrowError(
+			await expect(service.modifyInvestmentAccountHolding(input, mockUserId)).rejects.toThrowError(
 				INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTRED_DATE_RANGE
 			);
 		});
@@ -252,7 +252,7 @@ describe('InvestmentAccountHoldingService', () => {
 					date: '2022-11-05',
 				},
 			} as InvestmentAccounHoldingCreateInput;
-			await expect(service.createInvestmentAccountHolding(input, mockUserId)).rejects.toThrowError(
+			await expect(service.modifyInvestmentAccountHolding(input, mockUserId)).rejects.toThrowError(
 				INVESTMENT_ACCOUNT_HOLDING_ERROR.IS_WEEKEND
 			);
 		});

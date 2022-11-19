@@ -3,7 +3,7 @@ import { FinancialModelingAPIService } from '../../../api';
 import { PrismaService } from '../../../prisma';
 import { MomentServiceUtil } from '../../../utils';
 import { ASSET_HISTORICAL_ERROR, ASSET_PRICE_UPDATE_THRESHOLD_HOURS } from '../dto';
-import { AssetGeneral, AssetGeneralHistoricalPrices } from '../entities';
+import { AssetGeneral, AssetGeneralHistoricalPrices, AssetGeneralHistoricalPricesData } from '../entities';
 import { AssetGeneralUtil } from '../utils';
 
 @Injectable()
@@ -64,6 +64,14 @@ export class AssetGeneralService {
 			.filter((d) => !!d);
 
 		return mergedQuotes;
+	}
+
+	async getAssetGeneralHistoricalPricesDataOnDate(
+		symbol: string,
+		date: string
+	): Promise<AssetGeneralHistoricalPricesData> {
+		const prices = await this.getAssetHistoricalPricesStartToEnd(symbol, date, new Date().toISOString());
+		return prices.assetHistoricalPricesData[0];
 	}
 
 	async getAssetHistoricalPricesStartToEnd(

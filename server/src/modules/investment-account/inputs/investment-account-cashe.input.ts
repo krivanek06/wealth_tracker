@@ -1,4 +1,5 @@
 import { ArgsType, Field, Float, InputType } from '@nestjs/graphql';
+import { InvestmentAccountCashChangeType } from '@prisma/client';
 import { MaxLength, Min } from 'class-validator';
 
 @InputType()
@@ -10,12 +11,15 @@ export class InvestmentAccountCashCreateInput {
 
 	@Field(() => Float)
 	@Min(0)
-	cashCurrent: number;
+	cashValue: number;
 
 	@Field(() => String, {
 		description: 'What date to associate cash account change',
 	})
 	date: string;
+
+	@Field(() => InvestmentAccountCashChangeType)
+	type: InvestmentAccountCashChangeType;
 }
 
 // ----------- Edit ------------

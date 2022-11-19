@@ -1,10 +1,14 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import {
 	InvestmentAccount as InvestmentAccountClient,
 	InvestmentAccountCashChange as InvestmentAccountCashChangeClient,
+	InvestmentAccountCashChangeType,
 } from '@prisma/client';
 import { InvestmentAccountHolding } from './investment-account-holding.entity';
 
+registerEnumType(InvestmentAccountCashChangeType, {
+	name: 'InvestmentAccountCashChangeType',
+});
 @ObjectType()
 export class InvestmentAccount implements InvestmentAccountClient {
 	@Field(() => String)
@@ -42,10 +46,18 @@ export class InvestmentAccountCashChange implements InvestmentAccountCashChangeC
 	itemId: string;
 
 	@Field(() => Number)
-	cashCurrent: number;
+	cashValue: number;
 
 	@Field(() => String, {
 		description: 'Format yyyy-MM-DD',
 	})
 	date: string;
+
+	@Field(() => InvestmentAccountCashChangeType)
+	type: InvestmentAccountCashChangeType;
+
+	@Field(() => String, {
+		nullable: true,
+	})
+	holdingHistoryId: string;
 }

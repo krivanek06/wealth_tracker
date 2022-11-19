@@ -1,16 +1,19 @@
 import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import { PrismaService } from '../../../prisma';
-import { SharedServiceUtil } from '../../../utils';
-import { INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR, INVESTMENT_ACCOUNT_ERROR } from '../dto';
-import { InvestmentAccount, InvestmentAccountCashChange } from '../entities';
+import {
+	INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR,
+	INVESTMENT_ACCOUNT_ERROR,
+} from '../../src/modules/investment-account/dto';
+import { InvestmentAccount, InvestmentAccountCashChange } from '../../src/modules/investment-account/entities';
 import {
 	InvestmentAccountCashCreateInput,
 	InvestmentAccountCashDeleteInput,
 	InvestmentAccountCashEditInput,
-} from '../inputs';
-import { InvestmentAccountCashChangeService } from '../services';
+} from '../../src/modules/investment-account/inputs';
+import { InvestmentAccountCashChangeService } from '../../src/modules/investment-account/services';
+import { PrismaService } from '../../src/prisma';
+import { SharedServiceUtil } from '../../src/utils';
 
 describe('InvestmentAccountCashChangeService', () => {
 	const mockUserId = 'USER1';

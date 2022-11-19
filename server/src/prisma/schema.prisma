@@ -139,9 +139,17 @@ model InvestmentAccount {
 }
 
 type InvestmentAccountCashChange {
-    itemId      String // random UUID
-    cashCurrent Float
-    date        String // YYYY-MM-DD
+    itemId           String // random UUID
+    cashValue        Float
+    date             String // YYYY-MM-DD
+    type             InvestmentAccountCashChangeType
+    holdingHistoryId String?
+}
+
+enum InvestmentAccountCashChangeType {
+    DEPOSIT
+    WITHDRAWAL
+    ASSET_OPERATION
 }
 
 // the whole history of the one asset that was bough, completly sold, then bought again
@@ -158,11 +166,20 @@ type InvestmentAccountHolding {
 }
 
 type InvestmentAccountHoldingHistory {
-    itemId         String
-    createdAt      DateTime @default(now()) // when entry was created
-    date           String // YYYY-MM-DD of day when it was added to holdings
-    units          Float // how many units of asset the user have
-    investedAmount Float // $ how much user invested into a specific asset
+    itemId    String
+    createdAt DateTime @default(now()) // when entry was created
+    date      String // YYYY-MM-DD of day when it was added to holdings
+    units     Float // how many units of asset the user have
+
+    unitValue    Float
+    type         InvestmentAccountHoldingHistoryType
+    return       Float?
+    returnChange Float?
+}
+
+enum InvestmentAccountHoldingHistoryType {
+    BUY
+    SELL
 }
 
 enum InvestmentAccountHoldingType {

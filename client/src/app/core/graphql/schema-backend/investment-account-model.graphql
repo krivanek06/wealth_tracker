@@ -2,12 +2,17 @@ fragment InvestmentAccountHoldingHistory on InvestmentAccountHoldingHistory {
 	itemId
 	date
 	units
-	investedAmount
+	unitValue
+	type
+	return
+	returnChange
 }
 
 fragment InvestmentAccountCashChange on InvestmentAccountCashChange {
 	itemId
-	cashCurrent
+	holdingHistoryId
+	cashValue
+	type
 	date
 }
 
@@ -35,9 +40,9 @@ fragment InvestmentAccountActiveHoldingOutput on InvestmentAccountActiveHoldingO
 	investmentAccountId
 	type
 	sector
-	currentHistory {
-		...InvestmentAccountHoldingHistory
-	}
+	units
+	totalValue
+	beakEvenPrice
 	assetGeneral {
 		...AssetGeneral
 	}

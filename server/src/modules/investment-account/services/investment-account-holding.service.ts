@@ -76,7 +76,7 @@ export class InvestmentAccountHoldingService {
 				},
 				{ units: 0, value: 0 } as { units: number; value: number }
 			);
-		const brealEvenPrice = bepHelpers.value / bepHelpers.units; // TODO round
+		const brealEvenPrice = SharedServiceUtil.round2Dec(bepHelpers.value / bepHelpers.units);
 
 		// load symbol value on holdingInputData.date
 		const closedValueApi = (

@@ -10,6 +10,7 @@ export enum INVESTMENT_ACCOUNT_HOLDING_ERROR {
 	UNSUPPORTRED_DATE_RANGE = 'Provided input date is too old or in the future',
 	IS_WEEKEND = 'Please choose do not choose a weekend as date to add your asset',
 	MIN_UNIT_VALUE = 'Minimal unit amount for holdings is 0, can not be negative',
+	SELL_ERROR_NO_HOLDING = 'Unable to make SELL type operation for empty holding history',
 }
 
 export enum INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR {

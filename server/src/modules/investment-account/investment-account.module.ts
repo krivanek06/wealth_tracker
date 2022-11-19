@@ -9,6 +9,7 @@ import {
 import {
 	InvestmentAccountCashChangeService,
 	InvestmentAccountHoldingService,
+	InvestmentAccountRepositoryService,
 	InvestmentAccountService,
 } from './services';
 
@@ -22,6 +23,7 @@ import {
 		InvestmentAccountHoldingResolver,
 		InvestmentAccountCashChangeService,
 		InvestmentAccountCashChangeResolver,
+		InvestmentAccountRepositoryService,
 	],
 	exports: [InvestmentAccountResolver, InvestmentAccountHoldingResolver, InvestmentAccountCashChangeResolver],
 })

@@ -2,7 +2,6 @@ import { UseGuards } from '@nestjs/common';
 import { Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql';
-import { AssetGeneralService } from '../../asset-manager';
 import { InvestmentAccount } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
 import { InvestmentAccountActiveHoldingOutput, InvestmentAccountGrowth } from '../outputs';
@@ -11,10 +10,7 @@ import { InvestmentAccountService } from '../services';
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccount)
 export class InvestmentAccountResolver {
-	constructor(
-		private investmentAccountService: InvestmentAccountService,
-		private assetGeneralService: AssetGeneralService
-	) {}
+	constructor(private investmentAccountService: InvestmentAccountService) {}
 
 	/* Queries */
 
@@ -31,7 +27,7 @@ export class InvestmentAccountResolver {
 		defaultValue: [],
 	})
 	getInvestmentAccountById(@ReqUser() authUser: RequestUser, @Input() input: string): Promise<InvestmentAccount> {
-		return this.investmentAccountService.getInvestmentAccountsById(input);
+		return this.investmentAccountService.getInvestmentAccountById(input, authUser.id);
 	}
 
 	// TODO: implement caching for assets historical prices: https://docs.nestjs.com/techniques/caching

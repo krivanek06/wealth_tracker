@@ -1,18 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../prisma';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
-import { AssetStockService } from '../../asset-manager';
+import { AssetGeneralService, AssetStockService } from '../../asset-manager';
 import { INVESTMENT_ACCOUNT_HOLDING_ERROR, INVESTMENT_ACCOUNT_HOLDING_MAX_YEARS } from '../dto';
 import { InvestmentAccount, InvestmentAccountHolding, InvestmentAccountHoldingHistory } from '../entities';
 import { InvestmentAccounHoldingCreateInput, InvestmentAccounHoldingHistoryDeleteInput } from '../inputs';
-import { InvestmentAccountService } from './investment-account.service';
+import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
 @Injectable()
 export class InvestmentAccountHoldingService {
 	constructor(
-		private prisma: PrismaService,
-		private investmentAccountService: InvestmentAccountService,
-		private assetStockService: AssetStockService
+		private investmentAccountRepositoryService: InvestmentAccountRepositoryService,
+		private assetStockService: AssetStockService,
+		private assetGeneralService: AssetGeneralService
 	) {}
 
 	async createInvestmentAccountHolding(
@@ -43,32 +42,66 @@ export class InvestmentAccountHoldingService {
 			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTRED_DATE_RANGE, HttpStatus.FORBIDDEN);
 		}
 
-		let assetSecotor = input.type.toString();
+		let assetSecotor = input.holdingType.toString();
 
 		// load and save assets data into the DB
-		if (input.type === 'STOCK') {
+		if (input.holdingType === 'STOCK') {
 			const stock = await this.assetStockService.refreshStockIntoDatabase(input.symbol);
 			// stocks was a different sectory type
 			assetSecotor = stock.profile.sector;
 		}
 
 		// load investment account to which we want to create the holding
-		const investmentAccount = await this.investmentAccountService.getInvestmentAccountById(
+		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountById(
 			input.investmentAccountId,
 			userId
 		);
 
 		// find existing holding
-		const existingHolding = investmentAccount.holdings.find((x) => x.id === input.symbol);
-		const existingHoldingHistories = existingHolding?.holdingHistory ?? [];
+		const existingHoldingHistories =
+			investmentAccount.holdings.find((x) => x.id === input.symbol)?.holdingHistory ?? [];
+
+		// first entry cannot be sell
+		if (existingHoldingHistories.length === 0 && input.type === 'SELL') {
+			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.SELL_ERROR_NO_HOLDING, HttpStatus.FORBIDDEN);
+		}
+
+		// calcualte BEP by which we will create return & returnChange
+		const bepHelpers = existingHoldingHistories
+			// get only BUY holdings that happened sooner than input.holdingInputData.date
+			.filter((d) => d.date < input.holdingInputData.date && d.type === 'BUY')
+			.reduce(
+				(acc, curr) => {
+					return { units: acc.units + curr.units, value: acc.value + curr.unitValue * curr.units };
+				},
+				{ units: 0, value: 0 } as { units: number; value: number }
+			);
+		const brealEvenPrice = bepHelpers.value / bepHelpers.units; // TODO round
+
+		// load symbol value on holdingInputData.date
+		const closedValueApi = (
+			await this.assetGeneralService.getAssetGeneralHistoricalPricesDataOnDate(
+				input.symbol,
+				input.holdingInputData.date
+			)
+		)?.close;
+
+		// calculate return & returnChange if Sell operation
+		const inputUnits = input.holdingInputData.units;
+		const returnValue =
+			input.type === 'SELL' ? SharedServiceUtil.round2Dec((brealEvenPrice - closedValueApi) * inputUnits) : null;
+		const returnChange = input.type === 'SELL' ? (brealEvenPrice - closedValueApi) / closedValueApi : null;
 
 		// create DB object
 		const newHoldingHistory: InvestmentAccountHoldingHistory = {
 			itemId: SharedServiceUtil.getUUID(),
-			units: input.holdingInputData.units,
-			investedAmount: input.holdingInputData.investedAmount,
+			units: inputUnits,
+			type: input.type,
+			unitValue: closedValueApi,
 			date: MomentServiceUtil.format(input.holdingInputData.date),
 			createdAt: new Date(),
+			return: returnValue,
+			returnChange: returnChange,
 		};
 
 		// merge and sort ASC, because user may add newHoldingHistory sooner than existingHoldingHistories[-1]
@@ -77,9 +110,10 @@ export class InvestmentAccountHoldingService {
 		);
 
 		// holding may already exists or create new one
-		const modifiedHolding = !!existingHolding
-			? this.modifyExistingHoldingWithHistory(investmentAccount, input.symbol, mergedHoldingHistory)
-			: this.createNewHoldingWithHistory(investmentAccount, input, mergedHoldingHistory, assetSecotor);
+		const modifiedHolding =
+			existingHoldingHistories.length > 0
+				? this.modifyExistingHoldingWithHistory(investmentAccount, input.symbol, mergedHoldingHistory)
+				: this.createNewHoldingWithHistory(investmentAccount, input, mergedHoldingHistory, assetSecotor);
 
 		return modifiedHolding;
 	}
@@ -94,7 +128,7 @@ export class InvestmentAccountHoldingService {
 		userId: string
 	): Promise<InvestmentAccountHoldingHistory> {
 		// load investment account
-		const investmentAccount = await this.investmentAccountService.getInvestmentAccountById(
+		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountById(
 			input.investmentAccountId,
 			userId
 		);
@@ -118,14 +152,9 @@ export class InvestmentAccountHoldingService {
 			return d;
 		});
 
-		// Save holding to the DB
-		await this.prisma.investmentAccount.update({
-			data: {
-				holdings: [...modifiedHoldings],
-			},
-			where: {
-				id: investmentAccount.id,
-			},
+		// save entity
+		await this.investmentAccountRepositoryService.updateInvestmentAccount(investmentAccount.id, {
+			holdings: modifiedHoldings,
 		});
 
 		// returned removed history
@@ -160,8 +189,10 @@ export class InvestmentAccountHoldingService {
 			throw new Error('InvestmentAccountHoldingService.modifyExistingHoldingWithHistory(), holding not found');
 		}
 
-		// save data into DB
-		await this.updateInvestmenAccountHolding(investmentAccount.id, modifiedHoldings);
+		// save entity
+		await this.investmentAccountRepositoryService.updateInvestmentAccount(investmentAccount.id, {
+			holdings: modifiedHoldings,
+		});
 
 		return modifiedHolding;
 	}
@@ -187,29 +218,16 @@ export class InvestmentAccountHoldingService {
 			id: input.symbol,
 			investmentAccountId: input.investmentAccountId,
 			assetId: input.symbol,
-			type: input.type,
+			type: input.holdingType,
 			sector: assetSecotor,
 			holdingHistory: [...mergedHoldingHistory],
 		};
 
 		// save entity
-		const modifiedHoldings = [...investmentAccount.holdings, holding];
-		await this.updateInvestmenAccountHolding(input.investmentAccountId, modifiedHoldings);
+		await this.investmentAccountRepositoryService.updateInvestmentAccount(input.investmentAccountId, {
+			holdings: [...investmentAccount.holdings, holding],
+		});
 
 		return holding;
-	}
-
-	private updateInvestmenAccountHolding(
-		investmenAccountId: string,
-		holdings: InvestmentAccountHolding[]
-	): Promise<InvestmentAccount> {
-		return this.prisma.investmentAccount.update({
-			data: {
-				holdings: [...holdings],
-			},
-			where: {
-				id: investmenAccountId,
-			},
-		});
 	}
 }

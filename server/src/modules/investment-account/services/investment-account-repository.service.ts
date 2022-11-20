@@ -32,7 +32,7 @@ export class InvestmentAccountRepositoryService {
 		return investmentAccount;
 	}
 
-	async createInvestmentAccount(name: string, userId: string): Promise<InvestmentAccount> {
+	createInvestmentAccount(name: string, userId: string): Promise<InvestmentAccount> {
 		return this.prisma.investmentAccount.create({
 			data: {
 				name,

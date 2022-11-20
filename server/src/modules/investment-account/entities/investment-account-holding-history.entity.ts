@@ -26,7 +26,7 @@ export class InvestmentAccountHoldingHistory implements InvestmentAccountHolding
 	@Field(() => Float)
 	unitValue: number;
 
-	@Field(() => Float)
+	@Field(() => InvestmentAccountHoldingHistoryType)
 	type: InvestmentAccountHoldingHistoryType;
 
 	@Field(() => Float, {
@@ -38,4 +38,9 @@ export class InvestmentAccountHoldingHistory implements InvestmentAccountHolding
 		nullable: true,
 	})
 	returnChange: number;
+
+	@Field(() => String, {
+		description: 'InvestmentAccountCashChange.ID if holding history affected cash change',
+	})
+	cashChangeId: string;
 }

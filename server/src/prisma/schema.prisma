@@ -139,11 +139,10 @@ model InvestmentAccount {
 }
 
 type InvestmentAccountCashChange {
-    itemId           String // random UUID
-    cashValue        Float
-    date             String // YYYY-MM-DD
-    type             InvestmentAccountCashChangeType
-    holdingHistoryId String?
+    itemId    String // random UUID
+    cashValue Float
+    date      String // YYYY-MM-DD
+    type      InvestmentAccountCashChangeType
 }
 
 enum InvestmentAccountCashChangeType {
@@ -175,6 +174,9 @@ type InvestmentAccountHoldingHistory {
     type         InvestmentAccountHoldingHistoryType
     return       Float?
     returnChange Float?
+
+    // InvestmentAccountCashChange.ID change cash amount based on the BUY/SELL operation
+    cashChangeId String
 }
 
 enum InvestmentAccountHoldingHistoryType {

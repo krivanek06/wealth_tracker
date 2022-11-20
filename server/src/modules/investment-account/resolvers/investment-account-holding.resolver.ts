@@ -23,7 +23,9 @@ export class InvestmentAccountHoldingResolver {
 	 * @param authUser
 	 * @returns active holdings for some specific date
 	 */
-	// getInvestmentAccountActiveHoldingsForDate(): Promise<InvestmentAccountHolding[]> {}
+	getInvestmentAccountActiveHoldingsForDate(): Promise<InvestmentAccountHolding[]> {
+		return new Promise(() => []);
+	}
 
 	/* Mutations */
 
@@ -42,6 +44,16 @@ export class InvestmentAccountHoldingResolver {
 	): Promise<InvestmentAccountHoldingHistory> {
 		return this.investmentAccountHoldingService.deleteHoldingHistory(input, authUser.id);
 	}
+
+	/* 
+		TODO edit holding history, reason: may happane:
+		- CREATE 1 BUY OPEATION
+		- CREATE 2 BUY OPEATION
+		- CREATE SELL OPERATION - calculates BEP, return & return %
+		- DELETE first buy operation
+		- incorrect data for the second buy opeation, need to manually adjust
+
+	*/
 
 	/* Resolvers */
 	@ResolveField('historicalPrices', () => [AssetGeneralHistoricalPricesData], {

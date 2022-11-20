@@ -6,16 +6,15 @@ fragment InvestmentAccountHoldingHistory on InvestmentAccountHoldingHistory {
 	type
 	return
 	returnChange
+	cashChangeId
 }
 
 fragment InvestmentAccountCashChange on InvestmentAccountCashChange {
 	itemId
-	holdingHistoryId
 	cashValue
 	type
 	date
 }
-
 fragment InvestmentAccountHolding on InvestmentAccountHolding {
 	id
 	assetId

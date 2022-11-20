@@ -1,8 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import {
-	InvestmentAccount as InvestmentAccountClient,
-	InvestmentAccountCashChange as InvestmentAccountCashChangeClient,
-} from '@prisma/client';
+import { InvestmentAccount as InvestmentAccountClient } from '@prisma/client';
+import { InvestmentAccountCashChange } from './investment-account-cash-change.entity';
 import { InvestmentAccountHolding } from './investment-account-holding.entity';
 
 @ObjectType()
@@ -34,18 +32,4 @@ export class InvestmentAccount implements InvestmentAccountClient {
 		description: 'Holding history of this asset',
 	})
 	holdings: InvestmentAccountHolding[];
-}
-
-@ObjectType()
-export class InvestmentAccountCashChange implements InvestmentAccountCashChangeClient {
-	@Field(() => String)
-	itemId: string;
-
-	@Field(() => Number)
-	cashCurrent: number;
-
-	@Field(() => String, {
-		description: 'Format yyyy-MM-DD',
-	})
-	date: string;
 }

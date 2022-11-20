@@ -1,21 +1,26 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../prisma';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
-import { AssetStockService } from '../../asset-manager';
+import { AssetGeneralService, AssetStockService } from '../../asset-manager';
 import { INVESTMENT_ACCOUNT_HOLDING_ERROR, INVESTMENT_ACCOUNT_HOLDING_MAX_YEARS } from '../dto';
 import { InvestmentAccount, InvestmentAccountHolding, InvestmentAccountHoldingHistory } from '../entities';
-import { InvestmentAccounHoldingCreateInput, InvestmentAccounHoldingHistoryDeleteInput } from '../inputs';
-import { InvestmentAccountService } from './investment-account.service';
+import {
+	InvestmentAccounHoldingCreateInput,
+	InvestmentAccounHoldingHistoryDeleteInput,
+	InvestmentAccountCashCreateInput,
+} from '../inputs';
+import { InvestmentAccountCashChangeService } from './investment-account-cache-change.service';
+import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
 @Injectable()
 export class InvestmentAccountHoldingService {
 	constructor(
-		private prisma: PrismaService,
-		private investmentAccountService: InvestmentAccountService,
-		private assetStockService: AssetStockService
+		private investmentAccountRepositoryService: InvestmentAccountRepositoryService,
+		private assetStockService: AssetStockService,
+		private assetGeneralService: AssetGeneralService,
+		private investmentAccountCashChangeService: InvestmentAccountCashChangeService
 	) {}
 
-	async modifyInvestmentAccountHolding(
+	async createInvestmentAccountHolding(
 		input: InvestmentAccounHoldingCreateInput,
 		userId: string
 	): Promise<InvestmentAccountHolding> {
@@ -43,17 +48,17 @@ export class InvestmentAccountHoldingService {
 			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTRED_DATE_RANGE, HttpStatus.FORBIDDEN);
 		}
 
-		let assetSecotor = input.type.toString();
+		let assetSecotor = input.holdingType.toString();
 
 		// load and save assets data into the DB
-		if (input.type === 'STOCK') {
+		if (input.holdingType === 'STOCK') {
 			const stock = await this.assetStockService.refreshStockIntoDatabase(input.symbol);
 			// stocks was a different sectory type
 			assetSecotor = stock.profile.sector;
 		}
 
 		// load investment account to which we want to create the holding
-		const investmentAccount = await this.investmentAccountService.getInvestmentAccountById(
+		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountById(
 			input.investmentAccountId,
 			userId
 		);
@@ -62,13 +67,61 @@ export class InvestmentAccountHoldingService {
 		const existingHolding = investmentAccount.holdings.find((x) => x.id === input.symbol);
 		const existingHoldingHistories = existingHolding?.holdingHistory ?? [];
 
+		// calcualte BEP by which we will create return & returnChange
+		const bepHelpers = existingHoldingHistories
+			// get only BUY holdings that happened sooner than input.holdingInputData.date
+			.filter((d) => d.date < input.holdingInputData.date && d.type === 'BUY')
+			.reduce(
+				(acc, curr) => {
+					const multy = curr.type === 'BUY' ? 1 : -1;
+					return { units: acc.units + curr.units * multy, value: acc.value + curr.unitValue * curr.units * multy };
+				},
+				{ units: 0, value: 0 } as { units: number; value: number }
+			);
+
+		// first entry cannot be sell
+		if (input.type === 'SELL' && bepHelpers.units < input.holdingInputData.units) {
+			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.SELL_ERROR_NO_HOLDING, HttpStatus.FORBIDDEN);
+		}
+
+		const brealEvenPrice = SharedServiceUtil.roundDec(bepHelpers.value / bepHelpers.units);
+
+		// load symbol value on holdingInputData.date
+		const closedValueApi = (
+			await this.assetGeneralService.getAssetGeneralHistoricalPricesDataOnDate(
+				input.symbol,
+				input.holdingInputData.date
+			)
+		)?.close;
+
+		// save cash change -> if SELL add cash / if BUY subtract cash
+		const cashInput: InvestmentAccountCashCreateInput = {
+			investmentAccountId: input.investmentAccountId,
+			type: 'ASSET_OPERATION',
+			date: input.holdingInputData.date,
+			cashValue: input.holdingInputData.units * closedValueApi * (input.type === 'SELL' ? 1 : -1),
+		};
+		const savedCash = await this.investmentAccountCashChangeService.createInvestmentAccountCashe(cashInput, userId);
+
+		// calculate return & returnChange if Sell operation
+		const inputUnits = input.holdingInputData.units;
+		const returnValue =
+			input.type === 'SELL' ? SharedServiceUtil.roundDec((brealEvenPrice - closedValueApi) * inputUnits) : null;
+		const returnChange =
+			input.type === 'SELL' ? SharedServiceUtil.roundDec((brealEvenPrice - closedValueApi) / closedValueApi, 4) : null;
+
 		// create DB object
 		const newHoldingHistory: InvestmentAccountHoldingHistory = {
 			itemId: SharedServiceUtil.getUUID(),
-			units: input.holdingInputData.units,
-			investedAmount: input.holdingInputData.investedAmount,
+			units: inputUnits,
+			type: input.type,
+			unitValue: SharedServiceUtil.roundDec(closedValueApi),
 			date: MomentServiceUtil.format(input.holdingInputData.date),
 			createdAt: new Date(),
+			return: returnValue,
+			returnChange: returnChange,
+			cashChangeId: savedCash.itemId,
+			assetId: input.symbol,
 		};
 
 		// merge and sort ASC, because user may add newHoldingHistory sooner than existingHoldingHistories[-1]
@@ -78,15 +131,14 @@ export class InvestmentAccountHoldingService {
 
 		// holding may already exists or create new one
 		const modifiedHolding = !!existingHolding
-			? this.modifyExistingHoldingWithHistory(investmentAccount, input.symbol, mergedHoldingHistory)
-			: this.createNewHoldingWithHistory(investmentAccount, input, mergedHoldingHistory, assetSecotor);
+			? await this.modifyExistingHoldingWithHistory(investmentAccount, input.symbol, mergedHoldingHistory)
+			: await this.createNewHoldingWithHistory(investmentAccount, input, mergedHoldingHistory, assetSecotor);
 
 		return modifiedHolding;
 	}
 
 	/**
 	 * Removes a matching itemId from InvestmentAccountHolding and returns it
-	 *
 	 * @param input
 	 */
 	async deleteHoldingHistory(
@@ -94,7 +146,7 @@ export class InvestmentAccountHoldingService {
 		userId: string
 	): Promise<InvestmentAccountHoldingHistory> {
 		// load investment account
-		const investmentAccount = await this.investmentAccountService.getInvestmentAccountById(
+		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountById(
 			input.investmentAccountId,
 			userId
 		);
@@ -107,25 +159,56 @@ export class InvestmentAccountHoldingService {
 			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
 		}
 
-		const existingHolding = investmentAccount.holdings[existingHoldingIndex];
-		const removedHoldingHistory = existingHolding.holdingHistory.find((d) => d.itemId === input.itemId);
+		const symbolHoldingHistory = investmentAccount.holdings[existingHoldingIndex].holdingHistory;
+		const removedHoldingHistoryIndex = symbolHoldingHistory.findIndex((d) => d.itemId === input.itemId);
+
+		// trying to remove unexisting holdingHistory
+		if (removedHoldingHistoryIndex === -1) {
+			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+		}
+		// holdingHistory that will be removed
+		const removedHoldingHistory = symbolHoldingHistory[removedHoldingHistoryIndex];
+
+		// prevent removing a 'BUY' option if the next following SELL operation removes more symbols than we delete
+		// get the index of the next 'SELL' operation after removedHoldingHistoryIndex if there is any
+		const nextSellIndex = symbolHoldingHistory.findIndex(
+			(d, index) => index > removedHoldingHistoryIndex && d.type === 'SELL'
+		);
+
+		// removing a BUY operation and we have a SELL operation after it
+		if (removedHoldingHistory.type === 'BUY' && nextSellIndex !== -1) {
+			const nextSellHoldingHistory = symbolHoldingHistory[nextSellIndex];
+			// get total units up until nextSellIndex
+			const currentUnits = symbolHoldingHistory
+				.filter((_, index) => index < nextSellIndex)
+				.reduce((acc, curr) => acc + (curr.type === 'BUY' ? curr.units : -curr.units), 0);
+
+			// if removing BUY operation units if less than next SELL operation, throw error
+			if (currentUnits - removedHoldingHistory.units < nextSellHoldingHistory.units) {
+				throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNABLE_TO_DELETE_HISTORY, HttpStatus.NOT_FOUND);
+			}
+		}
+
+		// remove cash change
+		await this.investmentAccountCashChangeService.deleteInvestmentAccountCashe(
+			{
+				investmentAccountId: input.investmentAccountId,
+				itemId: removedHoldingHistory.cashChangeId,
+			},
+			userId
+		);
 
 		// replace holding history for matching symbol
 		const modifiedHoldings = investmentAccount.holdings.map((d) => {
 			if (d.id === input.symbol) {
-				return { ...d, holdingHistory: existingHolding.holdingHistory.filter((d) => d.itemId !== input.itemId) };
+				return { ...d, holdingHistory: symbolHoldingHistory.filter((d) => d.itemId !== input.itemId) };
 			}
 			return d;
 		});
 
-		// Save holding to the DB
-		await this.prisma.investmentAccount.update({
-			data: {
-				holdings: [...modifiedHoldings],
-			},
-			where: {
-				id: investmentAccount.id,
-			},
+		// save entity
+		await this.investmentAccountRepositoryService.updateInvestmentAccount(investmentAccount.id, {
+			holdings: modifiedHoldings,
 		});
 
 		// returned removed history
@@ -160,8 +243,10 @@ export class InvestmentAccountHoldingService {
 			throw new Error('InvestmentAccountHoldingService.modifyExistingHoldingWithHistory(), holding not found');
 		}
 
-		// save data into DB
-		await this.updateInvestmenAccountHolding(investmentAccount.id, modifiedHoldings);
+		// save entity
+		await this.investmentAccountRepositoryService.updateInvestmentAccount(investmentAccount.id, {
+			holdings: modifiedHoldings,
+		});
 
 		return modifiedHolding;
 	}
@@ -187,29 +272,16 @@ export class InvestmentAccountHoldingService {
 			id: input.symbol,
 			investmentAccountId: input.investmentAccountId,
 			assetId: input.symbol,
-			type: input.type,
+			type: input.holdingType,
 			sector: assetSecotor,
 			holdingHistory: [...mergedHoldingHistory],
 		};
 
 		// save entity
-		const modifiedHoldings = [...investmentAccount.holdings, holding];
-		await this.updateInvestmenAccountHolding(input.investmentAccountId, modifiedHoldings);
+		await this.investmentAccountRepositoryService.updateInvestmentAccount(input.investmentAccountId, {
+			holdings: [...investmentAccount.holdings, holding],
+		});
 
 		return holding;
-	}
-
-	private updateInvestmenAccountHolding(
-		investmenAccountId: string,
-		holdings: InvestmentAccountHolding[]
-	): Promise<InvestmentAccount> {
-		return this.prisma.investmentAccount.update({
-			data: {
-				holdings: [...holdings],
-			},
-			where: {
-				id: investmenAccountId,
-			},
-		});
 	}
 }

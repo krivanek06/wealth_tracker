@@ -1,6 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard } from 'src/auth';
+import { RequestUser, ReqUser } from '../../../auth/';
+import { Input } from '../../../graphql/args/';
 import { InvestmentAccountCashChange } from '../entities';
 import {
 	InvestmentAccountCashCreateInput,
@@ -8,8 +10,6 @@ import {
 	InvestmentAccountCashEditInput,
 } from '../inputs';
 import { InvestmentAccountCashChangeService } from '../services';
-import { RequestUser, ReqUser } from './../../../auth/';
-import { Input } from './../../../graphql/args/';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccountCashChange)
@@ -17,7 +17,7 @@ export class InvestmentAccountCashChangeResolver {
 	constructor(private investmentAccountCacheChangeService: InvestmentAccountCashChangeService) {}
 
 	@Mutation(() => InvestmentAccountCashChange)
-	async createInvestmentAccountCashe(
+	createInvestmentAccountCashe(
 		@Input() input: InvestmentAccountCashCreateInput,
 		@ReqUser() authUser: RequestUser
 	): Promise<InvestmentAccountCashChange> {
@@ -25,7 +25,7 @@ export class InvestmentAccountCashChangeResolver {
 	}
 
 	@Mutation(() => InvestmentAccountCashChange)
-	async editInvestmentAccountCashe(
+	editInvestmentAccountCashe(
 		@Input() input: InvestmentAccountCashEditInput,
 		@ReqUser() authUser: RequestUser
 	): Promise<InvestmentAccountCashChange> {
@@ -33,7 +33,7 @@ export class InvestmentAccountCashChangeResolver {
 	}
 
 	@Mutation(() => InvestmentAccountCashChange)
-	async deleteInvestmentAccountCashe(
+	deleteInvestmentAccountCashe(
 		@Input() input: InvestmentAccountCashDeleteInput,
 		@ReqUser() authUser: RequestUser
 	): Promise<InvestmentAccountCashChange> {

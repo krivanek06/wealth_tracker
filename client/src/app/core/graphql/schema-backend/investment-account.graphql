@@ -87,3 +87,9 @@ query GetTransactions($input: String!) {
 		}
 	}
 }
+
+query GetTransactionHistory($input: InvestmentAccountTransactionInput!) {
+	getTransactionHistory(input: $input) {
+		...InvestmentAccountTransactionOutput
+	}
+}

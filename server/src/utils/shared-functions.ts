@@ -5,7 +5,8 @@ export class SharedServiceUtil {
 		return uuid();
 	}
 
-	static round2Dec(value: number): number {
-		return Math.round(value * 100) / 100;
+	static roundDec(value: number, decimal = 2): number {
+		const decimalRounder = 10 * decimal;
+		return Math.round(value * decimalRounder) / decimalRounder;
 	}
 }

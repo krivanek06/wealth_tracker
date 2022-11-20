@@ -17,7 +17,7 @@ export class InvestmentAccountCashChangeResolver {
 	constructor(private investmentAccountCacheChangeService: InvestmentAccountCashChangeService) {}
 
 	@Mutation(() => InvestmentAccountCashChange)
-	async createInvestmentAccountCashe(
+	createInvestmentAccountCashe(
 		@Input() input: InvestmentAccountCashCreateInput,
 		@ReqUser() authUser: RequestUser
 	): Promise<InvestmentAccountCashChange> {
@@ -25,7 +25,7 @@ export class InvestmentAccountCashChangeResolver {
 	}
 
 	@Mutation(() => InvestmentAccountCashChange)
-	async editInvestmentAccountCashe(
+	editInvestmentAccountCashe(
 		@Input() input: InvestmentAccountCashEditInput,
 		@ReqUser() authUser: RequestUser
 	): Promise<InvestmentAccountCashChange> {
@@ -33,7 +33,7 @@ export class InvestmentAccountCashChangeResolver {
 	}
 
 	@Mutation(() => InvestmentAccountCashChange)
-	async deleteInvestmentAccountCashe(
+	deleteInvestmentAccountCashe(
 		@Input() input: InvestmentAccountCashDeleteInput,
 		@ReqUser() authUser: RequestUser
 	): Promise<InvestmentAccountCashChange> {

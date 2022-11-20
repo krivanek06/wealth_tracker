@@ -1,12 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
 import { INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR } from '../dto';
-import { InvestmentAccountCashChange } from '../entities';
+import { InvestmentAccount, InvestmentAccountCashChange } from '../entities';
 import {
 	InvestmentAccountCashCreateInput,
 	InvestmentAccountCashDeleteInput,
 	InvestmentAccountCashEditInput,
 } from '../inputs';
-import { MomentServiceUtil, SharedServiceUtil } from './../../../utils';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
 @Injectable()
@@ -15,8 +15,7 @@ export class InvestmentAccountCashChangeService {
 
 	async createInvestmentAccountCashe(
 		input: InvestmentAccountCashCreateInput,
-		userId: string,
-		holdingHistoryId: string | null = null
+		userId: string
 	): Promise<InvestmentAccountCashChange> {
 		const account = await this.investmentAccountRepositoryService.getInvestmentAccountById(
 			input.investmentAccountId,
@@ -26,9 +25,8 @@ export class InvestmentAccountCashChangeService {
 		const entry: InvestmentAccountCashChange = {
 			itemId: SharedServiceUtil.getUUID(),
 			date: MomentServiceUtil.format(input.date),
-			cashValue: input.cashValue,
+			cashValue: SharedServiceUtil.roundDec(input.cashValue),
 			type: input.type,
-			holdingHistoryId,
 		};
 
 		// modify in DB
@@ -84,10 +82,6 @@ export class InvestmentAccountCashChangeService {
 		const removedCashChange = account.cashChange.find((d) => d.itemId === input.itemId);
 		const filteredOut = account.cashChange.filter((d) => d.itemId !== input.itemId);
 
-		if (!removedCashChange) {
-			throw new HttpException(INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
 		// modify in DB
 		await this.updateInvestmentAccountCashchange(input.investmentAccountId, filteredOut);
 
@@ -97,9 +91,11 @@ export class InvestmentAccountCashChangeService {
 	private async updateInvestmentAccountCashchange(
 		investmentAccountId: string,
 		cashChangeInput: InvestmentAccountCashChange[]
-	): Promise<void> {
+	): Promise<InvestmentAccount> {
 		// order ASC
 		const cashChange = cashChangeInput.sort((a, b) => (a.date < b.date ? -1 : 1));
-		this.investmentAccountRepositoryService.updateInvestmentAccount(investmentAccountId, { cashChange: cashChange });
+		return this.investmentAccountRepositoryService.updateInvestmentAccount(investmentAccountId, {
+			cashChange: cashChange,
+		});
 	}
 }

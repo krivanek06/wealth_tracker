@@ -29,7 +29,7 @@ export class InvestmentAccountService {
 	 */
 	async getActiveHoldings(investmentAccount: InvestmentAccount): Promise<InvestmentAccountActiveHoldingOutput[]> {
 		const activeHoldings = investmentAccount.holdings.filter(
-			(d) => d.holdingHistory[d.holdingHistory.length - 1].units > 0
+			(d) => d.holdingHistory.length > 0 && d.holdingHistory[d.holdingHistory.length - 1].units > 0
 		);
 		const activeHoldingAssetIds = activeHoldings.map((d) => d.assetId);
 
@@ -51,7 +51,7 @@ export class InvestmentAccountService {
 			);
 
 			// calculate bep
-			const beakEvenPrice = SharedServiceUtil.round2Dec(totalValue / units);
+			const beakEvenPrice = SharedServiceUtil.roundDec(totalValue / units);
 
 			const assetGeneral = activeHoldingAssetGeneral.find((asset) => asset.id === holding.assetId);
 			const merge: InvestmentAccountActiveHoldingOutput = {
@@ -109,20 +109,23 @@ export class InvestmentAccountService {
 		const investedGrowth = historicalPrices
 			.map((d) => {
 				const holdingHistory = filteredHoldings.find((h) => h.assetId === d.id).holdingHistory ?? [];
-				let holdingCurrentIndex = 0;
+				let holdingIndex = 0; // increate holdingCurrentIndex if holdingHistory[holdingCurrentIndex].date is same as price.date
+				let unitsAccumulated = holdingHistory[holdingIndex]?.units ?? 0; // keep track of units by BUY/SELL operation
 
 				// store asset.units * price.close
 				const assetGrowthCalculation = d.assetHistoricalPricesData.map((price) => {
-					// increate holdingCurrentIndex if holdingHistory[holdingCurrentIndex].date is same as price.date
-					holdingCurrentIndex =
-						price.date >= holdingHistory[holdingCurrentIndex + 1]?.date ? holdingCurrentIndex + 1 : holdingCurrentIndex;
+					if (price.date >= holdingHistory[holdingIndex + 1]?.date) {
+						holdingIndex += 1;
+						const tmp = holdingHistory[holdingIndex];
+						unitsAccumulated += tmp.type === 'BUY' ? tmp.units : -tmp.units;
+					}
 
-					return { date: price.date, calculation: holdingHistory[holdingCurrentIndex].units * price.close };
+					return { date: price.date, calculation: unitsAccumulated * price.close };
 				});
 				return assetGrowthCalculation;
 			})
 			.reduce((acc, curr) => {
-				// each data in { curr: { date: string; calculation: number }[]} add tp the 'acc' array
+				// each data in { curr: { date: string; calculation: number }[]} add to the 'acc' array
 				curr.forEach((dataElement) => {
 					// 		// empty acc, happends only once
 					if (acc.length === 0) {
@@ -152,14 +155,18 @@ export class InvestmentAccountService {
 
 		// generate cash calculation since we had cash in account
 		let cashChangeIndex = 0; // needed because of cash change in investmentAccount.cashChange
-		// TODO adding previous cashValue
+		let cashAccumulated = investmentAccount.cashChange[cashChangeIndex]?.cashValue ?? 0;
 		const cashGrowth = MomentServiceUtil.getDates(investmentAccount.cashChange[0]?.date, new Date()).map((d) => {
 			const formattedDate = MomentServiceUtil.format(d);
-			const nextCashChange = investmentAccount.cashChange[cashChangeIndex + 1];
-			cashChangeIndex += formattedDate >= nextCashChange?.date && !!nextCashChange ? 1 : 0;
+			// reaching next cash entry, increase index and accumaltion
+			if (formattedDate >= investmentAccount.cashChange[cashChangeIndex + 1]?.date) {
+				cashChangeIndex += 1;
+				cashAccumulated += investmentAccount.cashChange[cashChangeIndex].cashValue;
+			}
+
 			return {
 				date: formattedDate,
-				calculation: investmentAccount.cashChange[cashChangeIndex].cashValue,
+				calculation: cashAccumulated,
 			};
 		});
 

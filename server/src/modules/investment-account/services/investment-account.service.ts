@@ -1,10 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
+import { LodashServiceUtil, MomentServiceUtil, SharedServiceUtil } from '../../../utils';
 import { AssetGeneralService } from '../../asset-manager';
 import { INVESTMENT_ACCOUNT_ERROR, INVESTMENT_ACCOUNT_MAX } from '../dto';
-import { InvestmentAccount } from '../entities';
+import { InvestmentAccount, InvestmentAccountHolding, InvestmentAccountHoldingHistory } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
-import { InvestmentAccountActiveHoldingOutput, InvestmentAccountGrowth } from '../outputs';
+import {
+	InvestmentAccountActiveHoldingOutput,
+	InvestmentAccountGrowth,
+	InvestmentAccountTransactionOutput,
+	InvestmentAccountTransactionWrapperOutput,
+} from '../outputs';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
 @Injectable()
@@ -22,22 +27,39 @@ export class InvestmentAccountService {
 		return this.investmentAccountRepositoryService.getInvestmentAccountById(investmentAccountId, userId);
 	}
 
+	async getTransactions(
+		investmentAccountId: string,
+		userId: string
+	): Promise<InvestmentAccountTransactionWrapperOutput> {
+		const account = await this.getInvestmentAccountById(investmentAccountId, userId);
+
+		// get every symbol holding history into arrya with existing return
+		const history = account.holdings
+			.map((d) => d.holdingHistory)
+			.map((d) => d.filter((d) => !!d.return))
+			.reduce((a, b) => [...a, ...b]);
+
+		const bestValueChage = this.getTransactionsOrder(account, history, 'returnChange', 'desc');
+		const bestValue = this.getTransactionsOrder(account, history, 'return', 'desc');
+		const worstValueChage = this.getTransactionsOrder(account, history, 'returnChange', 'asc');
+		const worstValue = this.getTransactionsOrder(account, history, 'return', 'asc');
+
+		return { bestValueChage, bestValue, worstValue, worstValueChage };
+	}
+
 	/**
 	 *
-	 * @param investmentAccount
+	 * @param holdings
 	 * @returns loaded assetGeneral info for all active symbol
 	 */
-	async getActiveHoldings(investmentAccount: InvestmentAccount): Promise<InvestmentAccountActiveHoldingOutput[]> {
-		const activeHoldings = investmentAccount.holdings.filter(
-			(d) => d.holdingHistory.length > 0 && d.holdingHistory[d.holdingHistory.length - 1].units > 0
-		);
-		const activeHoldingAssetIds = activeHoldings.map((d) => d.assetId);
+	async getActiveHoldingOutput(holdings: InvestmentAccountHolding[]): Promise<InvestmentAccountActiveHoldingOutput[]> {
+		const activeHoldingAssetIds = holdings.map((d) => d.assetId);
 
 		// load asset general
 		const activeHoldingAssetGeneral = await this.assetGeneralService.getAssetGeneralForSymbols(activeHoldingAssetIds);
 
 		// create result
-		const result = activeHoldings.map((holding) => {
+		const result = holdings.map((holding) => {
 			// get total value & units
 			const { totalValue, units } = holding.holdingHistory.reduce(
 				(acc, curr) => {
@@ -219,5 +241,22 @@ export class InvestmentAccountService {
 	async deleteInvestmentAccount(investmentAccountId: string, userId: string): Promise<InvestmentAccount> {
 		await this.investmentAccountRepositoryService.isInvestmentAccountExist(investmentAccountId, userId);
 		return this.investmentAccountRepositoryService.deleteInvestmentAccount(investmentAccountId);
+	}
+
+	private getTransactionsOrder(
+		investmentAccount: InvestmentAccount,
+		history: InvestmentAccountHoldingHistory[],
+		sortKey: 'returnChange' | 'return',
+		orders: 'asc' | 'desc'
+	): InvestmentAccountTransactionOutput[] {
+		const result = LodashServiceUtil.orderBy(history, [sortKey], orders)
+			.slice(0, 10)
+			.map((d) => {
+				const holding = investmentAccount.holdings.find((x) => x.assetId === d.assetId);
+				const res: InvestmentAccountTransactionOutput = { ...d, holdingType: holding.type, sector: holding.sector };
+				return res;
+			});
+
+		return result;
 	}
 }

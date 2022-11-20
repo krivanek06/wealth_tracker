@@ -121,6 +121,7 @@ export class InvestmentAccountHoldingService {
 			return: returnValue,
 			returnChange: returnChange,
 			cashChangeId: savedCash.itemId,
+			assetId: input.symbol,
 		};
 
 		// merge and sort ASC, because user may add newHoldingHistory sooner than existingHoldingHistories[-1]

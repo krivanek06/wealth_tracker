@@ -63,3 +63,18 @@ fragment InvestmentAccountGrowth on InvestmentAccountGrowth {
 	date
 	ownedAssets
 }
+
+fragment InvestmentAccountTransactionOutput on InvestmentAccountTransactionOutput {
+	itemId
+	assetId
+	cashChangeId
+	date
+	createdAt
+	units
+	unitValue
+	type
+	return
+	returnChange
+	holdingType
+	sector
+}

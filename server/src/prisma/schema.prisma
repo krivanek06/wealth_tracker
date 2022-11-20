@@ -166,6 +166,7 @@ type InvestmentAccountHolding {
 
 type InvestmentAccountHoldingHistory {
     itemId    String
+    assetId   String // ref InvestmentAccountHolding.assetId
     createdAt DateTime @default(now()) // when entry was created
     date      String // YYYY-MM-DD of day when it was added to holdings
     units     Float // how many units of asset the user have

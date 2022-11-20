@@ -45,16 +45,6 @@ export class InvestmentAccountHoldingResolver {
 		return this.investmentAccountHoldingService.deleteHoldingHistory(input, authUser.id);
 	}
 
-	/* 
-		TODO edit holding history, reason: may happane:
-		- CREATE 1 BUY OPEATION
-		- CREATE 2 BUY OPEATION
-		- CREATE SELL OPERATION - calculates BEP, return & return %
-		- DELETE first buy operation
-		- incorrect data for the second buy opeation, need to manually adjust
-
-	*/
-
 	/* Resolvers */
 	@ResolveField('historicalPrices', () => [AssetGeneralHistoricalPricesData], {
 		description: 'Return historical data for a symbol starting from ',

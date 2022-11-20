@@ -69,3 +69,21 @@ mutation DeleteInvestmentAccountCashe($input: InvestmentAccountCashDeleteInput!)
 		...InvestmentAccountCashChange
 	}
 }
+
+### Transactions
+query GetTransactions($input: String!) {
+	getTransactions(input: $input) {
+		bestValueChage {
+			...InvestmentAccountTransactionOutput
+		}
+		worstValueChage {
+			...InvestmentAccountTransactionOutput
+		}
+		bestValue {
+			...InvestmentAccountTransactionOutput
+		}
+		worstValue {
+			...InvestmentAccountTransactionOutput
+		}
+	}
+}

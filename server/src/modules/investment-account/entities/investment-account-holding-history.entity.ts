@@ -12,6 +12,16 @@ export class InvestmentAccountHoldingHistory implements InvestmentAccountHolding
 	@Field(() => String)
 	itemId: string;
 
+	@Field(() => String, {
+		description: 'Symbol ID -> AAPL, MSFT, BTC',
+	})
+	assetId: string;
+
+	@Field(() => String, {
+		description: 'InvestmentAccountCashChange.ID if holding history affected cash change',
+	})
+	cashChangeId: string;
+
 	@Field(() => String)
 	date: string;
 
@@ -32,15 +42,10 @@ export class InvestmentAccountHoldingHistory implements InvestmentAccountHolding
 	@Field(() => Float, {
 		nullable: true,
 	})
-	return: number;
+	return: number | null;
 
 	@Field(() => Float, {
 		nullable: true,
 	})
-	returnChange: number;
-
-	@Field(() => String, {
-		description: 'InvestmentAccountCashChange.ID if holding history affected cash change',
-	})
-	cashChangeId: string;
+	returnChange: number | null;
 }

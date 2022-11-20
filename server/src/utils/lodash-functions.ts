@@ -1,9 +1,10 @@
-import { Dictionary, List, ValueIteratee } from 'lodash';
+import { Dictionary, List, ListIteratee, Many, ValueIteratee } from 'lodash';
 import chunks from 'lodash/chunk';
 import cloneDeep from 'lodash/cloneDeep';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 import isEqual from 'lodash/isEqual';
+import orderBy from 'lodash/orderBy';
 import round from 'lodash/round';
 import takeRight from 'lodash/takeRight';
 import zip from 'lodash/zip';
@@ -15,6 +16,14 @@ export class LodashServiceUtil {
 
 	static groupBy<T>(collection: List<T> | null | undefined, iteratee?: ValueIteratee<T>): Dictionary<T[]> {
 		return groupBy(collection, iteratee);
+	}
+
+	static orderBy<T>(
+		collection: List<T> | null | undefined,
+		iteratees?: Many<ListIteratee<T>>,
+		orders?: Many<boolean | 'asc' | 'desc'>
+	): T[] {
+		return orderBy(collection, iteratees, orders);
 	}
 
 	static cloneDeep<T>(value: T): T {

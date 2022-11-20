@@ -26,6 +26,8 @@ export class AssetGeneralService {
 	 * are not recent data, refresh them from the API
 	 *
 	 * @param symbols an array of symbols we want to get back current AssetGeneral
+	 *
+	 * TODO implement caching
 	 */
 	async getAssetGeneralForSymbols(symbols: string[]): Promise<AssetGeneral[]> {
 		// load general data from all assets

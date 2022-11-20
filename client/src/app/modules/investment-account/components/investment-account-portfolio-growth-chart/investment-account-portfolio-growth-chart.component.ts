@@ -35,6 +35,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 		cash: number[][];
 		invested: number[][];
 		balance: number[][];
+		ownedAssets: number[][];
 	} {
 		// filter out times when cash changed
 		const cash = data
@@ -52,14 +53,31 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 				return acc;
 			}, [] as number[][]);
 
-		const balance = data.map((point) => [Date.parse(point.date), point.cash + point.invested]);
-		const invested = data.map((point) => [Date.parse(point.date), point.invested]);
+		const balance = data
+			.filter((d) => d.invested !== 0)
+			.map((point) => [Date.parse(point.date), point.cash + point.invested]);
+		const invested = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.invested]);
 
-		return { cash, balance, invested };
+		// create points where owned symbol changed
+		const ownedAssets = data
+			.reduce((acc, curr) => {
+				if (acc.length == 0) {
+					return [curr];
+				}
+				const previous = acc[acc.length - 1];
+				if (previous.ownedAssets === curr.ownedAssets) {
+					return acc;
+				}
+
+				return [...acc, curr];
+			}, [] as InvestmentAccountGrowth[])
+			.map((d) => [Date.parse(d.date), d.ownedAssets]);
+
+		return { cash, balance, invested, ownedAssets };
 	}
 
 	private initChart(data: InvestmentAccountGrowth[]) {
-		const { balance, invested, cash } = this.getChartData(data);
+		const { balance, invested, cash, ownedAssets } = this.getChartData(data);
 
 		this.chartOptions = {
 			chart: {
@@ -118,6 +136,20 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					tickPixelInterval: 40,
 					minorGridLineWidth: 0,
 					visible: false,
+				},
+				{
+					title: {
+						text: '',
+					},
+					startOnTick: false,
+					endOnTick: false,
+					gridLineColor: '#66666655',
+					opposite: false,
+					gridLineWidth: 1,
+					minorTickInterval: 'auto',
+					tickPixelInterval: 40,
+					minorGridLineWidth: 0,
+					visible: true,
 				},
 			],
 			xAxis: {
@@ -219,6 +251,27 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 				{
 					color: '#f24f18',
 					type: 'column',
+					visible: false,
+					// fillColor: {
+					// 	linearGradient: {
+					// 		x1: 1,
+					// 		y1: 0,
+					// 		x2: 0,
+					// 		y2: 1,
+					// 	},
+					// 	stops: [
+					// 		[0, '#d35431'],
+					// 		[1, 'transparent'],
+					// 	],
+					// },
+					yAxis: 3,
+					name: 'Cash',
+					data: cash,
+				},
+				{
+					color: '#ee22dd',
+					type: 'column',
+					visible: false,
 					// fillColor: {
 					// 	linearGradient: {
 					// 		x1: 1,
@@ -232,8 +285,8 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					// 	],
 					// },
 					yAxis: 2,
-					name: 'Cash',
-					data: cash,
+					name: 'Owned assets',
+					data: ownedAssets,
 				},
 				{
 					color: '#00c4dd',

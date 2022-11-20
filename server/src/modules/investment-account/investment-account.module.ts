@@ -5,11 +5,14 @@ import {
 	InvestmentAccountCashChangeResolver,
 	InvestmentAccountHoldingResolver,
 	InvestmentAccountResolver,
+	InvestmentAccountTransactionResolver,
 } from './resolvers';
 import {
 	InvestmentAccountCashChangeService,
 	InvestmentAccountHoldingService,
+	InvestmentAccountRepositoryService,
 	InvestmentAccountService,
+	InvestmentAccountTransactionService,
 } from './services';
 
 @Module({
@@ -22,6 +25,9 @@ import {
 		InvestmentAccountHoldingResolver,
 		InvestmentAccountCashChangeService,
 		InvestmentAccountCashChangeResolver,
+		InvestmentAccountRepositoryService,
+		InvestmentAccountTransactionService,
+		InvestmentAccountTransactionResolver,
 	],
 	exports: [InvestmentAccountResolver, InvestmentAccountHoldingResolver, InvestmentAccountCashChangeResolver],
 })

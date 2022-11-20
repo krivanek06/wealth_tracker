@@ -1,6 +1,5 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ObjectType } from '@nestjs/graphql';
 import { InvestmentAccountHoldingType } from '@prisma/client';
-import { InvestmentAccountHoldingHistory } from '../entities';
 import { AssetGeneral } from './../../asset-manager';
 
 @ObjectType()
@@ -26,12 +25,14 @@ export class InvestmentAccountActiveHoldingOutput {
 	@Field(() => String)
 	sector: string;
 
-	@Field(() => InvestmentAccountHoldingHistory, {
-		description: 'How many units of this symbol user has',
-	})
-	currentHistory: InvestmentAccountHoldingHistory;
+	@Field(() => Float)
+	units: number;
 
-	// TODO calculated BEP
+	@Field(() => Float)
+	totalValue: number;
+
+	@Field(() => Float)
+	beakEvenPrice: number;
 
 	@Field(() => AssetGeneral)
 	assetGeneral: AssetGeneral;

@@ -1,5 +1,5 @@
-import { ArgsType, Field, Float, InputType, Int } from '@nestjs/graphql';
-import { InvestmentAccountHoldingType } from '@prisma/client';
+import { ArgsType, Field, InputType, Int } from '@nestjs/graphql';
+import { InvestmentAccountHoldingHistoryType, InvestmentAccountHoldingType } from '@prisma/client';
 import { IsDate, IsInt, Min } from 'class-validator';
 
 // ----------- Other ------------
@@ -12,11 +12,6 @@ export class HoldingInputData {
 	@Min(0)
 	@IsInt()
 	units: number;
-
-	@Field(() => Float, {
-		description: 'Amount the user invested into this symbol',
-	})
-	investedAmount: number;
 
 	@Field(() => String, {
 		description: 'Date when we added this holding to our investment account',
@@ -41,7 +36,10 @@ export class InvestmentAccounHoldingCreateInput {
 	investmentAccountId: string;
 
 	@Field(() => InvestmentAccountHoldingType)
-	type: InvestmentAccountHoldingType;
+	holdingType: InvestmentAccountHoldingType;
+
+	@Field(() => InvestmentAccountHoldingHistoryType)
+	type: InvestmentAccountHoldingHistoryType;
 
 	@Field(() => HoldingInputData)
 	holdingInputData: HoldingInputData;

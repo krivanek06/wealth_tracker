@@ -124,63 +124,48 @@ export class InvestmentAccountService {
 			.reduce((acc, curr) => {
 				// each data in { curr: { date: string; calculation: number }[]} add to the 'acc' array
 				curr.forEach((dataElement) => {
-					// 		// empty acc, happends only once
-					if (acc.length === 0) {
-						acc.push(dataElement);
-						return;
-					}
-
 					// accumulated each assetGrowthCalculation into one investment growht number[] array
 					const elementIndex = acc.findIndex((el) => el.date === dataElement.date);
 
 					// if elementIndex exists, add value to it
 					if (elementIndex > -1) {
-						acc[elementIndex].calculation += dataElement.calculation;
+						acc[elementIndex].calc += dataElement.calculation;
+						acc[elementIndex].ownedAssets += 1;
 						return;
 					}
 
 					// data is not yet in the array
-					if (dataElement.date < acc[0].date) {
-						acc = [dataElement, ...acc]; // append element to the start
+					if (acc.length === 0 || dataElement.date < acc[0].date) {
+						acc = [{ date: dataElement.date, calc: dataElement.calculation, ownedAssets: 1 }, ...acc]; // append element to the start
 					} else if (dataElement.date > acc[acc.length - 1].date) {
-						acc = [...acc, dataElement]; // append element to the end
+						acc = [...acc, { date: dataElement.date, calc: dataElement.calculation, ownedAssets: 1 }]; // append element to the end
+					} else {
+						// append somewhere middle, find first larger date
+						const appendIndex = acc.findIndex((d) => dataElement.date < d.date);
+						acc.splice(appendIndex, 0, { date: dataElement.date, calc: dataElement.calculation, ownedAssets: 1 });
 					}
 				});
 
 				return acc;
-			}, [] as { date: string; calculation: number }[]);
-
-		// generate cash calculation since we had cash in account
-		let cashChangeIndex = 0; // needed because of cash change in investmentAccount.cashChange
-		let cashAccumulated = investmentAccount.cashChange[cashChangeIndex]?.cashValue ?? 0;
-		const cashGrowth = MomentServiceUtil.getDates(investmentAccount.cashChange[0]?.date, new Date()).map((d) => {
-			const formattedDate = MomentServiceUtil.format(d);
-			// reaching next cash entry, increase index and accumaltion
-			if (formattedDate >= investmentAccount.cashChange[cashChangeIndex + 1]?.date) {
-				cashChangeIndex += 1;
-				cashAccumulated += investmentAccount.cashChange[cashChangeIndex].cashValue;
-			}
-
-			return {
-				date: formattedDate,
-				calculation: cashAccumulated,
-			};
-		});
+			}, [] as { date: string; calc: number; ownedAssets: number }[]);
 
 		// select soonest date to generate date range for chart data
+		const cashGrowth = investmentAccount.cashChange;
 		const soonestDate = cashGrowth[0]?.date < investedGrowth[0]?.date ? cashGrowth[0].date : investedGrowth[0].date;
-		const dateRange = MomentServiceUtil.getDates(soonestDate, new Date());
 
-		const result = dateRange.map((date) => {
+		const result = MomentServiceUtil.getDates(soonestDate, new Date()).map((date) => {
 			const formattedDate = MomentServiceUtil.format(date);
-			const invested = investedGrowth.find((d) => d.date === formattedDate)?.calculation ?? 0;
-			const cash = cashGrowth.find((d) => d.date === formattedDate)?.calculation ?? 0;
+			const growth = investedGrowth.find((d) => d.date === formattedDate);
+			const invested = growth?.calc ?? 0;
+			const ownedAssets = growth?.ownedAssets ?? 0;
+
+			const cash = cashGrowth.find((d) => d.date === formattedDate)?.cashValue ?? 0;
 
 			const data: InvestmentAccountGrowth = {
 				invested,
 				cash,
+				ownedAssets,
 				date: formattedDate,
-				ownedAssets: 0, // TODO fix this
 			};
 			return data;
 		});

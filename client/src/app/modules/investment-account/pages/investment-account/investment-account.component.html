@@ -4,7 +4,7 @@
 		[currentInvestedAmout]="(currentInvestedAmout$ | async) ?? 0"
 		[totalInvestedAmount]="(totalInvestedAmount$ | async) ?? 0"
 		[dailyInvestmentChange]="dailyInvestmentChange$ | async"
-		[cashAmount]="investmentAccount.cashChange[investmentAccount.cashChange.length -1]?.cashCurrent ?? 0"
+		[cashAmount]="investmentAccount.cashChange[investmentAccount.cashChange.length -1]?.cashValue ?? 0"
 	></app-investment-account-state>
 
 	<div class="grid grid-cols-1 xl:grid-cols-3 gap-4">

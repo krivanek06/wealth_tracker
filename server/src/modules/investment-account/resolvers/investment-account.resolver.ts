@@ -4,11 +4,7 @@ import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql';
 import { InvestmentAccount } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
-import {
-	InvestmentAccountActiveHoldingOutput,
-	InvestmentAccountGrowth,
-	InvestmentAccountTransactionWrapperOutput,
-} from '../outputs';
+import { InvestmentAccountActiveHoldingOutput, InvestmentAccountGrowth } from '../outputs';
 import { InvestmentAccountService } from '../services';
 
 @UseGuards(AuthorizationGuard)
@@ -45,18 +41,6 @@ export class InvestmentAccountResolver {
 	): Promise<InvestmentAccountGrowth[]> {
 		return this.investmentAccountService.getInvestmentAccountGrowth(input, authUser.id);
 	}
-
-	@Query(() => InvestmentAccountTransactionWrapperOutput, {
-		description: 'Returns SOLD transaction in different orders',
-	})
-	getTransactions(
-		@ReqUser() authUser: RequestUser,
-		@Input() input: string
-	): Promise<InvestmentAccountTransactionWrapperOutput> {
-		return this.investmentAccountService.getTransactions(input, authUser.id);
-	}
-
-	// TODO getTransactionHistory(offset, limit)
 
 	/* Mutation */
 

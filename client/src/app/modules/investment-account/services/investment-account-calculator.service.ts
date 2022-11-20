@@ -18,7 +18,7 @@ export class InvestmentAccountCalculatorService {
 		return this.investmentAccountApiService.getInvestmentAccountById(accountId).pipe(
 			map((res) =>
 				res.activeHoldings.reduce((acc, curr) => {
-					return acc + curr.currentHistory.investedAmount;
+					return acc + curr.totalValue;
 				}, 0)
 			)
 		);
@@ -34,7 +34,7 @@ export class InvestmentAccountCalculatorService {
 		return this.investmentAccountApiService.getInvestmentAccountById(accountId).pipe(
 			map((res) =>
 				res.activeHoldings.reduce((acc, curr) => {
-					return acc + curr.currentHistory.units * curr.assetGeneral.assetQuote.price;
+					return acc + curr.units * curr.assetGeneral.assetQuote.price;
 				}, 0)
 			)
 		);
@@ -55,7 +55,7 @@ export class InvestmentAccountCalculatorService {
 
 				// get all daily change in value times units
 				const valueChange = res.activeHoldings
-					.map((d) => d.currentHistory.units * d.assetGeneral.assetQuote.change)
+					.map((d) => d.units * d.assetGeneral.assetQuote.change)
 					.reduce((a, b) => a + b, 0);
 
 				return {

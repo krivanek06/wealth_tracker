@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { DefaultImgDirective } from './../../../../shared/directives';
-import { InArrayPipe } from './../../../../shared/pipes';
+import { DefaultImgDirective } from '../../directives';
+import { InArrayPipe } from '../../pipes';
 import { ValuePresentationItemComponent } from './value-presentation-item.component';
 
 @NgModule({

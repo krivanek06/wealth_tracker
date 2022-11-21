@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { InvestmentAccountApiService } from '../../../core/api';
-import { DailyInvestmentChange, SectorAllocationCalculation } from '../models';
+import { ValuePresentItem } from '../../../shared/models';
+import { DailyInvestmentChange, SectorAllocation } from '../models';
 
 @Injectable({
 	providedIn: 'root',
@@ -66,29 +67,37 @@ export class InvestmentAccountCalculatorService {
 		);
 	}
 
-	getSectorAllocation(accountId: string): Observable<SectorAllocationCalculation[]> {
+	getSectorAllocation(accountId: string): Observable<ValuePresentItem<SectorAllocation>[]> {
 		return this.investmentAccountApiService.getInvestmentAccountById(accountId).pipe(
-			map((res) =>
-				res.activeHoldings.reduce((acc, curr) => {
-					const allocationIndex = acc.findIndex((d) => d.sectorName === curr.sector);
-					// not yet added
+			map((res) => {
+				const totalInvestedAmount = res.activeHoldings.reduce((acc, curr) => acc + curr.totalValue, 0);
+				return res.activeHoldings.reduce((acc, curr) => {
+					const allocationIndex = acc.findIndex((d) => d.name === curr.sector);
+
+					// exists
 					if (allocationIndex !== -1) {
-						acc[allocationIndex].symbols = [...acc[allocationIndex].symbols, curr.assetId];
-						acc[allocationIndex].units += curr.units;
+						acc[allocationIndex].item.symbols = [...acc[allocationIndex].item.symbols, curr.assetId];
+						acc[allocationIndex].valuePrct += curr.totalValue / totalInvestedAmount;
 						acc[allocationIndex].value += curr.totalValue;
 						return acc;
 					}
 
-					const data: SectorAllocationCalculation = {
-						sectorName: curr.sector,
-						symbols: [curr.assetId],
-						units: curr.units,
+					const valueItem: ValuePresentItem<SectorAllocation> = {
+						color: '#fe22cc',
+						imageSrc: null,
+						imageType: 'url',
+						name: curr.sector,
 						value: curr.totalValue,
+						item: {
+							sectorName: curr.sector,
+							symbols: [curr.assetId],
+						},
+						valuePrct: curr.totalValue / totalInvestedAmount,
 					};
 
-					return [...acc, data];
-				}, [] as SectorAllocationCalculation[])
-			)
+					return [...acc, valueItem];
+				}, [] as ValuePresentItem<SectorAllocation>[]);
+			})
 		);
 	}
 }

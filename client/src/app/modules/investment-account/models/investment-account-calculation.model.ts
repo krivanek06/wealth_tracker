@@ -3,9 +3,7 @@ export interface DailyInvestmentChange {
 	dailyChangesPercentage: number;
 }
 
-export interface SectorAllocationCalculation {
+export interface SectorAllocation {
 	sectorName: string;
-	value: number;
 	symbols: string[]; // distinct symbols are under this sector
-	units: number; // total symbol units unter this sector
 }

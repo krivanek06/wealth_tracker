@@ -149,8 +149,23 @@ export class InvestmentAccountService {
 				return acc;
 			}, [] as { date: string; calc: number; ownedAssets: number }[]);
 
+		const cashGrowth = MomentServiceUtil.getDates(investmentAccount.cashChange[0]?.date, new Date()).reduce(
+			(acc, date) => {
+				const formattedDate = MomentServiceUtil.format(date);
+				const existingCashEntity = investmentAccount.cashChange.find((d) => d.date === formattedDate);
+				const currentCash = (acc[acc.length - 1]?.calculation ?? 0) + (existingCashEntity?.cashValue ?? 0);
+
+				const data = {
+					date: formattedDate,
+					calculation: currentCash,
+				};
+
+				return [...acc, data];
+			},
+			[] as { date: string; calculation: number }[]
+		);
+
 		// select soonest date to generate date range for chart data
-		const cashGrowth = investmentAccount.cashChange;
 		const soonestDate = cashGrowth[0]?.date < investedGrowth[0]?.date ? cashGrowth[0].date : investedGrowth[0].date;
 
 		const result = MomentServiceUtil.getDates(soonestDate, new Date()).map((date) => {
@@ -159,11 +174,11 @@ export class InvestmentAccountService {
 			const invested = growth?.calc ?? 0;
 			const ownedAssets = growth?.ownedAssets ?? 0;
 
-			const cash = cashGrowth.find((d) => d.date === formattedDate)?.cashValue ?? 0;
+			const cash = cashGrowth.find((d) => d.date === formattedDate)?.calculation ?? 0;
 
 			const data: InvestmentAccountGrowth = {
-				invested,
-				cash,
+				invested: SharedServiceUtil.roundDec(invested),
+				cash: SharedServiceUtil.roundDec(cash),
 				ownedAssets,
 				date: formattedDate,
 			};

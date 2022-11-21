@@ -1,16 +1,19 @@
-import { Directive, ElementRef, Input } from '@angular/core';
+import { Directive, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { DefaultImageType } from '../models';
 
 @Directive({
 	selector: '[appDefaultImg]',
 	standalone: true,
 })
-export class DefaultImgDirective {
-	@Input() set src(location: string | null | undefined) {
-		this.setImage(this.resolveImage(location));
-	}
-	@Input() imageType: 'default' | 'tags' | 'url' = 'default';
+export class DefaultImgDirective implements OnChanges {
+	@Input() src?: string | null;
+	@Input() imageType: DefaultImageType = 'default';
 
 	constructor(private imageRef: ElementRef) {}
+
+	ngOnChanges(changes: SimpleChanges): void {
+		this.setImage(this.resolveImage(this.src));
+	}
 
 	private setImage(src: string) {
 		this.imageRef.nativeElement.setAttribute('src', src);

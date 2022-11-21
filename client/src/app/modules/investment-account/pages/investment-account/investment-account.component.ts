@@ -1,14 +1,16 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { FormControl } from '@angular/forms';
+import { combineLatest, map, Observable, startWith } from 'rxjs';
 import { InvestmentAccountApiService } from '../../../../core/api';
 import {
+	InvestmentAccountActiveHoldingOutputFragment,
 	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
 	InvestmentAccountOverviewFragment,
 } from '../../../../core/graphql';
-import { LAYOUT_2XL } from '../../../../shared/models';
-import { DailyInvestmentChange, SectorAllocationCalculation } from '../../models';
+import { LAYOUT_2XL, ValuePresentItem } from '../../../../shared/models';
+import { DailyInvestmentChange, SectorAllocation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
 @Component({
@@ -45,9 +47,17 @@ export class InvestmentAccountComponent implements OnInit {
 	/**
 	 * Symbols allocated by sectors
 	 */
-	sectorAllocation$!: Observable<SectorAllocationCalculation[]>;
+	sectorAllocation$!: Observable<ValuePresentItem<SectorAllocation>[]>;
 
 	layout2XL$!: Observable<boolean>;
+
+	// keeps track of visible sectors, if empty -> all is visible
+	sectorFormControl = new FormControl<SectorAllocation[]>([], { nonNullable: true });
+
+	/**
+	 * Active holdings that match sector if sectorFormControl not empty
+	 */
+	filteredActiveHoldings$!: Observable<InvestmentAccountActiveHoldingOutputFragment[]>;
 
 	constructor(
 		private investmentAccountApiService: InvestmentAccountApiService,
@@ -59,19 +69,33 @@ export class InvestmentAccountComponent implements OnInit {
 		const investmentId = this.investmentAccountsOverivew.id;
 		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(investmentId);
 		this.investmentAccountGrowth$ = this.investmentAccountApiService.getInvestmentAccountGrowth(investmentId);
-		this.sectorAllocation$ = this.investmentAccountCalculatorService.getSectorAllocation(investmentId);
+
+		this.filteredActiveHoldings$ = combineLatest([
+			this.investmentAccount$,
+			this.sectorFormControl.valueChanges.pipe(startWith(this.sectorFormControl.value)),
+		]).pipe(
+			map(([account, sectors]) =>
+				account.activeHoldings.filter(
+					(d) => sectors.length === 0 || sectors.map((x) => x.sectorName).includes(d.sector)
+				)
+			)
+		);
 
 		this.layout2XL$ = this.breakpointObserver.observe([LAYOUT_2XL]).pipe(map((res) => res.matches));
 
-		this.totalInvestedAmount$ =
-			this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(investmentId);
-		this.currentInvestedAmout$ =
-			this.investmentAccountCalculatorService.getInvestmentAccountByIdCurrentInvestedAmout(investmentId);
-		this.dailyInvestmentChange$ = this.investmentAccountCalculatorService.getDailyInvestmentChange(investmentId);
+		this.sectorAllocation$ = this.investmentAccount$.pipe(
+			map((acount) => this.investmentAccountCalculatorService.getSectorAllocation(acount))
+		);
 
-		// TODO remove
-		this.dailyInvestmentChange$.subscribe(console.log);
-		this.currentInvestedAmout$.subscribe(console.log);
-		this.totalInvestedAmount$.subscribe(console.log);
+		this.totalInvestedAmount$ = this.investmentAccount$.pipe(
+			map((acount) => this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(acount))
+		);
+
+		this.currentInvestedAmout$ = this.investmentAccount$.pipe(
+			map((account) => this.investmentAccountCalculatorService.getInvestmentAccountByIdCurrentInvestedAmout(account))
+		);
+		this.dailyInvestmentChange$ = this.investmentAccount$.pipe(
+			map((account) => this.investmentAccountCalculatorService.getDailyInvestmentChange(account))
+		);
 	}
 }

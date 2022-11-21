@@ -1,14 +1,30 @@
-<div class="m-auto flex items-center gap-3">
-	<button mat-stroked-button (click)="onScollChange('decement')" [style.height.px]="buttonHeightPx">
-		<mat-icon>arrow_back_ios</mat-icon>
+<div
+	class="m-auto flex items-center gap-3"
+	[ngClass]="{'flex-col': !isFlexRow}"
+	[style.max-height.px]="flexColHeightPx"
+>
+	<button
+		mat-stroked-button
+		(click)="onScollChange('decement')"
+		[style.height.px]="buttonHeightPx"
+		[ngClass]="{'w-full': !isFlexRow}"
+	>
+		<mat-icon *ngIf="isFlexRow">arrow_back_ios</mat-icon>
+		<mat-icon *ngIf="!isFlexRow">keyboard_arrow_up</mat-icon>
 	</button>
 
 	<!-- content projection -->
-	<div #contentWrapper class="c-content-wrapper">
+	<div #contentWrapper class="c-content-wrapper" [ngClass]="{'flex-col': !isFlexRow}">
 		<ng-content></ng-content>
 	</div>
 
-	<button mat-stroked-button (click)="onScollChange('increment')" [style.height.px]="buttonHeightPx">
-		<mat-icon>arrow_forward_ios</mat-icon>
+	<button
+		mat-stroked-button
+		(click)="onScollChange('increment')"
+		[style.height.px]="buttonHeightPx"
+		[ngClass]="{'w-full': !isFlexRow}"
+	>
+		<mat-icon *ngIf="isFlexRow">arrow_forward_ios</mat-icon>
+		<mat-icon *ngIf="!isFlexRow">keyboard_arrow_down</mat-icon>
 	</button>
 </div>

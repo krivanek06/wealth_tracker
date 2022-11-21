@@ -1,12 +1,14 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { InvestmentAccountApiService } from '../../../../core/api';
 import {
 	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
 	InvestmentAccountOverviewFragment,
 } from '../../../../core/graphql';
-import { DailyInvestmentChange } from '../../models';
+import { LAYOUT_2XL } from '../../../../shared/models';
+import { DailyInvestmentChange, SectorAllocationCalculation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
 @Component({
@@ -40,15 +42,26 @@ export class InvestmentAccountComponent implements OnInit {
 	 */
 	investmentAccountGrowth$!: Observable<InvestmentAccountGrowth[]>;
 
+	/**
+	 * Symbols allocated by sectors
+	 */
+	sectorAllocation$!: Observable<SectorAllocationCalculation[]>;
+
+	layout2XL$!: Observable<boolean>;
+
 	constructor(
 		private investmentAccountApiService: InvestmentAccountApiService,
-		private investmentAccountCalculatorService: InvestmentAccountCalculatorService
+		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
+		private breakpointObserver: BreakpointObserver
 	) {}
 
 	ngOnInit(): void {
 		const investmentId = this.investmentAccountsOverivew.id;
 		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(investmentId);
 		this.investmentAccountGrowth$ = this.investmentAccountApiService.getInvestmentAccountGrowth(investmentId);
+		this.sectorAllocation$ = this.investmentAccountCalculatorService.getSectorAllocation(investmentId);
+
+		this.layout2XL$ = this.breakpointObserver.observe([LAYOUT_2XL]).pipe(map((res) => res.matches));
 
 		this.totalInvestedAmount$ =
 			this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(investmentId);

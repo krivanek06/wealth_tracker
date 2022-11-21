@@ -4,6 +4,7 @@ import {
 	ChangeDetectorRef,
 	Component,
 	ElementRef,
+	Input,
 	OnInit,
 	ViewChild,
 } from '@angular/core';
@@ -16,6 +17,8 @@ import {
 })
 export class ScrollWrapperComponent implements OnInit, AfterViewInit {
 	@ViewChild('contentWrapper') element!: ElementRef;
+	@Input() isFlexRow = true;
+	@Input() flexColHeightPx: number = 300;
 
 	buttonHeightPx = 40;
 
@@ -30,6 +33,10 @@ export class ScrollWrapperComponent implements OnInit, AfterViewInit {
 
 	onScollChange(change: 'increment' | 'decement'): void {
 		const addValue = change === 'increment' ? 200 : -200;
-		this.element.nativeElement.scrollLeft += addValue;
+		if (this.isFlexRow) {
+			this.element.nativeElement.scrollLeft += addValue;
+		} else {
+			this.element.nativeElement.scrollTop += addValue;
+		}
 	}
 }

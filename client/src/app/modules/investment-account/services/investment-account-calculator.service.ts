@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { InvestmentAccountApiService } from '../../../core/api';
-import { DailyInvestmentChange } from '../models';
+import { DailyInvestmentChange, SectorAllocationCalculation } from '../models';
 
 @Injectable({
 	providedIn: 'root',
@@ -66,5 +66,29 @@ export class InvestmentAccountCalculatorService {
 		);
 	}
 
-	// TODO: calculate sector allocation
+	getSectorAllocation(accountId: string): Observable<SectorAllocationCalculation[]> {
+		return this.investmentAccountApiService.getInvestmentAccountById(accountId).pipe(
+			map((res) =>
+				res.activeHoldings.reduce((acc, curr) => {
+					const allocationIndex = acc.findIndex((d) => d.sectorName === curr.sector);
+					// not yet added
+					if (allocationIndex !== -1) {
+						acc[allocationIndex].symbols = [...acc[allocationIndex].symbols, curr.assetId];
+						acc[allocationIndex].units += curr.units;
+						acc[allocationIndex].value += curr.totalValue;
+						return acc;
+					}
+
+					const data: SectorAllocationCalculation = {
+						sectorName: curr.sector,
+						symbols: [curr.assetId],
+						units: curr.units,
+						value: curr.totalValue,
+					};
+
+					return [...acc, data];
+				}, [] as SectorAllocationCalculation[])
+			)
+		);
+	}
 }

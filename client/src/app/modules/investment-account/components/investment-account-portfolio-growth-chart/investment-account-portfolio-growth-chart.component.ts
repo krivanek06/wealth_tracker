@@ -137,7 +137,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					minorTickInterval: 'auto',
 					tickPixelInterval: 40,
 					minorGridLineWidth: 0,
-					visible: true,
+					visible: false,
 				},
 			],
 			xAxis: {

@@ -7,10 +7,10 @@
 		[cashAmount]="investmentAccount.cashChange[investmentAccount.cashChange.length -1]?.cashValue ?? 0"
 	></app-investment-account-state>
 
-	<div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+	<div class="grid grid-cols-1 2xl:grid-cols-3 gap-4">
 		<!-- account growth -->
 		<app-investment-account-portfolio-growth-chart
-			class="col-span-1 xl:col-span-2"
+			class="col-span-1 order-last 2xl:order-first 2xl:col-span-2"
 			[investmentAccountGrowth]="investmentAccountGrowth$ | async"
 		></app-investment-account-portfolio-growth-chart>
 

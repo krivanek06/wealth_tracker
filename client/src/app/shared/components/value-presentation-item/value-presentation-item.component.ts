@@ -18,6 +18,7 @@ import { ValuePresentItem } from '../../models';
 export class ValuePresentationItemComponent<T> implements OnInit, ControlValueAccessor {
 	@Input() items: ValuePresentItem<T>[] | null = [];
 	@Input() itemKey!: keyof T;
+	@Input() multiSelect = true;
 
 	activeItems: T[] = [];
 
@@ -33,7 +34,11 @@ export class ValuePresentationItemComponent<T> implements OnInit, ControlValueAc
 		if (inArray) {
 			this.activeItems = this.activeItems.filter((d) => d[this.itemKey] !== item[this.itemKey]);
 		} else {
-			this.activeItems = [...this.activeItems, item];
+			if (!this.multiSelect) {
+				this.activeItems = [item];
+			} else {
+				this.activeItems = [...this.activeItems, item];
+			}
 		}
 
 		// notify parent

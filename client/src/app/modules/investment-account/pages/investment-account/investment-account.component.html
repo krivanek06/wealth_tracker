@@ -17,7 +17,9 @@
 		<!-- sector allocation -->
 		<app-scroll-wrapper [isFlexRow]="(layout2XL$ | async) === false" [flexColHeightPx]="420">
 			<app-value-presentation-item
+				[formControl]="sectorFormControl"
 				[items]="sectorAllocation$ | async"
+				[multiSelect]="false"
 				itemKey="sectorName"
 			></app-value-presentation-item>
 		</app-scroll-wrapper>
@@ -26,6 +28,6 @@
 	<!-- active investmnts table -->
 	<app-investment-account-active-holdings-table
 		[totalInvestedAmount]="totalInvestedAmount$ | async"
-		[activeHoldings]="investmentAccount.activeHoldings"
+		[activeHoldings]="filteredActiveHoldings$ | async"
 	></app-investment-account-active-holdings-table>
 </ng-container>

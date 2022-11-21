@@ -28,8 +28,8 @@ export class InvestmentAccountActiveHoldingsTableComponent implements OnInit {
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 	@ViewChild(MatSort) sort!: MatSort;
 
-	@Input() set activeHoldings(activeHoldingsData: InvestmentAccountActiveHoldingOutputFragment[]) {
-		this.dataSource = new MatTableDataSource(activeHoldingsData);
+	@Input() set activeHoldings(activeHoldingsData: InvestmentAccountActiveHoldingOutputFragment[] | null) {
+		this.dataSource = new MatTableDataSource(activeHoldingsData ?? []);
 		this.dataSource.paginator = this.paginator;
 		this.dataSource.sort = this.sort;
 	}

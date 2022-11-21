@@ -16,11 +16,10 @@
 
 		<!-- sector allocation -->
 		<app-scroll-wrapper [isFlexRow]="(layout2XL$ | async) === false" [flexColHeightPx]="420">
-			<app-investment-account-sector-allocation
-				*ngFor="let allocation of sectorAllocation$ | async"
-				[allocation]="allocation"
-				[totalInvestedAmount]="(totalInvestedAmount$ | async) ?? 0"
-			></app-investment-account-sector-allocation>
+			<app-value-presentation-item
+				[items]="sectorAllocation$ | async"
+				itemKey="sectorName"
+			></app-value-presentation-item>
 		</app-scroll-wrapper>
 	</div>
 

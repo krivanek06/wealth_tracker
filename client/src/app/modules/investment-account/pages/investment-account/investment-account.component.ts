@@ -7,8 +7,8 @@ import {
 	InvestmentAccountGrowth,
 	InvestmentAccountOverviewFragment,
 } from '../../../../core/graphql';
-import { LAYOUT_2XL } from '../../../../shared/models';
-import { DailyInvestmentChange, SectorAllocationCalculation } from '../../models';
+import { LAYOUT_2XL, ValuePresentItem } from '../../../../shared/models';
+import { DailyInvestmentChange, SectorAllocation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
 @Component({
@@ -45,7 +45,7 @@ export class InvestmentAccountComponent implements OnInit {
 	/**
 	 * Symbols allocated by sectors
 	 */
-	sectorAllocation$!: Observable<SectorAllocationCalculation[]>;
+	sectorAllocation$!: Observable<ValuePresentItem<SectorAllocation>[]>;
 
 	layout2XL$!: Observable<boolean>;
 

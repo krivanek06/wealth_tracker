@@ -5,12 +5,11 @@ import { AccountState } from '../../models';
 import { PersonalAccountChartService } from '../../services';
 import { PersonalAccountApiService } from './../../../../core/api';
 import {
-	PersonalAccountAggregationDataOutput,
 	PersonalAccountOverviewBasicFragment,
 	PersonalAccountTagFragment,
 	TagDataType,
 } from './../../../../core/graphql';
-import { ChartType, GenericChartSeries } from './../../../../shared/models';
+import { ChartType, GenericChartSeries, ValuePresentItem } from './../../../../shared/models';
 
 @Component({
 	selector: 'app-personal-account',
@@ -21,8 +20,7 @@ import { ChartType, GenericChartSeries } from './../../../../shared/models';
 export class PersonalAccountComponent implements OnInit {
 	@Input() personalAccountBasic!: PersonalAccountOverviewBasicFragment;
 
-	yearlyExpenseTags$!: Observable<PersonalAccountAggregationDataOutput[]>;
-	yearlyExpenseTotal$!: Observable<number>;
+	yearlyExpenseTags$!: Observable<ValuePresentItem<PersonalAccountTagFragment>[]>;
 
 	// currect account state totalIncome, totalExpense and difference
 	accountState$!: Observable<AccountState>;
@@ -55,12 +53,10 @@ export class PersonalAccountComponent implements OnInit {
 		// filter out expense tags to show them to the user
 		this.yearlyExpenseTags$ = this.personalAccountApiService
 			.getPersonalAccountOverviewById(this.personalAccountBasic.id)
-			.pipe(map((account) => account.yearlyAggregaton.filter((d) => d.tag.type === TagDataType.Expense)));
-
-		// construct yearly total expenses
-		this.yearlyExpenseTotal$ = this.yearlyExpenseTags$.pipe(
-			map((expenseTags) => expenseTags.reduce((a, b) => a + b.value, 0))
-		);
+			.pipe(
+				map((account) => account.yearlyAggregaton.filter((d) => d.tag.type === TagDataType.Expense)),
+				map((expenseTags) => this.personalAccountChartService.createValuePresentItemFromTag(expenseTags))
+			);
 
 		// get chart categoties displayed on X-axis
 		this.categories$ = this.personalAccountApiService
@@ -74,7 +70,7 @@ export class PersonalAccountComponent implements OnInit {
 			// account
 			this.personalAccountApiService.getPersonalAccountOverviewById(this.personalAccountBasic.id),
 			// passing all avilable expense tags to create chart
-			this.yearlyExpenseTags$.pipe(map((yearlyExpenseTags) => yearlyExpenseTags.map((d) => d.tag))),
+			this.yearlyExpenseTags$.pipe(map((yearlyExpenseTags) => yearlyExpenseTags.map((d) => d.item))),
 		]).pipe(
 			map(([activeExpenses, account, availableExpenseTags]) =>
 				this.personalAccountChartService.getWeeklyExpenseChartData(

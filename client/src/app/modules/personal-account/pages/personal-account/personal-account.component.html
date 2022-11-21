@@ -18,8 +18,8 @@
 <app-scroll-wrapper>
 	<app-value-presentation-item
 		[formControl]="expenseFormControl"
-		[yearlyExpenseTotal]="yearlyExpenseTotal$ | async"
-		[yearlyExpenseTags]="yearlyExpenseTags$ | async"
+		[items]="yearlyExpenseTags$ | async"
+		itemKey="id"
 	></app-value-presentation-item>
 </app-scroll-wrapper>
 

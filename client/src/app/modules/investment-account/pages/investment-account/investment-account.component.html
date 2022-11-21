@@ -7,14 +7,21 @@
 		[cashAmount]="investmentAccount.cashChange[investmentAccount.cashChange.length -1]?.cashValue ?? 0"
 	></app-investment-account-state>
 
-	<div class="grid grid-cols-1 2xl:grid-cols-3 gap-4">
+	<div class="grid grid-cols-1 2xl:grid-cols-4 gap-4">
 		<!-- account growth -->
 		<app-investment-account-portfolio-growth-chart
-			class="col-span-1 order-last 2xl:order-first 2xl:col-span-2"
+			class="col-span-1 2xl:col-span-3"
 			[investmentAccountGrowth]="investmentAccountGrowth$ | async"
 		></app-investment-account-portfolio-growth-chart>
 
-		<div>Sector allocation</div>
+		<!-- sector allocation -->
+		<app-scroll-wrapper [isFlexRow]="(layout2XL$ | async) === false" [flexColHeightPx]="420">
+			<app-investment-account-sector-allocation
+				*ngFor="let allocation of sectorAllocation$ | async"
+				[allocation]="allocation"
+				[totalInvestedAmount]="(totalInvestedAmount$ | async) ?? 0"
+			></app-investment-account-sector-allocation>
+		</app-scroll-wrapper>
 	</div>
 
 	<!-- active investmnts table -->

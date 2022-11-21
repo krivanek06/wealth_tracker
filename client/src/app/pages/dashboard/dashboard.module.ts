@@ -1,3 +1,4 @@
+import { LayoutModule } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -15,6 +16,6 @@ const routes: Routes = [
 
 @NgModule({
 	declarations: [DashboardComponent],
-	imports: [CommonModule, RouterModule.forChild(routes), PersonalAccountModule, InvestmentAccountModule],
+	imports: [CommonModule, RouterModule.forChild(routes), PersonalAccountModule, InvestmentAccountModule, LayoutModule],
 })
 export class DashboardModule {}

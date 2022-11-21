@@ -37,21 +37,8 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 		balance: number[][];
 		ownedAssets: number[][];
 	} {
-		// filter out times when cash changed
-		const cash = data
-			.map((point) => [Date.parse(point.date), point.cash])
-			.reduce((acc, curr) => {
-				if (acc.length === 0) {
-					return [curr];
-				}
-
-				const accCash = acc[acc.length - 1][1]; // cash
-				const currCash = curr[1];
-				if (accCash !== currCash) {
-					return [...acc, curr];
-				}
-				return acc;
-			}, [] as number[][]);
+		// console.log('eeeeee', cash);
+		const cash = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.cash]);
 
 		const balance = data
 			.filter((d) => d.invested !== 0)
@@ -71,6 +58,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 
 				return [...acc, curr];
 			}, [] as InvestmentAccountGrowth[])
+			.filter((d) => d.ownedAssets !== 0)
 			.map((d) => [Date.parse(d.date), d.ownedAssets]);
 
 		return { cash, balance, invested, ownedAssets };
@@ -210,7 +198,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 				backgroundColor: '#232323',
 				xDateFormat: '%A, %b %e, %Y',
 				style: {
-					fontSize: '12px',
+					fontSize: '14px',
 					color: '#D9D8D8',
 				},
 				shared: true,
@@ -218,9 +206,13 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 				pointFormatter: function () {
 					const that = this as any;
 					const value = GeneralFuntionUtl.formatLargeNumber(that.y);
-					return `<p><span style="color: ${
-						that.series.color
-					}; font-weight: bold">● Portfolio ${that.series.name.toLowerCase()}: </span><span>$${value}</span></p><br/>`;
+					const name = that.series.name.toLowerCase();
+					const isCurrency = ['cash', 'balance', 'invested'].includes(name);
+
+					const displayTextName = isCurrency ? `Portfolio ${name}` : `${that.series.name}`;
+					const displayTextValue = isCurrency ? `$${value}` : value;
+
+					return `<p><span style="color: ${that.series.color}; font-weight: bold">● ${displayTextName}: </span><span>${displayTextValue}</span></p><br/>`;
 				},
 			},
 			plotOptions: {
@@ -249,44 +241,22 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 			},
 			series: [
 				{
-					color: '#f24f18',
-					type: 'column',
-					visible: false,
-					// fillColor: {
-					// 	linearGradient: {
-					// 		x1: 1,
-					// 		y1: 0,
-					// 		x2: 0,
-					// 		y2: 1,
-					// 	},
-					// 	stops: [
-					// 		[0, '#d35431'],
-					// 		[1, 'transparent'],
-					// 	],
-					// },
-					yAxis: 3,
-					name: 'Cash',
-					data: cash,
-				},
-				{
 					color: '#ee22dd',
 					type: 'column',
-					visible: false,
-					// fillColor: {
-					// 	linearGradient: {
-					// 		x1: 1,
-					// 		y1: 0,
-					// 		x2: 0,
-					// 		y2: 1,
-					// 	},
-					// 	stops: [
-					// 		[0, '#d35431'],
-					// 		[1, 'transparent'],
-					// 	],
-					// },
-					yAxis: 2,
+					visible: true,
+					opacity: 0.7,
+					yAxis: 3,
 					name: 'Owned assets',
 					data: ownedAssets,
+				},
+				{
+					color: '#f24f18',
+					type: 'line',
+					visible: true,
+					opacity: 0.7,
+					yAxis: 2,
+					name: 'Cash',
+					data: cash,
 				},
 				{
 					color: '#00c4dd',

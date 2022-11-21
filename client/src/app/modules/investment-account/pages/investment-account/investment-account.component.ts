@@ -69,7 +69,6 @@ export class InvestmentAccountComponent implements OnInit {
 		const investmentId = this.investmentAccountsOverivew.id;
 		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(investmentId);
 		this.investmentAccountGrowth$ = this.investmentAccountApiService.getInvestmentAccountGrowth(investmentId);
-		this.sectorAllocation$ = this.investmentAccountCalculatorService.getSectorAllocation(investmentId);
 
 		this.filteredActiveHoldings$ = combineLatest([
 			this.investmentAccount$,
@@ -84,17 +83,19 @@ export class InvestmentAccountComponent implements OnInit {
 
 		this.layout2XL$ = this.breakpointObserver.observe([LAYOUT_2XL]).pipe(map((res) => res.matches));
 
-		this.totalInvestedAmount$ =
-			this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(investmentId);
-		this.currentInvestedAmout$ =
-			this.investmentAccountCalculatorService.getInvestmentAccountByIdCurrentInvestedAmout(investmentId);
-		this.dailyInvestmentChange$ = this.investmentAccountCalculatorService.getDailyInvestmentChange(investmentId);
+		this.sectorAllocation$ = this.investmentAccount$.pipe(
+			map((acount) => this.investmentAccountCalculatorService.getSectorAllocation(acount))
+		);
 
-		// TODO remove
-		this.dailyInvestmentChange$.subscribe(console.log);
-		this.currentInvestedAmout$.subscribe(console.log);
-		this.totalInvestedAmount$.subscribe(console.log);
+		this.totalInvestedAmount$ = this.investmentAccount$.pipe(
+			map((acount) => this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(acount))
+		);
 
-		this.sectorFormControl.valueChanges.subscribe(console.log);
+		this.currentInvestedAmout$ = this.investmentAccount$.pipe(
+			map((account) => this.investmentAccountCalculatorService.getInvestmentAccountByIdCurrentInvestedAmout(account))
+		);
+		this.dailyInvestmentChange$ = this.investmentAccount$.pipe(
+			map((account) => this.investmentAccountCalculatorService.getDailyInvestmentChange(account))
+		);
 	}
 }

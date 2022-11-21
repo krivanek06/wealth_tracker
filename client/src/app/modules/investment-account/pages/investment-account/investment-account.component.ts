@@ -1,8 +1,10 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { FormControl } from '@angular/forms';
+import { combineLatest, map, Observable, startWith } from 'rxjs';
 import { InvestmentAccountApiService } from '../../../../core/api';
 import {
+	InvestmentAccountActiveHoldingOutputFragment,
 	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
 	InvestmentAccountOverviewFragment,
@@ -49,6 +51,14 @@ export class InvestmentAccountComponent implements OnInit {
 
 	layout2XL$!: Observable<boolean>;
 
+	// keeps track of visible sectors, if empty -> all is visible
+	sectorFormControl = new FormControl<SectorAllocation[]>([], { nonNullable: true });
+
+	/**
+	 * Active holdings that match sector if sectorFormControl not empty
+	 */
+	filteredActiveHoldings$!: Observable<InvestmentAccountActiveHoldingOutputFragment[]>;
+
 	constructor(
 		private investmentAccountApiService: InvestmentAccountApiService,
 		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
@@ -60,6 +70,17 @@ export class InvestmentAccountComponent implements OnInit {
 		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(investmentId);
 		this.investmentAccountGrowth$ = this.investmentAccountApiService.getInvestmentAccountGrowth(investmentId);
 		this.sectorAllocation$ = this.investmentAccountCalculatorService.getSectorAllocation(investmentId);
+
+		this.filteredActiveHoldings$ = combineLatest([
+			this.investmentAccount$,
+			this.sectorFormControl.valueChanges.pipe(startWith(this.sectorFormControl.value)),
+		]).pipe(
+			map(([account, sectors]) =>
+				account.activeHoldings.filter(
+					(d) => sectors.length === 0 || sectors.map((x) => x.sectorName).includes(d.sector)
+				)
+			)
+		);
 
 		this.layout2XL$ = this.breakpointObserver.observe([LAYOUT_2XL]).pipe(map((res) => res.matches));
 
@@ -73,5 +94,7 @@ export class InvestmentAccountComponent implements OnInit {
 		this.dailyInvestmentChange$.subscribe(console.log);
 		this.currentInvestedAmout$.subscribe(console.log);
 		this.totalInvestedAmount$.subscribe(console.log);
+
+		this.sectorFormControl.valueChanges.subscribe(console.log);
 	}
 }

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { ScrollWrapperModule, ValuePresentationItemModule } from '../../../../shared/components';
 import {
 	InvestmentAccountActiveHoldingsTableModule,
@@ -17,6 +18,7 @@ import { InvestmentAccountComponent } from './investment-account.component';
 		InvestmentAccountPortfolioGrowthChartModule,
 		ScrollWrapperModule,
 		ValuePresentationItemModule,
+		ReactiveFormsModule,
 	],
 	exports: [InvestmentAccountComponent],
 })

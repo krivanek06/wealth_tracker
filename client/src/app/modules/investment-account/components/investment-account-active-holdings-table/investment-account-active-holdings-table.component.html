@@ -77,7 +77,8 @@
 					[useCurrencySign]="true"
 					[currentValues]="{
             value: row.assetGeneral.assetQuote.price  * row.units,
-            valueToCompare: row.beakEvenPrice  * row.units
+            valueToCompare: row.beakEvenPrice  * row.units,
+            hideValue: true
         }"
 				></div>
 			</ng-container>
@@ -90,7 +91,6 @@
 					appPerceptageIncrease
 					[useCurrencySign]="true"
 					[changeValues]="{
-            change: row.assetGeneral.assetQuote.change,
             changesPercentage: row.assetGeneral.assetQuote.changesPercentage
           }"
 				></div>

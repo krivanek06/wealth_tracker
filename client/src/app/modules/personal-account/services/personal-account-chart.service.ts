@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
-import { PersonalAccountOverviewFragment, PersonalAccountTagFragment, TagDataType } from '../../../core/graphql';
-import { ChartType, GenericChartSeries } from '../../../shared/models';
+import {
+	PersonalAccountAggregationDataOutput,
+	PersonalAccountOverviewFragment,
+	PersonalAccountTagFragment,
+	TagDataType,
+} from '../../../core/graphql';
+import { ChartType, GenericChartSeries, ValuePresentItem } from '../../../shared/models';
 import { DateServiceUtil } from '../../../shared/utils';
 import { AccountState, TagColors } from '../models';
 
@@ -182,9 +187,26 @@ export class PersonalAccountChartService {
 				return acc;
 			}, [] as GenericChartSeries[]);
 
-		// TODO: remove
-		console.log(series);
-
 		return series;
+	}
+
+	createValuePresentItemFromTag(
+		tags: PersonalAccountAggregationDataOutput[]
+	): ValuePresentItem<PersonalAccountTagFragment>[] {
+		const totalValue = tags.reduce((a, b) => a + b.value, 0);
+
+		return tags.map((d) => {
+			const data: ValuePresentItem<PersonalAccountTagFragment> = {
+				color: d.tag.color,
+				imageSrc: d.tag.name,
+				imageType: 'tags',
+				name: d.tag.name,
+				value: d.value,
+				valuePrct: d.value / totalValue,
+				item: d.tag,
+			};
+
+			return data;
+		});
 	}
 }

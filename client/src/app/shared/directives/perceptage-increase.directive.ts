@@ -15,6 +15,8 @@ export type ChangeValues = {
 export type CurrentValues = {
 	value: number;
 	valueToCompare: number;
+
+	hideValue?: boolean;
 };
 
 @Directive({
@@ -50,7 +52,8 @@ export class PerceptageIncreaseDirective implements OnInit {
 			const value = this.currentValues.value - this.currentValues.valueToCompare;
 			const change = this.round2Dec(value);
 			const changesPercentage = this.round2Dec((value / this.currentValues.valueToCompare) * 100);
-			this.createElement(change, changesPercentage);
+			const hideValue = this.currentValues.hideValue;
+			this.createElement(change, changesPercentage, hideValue);
 			return;
 		}
 
@@ -63,7 +66,7 @@ export class PerceptageIncreaseDirective implements OnInit {
 	 * @param change - changed value between the current and compared to item
 	 * @param changesPercentage - changed prct between the current and compared to item
 	 */
-	private createElement(change: number | null, changesPercentage: number | null): void {
+	private createElement(change: number | null, changesPercentage: number | null, hideValue = false): void {
 		if (!changesPercentage && !change) {
 			return;
 		}
@@ -124,7 +127,7 @@ export class PerceptageIncreaseDirective implements OnInit {
 		}
 
 		// display value
-		if (change) {
+		if (change && !hideValue) {
 			const sign = this.useCurrencySign ? '$' : '';
 
 			const changeSpan = this.rederer2.createElement('span');

@@ -16,17 +16,18 @@
 
 		<!-- sector allocation -->
 		<app-scroll-wrapper [isFlexRow]="(layout2XL$ | async) === false" [flexColHeightPx]="420">
-			<app-investment-account-sector-allocation
-				*ngFor="let allocation of sectorAllocation$ | async"
-				[allocation]="allocation"
-				[totalInvestedAmount]="(totalInvestedAmount$ | async) ?? 0"
-			></app-investment-account-sector-allocation>
+			<app-value-presentation-item
+				[formControl]="sectorFormControl"
+				[items]="sectorAllocation$ | async"
+				[multiSelect]="false"
+				itemKey="sectorName"
+			></app-value-presentation-item>
 		</app-scroll-wrapper>
 	</div>
 
 	<!-- active investmnts table -->
 	<app-investment-account-active-holdings-table
 		[totalInvestedAmount]="totalInvestedAmount$ | async"
-		[activeHoldings]="investmentAccount.activeHoldings"
+		[activeHoldings]="filteredActiveHoldings$ | async"
 	></app-investment-account-active-holdings-table>
 </ng-container>

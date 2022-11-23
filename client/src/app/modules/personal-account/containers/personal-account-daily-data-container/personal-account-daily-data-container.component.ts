@@ -99,6 +99,7 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 				personalAccountId: this.personalAccountBasic.id,
 				personalAccountName: this.personalAccountBasic.name,
 			},
+			panelClass: ['g-mat-dialog-big'],
 		});
 	}
 

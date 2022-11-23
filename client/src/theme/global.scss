@@ -78,3 +78,8 @@ body {
 .g-color-text-normal {
 	@apply text-gray-200;
 }
+
+.g-section-title {
+	color: var(--color-primary-500) !important;
+	@apply text-2xl;
+}

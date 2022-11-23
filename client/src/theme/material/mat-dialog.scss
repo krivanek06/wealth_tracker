@@ -4,6 +4,16 @@ mat-dialog-container {
 	color: var(--color-gray-200) !important;
 
 	@screen md {
+		width: auto !important;
+	}
+
+	// @screen xl {
+	// 	width: 60vw !important;
+	// }
+}
+
+.g-mat-dialog-big .mat-dialog-container {
+	@screen md {
 		width: 75vw !important;
 	}
 

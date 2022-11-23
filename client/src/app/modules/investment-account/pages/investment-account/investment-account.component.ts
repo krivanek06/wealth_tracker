@@ -1,6 +1,7 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, map, Observable, startWith } from 'rxjs';
 import { InvestmentAccountApiService } from '../../../../core/api';
 import {
@@ -10,6 +11,7 @@ import {
 	InvestmentAccountOverviewFragment,
 } from '../../../../core/graphql';
 import { LAYOUT_2XL, ValuePresentItem } from '../../../../shared/models';
+import { InvestmentAccountCashChangeComponent } from '../../modals';
 import { DailyInvestmentChange, SectorAllocation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
@@ -59,16 +61,19 @@ export class InvestmentAccountComponent implements OnInit {
 	 */
 	filteredActiveHoldings$!: Observable<InvestmentAccountActiveHoldingOutputFragment[]>;
 
+	private investmentId!: string;
+
 	constructor(
 		private investmentAccountApiService: InvestmentAccountApiService,
 		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
-		private breakpointObserver: BreakpointObserver
+		private breakpointObserver: BreakpointObserver,
+		private dialog: MatDialog
 	) {}
 
 	ngOnInit(): void {
-		const investmentId = this.investmentAccountsOverivew.id;
-		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(investmentId);
-		this.investmentAccountGrowth$ = this.investmentAccountApiService.getInvestmentAccountGrowth(investmentId);
+		this.investmentId = this.investmentAccountsOverivew.id;
+		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(this.investmentId);
+		this.investmentAccountGrowth$ = this.investmentAccountApiService.getInvestmentAccountGrowth(this.investmentId);
 
 		this.filteredActiveHoldings$ = combineLatest([
 			this.investmentAccount$,
@@ -97,5 +102,14 @@ export class InvestmentAccountComponent implements OnInit {
 		this.dailyInvestmentChange$ = this.investmentAccount$.pipe(
 			map((account) => this.investmentAccountCalculatorService.getDailyInvestmentChange(account))
 		);
+	}
+
+	onChangeChangeClick(): void {
+		this.dialog.open(InvestmentAccountCashChangeComponent, {
+			data: {
+				investmentId: this.investmentId,
+			},
+			panelClass: ['g-mat-dialog-big'],
+		});
 	}
 }

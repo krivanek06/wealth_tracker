@@ -1,11 +1,14 @@
 <ng-container *ngIf="investmentAccount$ | async as investmentAccount">
 	<!-- account state -->
-	<app-investment-account-state
-		[currentInvestedAmout]="(currentInvestedAmout$ | async) ?? 0"
-		[totalInvestedAmount]="(totalInvestedAmount$ | async) ?? 0"
-		[dailyInvestmentChange]="dailyInvestmentChange$ | async"
-		[cashAmount]="investmentAccount.cashChange[investmentAccount.cashChange.length -1]?.cashValue ?? 0"
-	></app-investment-account-state>
+	<div class="mb-4">
+		<app-investment-account-state
+			(cachChangeClickEmitter)="onChangeChangeClick()"
+			[currentInvestedAmout]="(currentInvestedAmout$ | async) ?? 0"
+			[totalInvestedAmount]="(totalInvestedAmount$ | async) ?? 0"
+			[dailyInvestmentChange]="dailyInvestmentChange$ | async"
+			[cashAmount]="investmentAccount.cashChange[investmentAccount.cashChange.length -1]?.cashValue ?? 0"
+		></app-investment-account-state>
+	</div>
 
 	<div class="grid grid-cols-1 2xl:grid-cols-4 gap-4">
 		<!-- account growth -->
@@ -17,6 +20,7 @@
 		<!-- sector allocation -->
 		<app-scroll-wrapper [isFlexRow]="(layout2XL$ | async) === false" [flexColHeightPx]="420">
 			<app-value-presentation-item
+				[isFlexRow]="(layout2XL$ | async) === false"
 				[formControl]="sectorFormControl"
 				[items]="sectorAllocation$ | async"
 				[multiSelect]="false"

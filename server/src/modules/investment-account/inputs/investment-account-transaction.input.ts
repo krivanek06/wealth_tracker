@@ -28,6 +28,12 @@ export class InvestmentAccountTransactionInput {
 	})
 	orderAsc: boolean;
 
+	@Field(() => Boolean, {
+		defaultValue: true,
+		description: 'Put false if only SELL operation to get',
+	})
+	includeBuyOperation: boolean;
+
 	@Field(() => InvestmentAccountTransactionInputOrderType, {
 		defaultValue: InvestmentAccountTransactionInputOrderType.ORDER_BY_DATE,
 	})

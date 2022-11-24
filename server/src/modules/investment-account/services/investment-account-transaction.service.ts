@@ -50,7 +50,8 @@ export class InvestmentAccountTransactionService {
 					(holding) => input.filterSymbols.length === 0 || input.filterSymbols.includes(holding.assetId)
 				)
 			)
-			.reduce((a, b) => [...a, ...b]);
+			.reduce((a, b) => [...a, ...b])
+			.filter((d) => (input.includeBuyOperation ? true : d.type === 'SELL'));
 
 		const order = input.orderAsc ? 'asc' : 'desc';
 		const offest = input.offset;

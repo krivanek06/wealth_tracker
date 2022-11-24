@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, TrackByFunction } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { InvestmentAccountTransactionOutput } from '../../../../../core/graphql';
+import { InvestmentAccountHoldingHistoryType, InvestmentAccountTransactionOutput } from '../../../../../core/graphql';
 
 @Component({
 	selector: 'app-investment-account-transaction-table',
@@ -16,6 +16,8 @@ export class InvestmentAccountTransactionTableComponent implements OnInit {
 	dataSource!: MatTableDataSource<InvestmentAccountTransactionOutput>;
 
 	displayedColumns: string[] = ['symbol', 'order', 'return', 'value', 'total'];
+
+	InvestmentAccountHoldingHistoryType = InvestmentAccountHoldingHistoryType;
 
 	constructor() {}
 

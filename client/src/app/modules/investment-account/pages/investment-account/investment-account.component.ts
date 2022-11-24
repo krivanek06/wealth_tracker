@@ -121,6 +121,7 @@ export class InvestmentAccountComponent implements OnInit {
 				investmentId: this.investmentId,
 			},
 			panelClass: ['g-mat-dialog-big'],
+			minHeight: '50vh',
 		});
 	}
 }

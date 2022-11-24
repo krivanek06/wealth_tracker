@@ -2,7 +2,7 @@ import { InvestmentAccountTransactionInputOrderType } from '../../../core/graphq
 import { InputSource } from '../../../shared/models';
 export const TransactionOrderInputSource: InputSource[] = [
 	{ caption: 'Order by date', value: InvestmentAccountTransactionInputOrderType.OrderByDate },
-	{ caption: 'Order by created date', value: InvestmentAccountTransactionInputOrderType.OrderByCreatedAt },
+	// { caption: 'Order by created date', value: InvestmentAccountTransactionInputOrderType.OrderByCreatedAt },
 	{ caption: 'Order by value', value: InvestmentAccountTransactionInputOrderType.OrderByValue },
 	{ caption: 'Order by value change', value: InvestmentAccountTransactionInputOrderType.OrderByValueChange },
 ];

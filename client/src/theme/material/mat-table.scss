@@ -36,4 +36,10 @@ table[mat-table] {
 			background-color: var(--color-main-background-active);
 		}
 	}
+
+	th.mat-header-cell:last-of-type,
+	td.mat-cell:last-of-type,
+	td.mat-footer-cell:last-of-type {
+		padding-right: 8px !important;
+	}
 }

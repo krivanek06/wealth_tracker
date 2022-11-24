@@ -1,7 +1,8 @@
 mat-dialog-container {
-	width: 90vw !important;
+	width: 100vw !important;
 	background: var(--color-main-dialog) !important;
 	color: var(--color-gray-200) !important;
+	padding: 24px !important;
 
 	@screen md {
 		width: auto !important;
@@ -12,7 +13,21 @@ mat-dialog-container {
 	// }
 }
 
+.g-mat-dialog-big .mat-dialog-content {
+	max-height: none;
+
+	@screen sm {
+		max-height: 65vh;
+	}
+}
+
 .g-mat-dialog-big .mat-dialog-container {
+	height: 98vh !important;
+
+	@screen sm {
+		height: auto !important;
+	}
+
 	@screen md {
 		width: 75vw !important;
 	}

@@ -1,7 +1,7 @@
 <table mat-table [dataSource]="dataSource" class="w-full" [trackBy]="identity">
 	<!-- image & name -->
 	<ng-container matColumnDef="symbol">
-		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Symbol</th>
+		<th mat-header-cell *matHeaderCellDef class="hidden md:table-cell">Symbol</th>
 		<td mat-cell *matCellDef="let row">
 			<!-- logo + symbol -->
 			<div class="flex items-center gap-2">
@@ -10,8 +10,15 @@
 					<!-- asset symbol + type -->
 					<div class="flex flex-row gap-x-2">
 						<span class="g-color-text-normal flex gap-1 items-center"> {{ row.assetId }} </span>
-						<span class="text-gray-500 table-cell sm:hidden">|</span>
-						<span class="table-cell sm:hidden">{{ row.type }}</span>
+						<span class="text-gray-500 table-cell lg:hidden">|</span>
+						<span
+							class="table-cell lg:hidden"
+							[ngClass]="{
+                'g-color-danger': row.type === InvestmentAccountHoldingHistoryType.Sell,
+                'g-color-success': row.type === InvestmentAccountHoldingHistoryType.Buy
+              }"
+							>{{ row.type }}</span
+						>
 					</div>
 
 					<!-- date  -->
@@ -23,16 +30,22 @@
 
 	<!-- BUY / SELL order -->
 	<ng-container matColumnDef="order">
-		<th mat-header-cell *matHeaderCellDef class="hidden md:table-cell">Type</th>
-		<td mat-cell *matCellDef="let row" class="hidden md:table-cell">
-			<span>{{ row.type }}</span>
+		<th mat-header-cell *matHeaderCellDef class="hidden lg:table-cell">Type</th>
+		<td mat-cell *matCellDef="let row" class="hidden lg:table-cell text-base">
+			<span
+				[ngClass]="{
+          'g-color-danger': row.type === InvestmentAccountHoldingHistoryType.Sell,
+          'g-color-success': row.type === InvestmentAccountHoldingHistoryType.Buy
+        }"
+				>{{ row.type }}</span
+			>
 		</td>
 	</ng-container>
 
 	<!-- return -->
 	<ng-container matColumnDef="return">
 		<th mat-header-cell *matHeaderCellDef class="hidden md:table-cell">Return</th>
-		<td mat-cell *matCellDef="let row" class="hidden md:table-cell">
+		<td mat-cell *matCellDef="let row" class="hidden md:table-cell text-base">
 			<div
 				*ngIf="row.return"
 				appPerceptageIncrease
@@ -49,7 +62,7 @@
 	<!-- value -->
 	<ng-container matColumnDef="value">
 		<th mat-header-cell *matHeaderCellDef class="hidden md:table-cell">Value</th>
-		<td mat-cell *matCellDef="let row" class="hidden md:table-cell">
+		<td mat-cell *matCellDef="let row" class="hidden md:table-cell text-base">
 			<span>{{ row.units }} * {{ row.unitValue | currency }}</span>
 		</td>
 	</ng-container>
@@ -57,8 +70,24 @@
 	<!-- total -->
 	<ng-container matColumnDef="total">
 		<th mat-header-cell *matHeaderCellDef class="hidden md:table-cell">Total</th>
-		<td mat-cell *matCellDef="let row" class="hidden md:table-cell">
-			<span>{{ row.units * row.unitValue | currency}}</span>
+		<td mat-cell *matCellDef="let row" class="table-cell">
+			<div class="flex flex-col items-end md:items-start">
+				<span class="g-color-text-normal text-base">{{ row.units * row.unitValue | currency}}</span>
+				<!-- show this on md lower screen -->
+				<div class="table-cell md:hidden">
+					<!-- SELL operation -->
+					<div
+						*ngIf="row.return"
+						appPerceptageIncrease
+						[useCurrencySign]="true"
+						[changeValues]="{
+                changesPercentage: row.returnChange
+            }"
+					></div>
+					<!-- BUY operation -->
+					<div *ngIf="!row.return">{{ row.units }} * {{ row.unitValue | currency }}</div>
+				</div>
+			</div>
 		</td>
 	</ng-container>
 

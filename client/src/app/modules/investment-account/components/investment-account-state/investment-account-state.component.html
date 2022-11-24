@@ -64,10 +64,12 @@
 	</div>
 
 	<!-- cash -->
-	<button mat-stroked-button class="c-wrapper min-w-[130px]" (click)="onCashChangeClick()">
-		<div class="c-title">Cash</div>
-		<div class="c-body">
-			<div class="c-body-value">{{ (cashAmount ) | currency }}</div>
+	<button mat-stroked-button (click)="onCashChangeClick()">
+		<div class="c-wrapper min-w-[130px] min-h-[40px]">
+			<div class="c-title">Cash</div>
+			<div class="c-body">
+				<div class="c-body-value">{{ (cashAmount ) | currency }}</div>
+			</div>
 		</div>
 	</button>
 </div>

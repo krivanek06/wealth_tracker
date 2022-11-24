@@ -1,0 +1,21 @@
+:host {
+	display: block;
+
+	mat-dialog-content {
+		@apply flex flex-col gap-2 lg:flex-row;
+	}
+
+	.c-button-wrapper {
+		@apply flex flex-col-reverse lg:flex-row items-center gap-2;
+		button {
+			@apply w-full;
+		}
+	}
+
+	.c-cash-wrapper {
+		@apply flex flex-col sm:flex-row justify-between p-2 mb-2;
+		& > div {
+			@apply text-base flex justify-between gap-2;
+		}
+	}
+}

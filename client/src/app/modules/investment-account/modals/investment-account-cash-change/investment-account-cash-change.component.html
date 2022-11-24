@@ -1,0 +1,67 @@
+<div class="text-lg mb-6 text-center">
+	<span class="g-color-primary">{{ (investmentAccount$ | async)?.name }}: </span
+	><span *ngIf="cashCategory$ | async as c">{{ c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL | currency}}</span>
+</div>
+
+<mat-dialog-content>
+	<form (submit)="onSave()" [formGroup]="formGroup" class="lg:basis-3/5 mb-2">
+		<!-- cash state -->
+		<div *ngIf="cashCategory$ | async as cashCategory" class="c-cash-wrapper">
+			<div>
+				Deposit: <span class="g-color-success"> {{ cashCategory.DEPOSIT | largeNumberFormatter: false: true }}</span>
+			</div>
+			<div>
+				Assets:
+				<span class="g-color-danger">{{ cashCategory.ASSET_OPERATION | largeNumberFormatter: false: true }}</span>
+			</div>
+			<div>Withdrawal: <span>{{ cashCategory.WITHDRAWAL | largeNumberFormatter: false: true }}</span></div>
+		</div>
+		<!-- cash type -->
+		<app-form-mat-input-wrapper
+			class="w-full"
+			controlName="type"
+			inputCaption="Select cash type"
+			inputType="SELECT"
+			[inputSource]="cashTypeInputSource"
+		></app-form-mat-input-wrapper>
+
+		<!-- date -->
+		<app-form-mat-input-wrapper
+			class="w-full"
+			controlName="date"
+			inputCaption="Enter date"
+			inputType="DATEPICKER"
+		></app-form-mat-input-wrapper>
+
+		<!-- value -->
+		<app-form-mat-input-wrapper
+			class="w-full"
+			controlName="value"
+			inputCaption="Enter value"
+			inputType="NUMBER"
+		></app-form-mat-input-wrapper>
+
+		<div class="my-4">
+			<mat-divider></mat-divider>
+		</div>
+
+		<div class="c-button-wrapper">
+			<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
+			<button mat-stroked-button color="primary" type="submit">
+				<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
+				Save
+			</button>
+		</div>
+	</form>
+
+	<!-- history of changed cash -->
+	<div class="pl-4 md:pr-2 min-h-[300px] lg:h-[320px] overflow-y-scroll overflow-x-hidden flex-1">
+		<div class="text-base text-center mb-2 g-color-danger">Hold to remove</div>
+		<app-investment-account-cash-change-item
+			*ngFor="let cash of (investmentAccount$ | async)?.cashChange | sortByKey: 'date': 'desc' "
+			class="mb-1"
+			(deleteEmitter)="onDelete(cash)"
+			[cashChange]="cash"
+		></app-investment-account-cash-change-item>
+	</div>
+</mat-dialog-content>

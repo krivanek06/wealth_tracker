@@ -5,10 +5,10 @@
 		@apply flex flex-col gap-2 lg:flex-row;
 	}
 
-	mat-dialog-actions {
-		@apply flex flex-col-reverse lg:flex-row justify-end items-center gap-2;
+	.c-button-wrapper {
+		@apply flex flex-col-reverse lg:flex-row items-center gap-2;
 		button {
-			@apply min-w-[150px] w-full lg:w-auto flex-1 lg:flex-none;
+			@apply w-full;
 		}
 	}
 

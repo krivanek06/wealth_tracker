@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormMatInputWrapperModule } from 'src/app/shared/components';
 import { DefaultImgDirective } from 'src/app/shared/directives';
 import { NotificationBarModule } from '../../../../shared/dialogs';
-import { LargeNumberFormatterPipe } from '../../../../shared/pipes';
+import { LargeNumberFormatterPipe, SortByKeyPipe } from '../../../../shared/pipes';
 import { InvestmentAccountCashChangeItemComponent } from './investment-account-cash-change-item/investment-account-cash-change-item.component';
 import { InvestmentAccountCashChangeComponent } from './investment-account-cash-change.component';
 
@@ -27,6 +27,7 @@ import { InvestmentAccountCashChangeComponent } from './investment-account-cash-
 		FormMatInputWrapperModule,
 		LargeNumberFormatterPipe,
 		NotificationBarModule,
+		SortByKeyPipe,
 	],
 })
 export class InvestmentAccountCashChangeModule {}

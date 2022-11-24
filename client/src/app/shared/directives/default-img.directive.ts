@@ -28,6 +28,13 @@ export class DefaultImgDirective implements OnChanges {
 			const formattedName = location.toLowerCase().split(' ').join('_');
 			return `assets/personal-account-tags/${formattedName}.svg`;
 		}
+
+		if (this.imageType === 'investment_cash') {
+			console.log({ location });
+			const formattedName = 'cash_' + location.toLowerCase();
+			return `assets/investment-account/${formattedName}.svg`;
+		}
+
 		if (this.imageType === 'url') {
 			return location;
 		}

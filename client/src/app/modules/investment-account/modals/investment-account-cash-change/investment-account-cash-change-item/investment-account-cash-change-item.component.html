@@ -1,7 +1,7 @@
 <button
 	mat-button
 	appNotificationProgress
-	[notificationProgressMessage]="'Removing cash ' + cashChange.cashValue + ' from date: ' + (cashChange.date | date: 'dd.MM.YYYY')"
+	[notificationProgressMessage]="'Removing cash $' + cashChange.cashValue + ' from date: ' + (cashChange.date | date: 'dd.MM.YYYY')"
 	[notificationMessage]="'Removing data'"
 	(notificationSuccessEmitter)="onDelete()"
 	type="button"
@@ -10,10 +10,15 @@
 >
 	<div class="flex justify-between">
 		<div class="flex gap-2">
-			<!-- TODO replaca by image -->
-			<div class="w-[40px] h-[40px] bg-slate-300 hidden sm:block"></div>
+			<!-- image & info -->
+			<img
+				appDefaultImg
+				[src]="cashChange.type"
+				imageType="investment_cash"
+				class="w-[40px] h-[40px] hidden sm:block"
+			/>
 			<div class="flex flex-col">
-				<span class="text-base">{{ getNameFromType(cashChange.type) }}</span>
+				<span class="text-base">{{ getNameFromType(cashChange.type) | titlecase }}</span>
 				<span class="text-sm text-gray-500">{{ cashChange.date | date: 'dd.MM.YYYY' }}</span>
 			</div>
 		</div>

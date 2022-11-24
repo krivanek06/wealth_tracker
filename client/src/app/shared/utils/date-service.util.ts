@@ -42,8 +42,8 @@ export class DateServiceUtil {
 	 * @param formatOptions
 	 * @returns
 	 */
-	static formatDate(inputDate: DateInput, formatOptions: string): string {
+	static formatDate(inputDate: DateInput, formateStr: string = 'yyyy-MM-dd'): string {
 		const date = new Date(inputDate);
-		return format(date, formatOptions);
+		return format(date, formateStr);
 	}
 }

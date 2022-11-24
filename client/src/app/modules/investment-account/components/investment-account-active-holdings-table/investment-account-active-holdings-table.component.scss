@@ -4,18 +4,14 @@
 	}
 	.mat-column-symbol {
 		min-width: 75px;
+		width: max-content;
 
-		width: 50%;
 		div {
 			div {
 				margin-right: 16px;
 			}
 		}
 
-		@screen xs {
-			width: 60%;
-			max-width: 120px;
-		}
 		@screen sm {
 			width: auto;
 			max-width: 150px;
@@ -26,8 +22,4 @@
 	.mat-column-price {
 		min-width: 75px;
 	}
-
-	// .mat-column-52WeekRange {
-	// 	max-width: px;
-	// }
 }

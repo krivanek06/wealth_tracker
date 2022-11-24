@@ -31,6 +31,8 @@
 
 	<!-- active investmnts table -->
 	<app-investment-account-active-holdings-table
+		(addEmitter)="onAddHolding()"
+		(showHistoryEmitter)="onShowHisotry()"
 		[totalInvestedAmount]="totalInvestedAmount$ | async"
 		[activeHoldings]="filteredActiveHoldings$ | async"
 	></app-investment-account-active-holdings-table>

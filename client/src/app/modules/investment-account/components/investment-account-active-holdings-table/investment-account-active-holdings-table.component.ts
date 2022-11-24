@@ -23,6 +23,8 @@ import {
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvestmentAccountActiveHoldingsTableComponent implements OnInit {
+	@Output() addEmitter = new EventEmitter<void>();
+	@Output() showHistoryEmitter = new EventEmitter<void>();
 	@Output() holdingClickedEmitter = new EventEmitter<InvestmentAccountActiveHoldingOutputFragment>();
 
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -62,6 +64,14 @@ export class InvestmentAccountActiveHoldingsTableComponent implements OnInit {
 
 	onItemClicked(item: InvestmentAccountActiveHoldingOutput): void {
 		this.holdingClickedEmitter.emit(item);
+	}
+
+	onAddClick(): void {
+		this.addEmitter.emit();
+	}
+
+	onShowHistoryClick(): void {
+		this.showHistoryEmitter.emit();
 	}
 
 	toggleDailyChange(): void {

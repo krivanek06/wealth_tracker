@@ -285,10 +285,20 @@ export enum InvestmentAccountHoldingType {
 
 export type InvestmentAccountTransactionInput = {
   accountId: Scalars['String'];
+  /** Include symbols IDs for filtering, if empty, show all */
+  filterSymbols?: InputMaybe<Array<Scalars['String']>>;
   offset: Scalars['Int'];
-  orderByCreatedAt?: InputMaybe<Scalars['Boolean']>;
-  orderByDate?: InputMaybe<Scalars['Boolean']>;
+  /** Put false to order DESC */
+  orderAsc?: InputMaybe<Scalars['Boolean']>;
+  orderType?: InputMaybe<InvestmentAccountTransactionInputOrderType>;
 };
+
+export enum InvestmentAccountTransactionInputOrderType {
+  OrderByCreatedAt = 'ORDER_BY_CREATED_AT',
+  OrderByDate = 'ORDER_BY_DATE',
+  OrderByValue = 'ORDER_BY_VALUE',
+  OrderByValueChange = 'ORDER_BY_VALUE_CHANGE'
+}
 
 export type InvestmentAccountTransactionOutput = {
   __typename?: 'InvestmentAccountTransactionOutput';
@@ -595,10 +605,12 @@ export type Query = {
   getPersonalAccountMonthlyDataById: PersonalAccountMonthlyData;
   /** Returns all personal accounts for the requester */
   getPersonalAccounts: Array<PersonalAccount>;
+  /** Returns SOLD transaction in different orders */
+  getTopTransactions: InvestmentAccountTransactionWrapperOutput;
   /** Return by added transaction by saome date key */
   getTransactionHistory: Array<InvestmentAccountTransactionOutput>;
-  /** Returns SOLD transaction in different orders */
-  getTransactions: InvestmentAccountTransactionWrapperOutput;
+  /** All asset symbols that were ever inside holdings */
+  getTransactionSymbols: Array<Scalars['String']>;
   healthCheck: Scalars['String'];
   /** Search asset based on symbol */
   searchAssetBySymbol: Array<AssetGeneral>;
@@ -640,12 +652,17 @@ export type QueryGetPersonalAccountMonthlyDataByIdArgs = {
 };
 
 
+export type QueryGetTopTransactionsArgs = {
+  input: Scalars['String'];
+};
+
+
 export type QueryGetTransactionHistoryArgs = {
   input: InvestmentAccountTransactionInput;
 };
 
 
-export type QueryGetTransactionsArgs = {
+export type QueryGetTransactionSymbolsArgs = {
   input: Scalars['String'];
 };
 
@@ -800,12 +817,12 @@ export type DeleteInvestmentAccountCasheMutationVariables = Exact<{
 
 export type DeleteInvestmentAccountCasheMutation = { __typename?: 'Mutation', deleteInvestmentAccountCashe: { __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string } };
 
-export type GetTransactionsQueryVariables = Exact<{
+export type GetTopTransactionsQueryVariables = Exact<{
   input: Scalars['String'];
 }>;
 
 
-export type GetTransactionsQuery = { __typename?: 'Query', getTransactions: { __typename?: 'InvestmentAccountTransactionWrapperOutput', bestValueChage: Array<{ __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string }>, worstValueChage: Array<{ __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string }>, bestValue: Array<{ __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string }>, worstValue: Array<{ __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string }> } };
+export type GetTopTransactionsQuery = { __typename?: 'Query', getTopTransactions: { __typename?: 'InvestmentAccountTransactionWrapperOutput', bestValueChage: Array<{ __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string }>, worstValueChage: Array<{ __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string }>, bestValue: Array<{ __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string }>, worstValue: Array<{ __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string }> } };
 
 export type GetTransactionHistoryQueryVariables = Exact<{
   input: InvestmentAccountTransactionInput;
@@ -813,6 +830,13 @@ export type GetTransactionHistoryQueryVariables = Exact<{
 
 
 export type GetTransactionHistoryQuery = { __typename?: 'Query', getTransactionHistory: Array<{ __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string }> };
+
+export type GetTransactionSymbolsQueryVariables = Exact<{
+  input: Scalars['String'];
+}>;
+
+
+export type GetTransactionSymbolsQuery = { __typename?: 'Query', getTransactionSymbols: Array<string> };
 
 export type PersonalAccountTagFragment = { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string };
 
@@ -1383,9 +1407,9 @@ export const DeleteInvestmentAccountCasheDocument = gql`
       super(apollo);
     }
   }
-export const GetTransactionsDocument = gql`
-    query GetTransactions($input: String!) {
-  getTransactions(input: $input) {
+export const GetTopTransactionsDocument = gql`
+    query GetTopTransactions($input: String!) {
+  getTopTransactions(input: $input) {
     bestValueChage {
       ...InvestmentAccountTransactionOutput
     }
@@ -1405,8 +1429,8 @@ export const GetTransactionsDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class GetTransactionsGQL extends Apollo.Query<GetTransactionsQuery, GetTransactionsQueryVariables> {
-    override document = GetTransactionsDocument;
+  export class GetTopTransactionsGQL extends Apollo.Query<GetTopTransactionsQuery, GetTopTransactionsQueryVariables> {
+    override document = GetTopTransactionsDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
@@ -1425,6 +1449,22 @@ export const GetTransactionHistoryDocument = gql`
   })
   export class GetTransactionHistoryGQL extends Apollo.Query<GetTransactionHistoryQuery, GetTransactionHistoryQueryVariables> {
     override document = GetTransactionHistoryDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetTransactionSymbolsDocument = gql`
+    query GetTransactionSymbols($input: String!) {
+  getTransactionSymbols(input: $input)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetTransactionSymbolsGQL extends Apollo.Query<GetTransactionSymbolsQuery, GetTransactionSymbolsQueryVariables> {
+    override document = GetTransactionSymbolsDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

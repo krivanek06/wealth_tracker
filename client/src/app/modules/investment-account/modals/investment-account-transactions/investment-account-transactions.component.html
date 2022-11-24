@@ -1,0 +1,39 @@
+<div class="text-lg mb-6 flex justify-between items-center">
+	<span class="g-color-primary"> Account history </span>
+	<button mat-button mat-dialog-close type="button" class="g-color-danger">
+		<mat-icon>close</mat-icon>
+		Close
+	</button>
+</div>
+
+<mat-dialog-content>
+	<form [formGroup]="formGroup">
+		<!-- order -->
+		<app-form-mat-input-wrapper
+			controlName="orderType"
+			inputCaption="Select order"
+			inputType="SELECT"
+			[inputSource]="TransactionOrderInputSource"
+		></app-form-mat-input-wrapper>
+
+		<!-- symbols -->
+		<app-form-mat-input-wrapper
+			controlName="symbols"
+			inputCaption="Select symbols"
+			inputType="MULTISELECT"
+			[inputSource]="symbolInputSource$ | async"
+		></app-form-mat-input-wrapper>
+
+		<!-- DESC checkbox -->
+		<app-form-mat-input-wrapper
+			controlName="descOrder"
+			inputCaption="Is descending"
+			inputType="CHECKBOX"
+		></app-form-mat-input-wrapper>
+	</form>
+
+	<!-- table -->
+	<app-investment-account-transaction-table
+		[transactions]="transactionHistory$ | async"
+	></app-investment-account-transaction-table>
+</mat-dialog-content>

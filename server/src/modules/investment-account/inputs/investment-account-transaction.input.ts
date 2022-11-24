@@ -1,5 +1,16 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
+import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql';
 import { IsInt, Min } from 'class-validator';
+
+export enum InvestmentAccountTransactionInputOrderType {
+	ORDER_BY_DATE = 'ORDER_BY_DATE',
+	ORDER_BY_CREATED_AT = 'ORDER_BY_CREATED_AT',
+	ORDER_BY_VALUE = 'ORDER_BY_BEST_VALUE',
+	ORDER_BY_VALUE_CHANGE = 'ORDER_BY_BEST_VALUE_CHANGE',
+}
+
+registerEnumType(InvestmentAccountTransactionInputOrderType, {
+	name: 'InvestmentAccountTransactionInputOrderType',
+});
 
 @InputType()
 export class InvestmentAccountTransactionInput {
@@ -13,11 +24,18 @@ export class InvestmentAccountTransactionInput {
 
 	@Field(() => Boolean, {
 		defaultValue: true,
+		description: 'Put false to order DESC',
 	})
-	orderByDate: boolean;
+	orderAsc: boolean;
 
-	@Field(() => Boolean, {
-		defaultValue: false,
+	@Field(() => InvestmentAccountTransactionInputOrderType, {
+		defaultValue: InvestmentAccountTransactionInputOrderType.ORDER_BY_DATE,
 	})
-	orderByCreatedAt: boolean;
+	orderType: InvestmentAccountTransactionInputOrderType;
+
+	@Field(() => [String], {
+		defaultValue: [],
+		description: 'Include symbols IDs for filtering, if empty, show all',
+	})
+	filterSymbols: string[];
 }

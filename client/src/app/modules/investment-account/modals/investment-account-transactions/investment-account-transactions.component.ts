@@ -11,6 +11,8 @@ import { InputSource } from '../../../../shared/models';
 import { GeneralFuntionUtl } from '../../../../shared/utils';
 import { TransactionOrderInputSource } from '../../models';
 
+// TODO - virtual scrolling if many transactions
+// TODO - display number how many transaction has been in total executed
 @Component({
 	selector: 'app-investment-account-transactions',
 	templateUrl: './investment-account-transactions.component.html',
@@ -40,6 +42,9 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 		descOrder: new FormControl<boolean>(true, {
 			nonNullable: true,
 		}),
+		includeBuyOpeation: new FormControl<boolean>(true, {
+			nonNullable: true,
+		}),
 	});
 
 	constructor(
@@ -66,6 +71,7 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 					filterSymbols: formValue.symbols,
 					orderAsc: !formValue.descOrder,
 					orderType: formValue.orderType,
+					includeBuyOperation: formValue.includeBuyOpeation,
 				})
 			)
 		);

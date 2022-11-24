@@ -6,33 +6,40 @@
 	</button>
 </div>
 
+<form [formGroup]="formGroup">
+	<!-- order -->
+	<app-form-mat-input-wrapper
+		controlName="orderType"
+		inputCaption="Select order"
+		inputType="SELECT"
+		[inputSource]="TransactionOrderInputSource"
+	></app-form-mat-input-wrapper>
+
+	<!-- symbols -->
+	<app-form-mat-input-wrapper
+		controlName="symbols"
+		inputCaption="Select symbols"
+		inputType="MULTISELECT"
+		[inputSource]="symbolInputSource$ | async"
+	></app-form-mat-input-wrapper>
+
+	<!-- DESC checkbox -->
+	<app-form-mat-input-wrapper
+		controlName="descOrder"
+		inputCaption="Descending"
+		inputType="CHECKBOX"
+	></app-form-mat-input-wrapper>
+
+	<!-- BUY operation -->
+	<app-form-mat-input-wrapper
+		controlName="includeBuyOpeation"
+		inputCaption="Include BUY"
+		inputType="CHECKBOX"
+	></app-form-mat-input-wrapper>
+</form>
+
+<!-- table -->
 <mat-dialog-content>
-	<form [formGroup]="formGroup">
-		<!-- order -->
-		<app-form-mat-input-wrapper
-			controlName="orderType"
-			inputCaption="Select order"
-			inputType="SELECT"
-			[inputSource]="TransactionOrderInputSource"
-		></app-form-mat-input-wrapper>
-
-		<!-- symbols -->
-		<app-form-mat-input-wrapper
-			controlName="symbols"
-			inputCaption="Select symbols"
-			inputType="MULTISELECT"
-			[inputSource]="symbolInputSource$ | async"
-		></app-form-mat-input-wrapper>
-
-		<!-- DESC checkbox -->
-		<app-form-mat-input-wrapper
-			controlName="descOrder"
-			inputCaption="Is descending"
-			inputType="CHECKBOX"
-		></app-form-mat-input-wrapper>
-	</form>
-
-	<!-- table -->
 	<app-investment-account-transaction-table
 		[transactions]="transactionHistory$ | async"
 	></app-investment-account-transaction-table>

@@ -287,6 +287,8 @@ export type InvestmentAccountTransactionInput = {
   accountId: Scalars['String'];
   /** Include symbols IDs for filtering, if empty, show all */
   filterSymbols?: InputMaybe<Array<Scalars['String']>>;
+  /** Put false if only SELL operation to get */
+  includeBuyOperation?: InputMaybe<Scalars['Boolean']>;
   offset: Scalars['Int'];
   /** Put false to order DESC */
   orderAsc?: InputMaybe<Scalars['Boolean']>;

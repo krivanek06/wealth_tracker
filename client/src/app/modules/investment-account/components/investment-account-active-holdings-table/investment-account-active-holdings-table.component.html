@@ -1,8 +1,21 @@
-<div class="flex justify-end sm:hidden p-2">
-	<button mat-button class="g-color-primary" (click)="toggleDailyChange()">
+<div class="flex justify-between items-center p-2 mb-4">
+	<div class="g-section-title">Holdings</div>
+
+	<button mat-stroked-button type="button" color="primary" class="hidden sm:block">
+		<mat-icon>add</mat-icon>
+		Add holding
+	</button>
+	<!-- button on small screen -->
+	<button mat-button class="g-color-primary sm:hidden" (click)="toggleDailyChange()">
 		{{ showDailyChange ? 'Daily +/-' : 'Invested +/-'}}
 	</button>
 </div>
+
+<!-- add button small screen -->
+<button mat-stroked-button type="button" color="primary" class="block sm:hidden w-full mb-2">
+	<mat-icon>add</mat-icon>
+	Add holding
+</button>
 
 <table mat-table [dataSource]="dataSource" matSort class="w-full" [trackBy]="identity">
 	<!-- image & name -->

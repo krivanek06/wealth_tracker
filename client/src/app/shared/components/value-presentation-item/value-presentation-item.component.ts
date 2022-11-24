@@ -19,6 +19,7 @@ export class ValuePresentationItemComponent<T> implements OnInit, ControlValueAc
 	@Input() items: ValuePresentItem<T>[] | null = [];
 	@Input() itemKey!: keyof T;
 	@Input() multiSelect = true;
+	@Input() isFlexRow = true;
 
 	activeItems: T[] = [];
 

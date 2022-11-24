@@ -17,7 +17,7 @@ export class NotificationProgressDirective {
     Messages to display
   */
 	@Input() notificationProgressMessage!: string;
-	@Input() notificationSuccessMessage!: string;
+	@Input() notificationMessage!: string;
 
 	/*
     How many saconds before reaching 100%
@@ -39,7 +39,7 @@ export class NotificationProgressDirective {
 	@HostListener('click', ['$event.target'])
 	async onClick(): Promise<void> {
 		if (this.isMobileOrTablet() && (await this.openDialog(this.notificationProgressMessage))) {
-			this.openSnackBar('success', this.notificationSuccessMessage, 3000);
+			this.openSnackBar('notification', this.notificationMessage, 3000);
 			this.notificationSuccessEmitter.emit(); // notify parent component about task ending
 		}
 	}
@@ -81,7 +81,7 @@ export class NotificationProgressDirective {
 				if (result > 120) {
 					this.state$.next('cancel');
 					this.notificationProgressService.setCurrentValue(0);
-					this.openSnackBar('success', this.notificationSuccessMessage, 3000);
+					this.openSnackBar('notification', this.notificationMessage, 3000);
 					this.notificationSuccessEmitter.emit(); // notify parent component about task ending
 				}
 			});
@@ -95,7 +95,11 @@ export class NotificationProgressDirective {
 		});
 	}
 
-	private openSnackBar(type: 'progress' | 'success', message: string, duration: number | undefined = undefined): void {
+	private openSnackBar(
+		type: 'progress' | 'notification',
+		message: string,
+		duration: number | undefined = undefined
+	): void {
 		this._snackBar.openFromComponent(NotificationProgressComponent, {
 			horizontalPosition: 'end',
 			verticalPosition: 'top',

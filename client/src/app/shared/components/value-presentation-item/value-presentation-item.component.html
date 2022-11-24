@@ -1,6 +1,8 @@
-<ng-container *ngFor="let item of items">
+<div class="flex" [ngClass]="{'flex-col': !isFlexRow}">
 	<button
+		*ngFor="let item of items"
 		mat-button
+		[ngClass]="{'w-max': isFlexRow}"
 		[style.--valueItemColor]="item.color"
 		[style.--valueItemColorActive]="item.color + '44'"
 		[style]="(activeItems| inArray: item.item : itemKey ) ? 'background-color: ' +  item.color + '44': ''"
@@ -17,4 +19,4 @@
 			</div>
 		</div>
 	</button>
-</ng-container>
+</div>

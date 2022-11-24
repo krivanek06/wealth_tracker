@@ -15,6 +15,8 @@ import {
 	GetInvestmentAccountByIdGQL,
 	GetInvestmentAccountGrowthGQL,
 	GetInvestmentAccountsGQL,
+	GetTransactionHistoryGQL,
+	GetTransactionSymbolsGQL,
 	InvestmentAccountCashChangeFragment,
 	InvestmentAccountCashCreateInput,
 	InvestmentAccountCashDeleteInput,
@@ -22,6 +24,8 @@ import {
 	InvestmentAccountFragmentDoc,
 	InvestmentAccountGrowth,
 	InvestmentAccountOverviewFragment,
+	InvestmentAccountTransactionInput,
+	InvestmentAccountTransactionOutput,
 } from '../graphql';
 
 @Injectable({
@@ -40,6 +44,8 @@ export class InvestmentAccountApiService {
 		private createInvestmentAccountCasheGQL: CreateInvestmentAccountCasheGQL,
 		//private editInvestmentAccountCashe: EditInvestmentAccountCasheGQL, // user rather create & delete
 		private deleteInvestmentAccountCasheGQL: DeleteInvestmentAccountCasheGQL,
+		private getTransactionHistoryGQL: GetTransactionHistoryGQL,
+		private getTransactionSymbolsGQL: GetTransactionSymbolsGQL,
 		private apollo: Apollo
 	) {}
 
@@ -79,6 +85,28 @@ export class InvestmentAccountApiService {
 				},
 			})
 			.valueChanges.pipe(map((res) => res.data.getInvestmentAccountGrowth));
+	}
+
+	getTransactionHistory(input: InvestmentAccountTransactionInput): Observable<InvestmentAccountTransactionOutput[]> {
+		return this.getTransactionHistoryGQL
+			.fetch(
+				{
+					input,
+				},
+				{
+					fetchPolicy: 'network-only',
+				}
+			)
+			.pipe(map((res) => res.data.getTransactionHistory));
+	}
+
+	// TODO: when BUY new holding - check if it is here
+	getTransactionSymbols(input: string): Observable<string[]> {
+		return this.getTransactionSymbolsGQL
+			.watch({
+				input,
+			})
+			.valueChanges.pipe(map((res) => res.data.getTransactionSymbols));
 	}
 
 	createInvestmentAccountCashe(

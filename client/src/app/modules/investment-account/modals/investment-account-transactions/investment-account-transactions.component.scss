@@ -1,0 +1,15 @@
+:host {
+	display: block;
+
+	form {
+		@apply flex flex-col gap-y-2 gap-x-4 md:flex-row;
+
+		& > app-form-mat-input-wrapper {
+			@apply flex-1 md:flex-none;
+
+			&:last-child {
+				@apply self-end md:self-center;
+			}
+		}
+	}
+}

@@ -11,7 +11,7 @@ import {
 	InvestmentAccountOverviewFragment,
 } from '../../../../core/graphql';
 import { LAYOUT_2XL, ValuePresentItem } from '../../../../shared/models';
-import { InvestmentAccountCashChangeComponent } from '../../modals';
+import { InvestmentAccountCashChangeComponent, InvestmentAccountTransactionsComponent } from '../../modals';
 import { DailyInvestmentChange, SectorAllocation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
@@ -106,6 +106,17 @@ export class InvestmentAccountComponent implements OnInit {
 
 	onChangeChangeClick(): void {
 		this.dialog.open(InvestmentAccountCashChangeComponent, {
+			data: {
+				investmentId: this.investmentId,
+			},
+			panelClass: ['g-mat-dialog-big'],
+		});
+	}
+
+	onAddHolding(): void {}
+
+	onShowHisotry(): void {
+		this.dialog.open(InvestmentAccountTransactionsComponent, {
 			data: {
 				investmentId: this.investmentId,
 			},

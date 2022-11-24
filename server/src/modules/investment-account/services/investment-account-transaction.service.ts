@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { LodashServiceUtil } from '../../../utils';
 import { INVESTMENT_ACCOUNT_SEARCH_LIMIS } from '../dto';
 import { InvestmentAccount, InvestmentAccountHoldingHistory } from '../entities';
-import { InvestmentAccountTransactionInput } from '../inputs';
+import { InvestmentAccountTransactionInput, InvestmentAccountTransactionInputOrderType } from '../inputs';
 import { InvestmentAccountTransactionOutput, InvestmentAccountTransactionWrapperOutput } from '../outputs';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
@@ -10,7 +10,17 @@ import { InvestmentAccountRepositoryService } from './investment-account-reposit
 export class InvestmentAccountTransactionService {
 	constructor(private investmentAccountRepositoryService: InvestmentAccountRepositoryService) {}
 
-	async getTransactions(accountId: string, userId: string): Promise<InvestmentAccountTransactionWrapperOutput> {
+	async getTransactionSymbols(accountId: string, userId: string): Promise<string[]> {
+		const account = await this.investmentAccountRepositoryService.getInvestmentAccountById(accountId, userId);
+		const history = account.holdings
+			.map((d) => d.holdingHistory)
+			.reduce((a, b) => [...a, ...b])
+			.map((d) => d.assetId);
+
+		return [...new Set(history)];
+	}
+
+	async getTopTransactions(accountId: string, userId: string): Promise<InvestmentAccountTransactionWrapperOutput> {
 		const account = await this.investmentAccountRepositoryService.getInvestmentAccountById(accountId, userId);
 
 		// get every symbol holding history into arrya with existing return
@@ -33,33 +43,42 @@ export class InvestmentAccountTransactionService {
 	): Promise<InvestmentAccountTransactionOutput[]> {
 		const account = await this.investmentAccountRepositoryService.getInvestmentAccountById(input.accountId, userId);
 
-		const transactionOuput = account.holdings
-			.map((d) => d.holdingHistory)
-			.reduce((a, b) => [...a, ...b])
-			.sort((a, b) => {
-				if (input.orderByCreatedAt) {
-					return b.createdAt.getTime() - a.createdAt.getTime();
-				}
-				return a.date < b.date ? 1 : -1;
-			})
-			.slice(input.offset, input.offset + INVESTMENT_ACCOUNT_SEARCH_LIMIS)
-			.map((d) => {
-				const holding = account.holdings.find((x) => x.assetId === d.assetId);
-				const res: InvestmentAccountTransactionOutput = { ...d, holdingType: holding.type, sector: holding.sector };
-				return res;
-			});
+		// filter out valid holdings
+		const history = account.holdings
+			.map((d) =>
+				d.holdingHistory.filter(
+					(holding) => input.filterSymbols.length === 0 || input.filterSymbols.includes(holding.assetId)
+				)
+			)
+			.reduce((a, b) => [...a, ...b]);
 
-		return transactionOuput;
+		const order = input.orderAsc ? 'asc' : 'desc';
+		const offest = input.offset;
+		const limit = input.offset + INVESTMENT_ACCOUNT_SEARCH_LIMIS;
+
+		if (input.orderType === InvestmentAccountTransactionInputOrderType.ORDER_BY_VALUE) {
+			return this.getTransactionsOrder(account, history, 'return', order, offest, limit);
+		}
+		if (input.orderType === InvestmentAccountTransactionInputOrderType.ORDER_BY_VALUE_CHANGE) {
+			return this.getTransactionsOrder(account, history, 'returnChange', order, offest, limit);
+		}
+		if (input.orderType === InvestmentAccountTransactionInputOrderType.ORDER_BY_CREATED_AT) {
+			return this.getTransactionsOrder(account, history, 'createdAt', order, offest, limit);
+		}
+
+		return this.getTransactionsOrder(account, history, 'date', order, offest, limit);
 	}
 
 	private getTransactionsOrder(
 		investmentAccount: InvestmentAccount,
 		history: InvestmentAccountHoldingHistory[],
-		sortKey: 'returnChange' | 'return',
-		orders: 'asc' | 'desc'
+		sortKey: keyof InvestmentAccountHoldingHistory,
+		orders: 'asc' | 'desc',
+		offset = 0,
+		limit = 10
 	): InvestmentAccountTransactionOutput[] {
 		const result = LodashServiceUtil.orderBy(history, [sortKey], orders)
-			.slice(0, 10)
+			.slice(offset, limit)
 			.map((d) => {
 				const holding = investmentAccount.holdings.find((x) => x.assetId === d.assetId);
 				const res: InvestmentAccountTransactionOutput = { ...d, holdingType: holding.type, sector: holding.sector };

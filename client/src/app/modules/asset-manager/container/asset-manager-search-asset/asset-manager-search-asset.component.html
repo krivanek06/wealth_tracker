@@ -1,8 +1,7 @@
 <mat-form-field appearance="outline" class="w-full">
-	<mat-label>Search by company name or crypto name</mat-label>
+	<mat-label>Search by symbol</mat-label>
 	<input matInput [formControl]="formControl" [matAutocomplete]="auto" />
 	<mat-hint>Ex: 'Apple, Microsoft, BTC, ETH'</mat-hint>
-	<mat-error *ngIf="formControl.touched &&  formControl.errors?.['required'] "> Symbol name is required </mat-error>
 
 	<!-- display options -->
 	<mat-autocomplete #auto="matAutocomplete">

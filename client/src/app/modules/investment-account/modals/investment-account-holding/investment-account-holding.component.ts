@@ -1,13 +1,18 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { map, Observable } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 import { InvestmentAccountApiService } from '../../../../core/api';
 import { AssetGeneralFragment, InvestmentAccountFragment } from '../../../../core/graphql';
-import { InputTypeDateTimePickerConfig, positiveNumberValidator, requiredValidator } from '../../../../shared/models';
-import { CashAllocation, SearchableAssetEnum } from '../../models';
+import {
+	InputTypeDateTimePickerConfig,
+	minValueValidator,
+	positiveNumberValidator,
+	requiredValidator,
+} from '../../../../shared/models';
+import { SearchableAssetEnum } from '../../../asset-manager/models';
+import { CashAllocation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
-import { InvestmentAccountCashChangeComponent } from '../investment-account-cash-change/investment-account-cash-change.component';
 
 @Component({
 	selector: 'app-investment-account-holding',
@@ -17,12 +22,15 @@ import { InvestmentAccountCashChangeComponent } from '../investment-account-cash
 })
 export class InvestmentAccountHoldingComponent implements OnInit {
 	formGroup = new FormGroup({
-		assetType: new FormControl<SearchableAssetEnum>(SearchableAssetEnum.Aseet, {
+		assetType: new FormControl<SearchableAssetEnum>(SearchableAssetEnum.AseetByName, {
 			validators: [requiredValidator],
 			nonNullable: true,
 		}),
-		symbol: new FormControl<AssetGeneralFragment | null>(null, { validators: [requiredValidator], nonNullable: true }),
-		units: new FormControl<number>(0, { validators: [requiredValidator, positiveNumberValidator], nonNullable: true }),
+		symbol: new FormControl<AssetGeneralFragment | null>(null, { validators: [Validators.required] }),
+		units: new FormControl<number>(0, {
+			validators: [requiredValidator, positiveNumberValidator, minValueValidator(1)],
+			nonNullable: true,
+		}),
 		date: new FormControl<Date>(new Date(), { validators: [requiredValidator], nonNullable: true }),
 	});
 
@@ -40,10 +48,19 @@ export class InvestmentAccountHoldingComponent implements OnInit {
 		maxDate: new Date(),
 	};
 
+	get totalValue(): number {
+		if (!this.formGroup.controls.symbol.value) {
+			return 0;
+		}
+		return this.formGroup.controls.symbol.value.assetQuote.price * this.formGroup.controls.units.value;
+	}
+
+	cashError$!: Observable<boolean>;
+
 	constructor(
 		private investmentAccountApiService: InvestmentAccountApiService,
 		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
-		private dialogRef: MatDialogRef<InvestmentAccountCashChangeComponent>,
+		private dialogRef: MatDialogRef<InvestmentAccountHoldingComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: { investmentId: string }
 	) {}
 
@@ -55,7 +72,12 @@ export class InvestmentAccountHoldingComponent implements OnInit {
 			map((account) => this.investmentAccountCalculatorService.getCashCategories(account))
 		);
 
-		this.formGroup.valueChanges.subscribe(console.log);
+		// on form change check if user has enough cash
+		this.cashError$ = this.formGroup.valueChanges.pipe(
+			switchMap(() =>
+				this.cashCategory$.pipe(map((c) => c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL < this.totalValue))
+			)
+		);
 	}
 
 	onSave(): void {

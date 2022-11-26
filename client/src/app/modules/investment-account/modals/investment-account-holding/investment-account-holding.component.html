@@ -15,26 +15,60 @@
 			</div>
 			<div>
 				<span class="text-gray-400">Price: </span>
-				<span> $144.33 </span>
+				<span *ngIf="formGroup.controls.symbol.value as value"> {{value.assetQuote.price | currency}} </span>
+				<span *ngIf="!formGroup.controls.symbol.value">N/A</span>
 			</div>
 			<div>
 				<span class="text-gray-400">Total: </span>
-				<span> $14 321.21</span>
+				<span *ngIf="totalValue"> {{totalValue | currency }} </span>
+				<span *ngIf="!totalValue">N/A</span>
 			</div>
 		</div>
 
 		<!-- asset type -->
-		<mat-radio-group formControlName="assetType" aria-label="Select asset type" class="flex justify-around mb-3">
-			<mat-radio-button color="primary" [value]="SearchableAssetEnum.Aseet">Asset</mat-radio-button>
-			<mat-radio-button color="primary" [value]="SearchableAssetEnum.Crypto">Crypto</mat-radio-button>
+		<mat-radio-group
+			formControlName="assetType"
+			aria-label="Select asset type"
+			class="flex flex-col gap-1 xs:flex-row justify-around mb-3"
+		>
+			<mat-radio-button
+				color="primary"
+				[value]="SearchableAssetEnum.AseetByName"
+				matTooltip="Search any asset by its full name like: Microsfot, Tesla, etc."
+				>Asset by name</mat-radio-button
+			>
+			<mat-radio-button
+				color="primary"
+				[value]="SearchableAssetEnum.AseetById"
+				matTooltip="Search any asset by its ticker symbol like: MSFT, TSLA, AAPL, etc."
+				>Asset by id</mat-radio-button
+			>
+			<mat-radio-button
+				color="primary"
+				[value]="SearchableAssetEnum.Crypto"
+				matTooltip="Search crypto like: BTC, ETH, etc."
+				>Crypto by id</mat-radio-button
+			>
 		</mat-radio-group>
+
+		<div class="my-2">
+			<mat-divider></mat-divider>
+		</div>
 
 		<!-- search symbol -->
 		<div class="mb-3">
 			<app-asset-manager-search-asset
-				controlName="symbol"
-				[searchForCrypto]="formGroup.controls.assetType.value === SearchableAssetEnum.Crypto"
+				formControlName="symbol"
+				[searchableAsset]="formGroup.controls.assetType.value"
 			></app-asset-manager-search-asset>
+		</div>
+
+		<!-- error selecting symbol -->
+		<div
+			*ngIf="formGroup.controls.symbol.touched && formGroup.controls.symbol.errors?.['required']"
+			class="p-3 text-white bg-red-500 rounded-lg mb-4"
+		>
+			Symbol name is required
 		</div>
 
 		<!-- units -->
@@ -54,6 +88,9 @@
 			[inputTypeDateTimePickerConfig]="maxDateSymbolPurchase"
 		></app-form-mat-input-wrapper>
 
+		<!-- error if more than cash -->
+		<div *ngIf="cashError$ | async" class="p-3 text-white bg-red-500 rounded-lg mb-4">Insufficient cash amount</div>
+
 		<div class="my-4">
 			<mat-divider></mat-divider>
 		</div>
@@ -61,7 +98,7 @@
 		<!-- action buttons -->
 		<div class="c-button-wrapper">
 			<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
-			<button mat-stroked-button color="primary" type="submit">
+			<button mat-stroked-button color="primary" type="submit" [disabled]="cashError$ | async">
 				<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
 				Save
 			</button>

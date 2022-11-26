@@ -11,7 +11,11 @@ import {
 	InvestmentAccountOverviewFragment,
 } from '../../../../core/graphql';
 import { LAYOUT_2XL, ValuePresentItem } from '../../../../shared/models';
-import { InvestmentAccountCashChangeComponent, InvestmentAccountTransactionsComponent } from '../../modals';
+import {
+	InvestmentAccountCashChangeComponent,
+	InvestmentAccountHoldingComponent,
+	InvestmentAccountTransactionsComponent,
+} from '../../modals';
 import { DailyInvestmentChange, SectorAllocation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
@@ -113,7 +117,14 @@ export class InvestmentAccountComponent implements OnInit {
 		});
 	}
 
-	onAddHolding(): void {}
+	onAddHolding(): void {
+		this.dialog.open(InvestmentAccountHoldingComponent, {
+			data: {
+				investmentId: this.investmentId,
+			},
+			panelClass: ['g-mat-dialog-big'],
+		});
+	}
 
 	onShowHisotry(): void {
 		this.dialog.open(InvestmentAccountTransactionsComponent, {

@@ -56,11 +56,14 @@ export type AssetGeneralHistoricalPricesInput = {
 
 export type AssetGeneralQuote = {
   __typename?: 'AssetGeneralQuote';
-  avgVolume: Scalars['Float'];
+  /** Null very rarely when picking uncommon stock, like American Campus Communities */
+  avgVolume?: Maybe<Scalars['Float']>;
   change: Scalars['Float'];
   changesPercentage: Scalars['Float'];
-  dayHigh: Scalars['Float'];
-  dayLow: Scalars['Float'];
+  /** Null value of information was received during weekend */
+  dayHigh?: Maybe<Scalars['Float']>;
+  /** Null value of information was received during weekend */
+  dayLow?: Maybe<Scalars['Float']>;
   /** Only present for stocks */
   earningsAnnouncement?: Maybe<Scalars['String']>;
   /** Only present for stocks */
@@ -71,16 +74,20 @@ export type AssetGeneralQuote = {
   /** Only present for stocks */
   pe?: Maybe<Scalars['Float']>;
   price: Scalars['Float'];
-  priceAvg50: Scalars['Float'];
-  priceAvg200: Scalars['Float'];
-  /** For crypto it is current supply */
-  sharesOutstanding: Scalars['Float'];
+  /** Null very rarely when picking uncommon stock, like American Campus Communities */
+  priceAvg50?: Maybe<Scalars['Float']>;
+  /** Null very rarely when picking uncommon stock, like American Campus Communities */
+  priceAvg200?: Maybe<Scalars['Float']>;
+  /** For crypto it is current supply, null should be rarely */
+  sharesOutstanding?: Maybe<Scalars['Float']>;
   symbol: Scalars['String'];
   symbolImageURL?: Maybe<Scalars['String']>;
   timestamp: Scalars['Float'];
   volume: Scalars['Float'];
-  yearHigh: Scalars['Float'];
-  yearLow: Scalars['Float'];
+  /** Null very rarely when picking uncommon stock, like American Campus Communities */
+  yearHigh?: Maybe<Scalars['Float']>;
+  /** Null very rarely when picking uncommon stock, like American Campus Communities */
+  yearLow?: Maybe<Scalars['Float']>;
 };
 
 export type AssetGeneralSearchInput = {
@@ -703,9 +710,9 @@ export type AssetGeneralHistoricalPricesDataFragment = { __typename?: 'AssetGene
 
 export type AssetGeneralHistoricalPricesFragment = { __typename?: 'AssetGeneralHistoricalPrices', id: string, dateStart: string, dateEnd: string, assetHistoricalPricesData: Array<{ __typename?: 'AssetGeneralHistoricalPricesData', date: string, close: number }> };
 
-export type AssetGeneralQuoteFragment = { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null };
+export type AssetGeneralQuoteFragment = { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null };
 
-export type AssetGeneralFragment = { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } };
+export type AssetGeneralFragment = { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } };
 
 export type GetAssetHistoricalPricesStartToEndQueryVariables = Exact<{
   input: AssetGeneralHistoricalPricesInput;
@@ -719,14 +726,14 @@ export type SearchAssetBySymbolQueryVariables = Exact<{
 }>;
 
 
-export type SearchAssetBySymbolQuery = { __typename?: 'Query', searchAssetBySymbol: Array<{ __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } }> };
+export type SearchAssetBySymbolQuery = { __typename?: 'Query', searchAssetBySymbol: Array<{ __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } }> };
 
 export type GetAssetGeneralForSymbolQueryVariables = Exact<{
   input: Scalars['String'];
 }>;
 
 
-export type GetAssetGeneralForSymbolQuery = { __typename?: 'Query', getAssetGeneralForSymbol?: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } | null };
+export type GetAssetGeneralForSymbolQuery = { __typename?: 'Query', getAssetGeneralForSymbol?: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } | null };
 
 export type InvestmentAccountHoldingHistoryFragment = { __typename?: 'InvestmentAccountHoldingHistory', itemId: string, date: string, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, cashChangeId: string };
 
@@ -736,9 +743,9 @@ export type InvestmentAccountHoldingFragment = { __typename?: 'InvestmentAccount
 
 export type InvestmentAccountOverviewFragment = { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string };
 
-export type InvestmentAccountActiveHoldingOutputFragment = { __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } };
+export type InvestmentAccountActiveHoldingOutputFragment = { __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } };
 
-export type InvestmentAccountFragment = { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, cashChange: Array<{ __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string }>, activeHoldings: Array<{ __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } }> };
+export type InvestmentAccountFragment = { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, cashChange: Array<{ __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string }>, activeHoldings: Array<{ __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } }> };
 
 export type InvestmentAccountGrowthFragment = { __typename?: 'InvestmentAccountGrowth', invested: number, cash: number, date: string, ownedAssets: number };
 
@@ -749,7 +756,7 @@ export type GetInvestmentAccountByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetInvestmentAccountByIdQuery = { __typename?: 'Query', getInvestmentAccountById: { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, cashChange: Array<{ __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string }>, activeHoldings: Array<{ __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow: number, dayHigh: number, volume: number, yearLow: number, yearHigh: number, marketCap: number, avgVolume: number, sharesOutstanding: number, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } }> } };
+export type GetInvestmentAccountByIdQuery = { __typename?: 'Query', getInvestmentAccountById: { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, cashChange: Array<{ __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string }>, activeHoldings: Array<{ __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } }> } };
 
 export type GetInvestmentAccountsQueryVariables = Exact<{ [key: string]: never; }>;
 

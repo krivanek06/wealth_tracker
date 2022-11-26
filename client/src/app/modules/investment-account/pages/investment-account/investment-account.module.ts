@@ -7,7 +7,11 @@ import {
 	InvestmentAccountPortfolioGrowthChartModule,
 	InvestmentAccountStateModule,
 } from '../../components';
-import { InvestmentAccountCashChangeModule, InvestmentAccountTransactionsModule } from '../../modals';
+import {
+	InvestmentAccountCashChangeModule,
+	InvestmentAccountHoldingModule,
+	InvestmentAccountTransactionsModule,
+} from '../../modals';
 import { InvestmentAccountComponent } from './investment-account.component';
 
 @NgModule({
@@ -22,6 +26,7 @@ import { InvestmentAccountComponent } from './investment-account.component';
 		ReactiveFormsModule,
 		InvestmentAccountCashChangeModule,
 		InvestmentAccountTransactionsModule,
+		InvestmentAccountHoldingModule,
 	],
 	exports: [InvestmentAccountComponent],
 })

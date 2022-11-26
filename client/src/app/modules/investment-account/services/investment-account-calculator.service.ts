@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { InvestmentAccountFragment } from '../../../core/graphql';
 import { ValuePresentItem } from '../../../shared/models';
-import { DailyInvestmentChange, SectorAllocation } from '../models';
+import { CashAllocation, DailyInvestmentChange, SectorAllocation } from '../models';
+import { InvestmentAccountCashChangeType } from './../../../core/graphql/schema-backend.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -54,6 +55,12 @@ export class InvestmentAccountCalculatorService {
 		};
 	}
 
+	/**
+	 *
+	 * @param account
+	 * @returns how many symbols are allocated for a specific sector and what is the
+	 *          total value allocated
+	 */
 	getSectorAllocation(account: InvestmentAccountFragment): ValuePresentItem<SectorAllocation>[] {
 		const totalInvestedAmount = account.activeHoldings.reduce((acc, curr) => acc + curr.totalValue, 0);
 		return account.activeHoldings.reduce((acc, curr) => {
@@ -82,5 +89,23 @@ export class InvestmentAccountCalculatorService {
 
 			return [...acc, valueItem];
 		}, [] as ValuePresentItem<SectorAllocation>[]);
+	}
+
+	/**
+	 *
+	 * @param account
+	 * @returns cash allocated by types
+	 */
+	getCashCategories(account: InvestmentAccountFragment): CashAllocation {
+		return account.cashChange.reduce(
+			(acc, curr) => {
+				return { ...acc, [curr.type]: acc[curr.type] + curr.cashValue };
+			},
+			{
+				ASSET_OPERATION: 0,
+				DEPOSIT: 0,
+				WITHDRAWAL: 0,
+			} as { [key in InvestmentAccountCashChangeType]: number }
+		);
 	}
 }

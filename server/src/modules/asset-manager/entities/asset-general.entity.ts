@@ -23,40 +23,62 @@ export class AssetGeneralQuote implements AssetGeneralQuoteClient {
 	@Field(() => Float)
 	change: number;
 
-	@Field(() => Float)
-	dayLow: number;
+	@Field(() => Float, {
+		nullable: true,
+		description: 'Null value of information was received during weekend',
+	})
+	dayLow: number | null;
 
-	@Field(() => Float)
-	dayHigh: number;
+	@Field(() => Float, {
+		nullable: true,
+		description: 'Null value of information was received during weekend',
+	})
+	dayHigh: number | null;
 
 	@Field(() => Float)
 	volume: number;
 
-	@Field(() => Float)
-	yearLow: number;
+	@Field(() => Float, {
+		nullable: true,
+		description: 'Null very rarely when picking uncommon stock, like American Campus Communities',
+	})
+	yearLow: number | null;
 
-	@Field(() => Float)
-	yearHigh: number;
+	@Field(() => Float, {
+		nullable: true,
+		description: 'Null very rarely when picking uncommon stock, like American Campus Communities',
+	})
+	yearHigh: number | null;
 
 	@Field(() => Float)
 	marketCap: number;
 
-	@Field(() => Float)
-	priceAvg50: number;
+	@Field(() => Float, {
+		nullable: true,
+		description: 'Null very rarely when picking uncommon stock, like American Campus Communities',
+	})
+	priceAvg50: number | null;
 
-	@Field(() => Float)
-	priceAvg200: number;
+	@Field(() => Float, {
+		nullable: true,
+		description: 'Null very rarely when picking uncommon stock, like American Campus Communities',
+	})
+	priceAvg200: number | null;
 
-	@Field(() => Float)
-	avgVolume: number;
+	@Field(() => Float, {
+		nullable: true,
+		description: 'Null very rarely when picking uncommon stock, like American Campus Communities',
+	})
+	avgVolume: number | null;
 
 	@Field(() => String)
 	exchange: string;
 
 	@Field(() => Float, {
-		description: 'For crypto it is current supply',
+		nullable: true,
+		description: 'For crypto it is current supply, null should be rarely',
 	})
-	sharesOutstanding: number;
+	sharesOutstanding: number | null;
 
 	@Field(() => Float)
 	timestamp: number;

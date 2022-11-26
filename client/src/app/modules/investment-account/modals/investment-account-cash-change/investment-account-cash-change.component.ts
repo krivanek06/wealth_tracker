@@ -12,6 +12,8 @@ import {
 import { DialogServiceUtil } from '../../../../shared/dialogs';
 import { InputSource, requiredValidator } from '../../../../shared/models';
 import { DateServiceUtil } from '../../../../shared/utils';
+import { CashAllocation } from '../../models';
+import { InvestmentAccountCalculatorService } from '../../services';
 
 @Component({
 	selector: 'app-investment-account-cash-change',
@@ -37,13 +39,14 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 	investmentAccount$!: Observable<InvestmentAccountFragment>;
 
 	// display different categories and accumulated cash for them
-	cashCategory$!: Observable<{ [key in InvestmentAccountCashChangeType]: number }>;
+	cashCategory$!: Observable<CashAllocation>;
 
 	// used to show loader
 	isSaving = false;
 
 	constructor(
 		private investmentAccountApiService: InvestmentAccountApiService,
+		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
 		private dialogRef: MatDialogRef<InvestmentAccountCashChangeComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: { investmentId: string }
 	) {}
@@ -53,18 +56,7 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 
 		// build cash categories
 		this.cashCategory$ = this.investmentAccount$.pipe(
-			map((res) =>
-				res.cashChange.reduce(
-					(acc, curr) => {
-						return { ...acc, [curr.type]: acc[curr.type] + curr.cashValue };
-					},
-					{
-						ASSET_OPERATION: 0,
-						DEPOSIT: 0,
-						WITHDRAWAL: 0,
-					} as { [key in InvestmentAccountCashChangeType]: number }
-				)
-			)
+			map((account) => this.investmentAccountCalculatorService.getCashCategories(account))
 		);
 	}
 

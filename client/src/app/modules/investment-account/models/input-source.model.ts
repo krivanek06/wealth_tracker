@@ -6,3 +6,8 @@ export const TransactionOrderInputSource: InputSource[] = [
 	{ caption: 'Order by value', value: InvestmentAccountTransactionInputOrderType.OrderByValue },
 	{ caption: 'Order by value change', value: InvestmentAccountTransactionInputOrderType.OrderByValueChange },
 ];
+
+export enum SearchableAssetEnum {
+	Aseet = 'Aseet',
+	Crypto = 'Crypto',
+}

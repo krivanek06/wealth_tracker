@@ -11,9 +11,16 @@ export class AssetGeneralService {
 	constructor(private prisma: PrismaService, private financialModelingAPIService: FinancialModelingAPIService) {}
 
 	async searchAssetBySymbol(symbolPrefix: string, isCrypto = false): Promise<AssetGeneral[]> {
-		const apiData = await this.financialModelingAPIService.searchAssetBySymbolPrefix(symbolPrefix, isCrypto);
-		const symbolNames = apiData.map((d) => d.symbol);
-		return this.getAssetGeneralForSymbols(symbolNames);
+		try {
+			const apiData = await this.financialModelingAPIService.searchAssetBySymbolPrefix(symbolPrefix, isCrypto);
+			// filter out symbol name that include '.' like NN.DE, used to get errors
+			const unsupportedCharacters = ['.', '-'];
+			const symbolNames = apiData.map((d) => d.symbol).filter((d) => !unsupportedCharacters.some((c) => d.includes(c)));
+			return symbolNames.length === 0 ? [] : this.getAssetGeneralForSymbols(symbolNames);
+		} catch (e) {
+			console.log(e);
+			return [];
+		}
 	}
 
 	async getAssetGeneralForSymbol(symbol: string): Promise<AssetGeneral | null> {

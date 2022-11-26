@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { DefaultImageType } from '../models';
 import { GeneralFuntionUtl } from '../utils';
 
@@ -14,6 +14,11 @@ export class DefaultImgDirective implements OnChanges {
 
 	ngOnChanges(changes: SimpleChanges): void {
 		this.setImage(this.resolveImage(this.src));
+	}
+
+	@HostListener('error')
+	onError() {
+		this.imageRef.nativeElement.setAttribute('src', this.resolveImage(null));
 	}
 
 	private setImage(src: string) {

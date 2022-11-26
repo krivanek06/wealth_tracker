@@ -621,8 +621,10 @@ export type Query = {
   /** All asset symbols that were ever inside holdings */
   getTransactionSymbols: Array<Scalars['String']>;
   healthCheck: Scalars['String'];
-  /** Search asset based on symbol */
+  /** Search asset based on symbol name */
   searchAssetBySymbol: Array<AssetGeneral>;
+  /** Search asset based on symbol identification AAPL, BTC */
+  searchAssetBySymbolTickerPrefix: Array<AssetGeneral>;
 };
 
 
@@ -677,6 +679,11 @@ export type QueryGetTransactionSymbolsArgs = {
 
 
 export type QuerySearchAssetBySymbolArgs = {
+  input: Scalars['String'];
+};
+
+
+export type QuerySearchAssetBySymbolTickerPrefixArgs = {
   input: AssetGeneralSearchInput;
 };
 
@@ -722,11 +729,18 @@ export type GetAssetHistoricalPricesStartToEndQueryVariables = Exact<{
 export type GetAssetHistoricalPricesStartToEndQuery = { __typename?: 'Query', getAssetHistoricalPricesStartToEnd: { __typename?: 'AssetGeneralHistoricalPrices', id: string, dateStart: string, dateEnd: string, assetHistoricalPricesData: Array<{ __typename?: 'AssetGeneralHistoricalPricesData', date: string, close: number }> } };
 
 export type SearchAssetBySymbolQueryVariables = Exact<{
-  input: AssetGeneralSearchInput;
+  input: Scalars['String'];
 }>;
 
 
 export type SearchAssetBySymbolQuery = { __typename?: 'Query', searchAssetBySymbol: Array<{ __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } }> };
+
+export type SearchAssetBySymbolTickerPrefixQueryVariables = Exact<{
+  input: AssetGeneralSearchInput;
+}>;
+
+
+export type SearchAssetBySymbolTickerPrefixQuery = { __typename?: 'Query', searchAssetBySymbolTickerPrefix: Array<{ __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } }> };
 
 export type GetAssetGeneralForSymbolQueryVariables = Exact<{
   input: Scalars['String'];
@@ -1183,7 +1197,7 @@ export const GetAssetHistoricalPricesStartToEndDocument = gql`
     }
   }
 export const SearchAssetBySymbolDocument = gql`
-    query SearchAssetBySymbol($input: AssetGeneralSearchInput!) {
+    query SearchAssetBySymbol($input: String!) {
   searchAssetBySymbol(input: $input) {
     ...AssetGeneral
   }
@@ -1195,6 +1209,24 @@ export const SearchAssetBySymbolDocument = gql`
   })
   export class SearchAssetBySymbolGQL extends Apollo.Query<SearchAssetBySymbolQuery, SearchAssetBySymbolQueryVariables> {
     override document = SearchAssetBySymbolDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const SearchAssetBySymbolTickerPrefixDocument = gql`
+    query SearchAssetBySymbolTickerPrefix($input: AssetGeneralSearchInput!) {
+  searchAssetBySymbolTickerPrefix(input: $input) {
+    ...AssetGeneral
+  }
+}
+    ${AssetGeneralFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class SearchAssetBySymbolTickerPrefixGQL extends Apollo.Query<SearchAssetBySymbolTickerPrefixQuery, SearchAssetBySymbolTickerPrefixQueryVariables> {
+    override document = SearchAssetBySymbolTickerPrefixDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

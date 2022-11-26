@@ -1,22 +1,31 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { ControlValueAccessor, FormControl, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, forwardRef, Input, OnInit } from '@angular/core';
+import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Observable, of, switchMap, tap } from 'rxjs';
 import { AssetApiService } from '../../../../core/api';
 import { AssetGeneralFragment } from '../../../../core/graphql';
+import { SearchableAssetEnum } from '../../models';
 
 @Component({
 	selector: 'app-asset-manager-search-asset',
 	templateUrl: './asset-manager-search-asset.component.html',
 	styleUrls: ['./asset-manager-search-asset.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	providers: [
+		{
+			provide: NG_VALUE_ACCESSOR,
+			useExisting: forwardRef(() => AssetManagerSearchAssetComponent),
+			multi: true,
+		},
+	],
 })
 export class AssetManagerSearchAssetComponent implements OnInit, ControlValueAccessor {
-	@Input() set searchForCrypto(value: boolean) {
-		this.isCryptoSearch = value;
+	@Input() set searchableAsset(value: SearchableAssetEnum) {
+		this.searchType = value;
 		this.formControl.patchValue('');
+		this.onChange(null);
 	}
 
-	formControl = new FormControl<string>('', { validators: [Validators.required], nonNullable: true });
+	formControl = new FormControl<string>('');
 
 	// results showned on the UI
 	searchedResults$!: Observable<AssetGeneralFragment[]>;
@@ -24,7 +33,7 @@ export class AssetManagerSearchAssetComponent implements OnInit, ControlValueAcc
 	// used to show loading spinner
 	searching = false;
 
-	private isCryptoSearch = false;
+	private searchType: SearchableAssetEnum = SearchableAssetEnum.AseetByName;
 
 	onChange: (value: AssetGeneralFragment | null) => void = () => {};
 	onTouched = () => {};
@@ -37,13 +46,7 @@ export class AssetManagerSearchAssetComponent implements OnInit, ControlValueAcc
 			distinctUntilChanged(),
 			debounceTime(400),
 			tap((value) => (this.searching = !!value)),
-			switchMap((value) =>
-				!value
-					? of([]).pipe(tap(() => this.onChange(null))) // notify parent that serach was cleared
-					: this.assetApiService
-							.searchAssetBySymbol(value.toUpperCase(), this.isCryptoSearch)
-							.pipe(tap(() => (this.searching = false)))
-			)
+			switchMap((value) => (!value ? of([]) : this.getSearchEndpoint(value).pipe(tap(() => (this.searching = false)))))
 		);
 	}
 
@@ -69,5 +72,16 @@ export class AssetManagerSearchAssetComponent implements OnInit, ControlValueAcc
 	 */
 	registerOnTouched(fn: AssetManagerSearchAssetComponent['onTouched']): void {
 		this.onTouched = fn;
+	}
+
+	private getSearchEndpoint(value: string): Observable<AssetGeneralFragment[]> {
+		const val = value.toUpperCase();
+		if (this.searchType === SearchableAssetEnum.AseetByName) {
+			return this.assetApiService.searchAssetBySymbol(val);
+		}
+		if (this.searchType === SearchableAssetEnum.Crypto) {
+			return this.assetApiService.searchAssetBySymbolTickerPrefix(val, true);
+		}
+		return this.assetApiService.searchAssetBySymbolTickerPrefix(val, false);
 	}
 }

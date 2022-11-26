@@ -25,6 +25,8 @@ export class AssetManagerSearchAssetComponent implements OnInit, ControlValueAcc
 		this.onChange(null);
 	}
 
+	@Input() isDisabled = false;
+
 	formControl = new FormControl<string>('');
 
 	// results showned on the UI
@@ -56,8 +58,10 @@ export class AssetManagerSearchAssetComponent implements OnInit, ControlValueAcc
 		this.formControl.patchValue(asset.name, { emitEvent: false, onlySelf: true });
 	}
 
-	writeValue(symbolName: string): void {
-		this.formControl.patchValue(symbolName);
+	writeValue(asset?: AssetGeneralFragment): void {
+		if (asset) {
+			this.formControl.patchValue(asset.name, { emitEvent: false, onlySelf: true });
+		}
 	}
 
 	/**

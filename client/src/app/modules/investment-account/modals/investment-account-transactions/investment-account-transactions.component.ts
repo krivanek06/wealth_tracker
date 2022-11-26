@@ -54,13 +54,15 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.symbolInputSource$ = this.investmentAccountApiService.getTransactionSymbols(this.data.investmentId).pipe(
-			map((symbols) =>
-				symbols.map((d) => {
-					return { caption: d, value: d, image: GeneralFuntionUtl.getAssetUrl(d) } as InputSource;
-				})
-			)
-		);
+		this.symbolInputSource$ = this.investmentAccountApiService
+			.getAvailableTransactionSymbols(this.data.investmentId)
+			.pipe(
+				map((symbols) =>
+					symbols.map((d) => {
+						return { caption: d, value: d, image: GeneralFuntionUtl.getAssetUrl(d) } as InputSource;
+					})
+				)
+			);
 
 		this.transactionHistory$ = this.formGroup.valueChanges.pipe(
 			startWith(this.formGroup.value),

@@ -9,13 +9,14 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormMatInputWrapperModule } from '../../../../shared/components';
 import { NotificationBarModule } from '../../../../shared/dialogs';
-import { DefaultImgDirective } from '../../../../shared/directives';
+import { DefaultImgDirective, PerceptageIncreaseDirective } from '../../../../shared/directives';
 import { LargeNumberFormatterPipe, SortByKeyPipe } from '../../../../shared/pipes';
 import { AssetManagerSearchAssetModule } from '../../../asset-manager';
 import { InvestmentAccountHoldingComponent } from './investment-account-holding.component';
+import { HoldingHistoryItemComponent } from './holding-history-item/holding-history-item.component';
 
 @NgModule({
-	declarations: [InvestmentAccountHoldingComponent],
+	declarations: [InvestmentAccountHoldingComponent, HoldingHistoryItemComponent],
 	imports: [
 		CommonModule,
 		MatDialogModule,
@@ -31,6 +32,7 @@ import { InvestmentAccountHoldingComponent } from './investment-account-holding.
 		MatRadioModule,
 		AssetManagerSearchAssetModule,
 		MatTooltipModule,
+		PerceptageIncreaseDirective,
 	],
 })
 export class InvestmentAccountHoldingModule {}

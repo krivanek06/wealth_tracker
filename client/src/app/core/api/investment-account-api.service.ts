@@ -100,8 +100,8 @@ export class InvestmentAccountApiService {
 			.pipe(map((res) => res.data.getTransactionHistory));
 	}
 
-	// TODO: when BUY new holding - check if it is here
-	getTransactionSymbols(input: string): Observable<string[]> {
+	// TODO: when BUY new holding - add transaction into the array so that I can select the symbol
+	getAvailableTransactionSymbols(input: string): Observable<string[]> {
 		return this.getTransactionSymbolsGQL
 			.watch({
 				input,

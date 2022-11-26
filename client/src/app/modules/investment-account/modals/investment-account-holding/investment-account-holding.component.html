@@ -26,30 +26,35 @@
 		</div>
 
 		<!-- asset type -->
-		<mat-radio-group
-			formControlName="assetType"
-			aria-label="Select asset type"
-			class="flex flex-col gap-1 xs:flex-row justify-around mb-3"
-		>
-			<mat-radio-button
-				color="primary"
-				[value]="SearchableAssetEnum.AseetByName"
-				matTooltip="Search any asset by its full name like: Microsfot, Tesla, etc."
-				>Asset by name</mat-radio-button
+		<fieldset [disabled]="!!data.selectedAsset">
+			<mat-radio-group
+				formControlName="assetType"
+				aria-label="Select asset type"
+				class="flex flex-col gap-1 xs:flex-row justify-around mb-3"
 			>
-			<mat-radio-button
-				color="primary"
-				[value]="SearchableAssetEnum.AseetById"
-				matTooltip="Search any asset by its ticker symbol like: MSFT, TSLA, AAPL, etc."
-				>Asset by id</mat-radio-button
-			>
-			<mat-radio-button
-				color="primary"
-				[value]="SearchableAssetEnum.Crypto"
-				matTooltip="Search crypto like: BTC, ETH, etc."
-				>Crypto by id</mat-radio-button
-			>
-		</mat-radio-group>
+				<mat-radio-button
+					color="primary"
+					[value]="SearchableAssetEnum.AseetByName"
+					matTooltip="Search any asset by its full name like: Microsfot, Tesla, etc."
+				>
+					Asset by name
+				</mat-radio-button>
+				<mat-radio-button
+					color="primary"
+					[value]="SearchableAssetEnum.AseetById"
+					matTooltip="Search any asset by its ticker symbol like: MSFT, TSLA, AAPL, etc."
+				>
+					Asset by id
+				</mat-radio-button>
+				<mat-radio-button
+					color="primary"
+					[value]="SearchableAssetEnum.Crypto"
+					matTooltip="Search crypto like: BTC, ETH, etc."
+				>
+					Crypto by id
+				</mat-radio-button>
+			</mat-radio-group>
+		</fieldset>
 
 		<div class="my-2">
 			<mat-divider></mat-divider>
@@ -59,6 +64,7 @@
 		<div class="mb-3">
 			<app-asset-manager-search-asset
 				formControlName="symbol"
+				[isDisabled]="!!data.selectedAsset"
 				[searchableAsset]="formGroup.controls.assetType.value"
 			></app-asset-manager-search-asset>
 		</div>
@@ -106,9 +112,11 @@
 	</form>
 
 	<!-- history of asset holding -->
-	<div class="pl-4 md:pr-2 min-h-[300px] lg:h-[320px] overflow-x-hidden flex-1">
+	<div class="pl-4 md:pr-2 min-h-[300px] overflow-x-hidden flex-1">
 		<div class="text-base text-center mb-2 g-color-danger">Historical data</div>
 		<div class="text-xs text-center text-gray-500">Hold to remove</div>
-		TODO
+		<div *ngFor="let history of transactionHistory$ | async" class="p-1 g-bottom-border mb-1">
+			<app-holding-history-item [history]="history"></app-holding-history-item>
+		</div>
 	</div>
 </mat-dialog-content>

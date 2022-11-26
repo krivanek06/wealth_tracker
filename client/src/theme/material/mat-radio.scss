@@ -25,18 +25,21 @@
 			.mat-radio-label {
 				.mat-radio-container {
 					.mat-radio-outer-circle {
-						border-color: blue;
+						//border-color: blue;
 					}
 				}
 			}
 		}
 	}
+}
 
-	// &.input-radio-group {
-	//   .mat-radio-button:last-child {
-	//     .mat-radio-label {
-	//       margin-bottom: 2px;
-	//     }
-	//   }
-	// }
+// disabled state
+.mat-radio-button.mat-radio-disabled .mat-radio-label-content {
+	color: var(--color-gray-700) !important;
+}
+
+fieldset:disabled {
+	mat-radio-button {
+		background-color: var(--color-gray-800) !important;
+	}
 }

@@ -17,7 +17,9 @@ export class InvestmentAccountTransactionInput {
 	@Field(() => String)
 	accountId: string;
 
-	@Field(() => Int)
+	@Field(() => Int, {
+		defaultValue: 0,
+	})
 	@Min(0)
 	@IsInt()
 	offset: number;

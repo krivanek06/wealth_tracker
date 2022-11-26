@@ -23,9 +23,9 @@ import {
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvestmentAccountActiveHoldingsTableComponent implements OnInit {
+	@Output() holdingClickedEmitter = new EventEmitter<InvestmentAccountActiveHoldingOutputFragment>();
 	@Output() addEmitter = new EventEmitter<void>();
 	@Output() showHistoryEmitter = new EventEmitter<void>();
-	@Output() holdingClickedEmitter = new EventEmitter<InvestmentAccountActiveHoldingOutputFragment>();
 
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 	@ViewChild(MatSort) sort!: MatSort;

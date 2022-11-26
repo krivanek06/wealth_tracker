@@ -296,7 +296,7 @@ export type InvestmentAccountTransactionInput = {
   filterSymbols?: InputMaybe<Array<Scalars['String']>>;
   /** Put false if only SELL operation to get */
   includeBuyOperation?: InputMaybe<Scalars['Boolean']>;
-  offset: Scalars['Int'];
+  offset?: InputMaybe<Scalars['Int']>;
   /** Put false to order DESC */
   orderAsc?: InputMaybe<Scalars['Boolean']>;
   orderType?: InputMaybe<InvestmentAccountTransactionInputOrderType>;

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/cor
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { catchError, EMPTY, first, map, Observable, tap } from 'rxjs';
-import { InvestmentAccountApiService } from '../../../../core/api';
+import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	InvestmentAccountCashChangeFragment,
 	InvestmentAccountCashChangeType,
@@ -44,15 +44,17 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 	// used to show loader
 	isSaving = false;
 
+	InvestmentAccountCashChangeType = InvestmentAccountCashChangeType;
+
 	constructor(
-		private investmentAccountApiService: InvestmentAccountApiService,
+		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
 		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
 		private dialogRef: MatDialogRef<InvestmentAccountCashChangeComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: { investmentId: string }
 	) {}
 
 	ngOnInit(): void {
-		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(this.data.investmentId);
+		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.data.investmentId);
 
 		// build cash categories
 		this.cashCategory$ = this.investmentAccount$.pipe(
@@ -75,8 +77,8 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 			type: this.formGroup.controls.type.value,
 		};
 
-		this.investmentAccountApiService
-			.createInvestmentAccountCashe(input)
+		this.investmentAccountFacadeApiService
+			.createInvestmentAccountCash(input)
 			.pipe(
 				tap(() => {
 					this.isSaving = false;
@@ -95,8 +97,8 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 	}
 
 	onDelete(item: InvestmentAccountCashChangeFragment): void {
-		this.investmentAccountApiService
-			.deleteInvestmentAccountCashe(
+		this.investmentAccountFacadeApiService
+			.deleteInvestmentAccountCash(
 				{
 					investmentAccountId: this.data.investmentId,
 					itemId: item.itemId,

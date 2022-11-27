@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { InvestmentAccountCashChangeFragment, InvestmentAccountCashChangeType } from '../../../../../core/graphql';
 import { customMemoize } from '../../../../../shared/decoratos';
 
@@ -9,8 +9,6 @@ import { customMemoize } from '../../../../../shared/decoratos';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvestmentAccountCashChangeItemComponent implements OnInit {
-	@Output() deleteEmitter = new EventEmitter<InvestmentAccountCashChangeFragment>();
-
 	@Input() cashChange!: InvestmentAccountCashChangeFragment;
 
 	InvestmentAccountCashChangeType = InvestmentAccountCashChangeType;
@@ -25,9 +23,5 @@ export class InvestmentAccountCashChangeItemComponent implements OnInit {
 			return 'Asset';
 		}
 		return type.toLowerCase();
-	}
-
-	onDelete(): void {
-		this.deleteEmitter.emit(this.cashChange);
 	}
 }

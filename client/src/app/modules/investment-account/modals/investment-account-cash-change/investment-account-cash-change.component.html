@@ -57,11 +57,18 @@
 	<!-- history of changed cash -->
 	<div class="pl-4 md:pr-2 min-h-[300px] lg:h-[320px] overflow-y-scroll overflow-x-hidden flex-1">
 		<div class="text-base text-center mb-2 g-color-danger">Hold to remove</div>
-		<app-investment-account-cash-change-item
+		<button
 			*ngFor="let cash of (investmentAccount$ | async)?.cashChange | sortByKey: 'date': 'desc' "
-			class="mb-1"
-			(deleteEmitter)="onDelete(cash)"
-			[cashChange]="cash"
-		></app-investment-account-cash-change-item>
+			mat-button
+			appNotificationProgress
+			[notificationProgressMessage]="'Removing cash $' + cash.cashValue + ' from date: ' + (cash.date | date: 'dd.MM.YYYY')"
+			[notificationMessage]="'Removing data'"
+			(notificationSuccessEmitter)="onDelete(cash)"
+			type="button"
+			class="w-full mb-1"
+			[disabled]="cash.type === InvestmentAccountCashChangeType.AssetOperation"
+		>
+			<app-investment-account-cash-change-item [cashChange]="cash"></app-investment-account-cash-change-item>
+		</button>
 	</div>
 </mat-dialog-content>

@@ -242,7 +242,7 @@ export class InvestmentAccountHoldingService {
 			);
 
 			// calculate bep
-			const beakEvenPrice = SharedServiceUtil.roundDec(totalValue / units);
+			const beakEvenPrice = units !== 0 ? SharedServiceUtil.roundDec(totalValue / units) : 0;
 
 			const assetGeneral = activeHoldingAssetGeneral.find((asset) => asset.id === holding.assetId);
 			const merge: InvestmentAccountActiveHoldingOutput = {
@@ -252,7 +252,7 @@ export class InvestmentAccountHoldingService {
 				sector: holding.sector,
 				investmentAccountId: holding.investmentAccountId,
 				assetGeneral,
-				totalValue,
+				totalValue: units !== 0 ? totalValue : 0,
 				units,
 				beakEvenPrice,
 			};

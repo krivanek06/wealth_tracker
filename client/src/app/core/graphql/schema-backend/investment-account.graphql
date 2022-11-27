@@ -40,7 +40,7 @@ mutation DeleteInvestmentAccount($input: String!) {
 
 mutation CreateInvestmentAccountHolding($input: InvestmentAccounHoldingCreateInput!) {
 	createInvestmentAccountHolding(input: $input) {
-		...InvestmentAccountHolding
+		...InvestmentAccountActiveHoldingOutput
 	}
 }
 
@@ -67,6 +67,16 @@ mutation EditInvestmentAccountCashe($input: InvestmentAccountCashEditInput!) {
 mutation DeleteInvestmentAccountCashe($input: InvestmentAccountCashDeleteInput!) {
 	deleteInvestmentAccountCashe(input: $input) {
 		...InvestmentAccountCashChange
+	}
+}
+
+subscription CashModificationSubscription {
+	cashModification {
+		modification
+		accountId
+		data {
+			...InvestmentAccountCashChange
+		}
 	}
 }
 

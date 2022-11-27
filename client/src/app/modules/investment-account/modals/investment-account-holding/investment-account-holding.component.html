@@ -112,11 +112,23 @@
 	</form>
 
 	<!-- history of asset holding -->
-	<div class="pl-4 md:pr-2 min-h-[300px] overflow-x-hidden flex-1">
+	<div class="min-h-[300px] pl-4 md:pr-2 flex-1">
 		<div class="text-base text-center mb-2 g-color-danger">Historical data</div>
 		<div class="text-xs text-center text-gray-500">Hold to remove</div>
-		<div *ngFor="let history of transactionHistory$ | async" class="p-1 g-bottom-border mb-1">
-			<app-holding-history-item [history]="history"></app-holding-history-item>
+		<div class="min-h-[200px] max-h-[360px] overflow-x-hidden">
+			<div *ngFor="let history of transactionHistory$ | async" class="g-bottom-border">
+				<button
+					mat-button
+					appNotificationProgress
+					[notificationProgressMessage]="'Removing entry from date: ' + (history.date | date: 'dd.MM.YYYY')"
+					[notificationMessage]="'Removing data'"
+					(notificationSuccessEmitter)="onDelete(history)"
+					type="button"
+					class="w-full"
+				>
+					<app-holding-history-item [history]="history"></app-holding-history-item>
+				</button>
+			</div>
 		</div>
 	</div>
 </mat-dialog-content>

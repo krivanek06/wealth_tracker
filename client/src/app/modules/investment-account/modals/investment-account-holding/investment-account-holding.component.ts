@@ -1,8 +1,8 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { map, Observable, of, startWith, switchMap } from 'rxjs';
-import { InvestmentAccountApiService } from '../../../../core/api';
+import { first, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	AssetGeneralFragment,
 	InvestmentAccountFragment,
@@ -17,6 +17,7 @@ import {
 import { SearchableAssetEnum } from '../../../asset-manager/models';
 import { CashAllocation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
+import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.util';
 
 @Component({
 	selector: 'app-investment-account-holding',
@@ -62,7 +63,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	}
 
 	constructor(
-		private investmentAccountApiService: InvestmentAccountApiService,
+		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
 		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
 		private dialogRef: MatDialogRef<InvestmentAccountHoldingComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: { investmentId: string; selectedAsset?: AssetGeneralFragment }
@@ -78,7 +79,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	}
 
 	ngOnInit(): void {
-		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(this.data.investmentId);
+		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.data.investmentId);
 
 		// build cash categories
 		this.cashCategory$ = this.investmentAccount$.pipe(
@@ -98,7 +99,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 			switchMap((value) =>
 				!value
 					? of([])
-					: this.investmentAccountApiService.getTransactionHistory({
+					: this.investmentAccountFacadeApiService.getTransactionHistory({
 							accountId: this.data.investmentId,
 							filterSymbols: [value.id],
 					  })
@@ -119,5 +120,56 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		}
 
 		this.isSaving = true;
+		const controls = this.formGroup.controls;
+
+		// TODO BUY / SELL radio buttons
+
+		// const input: InvestmentAccounHoldingCreateInput = {
+		// 	investmentAccountId: this.data.investmentId,
+		//   holdingType: controls.assetType.value,
+		//   symbol: controls.symbol.value?.id,
+		//   type: controls.
+		// 	holdingInputData: {
+		//     date: DateServiceUtil.formatDate(controls.date.value),
+		//     units: controls.units.value
+		//   }
+		// };
+
+		// this.investmentAccountFacadeApiService
+		// 	.createInvestmentAccountHolding(input)
+		// 	.pipe(
+		// 		tap(() => {
+		// 			this.isSaving = false;
+		// 			DialogServiceUtil.showNotificationBar(`Cash entry has been saved`);
+		// 		}),
+		// 		// client error message
+		// 		catchError(() => {
+		// 			this.isSaving = false;
+		// 			DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
+		// 			return EMPTY;
+		// 		}),
+		// 		// memory leak
+		// 		first()
+		// 	)
+		// 	.subscribe();
+	}
+
+	onDelete(history: InvestmentAccountTransactionOutput): void {
+		this.investmentAccountFacadeApiService
+			.deleteInvestmentAccountHolding({
+				investmentAccountId: this.data.investmentId,
+				itemId: history.itemId,
+				symbol: history.assetId,
+			})
+			.pipe(
+				tap(() => {
+					// force to reload history
+					this.formGroup.controls.symbol.patchValue(this.formGroup.controls.symbol.value);
+					DialogServiceUtil.showNotificationBar(`Holding history has been removed`);
+				}),
+				// memory leak
+				first()
+			)
+			.subscribe();
 	}
 }

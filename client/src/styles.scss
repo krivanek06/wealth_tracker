@@ -24,7 +24,12 @@ body {
 		width: 95%;
 	}
 
-	@screen xl {
+	@screen 2xl {
+		margin: auto;
+		width: 90%;
+	}
+
+	@screen 2xl {
 		margin: auto;
 		width: 85%;
 	}

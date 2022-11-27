@@ -1,1 +1,1 @@
-export type DefaultImageType = 'default' | 'tags' | 'url' | 'investment_cash';
+export type DefaultImageType = 'default' | 'tags' | 'url' | 'assetId' | 'investment_cash';

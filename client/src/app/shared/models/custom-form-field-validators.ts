@@ -76,6 +76,24 @@ export const minLengthValidator = (maxLength: number): CustomInputValidatorFn =>
 	};
 };
 
+export const minValueValidator = (minValue: number): CustomInputValidatorFn => {
+	const minValidatorFn = Validators.min(minValue);
+
+	return (control: AbstractControl) => {
+		const validatorError = minValidatorFn(control);
+
+		if (validatorError) {
+			return {
+				interval: {
+					errorText: `Minimal value ${minValue} is required`,
+				},
+			};
+		}
+
+		return null;
+	};
+};
+
 export const positiveNumberValidator: CustomInputValidatorFn = (control) => {
 	if (!control.value || isNaN(control.value)) {
 		return null;

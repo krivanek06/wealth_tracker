@@ -1,5 +1,6 @@
-import { Directive, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { DefaultImageType } from '../models';
+import { GeneralFuntionUtl } from '../utils';
 
 @Directive({
 	selector: '[appDefaultImg]',
@@ -13,6 +14,11 @@ export class DefaultImgDirective implements OnChanges {
 
 	ngOnChanges(changes: SimpleChanges): void {
 		this.setImage(this.resolveImage(this.src));
+	}
+
+	@HostListener('error')
+	onError() {
+		this.imageRef.nativeElement.setAttribute('src', this.resolveImage(null));
 	}
 
 	private setImage(src: string) {
@@ -33,6 +39,10 @@ export class DefaultImgDirective implements OnChanges {
 			console.log({ location });
 			const formattedName = 'cash_' + location.toLowerCase();
 			return `assets/investment-account/${formattedName}.svg`;
+		}
+
+		if (this.imageType === 'assetId') {
+			return GeneralFuntionUtl.getAssetUrl(location);
 		}
 
 		if (this.imageType === 'url') {

@@ -2,9 +2,9 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
 import { AssetGeneralService } from '../../asset-manager';
 import { INVESTMENT_ACCOUNT_ERROR, INVESTMENT_ACCOUNT_MAX } from '../dto';
-import { InvestmentAccount, InvestmentAccountHolding } from '../entities';
+import { InvestmentAccount } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
-import { InvestmentAccountActiveHoldingOutput, InvestmentAccountGrowth } from '../outputs';
+import { InvestmentAccountGrowth } from '../outputs';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
 @Injectable()
@@ -20,52 +20,6 @@ export class InvestmentAccountService {
 
 	async getInvestmentAccountById(investmentAccountId: string, userId: string): Promise<InvestmentAccount> {
 		return this.investmentAccountRepositoryService.getInvestmentAccountById(investmentAccountId, userId);
-	}
-
-	/**
-	 *
-	 * @param holdings
-	 * @returns loaded assetGeneral info for all active symbol
-	 */
-	async getActiveHoldingOutput(holdings: InvestmentAccountHolding[]): Promise<InvestmentAccountActiveHoldingOutput[]> {
-		const activeHoldingAssetIds = holdings.map((d) => d.assetId);
-
-		// load asset general
-		const activeHoldingAssetGeneral = await this.assetGeneralService.getAssetGeneralForSymbols(activeHoldingAssetIds);
-
-		// create result
-		const result = holdings.map((holding) => {
-			// get total value & units
-			const { totalValue, units } = holding.holdingHistory.reduce(
-				(acc, curr) => {
-					const multy = curr.type === 'BUY' ? 1 : -1;
-					const newValue = acc.totalValue + curr.unitValue * curr.units * multy;
-					const newUnits = acc.units + curr.units * multy;
-
-					return { units: newUnits, totalValue: newValue };
-				},
-				{ units: 0, totalValue: 0 } as { units: number; totalValue: number }
-			);
-
-			// calculate bep
-			const beakEvenPrice = SharedServiceUtil.roundDec(totalValue / units);
-
-			const assetGeneral = activeHoldingAssetGeneral.find((asset) => asset.id === holding.assetId);
-			const merge: InvestmentAccountActiveHoldingOutput = {
-				id: holding.id,
-				assetId: holding.assetId,
-				type: holding.type,
-				sector: holding.sector,
-				investmentAccountId: holding.investmentAccountId,
-				assetGeneral,
-				totalValue,
-				units,
-				beakEvenPrice,
-			};
-			return merge;
-		});
-
-		return result;
 	}
 
 	/**

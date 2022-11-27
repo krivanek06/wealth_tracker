@@ -1,3 +1,7 @@
 footer {
-	height: 50px;
+	height: 15px;
+
+	@screen sm {
+		height: 30px;
+	}
 }

@@ -1,4 +1,8 @@
 export class GeneralFuntionUtl {
+	static getAssetUrl(asset: string): string {
+		return `https://financialmodelingprep.com/image-stock/${asset}.png`;
+	}
+
 	static isNumber = (value: string | number | unknown): boolean => {
 		return value != null && value !== '' && typeof value === 'number' && !isNaN(Number(value.toString()));
 	};

@@ -1,5 +1,5 @@
 import { ArgsType, Field, InputType, Int } from '@nestjs/graphql';
-import { InvestmentAccountHoldingHistoryType, InvestmentAccountHoldingType } from '@prisma/client';
+import { InvestmentAccountHoldingHistoryType } from '@prisma/client';
 import { IsDate, IsInt, Min } from 'class-validator';
 
 // ----------- Other ------------
@@ -35,8 +35,8 @@ export class InvestmentAccounHoldingCreateInput {
 	})
 	investmentAccountId: string;
 
-	@Field(() => InvestmentAccountHoldingType)
-	holdingType: InvestmentAccountHoldingType;
+	@Field(() => Boolean)
+	isCrypto: boolean;
 
 	@Field(() => InvestmentAccountHoldingHistoryType)
 	type: InvestmentAccountHoldingHistoryType;

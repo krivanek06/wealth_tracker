@@ -13,7 +13,8 @@ export interface InputSource {
 }
 
 export interface InputTypeDateTimePickerConfig {
-	minDate: Date | string;
+	minDate?: Date | string;
+	maxDate?: Date | string;
 }
 
 export enum InputTypeEnum {

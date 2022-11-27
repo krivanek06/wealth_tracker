@@ -4,8 +4,14 @@ query GetAssetHistoricalPricesStartToEnd($input: AssetGeneralHistoricalPricesInp
 	}
 }
 
-query SearchAssetBySymbol($input: AssetGeneralSearchInput!) {
+query SearchAssetBySymbol($input: String!) {
 	searchAssetBySymbol(input: $input) {
+		...AssetGeneral
+	}
+}
+
+query SearchAssetBySymbolTickerPrefix($input: AssetGeneralSearchInput!) {
+	searchAssetBySymbolTickerPrefix(input: $input) {
 		...AssetGeneral
 	}
 }

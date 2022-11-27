@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InvestmentAccountHoldingType } from '@prisma/client';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
 import { AssetGeneralService, AssetStockService } from '../../asset-manager';
 import { INVESTMENT_ACCOUNT_HOLDING_ERROR, INVESTMENT_ACCOUNT_HOLDING_MAX_YEARS } from '../dto';
@@ -44,18 +45,9 @@ export class InvestmentAccountHoldingService {
 		const { year: inputYear } = MomentServiceUtil.getDetailsInformationFromDate(input.holdingInputData.date);
 		const { year: todayYear } = MomentServiceUtil.getDetailsInformationFromDate(new Date());
 
-		// prevent lodaing more than N year of asset data or future data - just in case
+		// prevent loading more than N year of asset data or future data - just in case
 		if (todayYear - inputYear > INVESTMENT_ACCOUNT_HOLDING_MAX_YEARS) {
 			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTRED_DATE_RANGE, HttpStatus.FORBIDDEN);
-		}
-
-		let assetSecotor = input.holdingType.toString();
-
-		// load and save assets data into the DB
-		if (input.holdingType === 'STOCK') {
-			const stock = await this.assetStockService.refreshStockIntoDatabase(input.symbol);
-			// stocks was a different sectory type
-			assetSecotor = stock.profile.sector;
 		}
 
 		// load investment account to which we want to create the holding
@@ -85,8 +77,6 @@ export class InvestmentAccountHoldingService {
 			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.SELL_ERROR_NO_HOLDING, HttpStatus.FORBIDDEN);
 		}
 
-		const brealEvenPrice = SharedServiceUtil.roundDec(bepHelpers.value / bepHelpers.units);
-
 		// load symbol value on holdingInputData.date
 		const closedValueApi = (
 			await this.assetGeneralService.getAssetGeneralHistoricalPricesDataOnDate(
@@ -105,11 +95,12 @@ export class InvestmentAccountHoldingService {
 		const savedCash = await this.investmentAccountCashChangeService.createInvestmentAccountCashe(cashInput, userId);
 
 		// calculate return & returnChange if Sell operation
+		const breakEvenPrice = SharedServiceUtil.roundDec(bepHelpers.value / bepHelpers.units);
 		const inputUnits = input.holdingInputData.units;
 		const returnValue =
-			input.type === 'SELL' ? SharedServiceUtil.roundDec((brealEvenPrice - closedValueApi) * inputUnits) : null;
+			input.type === 'SELL' ? SharedServiceUtil.roundDec((breakEvenPrice - closedValueApi) * inputUnits) : null;
 		const returnChange =
-			input.type === 'SELL' ? SharedServiceUtil.roundDec((brealEvenPrice - closedValueApi) / closedValueApi, 4) : null;
+			input.type === 'SELL' ? SharedServiceUtil.roundDec((breakEvenPrice - closedValueApi) / closedValueApi, 4) : null;
 
 		// create DB object
 		const newHoldingHistory: InvestmentAccountHoldingHistory = {
@@ -130,10 +121,19 @@ export class InvestmentAccountHoldingService {
 			MomentServiceUtil.isBefore(a.date, b.date) ? -1 : 1
 		);
 
+		// get holding type and sector
+		const [holdingType, assetSector] = await this.getSectorAllocation(input.symbol, input.isCrypto);
+
 		// holding may already exists or create new one
 		const modifiedHolding = !!existingHolding
 			? await this.modifyExistingHoldingWithHistory(investmentAccount, input.symbol, mergedHoldingHistory)
-			: await this.createNewHoldingWithHistory(investmentAccount, input, mergedHoldingHistory, assetSecotor);
+			: await this.createNewHoldingWithHistory(
+					investmentAccount,
+					input,
+					mergedHoldingHistory,
+					holdingType,
+					assetSector
+			  );
 
 		return modifiedHolding;
 	}
@@ -305,22 +305,23 @@ export class InvestmentAccountHoldingService {
 	 * @param investmentAccount
 	 * @param input
 	 * @param mergedHoldingHistory
-	 * @param assetSecotor
+	 * @param assetSector
 	 * @returns
 	 */
 	private async createNewHoldingWithHistory(
 		investmentAccount: InvestmentAccount,
 		input: InvestmentAccounHoldingCreateInput,
 		mergedHoldingHistory: InvestmentAccountHoldingHistory[],
-		assetSecotor: string
+		holdingType: InvestmentAccountHoldingType,
+		assetSector: string
 	): Promise<InvestmentAccountHolding> {
 		// create new holding
 		const holding: InvestmentAccountHolding = {
 			id: input.symbol,
 			investmentAccountId: input.investmentAccountId,
 			assetId: input.symbol,
-			type: input.holdingType,
-			sector: assetSecotor,
+			type: holdingType,
+			sector: assetSector,
 			holdingHistory: [...mergedHoldingHistory],
 		};
 
@@ -330,5 +331,27 @@ export class InvestmentAccountHoldingService {
 		});
 
 		return holding;
+	}
+
+	private async getSectorAllocation(
+		symbol: string,
+		isCrypto: boolean
+	): Promise<[InvestmentAccountHoldingType, string]> {
+		if (isCrypto) {
+			return [InvestmentAccountHoldingType.CRYPTO, InvestmentAccountHoldingType.CRYPTO];
+		}
+		const assetGeneral = await this.assetStockService.refreshStockIntoDatabase(symbol);
+
+		if (assetGeneral.profile.isAdr) {
+			return [InvestmentAccountHoldingType.ADR, assetGeneral.profile.sector ?? InvestmentAccountHoldingType.ADR];
+		}
+		if (assetGeneral.profile.isEtf) {
+			return [InvestmentAccountHoldingType.ETF, InvestmentAccountHoldingType.ETF];
+		}
+		if (assetGeneral.profile.isFund) {
+			return [InvestmentAccountHoldingType.MUTUAL_FUND, InvestmentAccountHoldingType.MUTUAL_FUND];
+		}
+
+		return [InvestmentAccountHoldingType.STOCK, assetGeneral.profile.sector];
 	}
 }

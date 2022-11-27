@@ -139,9 +139,9 @@ export type HoldingInputData = {
 
 export type InvestmentAccounHoldingCreateInput = {
   holdingInputData: HoldingInputData;
-  holdingType: InvestmentAccountHoldingType;
   /** Investment account associated with the asset */
   investmentAccountId: Scalars['String'];
+  isCrypto: Scalars['Boolean'];
   /** Symbol ID */
   symbol: Scalars['String'];
   type: InvestmentAccountHoldingHistoryType;
@@ -295,6 +295,7 @@ export enum InvestmentAccountHoldingHistoryType {
 }
 
 export enum InvestmentAccountHoldingType {
+  Adr = 'ADR',
   Commodity = 'COMMODITY',
   Crypto = 'CRYPTO',
   Etf = 'ETF',

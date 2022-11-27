@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, map, Observable, startWith } from 'rxjs';
-import { InvestmentAccountApiService } from '../../../../core/api';
+import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	InvestmentAccountActiveHoldingOutputFragment,
 	InvestmentAccountFragment,
@@ -68,7 +68,7 @@ export class InvestmentAccountComponent implements OnInit {
 	private investmentId!: string;
 
 	constructor(
-		private investmentAccountApiService: InvestmentAccountApiService,
+		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
 		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
 		private breakpointObserver: BreakpointObserver,
 		private dialog: MatDialog
@@ -76,8 +76,10 @@ export class InvestmentAccountComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.investmentId = this.investmentAccountsOverivew.id;
-		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(this.investmentId);
-		this.investmentAccountGrowth$ = this.investmentAccountApiService.getInvestmentAccountGrowth(this.investmentId);
+		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.investmentId);
+		this.investmentAccountGrowth$ = this.investmentAccountFacadeApiService.getInvestmentAccountGrowth(
+			this.investmentId
+		);
 
 		this.filteredActiveHoldings$ = combineLatest([
 			this.investmentAccount$,

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/cor
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { map, Observable, startWith, switchMap } from 'rxjs';
-import { InvestmentAccountApiService } from '../../../../core/api';
+import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	InvestmentAccountTransactionInputOrderType,
 	InvestmentAccountTransactionOutput,
@@ -48,13 +48,13 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 	});
 
 	constructor(
-		private investmentAccountApiService: InvestmentAccountApiService,
+		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
 		private dialogRef: MatDialogRef<InvestmentAccountTransactionsComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: { investmentId: string }
 	) {}
 
 	ngOnInit(): void {
-		this.symbolInputSource$ = this.investmentAccountApiService
+		this.symbolInputSource$ = this.investmentAccountFacadeApiService
 			.getAvailableTransactionSymbols(this.data.investmentId)
 			.pipe(
 				map((symbols) =>
@@ -67,7 +67,7 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 		this.transactionHistory$ = this.formGroup.valueChanges.pipe(
 			startWith(this.formGroup.value),
 			switchMap((formValue) =>
-				this.investmentAccountApiService.getTransactionHistory({
+				this.investmentAccountFacadeApiService.getTransactionHistory({
 					accountId: this.data.investmentId,
 					offset: 0,
 					filterSymbols: formValue.symbols,

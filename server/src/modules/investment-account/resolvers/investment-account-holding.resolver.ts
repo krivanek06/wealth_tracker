@@ -4,16 +4,13 @@ import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql/args';
 import { InvestmentAccountHolding, InvestmentAccountHoldingHistory } from '../entities';
 import { InvestmentAccounHoldingCreateInput, InvestmentAccounHoldingHistoryDeleteInput } from '../inputs';
+import { InvestmentAccountActiveHoldingOutput } from '../outputs';
 import { InvestmentAccountHoldingService } from '../services';
-import { AssetGeneralService } from './../../asset-manager';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccountHolding)
 export class InvestmentAccountHoldingResolver {
-	constructor(
-		private investmentAccountHoldingService: InvestmentAccountHoldingService,
-		private assetGeneralService: AssetGeneralService
-	) {}
+	constructor(private investmentAccountHoldingService: InvestmentAccountHoldingService) {}
 	/* Queries */
 
 	/**
@@ -28,12 +25,17 @@ export class InvestmentAccountHoldingResolver {
 
 	/* Mutations */
 
-	@Mutation(() => InvestmentAccountHolding)
-	createInvestmentAccountHolding(
+	@Mutation(() => InvestmentAccountActiveHoldingOutput)
+	async createInvestmentAccountHolding(
 		@Input() input: InvestmentAccounHoldingCreateInput,
 		@ReqUser() authUser: RequestUser
-	): Promise<InvestmentAccountHolding> {
-		return this.investmentAccountHoldingService.createInvestmentAccountHolding(input, authUser.id);
+	): Promise<InvestmentAccountActiveHoldingOutput> {
+		const accountHolding = await this.investmentAccountHoldingService.createInvestmentAccountHolding(
+			input,
+			authUser.id
+		);
+		const data = await this.investmentAccountHoldingService.getActiveHoldingOutput([accountHolding]);
+		return data[0];
 	}
 
 	@Mutation(() => InvestmentAccountHoldingHistory)

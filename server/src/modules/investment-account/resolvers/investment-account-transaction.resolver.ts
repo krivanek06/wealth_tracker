@@ -22,7 +22,7 @@ export class InvestmentAccountTransactionResolver {
 	}
 
 	@Query(() => [InvestmentAccountTransactionOutput], {
-		description: 'Return by added transaction by saome date key',
+		description: 'Return by added transaction by same date key',
 	})
 	getTransactionHistory(
 		@ReqUser() authUser: RequestUser,

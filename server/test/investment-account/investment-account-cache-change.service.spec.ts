@@ -125,7 +125,7 @@ describe('InvestmentAccountCashChangeService', () => {
 				date: input.date,
 			};
 
-			const result = await service.editInvestmentAccountCashe(input, mockUserId);
+			const result = await service.editInvestmentAccountCash(input, mockUserId);
 
 			expect(result).toStrictEqual(expectedResponse);
 			expect(prismaServiceMock.investmentAccount.update).toHaveBeenCalledWith({
@@ -148,7 +148,7 @@ describe('InvestmentAccountCashChangeService', () => {
 				investmentAccountId: mockInvestmentAccountId,
 			};
 
-			await expect(service.editInvestmentAccountCashe(input, mockUserId)).rejects.toThrowError(
+			await expect(service.editInvestmentAccountCash(input, mockUserId)).rejects.toThrowError(
 				INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR.NOT_FOUND
 			);
 		});
@@ -161,7 +161,7 @@ describe('InvestmentAccountCashChangeService', () => {
 				investmentAccountId: mockInvestmentAccountId,
 			};
 
-			const result = await service.deleteInvestmentAccountCashe(input, mockUserId);
+			const result = await service.deleteInvestmentAccountCash(input, mockUserId);
 
 			expect(result).toStrictEqual(cashChangeExistingMock);
 			expect(prismaServiceMock.investmentAccount.update).toHaveBeenCalledWith({
@@ -182,7 +182,7 @@ describe('InvestmentAccountCashChangeService', () => {
 				investmentAccountId: mockInvestmentAccountId,
 			};
 
-			await expect(service.deleteInvestmentAccountCashe(input, mockUserId)).rejects.toThrowError(
+			await expect(service.deleteInvestmentAccountCash(input, mockUserId)).rejects.toThrowError(
 				INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR.NOT_FOUND
 			);
 		});

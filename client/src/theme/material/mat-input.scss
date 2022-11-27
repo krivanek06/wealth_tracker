@@ -1,0 +1,12 @@
+.mat-input-element:disabled,
+.mat-form-field-type-mat-native-select.mat-form-field-disabled .mat-form-field-infix::after {
+	color: var(--color-gray-600) !important;
+}
+
+fieldset:disabled {
+	mat-form-field {
+		.mat-form-field-outline {
+			background-color: var(--color-gray-800) !important;
+		}
+	}
+}

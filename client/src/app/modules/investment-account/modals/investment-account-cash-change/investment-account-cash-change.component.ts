@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/cor
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { catchError, EMPTY, first, map, Observable, tap } from 'rxjs';
-import { InvestmentAccountApiService } from '../../../../core/api';
+import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	InvestmentAccountCashChangeFragment,
 	InvestmentAccountCashChangeType,
@@ -12,6 +12,8 @@ import {
 import { DialogServiceUtil } from '../../../../shared/dialogs';
 import { InputSource, requiredValidator } from '../../../../shared/models';
 import { DateServiceUtil } from '../../../../shared/utils';
+import { CashAllocation } from '../../models';
+import { InvestmentAccountCalculatorService } from '../../services';
 
 @Component({
 	selector: 'app-investment-account-cash-change',
@@ -37,34 +39,26 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 	investmentAccount$!: Observable<InvestmentAccountFragment>;
 
 	// display different categories and accumulated cash for them
-	cashCategory$!: Observable<{ [key in InvestmentAccountCashChangeType]: number }>;
+	cashCategory$!: Observable<CashAllocation>;
 
 	// used to show loader
 	isSaving = false;
 
+	InvestmentAccountCashChangeType = InvestmentAccountCashChangeType;
+
 	constructor(
-		private investmentAccountApiService: InvestmentAccountApiService,
+		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
+		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
 		private dialogRef: MatDialogRef<InvestmentAccountCashChangeComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: { investmentId: string }
 	) {}
 
 	ngOnInit(): void {
-		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(this.data.investmentId);
+		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.data.investmentId);
 
 		// build cash categories
 		this.cashCategory$ = this.investmentAccount$.pipe(
-			map((res) =>
-				res.cashChange.reduce(
-					(acc, curr) => {
-						return { ...acc, [curr.type]: acc[curr.type] + curr.cashValue };
-					},
-					{
-						ASSET_OPERATION: 0,
-						DEPOSIT: 0,
-						WITHDRAWAL: 0,
-					} as { [key in InvestmentAccountCashChangeType]: number }
-				)
-			)
+			map((account) => this.investmentAccountCalculatorService.getCashCategories(account))
 		);
 	}
 
@@ -83,8 +77,8 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 			type: this.formGroup.controls.type.value,
 		};
 
-		this.investmentAccountApiService
-			.createInvestmentAccountCashe(input)
+		this.investmentAccountFacadeApiService
+			.createInvestmentAccountCash(input)
 			.pipe(
 				tap(() => {
 					this.isSaving = false;
@@ -103,8 +97,8 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 	}
 
 	onDelete(item: InvestmentAccountCashChangeFragment): void {
-		this.investmentAccountApiService
-			.deleteInvestmentAccountCashe(
+		this.investmentAccountFacadeApiService
+			.deleteInvestmentAccountCash(
 				{
 					investmentAccountId: this.data.investmentId,
 					itemId: item.itemId,

@@ -40,7 +40,7 @@ mutation DeleteInvestmentAccount($input: String!) {
 
 mutation CreateInvestmentAccountHolding($input: InvestmentAccounHoldingCreateInput!) {
 	createInvestmentAccountHolding(input: $input) {
-		...InvestmentAccountHolding
+		...InvestmentAccountActiveHoldingOutput
 	}
 }
 
@@ -70,9 +70,19 @@ mutation DeleteInvestmentAccountCashe($input: InvestmentAccountCashDeleteInput!)
 	}
 }
 
+subscription CashModificationSubscription {
+	cashModification {
+		modification
+		accountId
+		data {
+			...InvestmentAccountCashChange
+		}
+	}
+}
+
 ### Transactions
-query GetTransactions($input: String!) {
-	getTransactions(input: $input) {
+query GetTopTransactions($input: String!) {
+	getTopTransactions(input: $input) {
 		bestValueChage {
 			...InvestmentAccountTransactionOutput
 		}
@@ -92,4 +102,8 @@ query GetTransactionHistory($input: InvestmentAccountTransactionInput!) {
 	getTransactionHistory(input: $input) {
 		...InvestmentAccountTransactionOutput
 	}
+}
+
+query GetTransactionSymbols($input: String!) {
+	getTransactionSymbols(input: $input)
 }

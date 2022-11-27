@@ -14,20 +14,28 @@ export class InvestmentAccountTransactionResolver {
 	@Query(() => InvestmentAccountTransactionWrapperOutput, {
 		description: 'Returns SOLD transaction in different orders',
 	})
-	getTransactions(
+	getTopTransactions(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: string
 	): Promise<InvestmentAccountTransactionWrapperOutput> {
-		return this.investmentAccountTransactionService.getTransactions(input, authUser.id);
+		return this.investmentAccountTransactionService.getTopTransactions(input, authUser.id);
 	}
 
 	@Query(() => [InvestmentAccountTransactionOutput], {
-		description: 'Return by added transaction by saome date key',
+		description: 'Return by added transaction by same date key',
 	})
 	getTransactionHistory(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: InvestmentAccountTransactionInput
 	): Promise<InvestmentAccountTransactionOutput[]> {
 		return this.investmentAccountTransactionService.getTransactionHistory(input, authUser.id);
+	}
+
+	@Query(() => [String], {
+		description: 'All asset symbols that were ever inside holdings',
+		defaultValue: [],
+	})
+	getTransactionSymbols(@ReqUser() authUser: RequestUser, @Input() input: string): Promise<string[]> {
+		return this.investmentAccountTransactionService.getTransactionSymbols(input, authUser.id);
 	}
 }

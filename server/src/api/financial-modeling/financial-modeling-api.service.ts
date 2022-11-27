@@ -21,13 +21,13 @@ export class FinancialModelingAPIService {
 	constructor(private readonly httpService: HttpService) {}
 
 	/**
-	 * Example: https://financialmodelingprep.com/api/v3/search?query=AA&limit=10&apikey=XXX
+	 * Example: https://financialmodelingprep.com/api/v3/search-name?query=AA&limit=10&apikey=XXX
 	 *
 	 * @param symbolPrefix
 	 * @returns searched stocks by prefix symbol
 	 */
-	searchAssetBySymbolPrefix(symbolPrefix: string, isCrypto = false): Promise<FMSearch[]> {
-		const modifiedPrefix = (isCrypto ? `${symbolPrefix}USD` : symbolPrefix).toUpperCase();
+	searchAssetBySymbolPrefix(symbolPrefix: string): Promise<FMSearch[]> {
+		const modifiedPrefix = symbolPrefix.toUpperCase();
 		const requestConfig: AxiosRequestConfig = {
 			params: {
 				query: modifiedPrefix,
@@ -37,6 +37,32 @@ export class FinancialModelingAPIService {
 		};
 		return lastValueFrom(
 			this.httpService.get<FMSearch[]>(`${this.endpointV3}/search-name`, requestConfig).pipe(
+				map((res) =>
+					res.data.map((d) => {
+						return { ...d, image: `${this.endpointImage}/${d.symbol}.png` };
+					})
+				)
+			)
+		);
+	}
+
+	/**
+	 * Example: https://financialmodelingprep.com/api/v3/search?query=AA&limit=10&apikey=XXX
+	 *
+	 * @param symbolPrefix
+	 * @returns searched stocks by prefix symbol
+	 */
+	searchAssetBySymbolTickerPrefix(symbolPrefix: string, isCrypto = false): Promise<FMSearch[]> {
+		const modifiedPrefix = (isCrypto ? `${symbolPrefix}USD` : symbolPrefix).toUpperCase();
+		const requestConfig: AxiosRequestConfig = {
+			params: {
+				query: modifiedPrefix,
+				limit: 10,
+				apikey: this.apiKey,
+			},
+		};
+		return lastValueFrom(
+			this.httpService.get<FMSearch[]>(`${this.endpointV3}/search`, requestConfig).pipe(
 				map((res) =>
 					res.data.map((d) => {
 						return { ...d, image: `${this.endpointImage}/${d.symbol}.png` };

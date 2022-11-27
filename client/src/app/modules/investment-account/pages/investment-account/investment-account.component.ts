@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, map, Observable, startWith } from 'rxjs';
-import { InvestmentAccountApiService } from '../../../../core/api';
+import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	InvestmentAccountActiveHoldingOutputFragment,
 	InvestmentAccountFragment,
@@ -11,7 +11,11 @@ import {
 	InvestmentAccountOverviewFragment,
 } from '../../../../core/graphql';
 import { LAYOUT_2XL, ValuePresentItem } from '../../../../shared/models';
-import { InvestmentAccountCashChangeComponent } from '../../modals';
+import {
+	InvestmentAccountCashChangeComponent,
+	InvestmentAccountHoldingComponent,
+	InvestmentAccountTransactionsComponent,
+} from '../../modals';
 import { DailyInvestmentChange, SectorAllocation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
@@ -64,7 +68,7 @@ export class InvestmentAccountComponent implements OnInit {
 	private investmentId!: string;
 
 	constructor(
-		private investmentAccountApiService: InvestmentAccountApiService,
+		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
 		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
 		private breakpointObserver: BreakpointObserver,
 		private dialog: MatDialog
@@ -72,8 +76,10 @@ export class InvestmentAccountComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.investmentId = this.investmentAccountsOverivew.id;
-		this.investmentAccount$ = this.investmentAccountApiService.getInvestmentAccountById(this.investmentId);
-		this.investmentAccountGrowth$ = this.investmentAccountApiService.getInvestmentAccountGrowth(this.investmentId);
+		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.investmentId);
+		this.investmentAccountGrowth$ = this.investmentAccountFacadeApiService.getInvestmentAccountGrowth(
+			this.investmentId
+		);
 
 		this.filteredActiveHoldings$ = combineLatest([
 			this.investmentAccount$,
@@ -110,6 +116,26 @@ export class InvestmentAccountComponent implements OnInit {
 				investmentId: this.investmentId,
 			},
 			panelClass: ['g-mat-dialog-big'],
+		});
+	}
+
+	onAddHolding(holding?: InvestmentAccountActiveHoldingOutputFragment): void {
+		this.dialog.open(InvestmentAccountHoldingComponent, {
+			data: {
+				investmentId: this.investmentId,
+				selectedAsset: holding?.assetGeneral,
+			},
+			panelClass: ['g-mat-dialog-big'],
+		});
+	}
+
+	onShowHisotry(): void {
+		this.dialog.open(InvestmentAccountTransactionsComponent, {
+			data: {
+				investmentId: this.investmentId,
+			},
+			panelClass: ['g-mat-dialog-big'],
+			minHeight: '50vh',
 		});
 	}
 }

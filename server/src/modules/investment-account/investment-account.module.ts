@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { GraphQLPubsubBackendModule } from '../../graphql/pubsub.module';
 import { PrismaService } from '../../prisma';
 import { AssetManagerModule } from '../asset-manager';
 import {
@@ -16,7 +17,7 @@ import {
 } from './services';
 
 @Module({
-	imports: [forwardRef(() => AssetManagerModule)],
+	imports: [forwardRef(() => AssetManagerModule), GraphQLPubsubBackendModule],
 	providers: [
 		PrismaService,
 		InvestmentAccountService,

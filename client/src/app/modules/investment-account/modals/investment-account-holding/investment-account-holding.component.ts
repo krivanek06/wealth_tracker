@@ -1,23 +1,26 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { first, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, first, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	AssetGeneralFragment,
+	InvestmentAccounHoldingCreateInput,
 	InvestmentAccountFragment,
+	InvestmentAccountHoldingHistoryType,
 	InvestmentAccountTransactionOutput,
 } from '../../../../core/graphql';
+import { DialogServiceUtil } from '../../../../shared/dialogs';
 import {
 	InputTypeDateTimePickerConfig,
 	minValueValidator,
 	positiveNumberValidator,
 	requiredValidator,
 } from '../../../../shared/models';
+import { DateServiceUtil } from '../../../../shared/utils';
 import { SearchableAssetEnum } from '../../../asset-manager/models';
 import { CashAllocation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
-import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.util';
 
 @Component({
 	selector: 'app-investment-account-holding',
@@ -27,6 +30,10 @@ import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.u
 })
 export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit {
 	formGroup = new FormGroup({
+		transactionType: new FormControl<InvestmentAccountHoldingHistoryType>(InvestmentAccountHoldingHistoryType.Buy, {
+			validators: [requiredValidator],
+			nonNullable: true,
+		}),
 		assetType: new FormControl<SearchableAssetEnum>(SearchableAssetEnum.AseetById, {
 			validators: [requiredValidator],
 			nonNullable: true,
@@ -50,6 +57,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	isSaving = false;
 
 	SearchableAssetEnum = SearchableAssetEnum;
+	InvestmentAccountHoldingHistoryType = InvestmentAccountHoldingHistoryType;
 
 	maxDateSymbolPurchase: InputTypeDateTimePickerConfig = {
 		maxDate: new Date(),
@@ -111,47 +119,48 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 			this.formGroup.controls.symbol.patchValue(this.data.selectedAsset);
 			this.formGroup.controls.assetType.patchValue(SearchableAssetEnum.AseetById);
 		}
+
+		// TODO: based on date change - load selected symbol price
 	}
 
 	onSave(): void {
+		const controls = this.formGroup.controls;
 		this.formGroup.markAllAsTouched();
-		if (this.formGroup.invalid) {
+
+		if (this.formGroup.invalid || !controls.symbol.value) {
 			return;
 		}
 
 		this.isSaving = true;
-		const controls = this.formGroup.controls;
 
-		// TODO BUY / SELL radio buttons
+		const input: InvestmentAccounHoldingCreateInput = {
+			investmentAccountId: this.data.investmentId,
+			isCrypto: controls.assetType.value === SearchableAssetEnum.Crypto,
+			symbol: controls.symbol.value.id,
+			type: controls.transactionType.value,
+			holdingInputData: {
+				date: DateServiceUtil.formatDate(controls.date.value),
+				units: controls.units.value,
+			},
+		};
 
-		// const input: InvestmentAccounHoldingCreateInput = {
-		// 	investmentAccountId: this.data.investmentId,
-		//   holdingType: controls.assetType.value,
-		//   symbol: controls.symbol.value?.id,
-		//   type: controls.
-		// 	holdingInputData: {
-		//     date: DateServiceUtil.formatDate(controls.date.value),
-		//     units: controls.units.value
-		//   }
-		// };
-
-		// this.investmentAccountFacadeApiService
-		// 	.createInvestmentAccountHolding(input)
-		// 	.pipe(
-		// 		tap(() => {
-		// 			this.isSaving = false;
-		// 			DialogServiceUtil.showNotificationBar(`Cash entry has been saved`);
-		// 		}),
-		// 		// client error message
-		// 		catchError(() => {
-		// 			this.isSaving = false;
-		// 			DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
-		// 			return EMPTY;
-		// 		}),
-		// 		// memory leak
-		// 		first()
-		// 	)
-		// 	.subscribe();
+		this.investmentAccountFacadeApiService
+			.createInvestmentAccountHolding(input)
+			.pipe(
+				tap(() => {
+					this.isSaving = false;
+					DialogServiceUtil.showNotificationBar(`Holding history has been saved`);
+				}),
+				// client error message
+				catchError(() => {
+					this.isSaving = false;
+					DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
+					return EMPTY;
+				}),
+				// memory leak
+				first()
+			)
+			.subscribe();
 	}
 
 	onDelete(history: InvestmentAccountTransactionOutput): void {

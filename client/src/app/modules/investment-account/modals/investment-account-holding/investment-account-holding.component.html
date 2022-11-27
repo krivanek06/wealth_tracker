@@ -60,6 +60,30 @@
 			<mat-divider></mat-divider>
 		</div>
 
+		<!-- transaction type -->
+		<mat-radio-group
+			formControlName="transactionType"
+			aria-label="Select transaction type"
+			class="flex flex-row gap-x-4 gap-y-2 mb-3"
+		>
+			<mat-radio-button
+				color="accent"
+				[value]="InvestmentAccountHoldingHistoryType.Buy"
+				[ngClass]="{' border-green-500': formGroup.controls.transactionType.value === InvestmentAccountHoldingHistoryType.Buy}"
+				class="flex-1 text-green-500 border-2"
+			>
+				Buy
+			</mat-radio-button>
+			<mat-radio-button
+				color="warn"
+				[value]="InvestmentAccountHoldingHistoryType.Sell"
+				[ngClass]="{' border-red-500': formGroup.controls.transactionType.value === InvestmentAccountHoldingHistoryType.Sell}"
+				class="flex-1 text-red-500 border-2"
+			>
+				Sell
+			</mat-radio-button>
+		</mat-radio-group>
+
 		<!-- search symbol -->
 		<div class="mb-3">
 			<app-asset-manager-search-asset
@@ -91,6 +115,7 @@
 			controlName="date"
 			inputCaption="Enter date of purchase"
 			inputType="DATEPICKER"
+			[disabled]="!formGroup.controls.symbol.value"
 			[inputTypeDateTimePickerConfig]="maxDateSymbolPurchase"
 		></app-form-mat-input-wrapper>
 
@@ -115,7 +140,7 @@
 	<div class="min-h-[300px] pl-4 md:pr-2 flex-1">
 		<div class="text-base text-center mb-2 g-color-danger">Historical data</div>
 		<div class="text-xs text-center text-gray-500">Hold to remove</div>
-		<div class="min-h-[200px] max-h-[360px] overflow-x-hidden">
+		<div class="min-h-[200px] max-h-[420px] overflow-x-hidden">
 			<div *ngFor="let history of transactionHistory$ | async" class="g-bottom-border">
 				<button
 					mat-button

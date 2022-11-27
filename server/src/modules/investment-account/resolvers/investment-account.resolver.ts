@@ -5,12 +5,15 @@ import { Input } from '../../../graphql';
 import { InvestmentAccount } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
 import { InvestmentAccountActiveHoldingOutput, InvestmentAccountGrowth } from '../outputs';
-import { InvestmentAccountService } from '../services';
+import { InvestmentAccountHoldingService, InvestmentAccountService } from '../services';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => InvestmentAccount)
 export class InvestmentAccountResolver {
-	constructor(private investmentAccountService: InvestmentAccountService) {}
+	constructor(
+		private investmentAccountService: InvestmentAccountService,
+		private investmentAccountHoldingService: InvestmentAccountHoldingService
+	) {}
 
 	/* Queries */
 
@@ -84,6 +87,6 @@ export class InvestmentAccountResolver {
 		const activeHoldings = investmentAccount.holdings.filter(
 			(d) => d.holdingHistory.length > 0 && d.holdingHistory[d.holdingHistory.length - 1].units > 0
 		);
-		return this.investmentAccountService.getActiveHoldingOutput(activeHoldings);
+		return this.investmentAccountHoldingService.getActiveHoldingOutput(activeHoldings);
 	}
 }

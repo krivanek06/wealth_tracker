@@ -8,6 +8,7 @@ import {
 	InvestmentAccounHoldingHistoryDeleteInput,
 	InvestmentAccountCashCreateInput,
 } from '../inputs';
+import { InvestmentAccountActiveHoldingOutput } from '../outputs';
 import { InvestmentAccountCashChangeService } from './investment-account-cache-change.service';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
@@ -67,7 +68,7 @@ export class InvestmentAccountHoldingService {
 		const existingHolding = investmentAccount.holdings.find((x) => x.id === input.symbol);
 		const existingHoldingHistories = existingHolding?.holdingHistory ?? [];
 
-		// calcualte BEP by which we will create return & returnChange
+		// calculate BEP by which we will create return & returnChange
 		const bepHelpers = existingHoldingHistories
 			// get only BUY holdings that happened sooner than input.holdingInputData.date
 			.filter((d) => d.date < input.holdingInputData.date && d.type === 'BUY')
@@ -190,7 +191,7 @@ export class InvestmentAccountHoldingService {
 		}
 
 		// remove cash change
-		await this.investmentAccountCashChangeService.deleteInvestmentAccountCashe(
+		await this.investmentAccountCashChangeService.deleteInvestmentAccountCash(
 			{
 				investmentAccountId: input.investmentAccountId,
 				itemId: removedHoldingHistory.cashChangeId,
@@ -213,6 +214,52 @@ export class InvestmentAccountHoldingService {
 
 		// returned removed history
 		return removedHoldingHistory;
+	}
+
+	/**
+	 *
+	 * @param holdings
+	 * @returns loaded assetGeneral info for all active symbol
+	 */
+	async getActiveHoldingOutput(holdings: InvestmentAccountHolding[]): Promise<InvestmentAccountActiveHoldingOutput[]> {
+		const activeHoldingAssetIds = holdings.map((d) => d.assetId);
+
+		// load asset general
+		const activeHoldingAssetGeneral = await this.assetGeneralService.getAssetGeneralForSymbols(activeHoldingAssetIds);
+
+		// create result
+		const result = holdings.map((holding) => {
+			// get total value & units
+			const { totalValue, units } = holding.holdingHistory.reduce(
+				(acc, curr) => {
+					const multy = curr.type === 'BUY' ? 1 : -1;
+					const newValue = acc.totalValue + curr.unitValue * curr.units * multy;
+					const newUnits = acc.units + curr.units * multy;
+
+					return { units: newUnits, totalValue: newValue };
+				},
+				{ units: 0, totalValue: 0 } as { units: number; totalValue: number }
+			);
+
+			// calculate bep
+			const beakEvenPrice = SharedServiceUtil.roundDec(totalValue / units);
+
+			const assetGeneral = activeHoldingAssetGeneral.find((asset) => asset.id === holding.assetId);
+			const merge: InvestmentAccountActiveHoldingOutput = {
+				id: holding.id,
+				assetId: holding.assetId,
+				type: holding.type,
+				sector: holding.sector,
+				investmentAccountId: holding.investmentAccountId,
+				assetGeneral,
+				totalValue,
+				units,
+				beakEvenPrice,
+			};
+			return merge;
+		});
+
+		return result;
 	}
 
 	/**

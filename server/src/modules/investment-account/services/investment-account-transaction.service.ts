@@ -10,6 +10,12 @@ import { InvestmentAccountRepositoryService } from './investment-account-reposit
 export class InvestmentAccountTransactionService {
 	constructor(private investmentAccountRepositoryService: InvestmentAccountRepositoryService) {}
 
+	/**
+	 *
+	 * @param accountId
+	 * @param userId
+	 * @returns array of symbols located in the transaction history. Used for filtering transaction history by symbols
+	 */
 	async getTransactionSymbols(accountId: string, userId: string): Promise<string[]> {
 		const account = await this.investmentAccountRepositoryService.getInvestmentAccountById(accountId, userId);
 		const history = account.holdings

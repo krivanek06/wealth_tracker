@@ -15,8 +15,8 @@
 			</div>
 			<div>
 				<span class="text-gray-400">Price: </span>
-				<span *ngIf="formGroup.controls.symbol.value as value"> {{value.assetQuote.price | currency}} </span>
-				<span *ngIf="!formGroup.controls.symbol.value">N/A</span>
+				<span *ngIf="formSymbolPrice.value as value">~ {{ value | currency}} </span>
+				<span *ngIf="!formSymbolPrice.value">N/A</span>
 			</div>
 			<div>
 				<span class="text-gray-400">Total: </span>
@@ -141,7 +141,7 @@
 		<div class="text-base text-center mb-2 g-color-danger">Historical data</div>
 		<div class="text-xs text-center text-gray-500">Hold to remove</div>
 		<div class="min-h-[200px] max-h-[420px] overflow-x-hidden">
-			<div *ngFor="let history of transactionHistory$ | async" class="g-bottom-border">
+			<div *ngFor="let history of transactionHistory$ | async | sortByKey: 'date': 'desc'" class="g-bottom-border">
 				<button
 					mat-button
 					appNotificationProgress

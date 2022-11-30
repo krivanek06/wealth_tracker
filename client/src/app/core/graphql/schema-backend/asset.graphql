@@ -21,3 +21,9 @@ query GetAssetGeneralForSymbol($input: String!) {
 		...AssetGeneral
 	}
 }
+
+query GetAssetGeneralHistoricalPricesDataOnDate($input: AssetGeneralHistoricalPricesInputOnDate!) {
+	getAssetGeneralHistoricalPricesDataOnDate(input: $input) {
+		...AssetGeneralHistoricalPricesData
+	}
+}

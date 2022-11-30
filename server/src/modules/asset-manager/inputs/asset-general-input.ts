@@ -29,3 +29,15 @@ export class AssetGeneralHistoricalPricesInput {
 	@IsDate()
 	end: string;
 }
+
+@InputType()
+@ArgsType()
+export class AssetGeneralHistoricalPricesInputOnDate {
+	@Field(() => String)
+	@MaxLength(10)
+	symbol: string;
+
+	@Field(() => String)
+	@IsDate()
+	date: string;
+}

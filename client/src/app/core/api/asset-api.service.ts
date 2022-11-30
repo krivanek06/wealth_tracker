@@ -2,11 +2,15 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import {
 	AssetGeneralFragment,
+	AssetGeneralHistoricalPrices,
+	AssetGeneralHistoricalPricesData,
+	AssetGeneralHistoricalPricesInput,
 	GetAssetGeneralForSymbolGQL,
+	GetAssetGeneralHistoricalPricesDataOnDateGQL,
 	GetAssetHistoricalPricesStartToEndGQL,
 	SearchAssetBySymbolGQL,
 	SearchAssetBySymbolTickerPrefixGQL,
-} from './../graphql/schema-backend.service';
+} from '../graphql';
 
 @Injectable({
 	providedIn: 'root',
@@ -16,6 +20,7 @@ export class AssetApiService {
 		private searchAssetBySymbolGQL: SearchAssetBySymbolGQL,
 		private searchAssetBySymbolTickerPrefixGQL: SearchAssetBySymbolTickerPrefixGQL,
 		private getAssetHistoricalPricesStartToEndGQL: GetAssetHistoricalPricesStartToEndGQL,
+		private getAssetGeneralHistoricalPricesDataOnDateGQL: GetAssetGeneralHistoricalPricesDataOnDateGQL,
 		private getAssetGeneralForSymbolGQL: GetAssetGeneralForSymbolGQL
 	) {}
 
@@ -36,5 +41,39 @@ export class AssetApiService {
 				},
 			})
 			.pipe(map((res) => res.data?.searchAssetBySymbolTickerPrefix));
+	}
+
+	getAssetHistoricalPricesStartToEnd(
+		input: AssetGeneralHistoricalPricesInput
+	): Observable<AssetGeneralHistoricalPrices> {
+		return this.getAssetHistoricalPricesStartToEndGQL
+			.fetch(
+				{
+					input,
+				},
+				{
+					fetchPolicy: 'network-only',
+				}
+			)
+			.pipe(map((res) => res.data.getAssetHistoricalPricesStartToEnd));
+	}
+
+	getAssetGeneralHistoricalPricesDataOnDate(
+		symbol: string,
+		date: string
+	): Observable<AssetGeneralHistoricalPricesData> {
+		return this.getAssetGeneralHistoricalPricesDataOnDateGQL
+			.fetch(
+				{
+					input: {
+						symbol,
+						date,
+					},
+				},
+				{
+					fetchPolicy: 'network-only',
+				}
+			)
+			.pipe(map((res) => res.data.getAssetGeneralHistoricalPricesDataOnDate));
 	}
 }

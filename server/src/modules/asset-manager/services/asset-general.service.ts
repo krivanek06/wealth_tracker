@@ -10,9 +10,14 @@ import { AssetGeneralUtil } from '../utils';
 export class AssetGeneralService {
 	constructor(private prisma: PrismaService, private financialModelingAPIService: FinancialModelingAPIService) {}
 
-	async searchAssetBySymbol(symbolPrefix: string): Promise<AssetGeneral[]> {
+	/**
+	 *
+	 * @param symbolPrefix - prefix of the full symbol name 'Micros..', 'Apple inc.' ...
+	 * @returns array of AssetGeneral that match the `symbolPrefix` prefix
+	 */
+	async searchAssetBySymbolPrefixName(symbolPrefix: string): Promise<AssetGeneral[]> {
 		try {
-			const apiData = await this.financialModelingAPIService.searchAssetBySymbolPrefix(symbolPrefix);
+			const apiData = await this.financialModelingAPIService.searchAssetBySymbolPrefixName(symbolPrefix);
 			// filter out symbol name that include '.' like NN.DE, used to get errors
 			const unsupportedCharacters = ['.', '-'];
 			const symbolNames = apiData.map((d) => d.symbol).filter((d) => !unsupportedCharacters.some((c) => d.includes(c)));
@@ -23,6 +28,12 @@ export class AssetGeneralService {
 		}
 	}
 
+	/**
+	 *
+	 * @param symbolPrefix - identification of a symbol like AAPL, MSFT, BTC, ETF
+	 * @param isCrypto - true if searching for crypto
+	 * @returns array of AssetGeneral that match the `symbolPrefix` prefix
+	 */
 	async searchAssetBySymbolTickerPrefix(symbolPrefix: string, isCrypto = false): Promise<AssetGeneral[]> {
 		try {
 			const apiData = await this.financialModelingAPIService.searchAssetBySymbolTickerPrefix(symbolPrefix, isCrypto);
@@ -36,6 +47,11 @@ export class AssetGeneralService {
 		}
 	}
 
+	/**
+	 *
+	 * @param symbol
+	 * @returns AssetGeneral information for a specific symbols
+	 */
 	async getAssetGeneralForSymbol(symbol: string): Promise<AssetGeneral | null> {
 		const result = await this.getAssetGeneralForSymbols([symbol]);
 		return result[0] ?? null;
@@ -92,6 +108,14 @@ export class AssetGeneralService {
 		symbol: string,
 		date: string
 	): Promise<AssetGeneralHistoricalPricesData> {
+		// check if today
+		if (MomentServiceUtil.isToday(date)) {
+			const assetsGeneral = await this.getAssetGeneralForSymbols([symbol]);
+			const assetQuote = assetsGeneral[0].assetQuote;
+			return { date, close: assetQuote.price };
+		}
+
+		// load historical data
 		const prices = await this.getAssetHistoricalPricesStartToEnd(symbol, date, new Date().toISOString());
 		return prices.assetHistoricalPricesData[0];
 	}
@@ -128,6 +152,10 @@ export class AssetGeneralService {
 	): Promise<AssetGeneralHistoricalPrices> {
 		if (MomentServiceUtil.isBefore(end, start)) {
 			throw new HttpException(ASSET_HISTORICAL_ERROR.BAD_INPUT_DATE, HttpStatus.BAD_REQUEST);
+		}
+
+		if (MomentServiceUtil.isToday(start)) {
+			throw new HttpException(ASSET_HISTORICAL_ERROR.START_TODAY, HttpStatus.BAD_REQUEST);
 		}
 
 		// load historical prices

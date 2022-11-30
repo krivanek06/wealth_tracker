@@ -7,7 +7,6 @@ import {
 	DeleteInvestmentAccountCasheMutation,
 	DeleteInvestmentAccountHoldingMutation,
 	InvestmentAccounHoldingCreateInput,
-	InvestmentAccounHoldingHistoryDeleteInput,
 	InvestmentAccountCashChangeFragment,
 	InvestmentAccountCashCreateInput,
 	InvestmentAccountCashDeleteInput,
@@ -56,9 +55,10 @@ export class InvestmentAccountFacadeApiService {
 	}
 
 	deleteInvestmentAccountHolding(
-		input: InvestmentAccounHoldingHistoryDeleteInput
+		accountId: string,
+		history: InvestmentAccountTransactionOutput
 	): Observable<FetchResult<DeleteInvestmentAccountHoldingMutation>> {
-		return this.investmentAccountApiService.deleteInvestmentAccountHolding(input);
+		return this.investmentAccountApiService.deleteInvestmentAccountHolding(accountId, history);
 	}
 
 	createInvestmentAccountCash(

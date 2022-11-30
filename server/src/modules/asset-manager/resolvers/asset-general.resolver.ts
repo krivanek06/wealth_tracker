@@ -2,8 +2,12 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard } from '../../../auth';
 import { Input } from '../../../graphql';
-import { AssetGeneral, AssetGeneralHistoricalPrices } from '../entities';
-import { AssetGeneralHistoricalPricesInput, AssetGeneralSearchInput } from '../inputs';
+import { AssetGeneral, AssetGeneralHistoricalPrices, AssetGeneralHistoricalPricesData } from '../entities';
+import {
+	AssetGeneralHistoricalPricesInput,
+	AssetGeneralHistoricalPricesInputOnDate,
+	AssetGeneralSearchInput,
+} from '../inputs';
 import { AssetGeneralService } from '../services';
 
 @UseGuards(AuthorizationGuard)
@@ -16,7 +20,7 @@ export class AssetGeneralResolver {
 		defaultValue: [],
 	})
 	searchAssetBySymbol(@Input() input: string): Promise<AssetGeneral[]> {
-		return this.assetGeneralService.searchAssetBySymbol(input);
+		return this.assetGeneralService.searchAssetBySymbolPrefixName(input);
 	}
 
 	@Query(() => [AssetGeneral], {
@@ -50,5 +54,14 @@ export class AssetGeneralResolver {
 		@Input() input: AssetGeneralHistoricalPricesInput
 	): Promise<AssetGeneralHistoricalPrices> {
 		return this.assetGeneralService.getAssetHistoricalPricesStartToEnd(input.symbol, input.start, input.end);
+	}
+
+	@Query(() => AssetGeneralHistoricalPricesData, {
+		description: 'Historical price for an Asset',
+	})
+	getAssetGeneralHistoricalPricesDataOnDate(
+		@Input() input: AssetGeneralHistoricalPricesInputOnDate
+	): Promise<AssetGeneralHistoricalPricesData> {
+		return this.assetGeneralService.getAssetGeneralHistoricalPricesDataOnDate(input.symbol, input.date);
 	}
 }

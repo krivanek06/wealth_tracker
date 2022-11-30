@@ -22,6 +22,7 @@ import { SearchableAssetEnum } from '../../../asset-manager/models';
 import { CashAllocation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
+// TODO: disable choosing weekends
 @Component({
 	selector: 'app-investment-account-holding',
 	templateUrl: './investment-account-holding.component.html',
@@ -60,8 +61,9 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	SearchableAssetEnum = SearchableAssetEnum;
 	InvestmentAccountHoldingHistoryType = InvestmentAccountHoldingHistoryType;
 
-	maxDateSymbolPurchase: InputTypeDateTimePickerConfig = {
+	datePickerConfig: InputTypeDateTimePickerConfig = {
 		maxDate: new Date(),
+		dateFilter: DateServiceUtil.isNotWeekend,
 	};
 
 	get formSymbol(): FormControl {
@@ -198,6 +200,8 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 				tap(() => {
 					this.isSaving = false;
 					DialogServiceUtil.showNotificationBar(`Holding history has been saved`);
+					// trigger value change to load transactionHistory again
+					this.formSymbol.patchValue(this.formSymbol.value);
 				}),
 				// client error message
 				catchError(() => {

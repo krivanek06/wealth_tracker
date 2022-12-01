@@ -1,24 +1,29 @@
 <ng-container *ngIf="investmentAccount$ | async as investmentAccount">
-	<!-- account state -->
-	<div class="mb-4">
-		<app-investment-account-state
-			(cachChangeClickEmitter)="onChangeChangeClick()"
-			[currentInvestedAmout]="(currentInvestedAmout$ | async) ?? 0"
-			[totalInvestedAmount]="(totalInvestedAmount$ | async) ?? 0"
-			[dailyInvestmentChange]="dailyInvestmentChange$ | async"
-			[cashAmount]="investmentAccount.cashChange[investmentAccount.cashChange.length -1]?.cashValue ?? 0"
-		></app-investment-account-state>
-	</div>
-
 	<div class="grid grid-cols-1 2xl:grid-cols-4 gap-4">
-		<!-- account growth -->
-		<app-investment-account-portfolio-growth-chart
-			class="col-span-1 2xl:col-span-3"
-			[investmentAccountGrowth]="investmentAccountGrowth$ | async"
-		></app-investment-account-portfolio-growth-chart>
+		<div class="col-span-1 2xl:col-span-3">
+			<!-- account state -->
+			<div class="mb-2">
+				<app-investment-account-state
+					(cachChangeClickEmitter)="onChangeChangeClick()"
+					[currentInvestedAmout]="(currentInvestedAmout$ | async) ?? 0"
+					[totalInvestedAmount]="(totalInvestedAmount$ | async) ?? 0"
+					[dailyInvestmentChange]="dailyInvestmentChange$ | async"
+					[cashAmount]="investmentAccount.cashChange[investmentAccount.cashChange.length -1]?.cashValue ?? 0"
+				></app-investment-account-state>
+			</div>
+
+			<!-- account growth -->
+			<app-investment-account-portfolio-growth-chart
+				[investmentAccountGrowth]="investmentAccountGrowth$ | async"
+			></app-investment-account-portfolio-growth-chart>
+		</div>
 
 		<!-- sector allocation -->
-		<app-scroll-wrapper [isFlexRow]="(layout2XL$ | async) === false" [flexColHeightPx]="420">
+		<app-scroll-wrapper
+			[isFlexRow]="(layout2XL$ | async) === false"
+			[flexColHeightPx]="540"
+			class="2xl:flex 2xl:items-center"
+		>
 			<app-value-presentation-item
 				[isFlexRow]="(layout2XL$ | async) === false"
 				[formControl]="sectorFormControl"
@@ -29,7 +34,7 @@
 		</app-scroll-wrapper>
 	</div>
 
-	<!-- active investmnts table -->
+	<!-- active investments table -->
 	<app-investment-account-active-holdings-table
 		(holdingClickedEmitter)="onAddHolding($event)"
 		(addEmitter)="onAddHolding()"

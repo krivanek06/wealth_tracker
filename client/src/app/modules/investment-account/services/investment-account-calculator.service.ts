@@ -1,8 +1,19 @@
 import { Injectable } from '@angular/core';
-import { InvestmentAccountFragment } from '../../../core/graphql';
+import {
+	InvestmentAccountActiveHoldingOutputFragment,
+	InvestmentAccountCashChangeType,
+	InvestmentAccountFragment,
+	InvestmentAccountGrowth,
+} from '../../../core/graphql';
 import { ValuePresentItem } from '../../../shared/models';
-import { CashAllocation, DailyInvestmentChange, SectorAllocation } from '../models';
-import { InvestmentAccountCashChangeType } from './../../../core/graphql/schema-backend.service';
+import { DateServiceUtil } from '../../../shared/utils';
+import {
+	CashAllocation,
+	DailyInvestmentChange,
+	InvestmentAccountPeriodChange,
+	PeriodChangeDate,
+	SectorAllocation,
+} from '../models';
 
 @Injectable({
 	providedIn: 'root',
@@ -107,5 +118,39 @@ export class InvestmentAccountCalculatorService {
 				WITHDRAWAL: 0,
 			} as { [key in InvestmentAccountCashChangeType]: number }
 		);
+	}
+
+	getInvestmentAccountPeriodChange(
+		activeHoldings: InvestmentAccountActiveHoldingOutputFragment[],
+		accountGrowthData: InvestmentAccountGrowth[]
+	): InvestmentAccountPeriodChange[] {
+		if (accountGrowthData.length === 0) {
+			return [];
+		}
+
+		// reverse accountGrowthData so that dates are in DESC
+		const reveresData = accountGrowthData.slice().reverse();
+
+		const today = new Date();
+
+		// calculate today ballance from active symbols
+		const todayBalance = activeHoldings.reduce((acc, curr) => acc + curr.units * curr.assetGeneral.assetQuote.price, 0);
+
+		const result = PeriodChangeDate.map((period) => {
+			const timeDiff = reveresData.find(
+				(d) => DateServiceUtil.differenceInBusinessDays(today, d.date) >= period.value - 1
+			);
+			if (!timeDiff) {
+				return { title: period.name, value: -1, valuePrct: -1 } as InvestmentAccountPeriodChange;
+			}
+			const timeDiffValue = timeDiff.cash + timeDiff.invested;
+
+			const value = todayBalance - timeDiffValue;
+			const valuePrct = (todayBalance - timeDiffValue) / timeDiffValue;
+
+			return { title: period.name, value, valuePrct } as InvestmentAccountPeriodChange;
+		});
+
+		return result;
 	}
 }

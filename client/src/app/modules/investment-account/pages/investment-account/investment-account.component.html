@@ -1,26 +1,27 @@
 <ng-container *ngIf="investmentAccount$ | async as investmentAccount">
-	<!-- account state -->
-	<div class="mb-4">
-		<app-investment-account-state
-			(cachChangeClickEmitter)="onChangeChangeClick()"
-			[currentInvestedAmout]="(currentInvestedAmout$ | async) ?? 0"
-			[totalInvestedAmount]="(totalInvestedAmount$ | async) ?? 0"
-			[dailyInvestmentChange]="dailyInvestmentChange$ | async"
-			[cashAmount]="investmentAccount.cashChange[investmentAccount.cashChange.length -1]?.cashValue ?? 0"
-		></app-investment-account-state>
-	</div>
-
 	<div class="grid grid-cols-1 2xl:grid-cols-4 gap-4">
-		<!-- account growth -->
-		<app-investment-account-portfolio-growth-chart
-			class="col-span-1 2xl:col-span-3"
-			[investmentAccountGrowth]="investmentAccountGrowth$ | async"
-		></app-investment-account-portfolio-growth-chart>
+		<div class="col-span-1 2xl:col-span-3">
+			<!-- account state -->
+			<div class="mb-2">
+				<app-investment-account-state
+					(cachChangeClickEmitter)="onChangeChangeClick()"
+					[currentInvestedAmout]="(currentInvestedAmout$ | async) ?? 0"
+					[totalInvestedAmount]="(totalInvestedAmount$ | async) ?? 0"
+					[dailyInvestmentChange]="dailyInvestmentChange$ | async"
+					[cashAmount]="investmentAccount.cashChange[investmentAccount.cashChange.length -1]?.cashValue ?? 0"
+				></app-investment-account-state>
+			</div>
+
+			<!-- account growth -->
+			<app-investment-account-portfolio-growth-chart
+				[investmentAccountGrowth]="investmentAccountGrowth$ | async"
+			></app-investment-account-portfolio-growth-chart>
+		</div>
 
 		<!-- sector allocation -->
-		<app-scroll-wrapper [isFlexRow]="(layout2XL$ | async) === false" [flexColHeightPx]="420">
+		<app-scroll-wrapper [isFlexRow]="false" [flexColHeightPx]="540" class="hidden 2xl:flex items-center">
 			<app-value-presentation-item
-				[isFlexRow]="(layout2XL$ | async) === false"
+				[isFlexRow]="false"
 				[formControl]="sectorFormControl"
 				[items]="sectorAllocation$ | async"
 				[multiSelect]="false"
@@ -29,7 +30,28 @@
 		</app-scroll-wrapper>
 	</div>
 
-	<!-- active investmnts table -->
+	<!-- period change -->
+	<div
+		class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:flex 2xl:justify-around gap-4 p-4 sm:max-2xl:pl-14"
+	>
+		<app-investment-account-period-change
+			*ngFor="let periodChange of accountPeriodChange$ | async"
+			[periodChange]="periodChange"
+		></app-investment-account-period-change>
+	</div>
+
+	<!-- sector allocation -->
+	<app-scroll-wrapper [isFlexRow]="true" class="block 2xl:hidden">
+		<app-value-presentation-item
+			[isFlexRow]="true"
+			[formControl]="sectorFormControl"
+			[items]="sectorAllocation$ | async"
+			[multiSelect]="false"
+			itemKey="sectorName"
+		></app-value-presentation-item>
+	</app-scroll-wrapper>
+
+	<!-- active investments table -->
 	<app-investment-account-active-holdings-table
 		(holdingClickedEmitter)="onAddHolding($event)"
 		(addEmitter)="onAddHolding()"

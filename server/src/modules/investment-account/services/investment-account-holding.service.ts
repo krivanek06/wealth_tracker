@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InvestmentAccountHoldingType } from '@prisma/client';
+import { InvestmentAccountHoldingHistoryType, InvestmentAccountHoldingType } from '@prisma/client';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
 import { AssetGeneralService, AssetStockService } from '../../asset-manager';
 import { INVESTMENT_ACCOUNT_HOLDING_ERROR, INVESTMENT_ACCOUNT_HOLDING_MAX_YEARS } from '../dto';
@@ -21,6 +21,16 @@ export class InvestmentAccountHoldingService {
 		private assetGeneralService: AssetGeneralService,
 		private investmentAccountCashChangeService: InvestmentAccountCashChangeService
 	) {}
+
+	filterOutActiveHoldings(account: InvestmentAccount): InvestmentAccountHolding[] {
+		return account.holdings.filter(
+			(d) =>
+				d.holdingHistory.reduce(
+					(acc, curr) => acc + (curr.type === InvestmentAccountHoldingHistoryType.BUY ? curr.units : -curr.units),
+					0
+				) > 0
+		);
+	}
 
 	async createInvestmentAccountHolding(
 		input: InvestmentAccounHoldingCreateInput,

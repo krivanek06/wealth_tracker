@@ -70,6 +70,7 @@
 						[max]="inputTypeDateTimePickerConfig?.maxDate"
 						matInput
 						[matDatepicker]="datePicker"
+						[matDatepickerFilter]="inputTypeDateTimePickerConfig?.dateFilter ?? defaultDateFilter"
 						[formControl]="formInputControl"
 					/>
 					<mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>

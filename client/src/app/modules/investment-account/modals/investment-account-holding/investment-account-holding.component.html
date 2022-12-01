@@ -15,8 +15,8 @@
 			</div>
 			<div>
 				<span class="text-gray-400">Price: </span>
-				<span *ngIf="formGroup.controls.symbol.value as value"> {{value.assetQuote.price | currency}} </span>
-				<span *ngIf="!formGroup.controls.symbol.value">N/A</span>
+				<span *ngIf="formSymbolPrice.value as value">~ {{ value | currency}} </span>
+				<span *ngIf="!formSymbolPrice.value">N/A</span>
 			</div>
 			<div>
 				<span class="text-gray-400">Total: </span>
@@ -116,7 +116,7 @@
 			inputCaption="Enter date of purchase"
 			inputType="DATEPICKER"
 			[disabled]="!formGroup.controls.symbol.value"
-			[inputTypeDateTimePickerConfig]="maxDateSymbolPurchase"
+			[inputTypeDateTimePickerConfig]="datePickerConfig"
 		></app-form-mat-input-wrapper>
 
 		<!-- error if more than cash -->
@@ -137,11 +137,11 @@
 	</form>
 
 	<!-- history of asset holding -->
-	<div class="min-h-[300px] pl-4 md:pr-2 flex-1">
+	<div class="min-h-[300px] sm:pl-4 md:pr-2 flex-1">
 		<div class="text-base text-center mb-2 g-color-danger">Historical data</div>
 		<div class="text-xs text-center text-gray-500">Hold to remove</div>
 		<div class="min-h-[200px] max-h-[420px] overflow-x-hidden">
-			<div *ngFor="let history of transactionHistory$ | async" class="g-bottom-border">
+			<div *ngFor="let history of transactionHistory$ | async | sortByKey: 'date': 'desc'" class="g-bottom-border">
 				<button
 					mat-button
 					appNotificationProgress

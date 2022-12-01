@@ -54,6 +54,11 @@ export type AssetGeneralHistoricalPricesInput = {
   symbol: Scalars['String'];
 };
 
+export type AssetGeneralHistoricalPricesInputOnDate = {
+  date: Scalars['String'];
+  symbol: Scalars['String'];
+};
+
 export type AssetGeneralQuote = {
   __typename?: 'AssetGeneralQuote';
   /** Null very rarely when picking uncommon stock, like American Campus Communities */
@@ -611,6 +616,8 @@ export type Query = {
   __typename?: 'Query';
   getAssetGeneralForSymbol?: Maybe<AssetGeneral>;
   getAssetGeneralForSymbols: Array<AssetGeneral>;
+  /** Historical price for an Asset */
+  getAssetGeneralHistoricalPricesDataOnDate: AssetGeneralHistoricalPricesData;
   /** Historical prices for an Asset */
   getAssetHistoricalPricesStartToEnd: AssetGeneralHistoricalPrices;
   /** Returns default tags that are shared cross every user */
@@ -648,6 +655,11 @@ export type QueryGetAssetGeneralForSymbolArgs = {
 
 export type QueryGetAssetGeneralForSymbolsArgs = {
   symbols: Array<Scalars['String']>;
+};
+
+
+export type QueryGetAssetGeneralHistoricalPricesDataOnDateArgs = {
+  input: AssetGeneralHistoricalPricesInputOnDate;
 };
 
 
@@ -762,6 +774,13 @@ export type GetAssetGeneralForSymbolQueryVariables = Exact<{
 
 
 export type GetAssetGeneralForSymbolQuery = { __typename?: 'Query', getAssetGeneralForSymbol?: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } | null };
+
+export type GetAssetGeneralHistoricalPricesDataOnDateQueryVariables = Exact<{
+  input: AssetGeneralHistoricalPricesInputOnDate;
+}>;
+
+
+export type GetAssetGeneralHistoricalPricesDataOnDateQuery = { __typename?: 'Query', getAssetGeneralHistoricalPricesDataOnDate: { __typename?: 'AssetGeneralHistoricalPricesData', date: string, close: number } };
 
 export type InvestmentAccountHoldingHistoryFragment = { __typename?: 'InvestmentAccountHoldingHistory', itemId: string, date: string, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, cashChangeId: string };
 
@@ -1264,6 +1283,24 @@ export const GetAssetGeneralForSymbolDocument = gql`
   })
   export class GetAssetGeneralForSymbolGQL extends Apollo.Query<GetAssetGeneralForSymbolQuery, GetAssetGeneralForSymbolQueryVariables> {
     override document = GetAssetGeneralForSymbolDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetAssetGeneralHistoricalPricesDataOnDateDocument = gql`
+    query GetAssetGeneralHistoricalPricesDataOnDate($input: AssetGeneralHistoricalPricesInputOnDate!) {
+  getAssetGeneralHistoricalPricesDataOnDate(input: $input) {
+    ...AssetGeneralHistoricalPricesData
+  }
+}
+    ${AssetGeneralHistoricalPricesDataFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetAssetGeneralHistoricalPricesDataOnDateGQL extends Apollo.Query<GetAssetGeneralHistoricalPricesDataOnDateQuery, GetAssetGeneralHistoricalPricesDataOnDateQueryVariables> {
+    override document = GetAssetGeneralHistoricalPricesDataOnDateDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

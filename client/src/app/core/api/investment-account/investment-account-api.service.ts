@@ -15,7 +15,6 @@ import {
 	GetTransactionHistoryGQL,
 	GetTransactionSymbolsGQL,
 	InvestmentAccounHoldingCreateInput,
-	InvestmentAccounHoldingHistoryDeleteInput,
 	InvestmentAccountActiveHoldingOutput,
 	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
@@ -126,16 +125,35 @@ export class InvestmentAccountApiService {
 	}
 
 	deleteInvestmentAccountHolding(
-		input: InvestmentAccounHoldingHistoryDeleteInput
+		accountId: string,
+		history: InvestmentAccountTransactionOutput
 	): Observable<FetchResult<DeleteInvestmentAccountHoldingMutation>> {
 		return this.deleteInvestmentAccountHoldingGQL.mutate(
 			{
-				input,
+				input: {
+					investmentAccountId: accountId,
+					itemId: history.itemId,
+					symbol: history.assetId,
+				},
 			},
 			{
+				optimisticResponse: {
+					__typename: 'Mutation',
+					deleteInvestmentAccountHolding: {
+						__typename: 'InvestmentAccountHoldingHistory',
+						date: history.date,
+						cashChangeId: history.cashChangeId,
+						itemId: history.itemId,
+						type: history.type,
+						units: history.units,
+						unitValue: history.unitValue,
+						return: history.return,
+						returnChange: history.returnChange,
+					},
+				},
 				update: (store: DataProxy, { data }) => {
 					const result = data?.deleteInvestmentAccountHolding as InvestmentAccountHoldingHistoryFragment;
-					const account = this.investmentAccountCacheService.getInvestmentAccountFromCache(input.investmentAccountId);
+					const account = this.investmentAccountCacheService.getInvestmentAccountFromCache(accountId);
 
 					// remove cashChangeId from cashChange
 					const cashChange = account.cashChange.filter((d) => d.itemId !== result.cashChangeId);

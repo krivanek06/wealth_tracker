@@ -120,6 +120,15 @@ export class AssetGeneralService {
 		return prices.assetHistoricalPricesData[0];
 	}
 
+	/**
+	 * assetHistoricalPricesData is loaded from DB or from API and filtered out only the dates that match the [start, end] date range
+	 * if [start, end] dates are weekends, return next closest date match
+	 *
+	 * @param symbol
+	 * @param start starting date
+	 * @param end ending date
+	 * @returns as AssetGeneralHistoricalPrices object where assetHistoricalPricesData match the start end end date or are close
+	 */
 	async getAssetHistoricalPricesStartToEnd(
 		symbol: string,
 		start: string,
@@ -151,11 +160,11 @@ export class AssetGeneralService {
 		end: string
 	): Promise<AssetGeneralHistoricalPrices> {
 		if (MomentServiceUtil.isBefore(end, start)) {
-			throw new HttpException(ASSET_HISTORICAL_ERROR.BAD_INPUT_DATE, HttpStatus.BAD_REQUEST);
+			throw new HttpException(ASSET_HISTORICAL_ERROR.BAD_INPUT_DATE + symbol, HttpStatus.BAD_REQUEST);
 		}
 
 		if (MomentServiceUtil.isToday(start)) {
-			throw new HttpException(ASSET_HISTORICAL_ERROR.START_TODAY, HttpStatus.BAD_REQUEST);
+			throw new HttpException(ASSET_HISTORICAL_ERROR.START_TODAY + symbol, HttpStatus.BAD_REQUEST);
 		}
 
 		// load historical prices

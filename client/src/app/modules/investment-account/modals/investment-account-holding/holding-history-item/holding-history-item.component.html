@@ -1,5 +1,5 @@
 <!-- logo + symbol -->
-<div class="flex items-center gap-2">
+<div class="flex items-center gap-2 leading-6">
 	<img [src]="history.assetId" imageType="assetId" appDefaultImg class="h-8" />
 	<div class="flex flex-col">
 		<!-- asset symbol + type -->
@@ -16,25 +16,26 @@
 		</div>
 
 		<!-- date  -->
-		<div class="text-xs text-gray-500">{{ history.date | date: 'dd.MM.yyyy' }}</div>
+		<div class="text-xs text-gray-500 text-start">{{ history.date | date: 'dd.MM.yyyy' }}</div>
 	</div>
 </div>
 
 <!-- total value -->
-<div class="flex flex-col items-end">
-	<span class="g-color-text-normal text-base">{{ history.units * history.unitValue | currency}}</span>
-	<!-- show this on md lower screen -->
-	<div>
+<div class="flex flex-col items-end leading-6">
+	<div class="flex items-center gap-x-2 flex-col sm:flex-row">
+		<span class="g-color-text-normal text-base">{{ history.units * history.unitValue | currency}}</span>
+
 		<!-- SELL operation -->
 		<div
 			*ngIf="history.returnChange"
 			appPerceptageIncrease
 			[useCurrencySign]="true"
 			[changeValues]="{
-                changesPercentage: history.returnChange
-            }"
+              changesPercentage: history.returnChange
+          }"
 		></div>
-		<!-- BUY operation -->
-		<div *ngIf="!history.return" class="text-gray-400">{{ history.units }} * {{ history.unitValue | currency }}</div>
 	</div>
+
+	<!-- BUY operation -->
+	<div class="text-gray-400">{{ history.units }} * {{ history.unitValue | currency }}</div>
 </div>

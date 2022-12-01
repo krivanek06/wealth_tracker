@@ -22,7 +22,6 @@ import { SearchableAssetEnum } from '../../../asset-manager/models';
 import { CashAllocation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
-// TODO: disable choosing weekends
 @Component({
 	selector: 'app-investment-account-holding',
 	templateUrl: './investment-account-holding.component.html',

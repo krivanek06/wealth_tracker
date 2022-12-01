@@ -2,7 +2,7 @@
 	display: block;
 
 	mat-dialog-content {
-		@apply flex flex-col gap-2 lg:flex-row;
+		@apply flex flex-col gap-2 xl:flex-row;
 	}
 
 	.c-button-wrapper {

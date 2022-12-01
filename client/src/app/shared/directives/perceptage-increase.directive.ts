@@ -82,6 +82,7 @@ export class PerceptageIncreaseDirective implements OnInit {
 		this.rederer2.addClass(wrapper, 'flex');
 		if (this.flexStyle === 'row') {
 			this.rederer2.addClass(wrapper, 'items-center');
+			this.rederer2.addClass(wrapper, 'flex-wrap');
 			this.rederer2.addClass(wrapper, 'gap-x-1');
 		} else {
 			this.rederer2.addClass(wrapper, 'flex-col');

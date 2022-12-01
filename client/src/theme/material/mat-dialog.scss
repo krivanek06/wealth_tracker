@@ -29,10 +29,18 @@ mat-dialog-container {
 	}
 
 	@screen md {
-		width: 75vw !important;
+		width: 80vw !important;
 	}
 
+	// @screen lg {
+	// 	width: 70vw !important;
+	// }
+
 	@screen xl {
+		width: 70vw !important;
+	}
+
+	@screen 2xl {
 		width: 60vw !important;
 	}
 }

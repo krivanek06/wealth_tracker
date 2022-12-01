@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ScrollWrapperModule, ValuePresentationItemModule } from '../../../../shared/components';
 import {
 	InvestmentAccountActiveHoldingsTableModule,
+	InvestmentAccountPeriodChangeModule,
 	InvestmentAccountPortfolioGrowthChartModule,
 	InvestmentAccountStateModule,
 } from '../../components';
@@ -27,6 +28,7 @@ import { InvestmentAccountComponent } from './investment-account.component';
 		InvestmentAccountCashChangeModule,
 		InvestmentAccountTransactionsModule,
 		InvestmentAccountHoldingModule,
+		InvestmentAccountPeriodChangeModule,
 	],
 	exports: [InvestmentAccountComponent],
 })

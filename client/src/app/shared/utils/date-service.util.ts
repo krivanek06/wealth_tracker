@@ -1,4 +1,13 @@
-import { differenceInDays, format, getDay, getMonth, getWeek, getYear, isWeekend } from 'date-fns';
+import {
+	differenceInBusinessDays,
+	differenceInDays,
+	format,
+	getDay,
+	getMonth,
+	getWeek,
+	getYear,
+	isWeekend,
+} from 'date-fns';
 export type DateServiceUtilDateInformations = {
 	year: number;
 	month: number;
@@ -49,5 +58,9 @@ export class DateServiceUtil {
 
 	static isNotWeekend(date: DateInput): boolean {
 		return !isWeekend(new Date(date));
+	}
+
+	static differenceInBusinessDays(date1: DateInput, date2: DateInput): number {
+		return Math.abs(differenceInBusinessDays(new Date(date1), new Date(date2)));
 	}
 }

@@ -1,4 +1,3 @@
-import { BreakpointObserver } from '@angular/cdk/layout';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,13 +9,13 @@ import {
 	InvestmentAccountGrowth,
 	InvestmentAccountOverviewFragment,
 } from '../../../../core/graphql';
-import { LAYOUT_2XL, ValuePresentItem } from '../../../../shared/models';
+import { ValuePresentItem } from '../../../../shared/models';
 import {
 	InvestmentAccountCashChangeComponent,
 	InvestmentAccountHoldingComponent,
 	InvestmentAccountTransactionsComponent,
 } from '../../modals';
-import { DailyInvestmentChange, SectorAllocation } from '../../models';
+import { DailyInvestmentChange, InvestmentAccountPeriodChange, SectorAllocation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
 @Component({
@@ -55,7 +54,10 @@ export class InvestmentAccountComponent implements OnInit {
 	 */
 	sectorAllocation$!: Observable<ValuePresentItem<SectorAllocation>[]>;
 
-	layout2XL$!: Observable<boolean>;
+	/**
+	 * Investment account change over period of times - 1week, 1month, etc.
+	 */
+	accountPeriodChange$!: Observable<InvestmentAccountPeriodChange[]>;
 
 	// keeps track of visible sectors, if empty -> all is visible
 	sectorFormControl = new FormControl<SectorAllocation[]>([], { nonNullable: true });
@@ -70,7 +72,6 @@ export class InvestmentAccountComponent implements OnInit {
 	constructor(
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
 		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
-		private breakpointObserver: BreakpointObserver,
 		private dialog: MatDialog
 	) {}
 
@@ -92,8 +93,6 @@ export class InvestmentAccountComponent implements OnInit {
 			)
 		);
 
-		this.layout2XL$ = this.breakpointObserver.observe([LAYOUT_2XL]).pipe(map((res) => res.matches));
-
 		this.sectorAllocation$ = this.investmentAccount$.pipe(
 			map((acount) => this.investmentAccountCalculatorService.getSectorAllocation(acount))
 		);
@@ -107,6 +106,12 @@ export class InvestmentAccountComponent implements OnInit {
 		);
 		this.dailyInvestmentChange$ = this.investmentAccount$.pipe(
 			map((account) => this.investmentAccountCalculatorService.getDailyInvestmentChange(account))
+		);
+
+		this.accountPeriodChange$ = combineLatest([this.investmentAccount$, this.investmentAccountGrowth$]).pipe(
+			map(([account, growth]) =>
+				this.investmentAccountCalculatorService.getInvestmentAccountPeriodChange(account.activeHoldings, growth)
+			)
 		);
 	}
 

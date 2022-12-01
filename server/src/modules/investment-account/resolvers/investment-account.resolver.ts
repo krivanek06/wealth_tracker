@@ -84,9 +84,7 @@ export class InvestmentAccountResolver {
 		nullable: false,
 	})
 	getActiveHoldings(@Parent() investmentAccount: InvestmentAccount): Promise<InvestmentAccountActiveHoldingOutput[]> {
-		const activeHoldings = investmentAccount.holdings.filter(
-			(d) => d.holdingHistory.length > 0 && d.holdingHistory[d.holdingHistory.length - 1].units > 0
-		);
+		const activeHoldings = this.investmentAccountHoldingService.filterOutActiveHoldings(investmentAccount);
 		return this.investmentAccountHoldingService.getActiveHoldingOutput(activeHoldings);
 	}
 }

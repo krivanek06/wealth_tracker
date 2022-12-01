@@ -8,6 +8,7 @@ import {
 	getWeek,
 	getYear,
 	isBefore,
+	isToday,
 	isWeekend,
 	startOfDay,
 	subDays,
@@ -52,6 +53,10 @@ export class MomentServiceUtil {
 
 	static startOfDay(date: DateInput): Date {
 		return startOfDay(new Date(date));
+	}
+
+	static isToday(date: DateInput): boolean {
+		return isToday(new Date(date));
 	}
 
 	static isBefore(date: DateInput, dateToCompare: DateInput): boolean {

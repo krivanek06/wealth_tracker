@@ -26,7 +26,7 @@ export class FinancialModelingAPIService {
 	 * @param symbolPrefix
 	 * @returns searched stocks by prefix symbol
 	 */
-	searchAssetBySymbolPrefix(symbolPrefix: string): Promise<FMSearch[]> {
+	searchAssetBySymbolPrefixName(symbolPrefix: string): Promise<FMSearch[]> {
 		const modifiedPrefix = symbolPrefix.toUpperCase();
 		const requestConfig: AxiosRequestConfig = {
 			params: {
@@ -103,7 +103,7 @@ export class FinancialModelingAPIService {
 				)
 				.pipe(
 					map((res) => {
-						if (!res) {
+						if (!res.data || !res.data.historical) {
 							throw new HttpException(FINANCIAL_MODELING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
 						}
 						return res.data.historical.sort((a, b) => (a.date < b.date ? -1 : 1));

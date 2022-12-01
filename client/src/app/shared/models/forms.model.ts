@@ -1,4 +1,5 @@
 import { FormControl, FormGroup } from '@angular/forms';
+import { DateFilterFn } from '@angular/material/datepicker';
 
 // source: https://stackoverflow.com/questions/72507263/angular-14-strictly-typed-reactive-forms-how-to-type-formgroup-model-using-exi
 export type ModelFormGroup<T> = FormGroup<{
@@ -15,6 +16,7 @@ export interface InputSource {
 export interface InputTypeDateTimePickerConfig {
 	minDate?: Date | string;
 	maxDate?: Date | string;
+	dateFilter?: DateFilterFn<any>;
 }
 
 export enum InputTypeEnum {

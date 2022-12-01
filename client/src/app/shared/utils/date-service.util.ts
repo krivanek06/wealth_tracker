@@ -1,4 +1,4 @@
-import { differenceInDays, format, getDay, getMonth, getWeek, getYear } from 'date-fns';
+import { differenceInDays, format, getDay, getMonth, getWeek, getYear, isWeekend } from 'date-fns';
 export type DateServiceUtilDateInformations = {
 	year: number;
 	month: number;
@@ -45,5 +45,9 @@ export class DateServiceUtil {
 	static formatDate(inputDate: DateInput, formateStr: string = 'yyyy-MM-dd'): string {
 		const date = new Date(inputDate);
 		return format(date, formateStr);
+	}
+
+	static isNotWeekend(date: DateInput): boolean {
+		return !isWeekend(new Date(date));
 	}
 }

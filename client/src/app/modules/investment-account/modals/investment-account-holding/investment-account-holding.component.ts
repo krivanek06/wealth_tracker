@@ -1,8 +1,8 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { catchError, EMPTY, first, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
-import { InvestmentAccountFacadeApiService } from '../../../../core/api';
+import { catchError, combineLatest, EMPTY, filter, first, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { AssetApiService, InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	AssetGeneralFragment,
 	InvestmentAccounHoldingCreateInput,
@@ -39,6 +39,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 			nonNullable: true,
 		}),
 		symbol: new FormControl<AssetGeneralFragment | null>(null, { validators: [Validators.required] }),
+		symbolPrice: new FormControl<number>(0, { validators: [Validators.required], nonNullable: true }),
 		units: new FormControl<number>(0, {
 			validators: [requiredValidator, positiveNumberValidator, minValueValidator(1)],
 			nonNullable: true,
@@ -59,20 +60,42 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	SearchableAssetEnum = SearchableAssetEnum;
 	InvestmentAccountHoldingHistoryType = InvestmentAccountHoldingHistoryType;
 
-	maxDateSymbolPurchase: InputTypeDateTimePickerConfig = {
+	datePickerConfig: InputTypeDateTimePickerConfig = {
 		maxDate: new Date(),
+		dateFilter: DateServiceUtil.isNotWeekend,
 	};
+
+	get formSymbol(): FormControl {
+		return this.formGroup.controls.symbol;
+	}
+
+	get formAssetType(): FormControl {
+		return this.formGroup.controls.assetType;
+	}
+
+	get formDate(): FormControl {
+		return this.formGroup.controls.date;
+	}
+
+	get formSymbolPrice(): FormControl {
+		return this.formGroup.controls.symbolPrice;
+	}
+
+	get formTransactionType(): FormControl {
+		return this.formGroup.controls.transactionType;
+	}
 
 	get totalValue(): number {
 		if (!this.formGroup.controls.symbol.value) {
 			return 0;
 		}
-		return this.formGroup.controls.symbol.value.assetQuote.price * this.formGroup.controls.units.value;
+		return this.formSymbolPrice.value * this.formGroup.controls.units.value;
 	}
 
 	constructor(
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
 		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
+		private assetApiService: AssetApiService,
 		private dialogRef: MatDialogRef<InvestmentAccountHoldingComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: { investmentId: string; selectedAsset?: AssetGeneralFragment }
 	) {}
@@ -80,8 +103,8 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		// load values for selected asset
 		setTimeout(() => {
 			if (this.data.selectedAsset) {
-				this.formGroup.controls.symbol.patchValue(this.data.selectedAsset);
-				this.formGroup.controls.assetType.patchValue(SearchableAssetEnum.AseetById);
+				this.formSymbol.patchValue(this.data.selectedAsset);
+				this.formAssetType.patchValue(SearchableAssetEnum.AseetById);
 			}
 		});
 	}
@@ -97,13 +120,19 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		// on form change check if user has enough cash
 		this.cashError$ = this.formGroup.valueChanges.pipe(
 			switchMap(() =>
-				this.cashCategory$.pipe(map((c) => c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL < this.totalValue))
+				this.cashCategory$.pipe(
+					map(
+						(c) =>
+							c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL < this.totalValue &&
+							this.formTransactionType.value === InvestmentAccountHoldingHistoryType.Buy
+					)
+				)
 			)
 		);
 
 		// on symbol pick load transaction history
-		this.transactionHistory$ = this.formGroup.controls.symbol.valueChanges.pipe(
-			startWith(this.formGroup.controls.symbol.value),
+		this.transactionHistory$ = this.formSymbol.valueChanges.pipe(
+			startWith(this.formSymbol.value),
 			switchMap((value) =>
 				!value
 					? of([])
@@ -116,11 +145,27 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 
 		// IDK why, but keep data in ngAfterViewInit because it just works
 		if (this.data.selectedAsset) {
-			this.formGroup.controls.symbol.patchValue(this.data.selectedAsset);
-			this.formGroup.controls.assetType.patchValue(SearchableAssetEnum.AseetById);
+			this.formSymbol.patchValue(this.data.selectedAsset);
+			this.formAssetType.patchValue(SearchableAssetEnum.AseetById);
 		}
 
-		// TODO: based on date change - load selected symbol price
+		// monitor symbol and date change and load price for a specific date
+		combineLatest([
+			this.formSymbol.valueChanges.pipe(startWith(this.formSymbol.value)),
+			this.formDate.valueChanges.pipe(startWith(this.formDate.value)),
+		])
+			.pipe(
+				filter(([asset, date]: [AssetGeneralFragment, Date]) => !!asset && !!date),
+				switchMap(([asset, date]: [AssetGeneralFragment, Date]) =>
+					this.assetApiService
+						.getAssetGeneralHistoricalPricesDataOnDate(asset.id, DateServiceUtil.formatDate(date))
+						.pipe(map((res) => res.close))
+				)
+			)
+			.subscribe((assetPrice) => {
+				console.log(assetPrice);
+				this.formSymbolPrice.patchValue(assetPrice);
+			});
 	}
 
 	onSave(): void {
@@ -144,17 +189,22 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 			},
 		};
 
+		// notify user
+		DialogServiceUtil.showNotificationBar(`Saving holding for ${controls.symbol.value.id}`, 'notification');
+
+		// save holding
 		this.investmentAccountFacadeApiService
 			.createInvestmentAccountHolding(input)
 			.pipe(
 				tap(() => {
 					this.isSaving = false;
 					DialogServiceUtil.showNotificationBar(`Holding history has been saved`);
+					// trigger value change to load transactionHistory again
+					this.formSymbol.patchValue(this.formSymbol.value);
 				}),
 				// client error message
 				catchError(() => {
 					this.isSaving = false;
-					DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
 					return EMPTY;
 				}),
 				// memory leak
@@ -165,15 +215,11 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 
 	onDelete(history: InvestmentAccountTransactionOutput): void {
 		this.investmentAccountFacadeApiService
-			.deleteInvestmentAccountHolding({
-				investmentAccountId: this.data.investmentId,
-				itemId: history.itemId,
-				symbol: history.assetId,
-			})
+			.deleteInvestmentAccountHolding(this.data.investmentId, history)
 			.pipe(
 				tap(() => {
 					// force to reload history
-					this.formGroup.controls.symbol.patchValue(this.formGroup.controls.symbol.value);
+					this.formSymbol.patchValue(this.formSymbol.value);
 					DialogServiceUtil.showNotificationBar(`Holding history has been removed`);
 				}),
 				// memory leak

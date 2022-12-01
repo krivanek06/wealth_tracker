@@ -59,7 +59,7 @@ describe('AssetGeneralService', () => {
 	});
 	const financialModelingAPIServiceMock: FinancialModelingAPIService = createMock<FinancialModelingAPIService>({
 		getStockProfile: jest.fn(),
-		searchAssetBySymbolPrefix: jest.fn(),
+		searchAssetBySymbolPrefixName: jest.fn(),
 		getAssetHistoricalPrices: jest.fn(),
 	});
 
@@ -105,7 +105,7 @@ describe('AssetGeneralService', () => {
 		beforeEach(() => {
 			const searchedSymbols: FMSearch[] = [{ symbol: symbolMock1 } as FMSearch, { symbol: symbolMock2 } as FMSearch];
 
-			when(financialModelingAPIServiceMock.searchAssetBySymbolPrefix)
+			when(financialModelingAPIServiceMock.searchAssetBySymbolPrefixName)
 				.calledWith(symbolMock1, false)
 				.mockResolvedValue(searchedSymbols)
 				.calledWith(symbolMock1, true)
@@ -115,15 +115,15 @@ describe('AssetGeneralService', () => {
 		});
 
 		it('should return searched stocks for existing API response', async () => {
-			const result1 = await service.searchAssetBySymbol(symbolMock1, false);
-			const result2 = await service.searchAssetBySymbol(symbolMock1, true);
+			const result1 = await service.searchAssetBySymbolPrefixName(symbolMock1, false);
+			const result2 = await service.searchAssetBySymbolPrefixName(symbolMock1, true);
 
 			expect(result1).toStrictEqual([symbolMock1AssetGeneral, symbolMock2AssetGeneral]);
 			expect(result2).toStrictEqual([symbolMock1AssetGeneral, symbolMock2AssetGeneral]);
 		});
 
 		it('should return searched stocks for empty API response', async () => {
-			const response = await service.searchAssetBySymbol(symbolMock2, false);
+			const response = await service.searchAssetBySymbolPrefixName(symbolMock2, false);
 			expect(response).toEqual([]);
 			expect(response.length).toEqual(0);
 		});

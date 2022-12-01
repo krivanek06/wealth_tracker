@@ -3,5 +3,6 @@ export enum ASSET_STOCK_ERROR {
 }
 
 export enum ASSET_HISTORICAL_ERROR {
-	BAD_INPUT_DATE = 'Ending date is sooner than starting date',
+	BAD_INPUT_DATE = 'Ending date is sooner than starting date for symbol: ',
+	START_TODAY = 'Start date can not be today for symbol: ',
 }

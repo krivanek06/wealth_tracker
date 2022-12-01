@@ -1,5 +1,6 @@
 import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ControlContainer, FormControl } from '@angular/forms';
+import { DateFilterFn } from '@angular/material/datepicker';
 import { map, Observable } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 import { InputSource, InputType, InputTypeDateTimePickerConfig, InputTypeEnum } from '../../models';
@@ -36,6 +37,8 @@ export class FormMatInputWrapperComponent implements OnInit, OnChanges {
 		used when inputType === DATEPICKER
 	*/
 	@Input() inputTypeDateTimePickerConfig?: InputTypeDateTimePickerConfig;
+	// only used if InputTypeDateTimePickerConfig.dateFilter is not present
+	defaultDateFilter: DateFilterFn<any> = (d: Date) => true;
 
 	@ViewChild('matSearchSelectInput') matSearchSelectInput?: ElementRef<HTMLInputElement>;
 

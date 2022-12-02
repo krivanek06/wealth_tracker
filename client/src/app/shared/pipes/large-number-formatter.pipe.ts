@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { GeneralFuntionUtl } from '../utils';
+import { GeneralFunctionUtil } from '../utils';
 
 @Pipe({
 	name: 'largeNumberFormatter',
@@ -11,6 +11,6 @@ export class LargeNumberFormatterPipe implements PipeTransform {
 		isPercent: boolean = false,
 		showDollarSign: boolean = false
 	): unknown {
-		return GeneralFuntionUtl.formatLargeNumber(value, isPercent, showDollarSign);
+		return GeneralFunctionUtil.formatLargeNumber(value, isPercent, showDollarSign);
 	}
 }

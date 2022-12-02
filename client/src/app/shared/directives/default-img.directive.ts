@@ -1,6 +1,6 @@
 import { Directive, ElementRef, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { DefaultImageType } from '../models';
-import { GeneralFuntionUtl } from '../utils';
+import { GeneralFunctionUtil } from '../utils';
 
 @Directive({
 	selector: '[appDefaultImg]',
@@ -42,7 +42,7 @@ export class DefaultImgDirective implements OnChanges {
 		}
 
 		if (this.imageType === 'assetId') {
-			return GeneralFuntionUtl.getAssetUrl(location);
+			return GeneralFunctionUtil.getAssetUrl(location);
 		}
 
 		if (this.imageType === 'url') {

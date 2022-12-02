@@ -8,7 +8,7 @@ import {
 	InvestmentAccountTransactionOutput,
 } from '../../../../core/graphql';
 import { InputSource } from '../../../../shared/models';
-import { GeneralFuntionUtl } from '../../../../shared/utils';
+import { GeneralFunctionUtil } from '../../../../shared/utils';
 import { TransactionOrderInputSource } from '../../models';
 
 // TODO - virtual scrolling if many transactions
@@ -59,7 +59,7 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 			.pipe(
 				map((symbols) =>
 					symbols.map((d) => {
-						return { caption: d, value: d, image: GeneralFuntionUtl.getAssetUrl(d) } as InputSource;
+						return { caption: d, value: d, image: GeneralFunctionUtil.getAssetUrl(d) } as InputSource;
 					})
 				)
 			);

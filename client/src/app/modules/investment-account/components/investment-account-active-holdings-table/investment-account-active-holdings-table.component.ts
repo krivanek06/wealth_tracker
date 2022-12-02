@@ -9,12 +9,13 @@ import {
 	ViewChild,
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import {
 	InvestmentAccountActiveHoldingOutput,
 	InvestmentAccountActiveHoldingOutputFragment,
 } from '../../../../core/graphql';
+import { GeneralFunctionUtil } from '../../../../shared/utils';
 
 @Component({
 	selector: 'app-investment-account-active-holdings-table',
@@ -76,5 +77,29 @@ export class InvestmentAccountActiveHoldingsTableComponent implements OnInit {
 
 	toggleDailyChange(): void {
 		this.showDailyChange = !this.showDailyChange;
+	}
+
+	sortData(sort: Sort) {
+		const data = this.dataSource.data.slice();
+		if (!sort.active || sort.direction === '') {
+			this.dataSource.data = data;
+			return;
+		}
+
+		this.dataSource.data = data.sort(
+			(a: InvestmentAccountActiveHoldingOutputFragment, b: InvestmentAccountActiveHoldingOutputFragment) => {
+				const isAsc = sort.direction === 'asc';
+				switch (sort.active) {
+					case 'symbol':
+						return GeneralFunctionUtil.compare(a.units, b.units, isAsc);
+					case 'price':
+						return GeneralFunctionUtil.compare(a.assetGeneral.assetQuote.price, b.assetGeneral.assetQuote.price, isAsc);
+					case 'invested':
+						return GeneralFunctionUtil.compare(a.totalValue, b.totalValue, isAsc);
+					default:
+						return 0;
+				}
+			}
+		);
 	}
 }

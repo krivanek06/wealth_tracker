@@ -70,14 +70,9 @@ export class InvestmentAccountApiService {
 
 	getTransactionHistory(input: InvestmentAccountTransactionInput): Observable<InvestmentAccountTransactionOutput[]> {
 		return this.getTransactionHistoryGQL
-			.fetch(
-				{
-					input,
-				},
-				{
-					fetchPolicy: 'network-only',
-				}
-			)
+			.fetch({
+				input,
+			})
 			.pipe(map((res) => res.data.getTransactionHistory));
 	}
 

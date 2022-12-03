@@ -69,7 +69,7 @@ export function createDefaultApollo(httpLink: HttpLink): ApolloClientOptions<any
 		options: {
 			reconnect: true,
 			connectionParams: {
-				authorization: `Bearer 1234`,
+				authorization: `Bearer 1234`, // TODO add authenticated userId
 			},
 		},
 	});

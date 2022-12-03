@@ -52,9 +52,14 @@ export class GeneralFunctionUtil {
 	};
 
 	static compare(a?: number | string | null, b?: number | string | null, isAsc: boolean = true): number {
-		if (!a || !b) {
+		if (!!a && !b) {
 			return 1;
 		}
+
+		if (!a || !b) {
+			return -1;
+		}
+
 		return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 	}
 }

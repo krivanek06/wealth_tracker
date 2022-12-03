@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import {
+	GetTransactionHistoryDocument,
+	GetTransactionHistoryQuery,
 	InvestmentAccountFragment,
 	InvestmentAccountFragmentDoc,
 	InvestmentAccountOverviewFragment,
+	InvestmentAccountTransactionOutputFragment,
 } from '../../graphql';
 
 @Injectable({
@@ -21,7 +24,7 @@ export class InvestmentAccountCacheService {
 
 		// not found
 		if (!fragment) {
-			throw new Error(`[InvestmentAccountApiService]: Unable to find the correct invetment account`);
+			throw new Error(`[InvestmentAccountApiService]: Unable to find InvestmentAccountFragment`);
 		}
 
 		return fragment;
@@ -34,6 +37,30 @@ export class InvestmentAccountCacheService {
 			fragment: InvestmentAccountFragmentDoc,
 			data: {
 				...data,
+			},
+		});
+	}
+
+	getTransactionHistory(accountId: string): InvestmentAccountTransactionOutputFragment[] | undefined {
+		const query = this.apollo.client.readQuery<GetTransactionHistoryQuery>({
+			query: GetTransactionHistoryDocument,
+			variables: {
+				accountId,
+			},
+		});
+
+		return query?.getTransactionHistory;
+	}
+
+	updateTransactionHistory(accountId: string, transaction: InvestmentAccountTransactionOutputFragment[]): void {
+		this.apollo.client.writeQuery<GetTransactionHistoryQuery>({
+			query: GetTransactionHistoryDocument,
+			variables: {
+				accountId,
+			},
+			data: {
+				__typename: 'Query',
+				getTransactionHistory: [...transaction],
 			},
 		});
 	}

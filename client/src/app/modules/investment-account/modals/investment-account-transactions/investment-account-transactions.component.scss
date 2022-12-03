@@ -2,14 +2,10 @@
 	display: block;
 
 	form {
-		@apply flex flex-col gap-y-2 gap-x-4 md:flex-row;
+		@apply flex flex-col gap-y-2 gap-x-4 md:flex-row mb-4 md:mb-2;
 
-		& > app-form-mat-input-wrapper {
+		& > * {
 			@apply flex-1 md:flex-none;
-
-			&:nth-last-child(-n + 2) {
-				@apply self-end md:self-center;
-			}
 		}
 	}
 }

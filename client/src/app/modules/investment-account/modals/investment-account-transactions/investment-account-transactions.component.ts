@@ -1,14 +1,11 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { map, Observable, startWith, switchMap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
-import {
-	InvestmentAccountTransactionInputOrderType,
-	InvestmentAccountTransactionOutput,
-} from '../../../../core/graphql';
+import { InvestmentAccountTransactionOutput } from '../../../../core/graphql';
 import { InputSource } from '../../../../shared/models';
-import { GeneralFuntionUtl } from '../../../../shared/utils';
+import { GeneralFunctionUtil } from '../../../../shared/utils';
 import { TransactionOrderInputSource } from '../../models';
 
 // TODO - virtual scrolling if many transactions
@@ -33,18 +30,6 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 		symbols: new FormControl<string[]>([], {
 			nonNullable: true,
 		}),
-		orderType: new FormControl<InvestmentAccountTransactionInputOrderType>(
-			InvestmentAccountTransactionInputOrderType.OrderByDate,
-			{
-				nonNullable: true,
-			}
-		),
-		descOrder: new FormControl<boolean>(true, {
-			nonNullable: true,
-		}),
-		includeBuyOpeation: new FormControl<boolean>(true, {
-			nonNullable: true,
-		}),
 	});
 
 	constructor(
@@ -59,23 +44,11 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 			.pipe(
 				map((symbols) =>
 					symbols.map((d) => {
-						return { caption: d, value: d, image: GeneralFuntionUtl.getAssetUrl(d) } as InputSource;
+						return { caption: d, value: d, image: GeneralFunctionUtil.getAssetUrl(d) } as InputSource;
 					})
 				)
 			);
 
-		this.transactionHistory$ = this.formGroup.valueChanges.pipe(
-			startWith(this.formGroup.value),
-			switchMap((formValue) =>
-				this.investmentAccountFacadeApiService.getTransactionHistory({
-					accountId: this.data.investmentId,
-					offset: 0,
-					filterSymbols: formValue.symbols,
-					orderAsc: !formValue.descOrder,
-					orderType: formValue.orderType,
-					includeBuyOperation: formValue.includeBuyOpeation,
-				})
-			)
-		);
+		this.transactionHistory$ = this.investmentAccountFacadeApiService.getTransactionHistory(this.data.investmentId);
 	}
 }

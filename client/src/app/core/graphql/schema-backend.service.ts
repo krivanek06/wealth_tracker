@@ -191,7 +191,16 @@ export type InvestmentAccountActiveHoldingOutput = {
   sector: Scalars['String'];
   totalValue: Scalars['Float'];
   type: InvestmentAccountHoldingType;
+  /** Total units for the active holding */
   units: Scalars['Float'];
+};
+
+export type InvestmentAccountActiveHoldingOutputWrapper = {
+  __typename?: 'InvestmentAccountActiveHoldingOutputWrapper';
+  /** Modified active holding current data */
+  holdingOutput: InvestmentAccountActiveHoldingOutput;
+  /** Transaction that was created */
+  transaction: InvestmentAccountTransactionOutput;
 };
 
 export type InvestmentAccountCashChange = {
@@ -380,7 +389,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createInvestmentAccount: InvestmentAccount;
   createInvestmentAccountCashe: InvestmentAccountCashChange;
-  createInvestmentAccountHolding: InvestmentAccountActiveHoldingOutput;
+  createInvestmentAccountHolding: InvestmentAccountActiveHoldingOutputWrapper;
   createPersonalAccount: PersonalAccount;
   createPersonalAccountDailyEntry: PersonalAccountDailyData;
   /** Returns the ID of the removed investment account */
@@ -843,7 +852,7 @@ export type CreateInvestmentAccountHoldingMutationVariables = Exact<{
 }>;
 
 
-export type CreateInvestmentAccountHoldingMutation = { __typename?: 'Mutation', createInvestmentAccountHolding: { __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } } };
+export type CreateInvestmentAccountHoldingMutation = { __typename?: 'Mutation', createInvestmentAccountHolding: { __typename?: 'InvestmentAccountActiveHoldingOutputWrapper', holdingOutput: { __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } }, transaction: { __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string } } };
 
 export type DeleteInvestmentAccountHoldingMutationVariables = Exact<{
   input: InvestmentAccounHoldingHistoryDeleteInput;
@@ -886,7 +895,7 @@ export type GetTopTransactionsQueryVariables = Exact<{
 export type GetTopTransactionsQuery = { __typename?: 'Query', getTopTransactions: { __typename?: 'InvestmentAccountTransactionWrapperOutput', bestValueChage: Array<{ __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string }>, worstValueChage: Array<{ __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string }>, bestValue: Array<{ __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string }>, worstValue: Array<{ __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, cashChangeId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string }> } };
 
 export type GetTransactionHistoryQueryVariables = Exact<{
-  input: InvestmentAccountTransactionInput;
+  accountId: Scalars['String'];
 }>;
 
 
@@ -1417,10 +1426,16 @@ export const DeleteInvestmentAccountDocument = gql`
 export const CreateInvestmentAccountHoldingDocument = gql`
     mutation CreateInvestmentAccountHolding($input: InvestmentAccounHoldingCreateInput!) {
   createInvestmentAccountHolding(input: $input) {
-    ...InvestmentAccountActiveHoldingOutput
+    holdingOutput {
+      ...InvestmentAccountActiveHoldingOutput
+    }
+    transaction {
+      ...InvestmentAccountTransactionOutput
+    }
   }
 }
-    ${InvestmentAccountActiveHoldingOutputFragmentDoc}`;
+    ${InvestmentAccountActiveHoldingOutputFragmentDoc}
+${InvestmentAccountTransactionOutputFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
@@ -1556,8 +1571,8 @@ export const GetTopTransactionsDocument = gql`
     }
   }
 export const GetTransactionHistoryDocument = gql`
-    query GetTransactionHistory($input: InvestmentAccountTransactionInput!) {
-  getTransactionHistory(input: $input) {
+    query GetTransactionHistory($accountId: String!) {
+  getTransactionHistory(input: {accountId: $accountId}) {
     ...InvestmentAccountTransactionOutput
   }
 }

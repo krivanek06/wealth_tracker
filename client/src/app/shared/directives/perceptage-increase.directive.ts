@@ -1,5 +1,5 @@
 import { Directive, Input, OnInit, Renderer2, ViewContainerRef } from '@angular/core';
-import { GeneralFuntionUtl } from '../utils';
+import { GeneralFunctionUtil } from '../utils';
 
 /**
  * Use this if you already have the prct diff & diff
@@ -132,7 +132,7 @@ export class PerceptageIncreaseDirective implements OnInit {
 			const sign = this.useCurrencySign ? '$' : '';
 
 			const changeSpan = this.rederer2.createElement('span');
-			const text = `${sign} ${GeneralFuntionUtl.formatLargeNumber(change)}`;
+			const text = `${sign} ${GeneralFunctionUtil.formatLargeNumber(change)}`;
 			const changeText = !!changesPercentage ? this.rederer2.createText(`(${text})`) : this.rederer2.createText(text);
 
 			// changesPercentage does not exist -> changeSpan will be color

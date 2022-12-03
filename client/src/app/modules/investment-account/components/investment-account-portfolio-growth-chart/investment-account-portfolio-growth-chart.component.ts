@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
 import * as Highcharts from 'highcharts';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 import { InvestmentAccountGrowth } from '../../../../core/graphql';
-import { GeneralFuntionUtl } from '../../../../shared/utils';
+import { GeneralFunctionUtil } from '../../../../shared/utils';
 
 NoDataToDisplay(Highcharts);
 
@@ -205,7 +205,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 				headerFormat: '<p style="color:#909592; font-size: 12px">{point.key}</p><br/>',
 				pointFormatter: function () {
 					const that = this as any;
-					const value = GeneralFuntionUtl.formatLargeNumber(that.y);
+					const value = GeneralFunctionUtil.formatLargeNumber(that.y);
 					const name = that.series.name.toLowerCase();
 					const isCurrency = ['cash', 'balance', 'invested'].includes(name);
 

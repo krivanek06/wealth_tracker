@@ -1,3 +1,39 @@
 :host {
-  display: block;
+	display: block;
+
+	.mat-column-symbol {
+		width: auto;
+
+		@screen md {
+			width: 220px;
+		}
+
+		@screen lg {
+			width: 160px;
+		}
+	}
+
+	.mat-column-date {
+		width: 120px;
+	}
+
+	.mat-column-total {
+		width: 140px;
+	}
+
+	.mat-column-value {
+		width: 140px;
+	}
+
+	.mat-column-return {
+		width: 220px;
+	}
+
+	.mat-column-order {
+		width: 80px;
+
+		@screen xl {
+			width: 100px;
+		}
+	}
 }

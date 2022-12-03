@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { catchError, combineLatest, EMPTY, filter, first, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, EMPTY, filter, first, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { AssetApiService, InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	AssetGeneralFragment,
@@ -133,13 +133,10 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		// on symbol pick load transaction history
 		this.transactionHistory$ = this.formSymbol.valueChanges.pipe(
 			startWith(this.formSymbol.value),
-			switchMap((value) =>
-				!value
-					? of([])
-					: this.investmentAccountFacadeApiService.getTransactionHistory({
-							accountId: this.data.investmentId,
-							filterSymbols: [value.id],
-					  })
+			switchMap((value: AssetGeneralFragment) =>
+				this.investmentAccountFacadeApiService
+					.getTransactionHistory(this.data.investmentId)
+					.pipe(map((transactions) => transactions.filter((d) => (!!value ? d.assetId === value.id : false))))
 			)
 		);
 
@@ -218,8 +215,6 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 			.deleteInvestmentAccountHolding(this.data.investmentId, history)
 			.pipe(
 				tap(() => {
-					// force to reload history
-					this.formSymbol.patchValue(this.formSymbol.value);
 					DialogServiceUtil.showNotificationBar(`Holding history has been removed`);
 				}),
 				// memory leak

@@ -40,7 +40,12 @@ mutation DeleteInvestmentAccount($input: String!) {
 
 mutation CreateInvestmentAccountHolding($input: InvestmentAccounHoldingCreateInput!) {
 	createInvestmentAccountHolding(input: $input) {
-		...InvestmentAccountActiveHoldingOutput
+		holdingOutput {
+			...InvestmentAccountActiveHoldingOutput
+		}
+		transaction {
+			...InvestmentAccountTransactionOutput
+		}
 	}
 }
 
@@ -98,8 +103,8 @@ query GetTopTransactions($input: String!) {
 	}
 }
 
-query GetTransactionHistory($input: InvestmentAccountTransactionInput!) {
-	getTransactionHistory(input: $input) {
+query GetTransactionHistory($accountId: String!) {
+	getTransactionHistory(input: { accountId: $accountId }) {
 		...InvestmentAccountTransactionOutput
 	}
 }

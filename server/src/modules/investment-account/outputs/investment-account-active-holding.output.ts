@@ -1,6 +1,7 @@
 import { Field, Float, ObjectType } from '@nestjs/graphql';
 import { InvestmentAccountHoldingType } from '@prisma/client';
 import { AssetGeneral } from './../../asset-manager';
+import { InvestmentAccountTransactionOutput } from './investment-account-transaction.output';
 
 @ObjectType()
 export class InvestmentAccountActiveHoldingOutput {
@@ -25,7 +26,9 @@ export class InvestmentAccountActiveHoldingOutput {
 	@Field(() => String)
 	sector: string;
 
-	@Field(() => Float)
+	@Field(() => Float, {
+		description: 'Total units for the active holding',
+	})
 	units: number;
 
 	@Field(() => Float)
@@ -36,4 +39,17 @@ export class InvestmentAccountActiveHoldingOutput {
 
 	@Field(() => AssetGeneral)
 	assetGeneral: AssetGeneral;
+}
+
+@ObjectType()
+export class InvestmentAccountActiveHoldingOutputWrapper {
+	@Field(() => InvestmentAccountActiveHoldingOutput, {
+		description: 'Modified active holding current data',
+	})
+	holdingOutput: InvestmentAccountActiveHoldingOutput;
+
+	@Field(() => InvestmentAccountTransactionOutput, {
+		description: 'Transaction that was created',
+	})
+	transaction: InvestmentAccountTransactionOutput;
 }

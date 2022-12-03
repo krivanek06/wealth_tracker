@@ -9,7 +9,7 @@ import {
 	InvestmentAccounHoldingHistoryDeleteInput,
 	InvestmentAccountCashCreateInput,
 } from '../inputs';
-import { InvestmentAccountActiveHoldingOutput } from '../outputs';
+import { InvestmentAccountActiveHoldingOutput, InvestmentAccountTransactionOutput } from '../outputs';
 import { InvestmentAccountCashChangeService } from './investment-account-cache-change.service';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
@@ -35,7 +35,7 @@ export class InvestmentAccountHoldingService {
 	async createInvestmentAccountHolding(
 		input: InvestmentAccounHoldingCreateInput,
 		userId: string
-	): Promise<InvestmentAccountHolding> {
+	): Promise<{ holding: InvestmentAccountHolding; transaction: InvestmentAccountTransactionOutput }> {
 		// do not allow selecting weekend for date
 		if (MomentServiceUtil.isWeekend(input.holdingInputData.date)) {
 			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.IS_WEEKEND, HttpStatus.BAD_REQUEST);
@@ -102,6 +102,8 @@ export class InvestmentAccountHoldingService {
 			date: input.holdingInputData.date,
 			cashValue: input.holdingInputData.units * closedValueApi * (input.type === 'SELL' ? 1 : -1),
 		};
+
+		// save cash
 		const savedCash = await this.investmentAccountCashChangeService.createInvestmentAccountCashe(cashInput, userId);
 
 		// calculate return & returnChange if Sell operation
@@ -134,6 +136,13 @@ export class InvestmentAccountHoldingService {
 		// get holding type and sector
 		const [holdingType, assetSector] = await this.getSectorAllocation(input.symbol, input.isCrypto);
 
+		// create returning InvestmentAccountTransactionOutput
+		const transaction: InvestmentAccountTransactionOutput = {
+			...newHoldingHistory,
+			holdingType: holdingType,
+			sector: assetSector,
+		};
+
 		// holding may already exists or create new one
 		const modifiedHolding = !!existingHolding
 			? await this.modifyExistingHoldingWithHistory(investmentAccount, input.symbol, mergedHoldingHistory)
@@ -145,7 +154,7 @@ export class InvestmentAccountHoldingService {
 					assetSector
 			  );
 
-		return modifiedHolding;
+		return { holding: modifiedHolding, transaction };
 	}
 
 	/**

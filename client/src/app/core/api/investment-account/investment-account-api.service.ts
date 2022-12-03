@@ -15,13 +15,12 @@ import {
 	GetTransactionHistoryGQL,
 	GetTransactionSymbolsGQL,
 	InvestmentAccounHoldingCreateInput,
-	InvestmentAccountActiveHoldingOutput,
+	InvestmentAccountActiveHoldingOutputWrapper,
 	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
 	InvestmentAccountHoldingHistoryFragment,
 	InvestmentAccountHoldingHistoryType,
 	InvestmentAccountOverviewFragment,
-	InvestmentAccountTransactionInput,
 	InvestmentAccountTransactionOutput,
 } from '../../graphql';
 import { InvestmentAccountCacheService } from './investment-account-cache.service';
@@ -68,17 +67,12 @@ export class InvestmentAccountApiService {
 			.valueChanges.pipe(map((res) => res.data.getInvestmentAccountGrowth));
 	}
 
-	getTransactionHistory(input: InvestmentAccountTransactionInput): Observable<InvestmentAccountTransactionOutput[]> {
+	getTransactionHistory(accountId: string): Observable<InvestmentAccountTransactionOutput[]> {
 		return this.getTransactionHistoryGQL
-			.fetch(
-				{
-					input,
-				},
-				{
-					fetchPolicy: 'network-only',
-				}
-			)
-			.pipe(map((res) => res.data.getTransactionHistory));
+			.watch({
+				accountId,
+			})
+			.valueChanges.pipe(map((res) => res.data.getTransactionHistory));
 	}
 
 	getAvailableTransactionSymbols(input: string): Observable<string[]> {
@@ -98,26 +92,38 @@ export class InvestmentAccountApiService {
 			},
 			{
 				update: (store: DataProxy, { data }) => {
-					const result = data?.createInvestmentAccountHolding as InvestmentAccountActiveHoldingOutput;
-					const account = this.investmentAccountCacheService.getInvestmentAccountFromCache(input.investmentAccountId);
-					const holdingIndex = account.activeHoldings.findIndex((d) => d.assetId === result.assetId);
+					const result = data?.createInvestmentAccountHolding as InvestmentAccountActiveHoldingOutputWrapper;
+					const { holdingOutput, transaction } = result;
+
+					const accountId = input.investmentAccountId;
+					const account = this.investmentAccountCacheService.getInvestmentAccountFromCache(accountId);
+					const holdingIndex = account.activeHoldings.findIndex((d) => d.assetId === holdingOutput.assetId);
 
 					// if sell I may reduce or completely sell every holding
 					if (input.type === InvestmentAccountHoldingHistoryType.Sell) {
 						const activeHoldings =
-							result.units !== 0
-								? account.activeHoldings.map((d) => (d.assetId === result.assetId ? result : d))
-								: account.activeHoldings.filter((d) => d.id !== result.id);
+							holdingOutput.units !== 0
+								? account.activeHoldings.map((d) => (d.assetId === holdingOutput.assetId ? holdingOutput : d))
+								: account.activeHoldings.filter((d) => d.id !== holdingOutput.id);
 						this.investmentAccountCacheService.updateInvestmentAccount({ ...account, activeHoldings });
 					}
 
 					// if buy then symbol may or may not be in my active holdings
-					if (input.type === InvestmentAccountHoldingHistoryType.Buy) {
+					else if (input.type === InvestmentAccountHoldingHistoryType.Buy) {
 						const activeHoldings =
 							holdingIndex > -1
-								? account.activeHoldings.map((d) => (d.assetId === result.assetId ? result : d))
-								: [...account.activeHoldings, result];
+								? account.activeHoldings.map((d) => (d.assetId === holdingOutput.assetId ? holdingOutput : d))
+								: [...account.activeHoldings, holdingOutput];
 						this.investmentAccountCacheService.updateInvestmentAccount({ ...account, activeHoldings });
+					}
+
+					// update transaction history
+					const cachedTransactionHistory = this.investmentAccountCacheService.getTransactionHistory(accountId);
+					if (cachedTransactionHistory) {
+						this.investmentAccountCacheService.updateTransactionHistory(accountId, [
+							...cachedTransactionHistory,
+							transaction,
+						]);
 					}
 				},
 			}
@@ -157,8 +163,26 @@ export class InvestmentAccountApiService {
 
 					// remove cashChangeId from cashChange
 					const cashChange = account.cashChange.filter((d) => d.itemId !== result.cashChangeId);
+					// update units for active holding if exists
+					const activeHoldings = account.activeHoldings.map((d) =>
+						d.assetId === history.assetId
+							? {
+									...d,
+									units:
+										d.units +
+										(history.type === InvestmentAccountHoldingHistoryType.Buy ? -history.units : history.units),
+							  }
+							: d
+					);
+					// save update in cache
+					this.investmentAccountCacheService.updateInvestmentAccount({ ...account, cashChange, activeHoldings });
 
-					this.investmentAccountCacheService.updateInvestmentAccount({ ...account, cashChange });
+					// update transaction history
+					const cachedTransactionHistory = this.investmentAccountCacheService.getTransactionHistory(accountId);
+					if (cachedTransactionHistory) {
+						const filteredHistory = cachedTransactionHistory.filter((d) => d.itemId !== result.itemId);
+						this.investmentAccountCacheService.updateTransactionHistory(accountId, filteredHistory);
+					}
 				},
 			}
 		);

@@ -60,20 +60,20 @@ export class InvestmentAccountTransactionService {
 			.filter((d) => (input.includeBuyOperation ? true : d.type === 'SELL'));
 
 		const order = input.orderAsc ? 'asc' : 'desc';
-		const offest = input.offset;
+		const offset = input.offset;
 		const limit = input.offset + INVESTMENT_ACCOUNT_SEARCH_LIMIS;
 
 		if (input.orderType === InvestmentAccountTransactionInputOrderType.ORDER_BY_VALUE) {
-			return this.getTransactionsOrder(account, history, 'return', order, offest, limit);
+			return this.getTransactionsOrder(account, history, 'return', order, offset, limit);
 		}
 		if (input.orderType === InvestmentAccountTransactionInputOrderType.ORDER_BY_VALUE_CHANGE) {
-			return this.getTransactionsOrder(account, history, 'returnChange', order, offest, limit);
+			return this.getTransactionsOrder(account, history, 'returnChange', order, offset, limit);
 		}
 		if (input.orderType === InvestmentAccountTransactionInputOrderType.ORDER_BY_CREATED_AT) {
-			return this.getTransactionsOrder(account, history, 'createdAt', order, offest, limit);
+			return this.getTransactionsOrder(account, history, 'createdAt', order, offset, limit);
 		}
 
-		return this.getTransactionsOrder(account, history, 'date', order, offest, limit);
+		return this.getTransactionsOrder(account, history, 'date', order, offset, limit);
 	}
 
 	private getTransactionsOrder(

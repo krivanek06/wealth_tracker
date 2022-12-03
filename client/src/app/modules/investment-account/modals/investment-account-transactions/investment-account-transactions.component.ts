@@ -49,8 +49,6 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 				)
 			);
 
-		this.transactionHistory$ = this.investmentAccountFacadeApiService.getTransactionHistory({
-			accountId: this.data.investmentId,
-		});
+		this.transactionHistory$ = this.investmentAccountFacadeApiService.getTransactionHistory(this.data.investmentId);
 	}
 }

@@ -140,7 +140,7 @@
 	<div class="min-h-[300px] sm:pl-4 md:pr-2 flex-1">
 		<div class="text-base text-center mb-2 g-color-danger">Historical data</div>
 		<div class="text-xs text-center text-gray-500">Hold to remove</div>
-		<div class="min-h-[200px] max-h-[420px] overflow-x-hidden">
+		<div class="min-h-[200px] max-h-[420px] overflow-x-hidden pt-3">
 			<div *ngFor="let history of transactionHistory$ | async | sortByKey: 'date': 'desc'" class="g-bottom-border">
 				<button
 					mat-button

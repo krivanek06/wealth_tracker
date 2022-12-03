@@ -13,7 +13,6 @@ import {
 	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
 	InvestmentAccountOverviewFragment,
-	InvestmentAccountTransactionInput,
 	InvestmentAccountTransactionOutput,
 } from '../../graphql';
 import { InvestmentAccountApiService } from './investment-account-api.service';
@@ -40,8 +39,8 @@ export class InvestmentAccountFacadeApiService {
 		return this.investmentAccountApiService.getInvestmentAccountGrowth(accountId);
 	}
 
-	getTransactionHistory(input: InvestmentAccountTransactionInput): Observable<InvestmentAccountTransactionOutput[]> {
-		return this.investmentAccountApiService.getTransactionHistory(input);
+	getTransactionHistory(accountId: string): Observable<InvestmentAccountTransactionOutput[]> {
+		return this.investmentAccountApiService.getTransactionHistory(accountId);
 	}
 
 	getAvailableTransactionSymbols(input: string): Observable<string[]> {

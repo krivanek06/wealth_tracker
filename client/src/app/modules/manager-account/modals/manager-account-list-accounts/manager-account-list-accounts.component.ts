@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { InvestmentAccountFacadeApiService, PersonalAccountApiService } from '../../../../core/api';
 import { InvestmentAccountOverviewFragment, PersonalAccountOverviewBasicFragment } from '../../../../core/graphql';
+import { GeneralAccounts } from '../../models';
 
 @Component({
 	selector: 'app-manager-account-list-accounts',
@@ -13,6 +15,8 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 	personalAccounts$!: Observable<PersonalAccountOverviewBasicFragment[]>;
 	investmentAccounts$!: Observable<InvestmentAccountOverviewFragment[]>;
 
+	selectedAccountControl = new FormControl<GeneralAccounts | null>(null);
+
 	constructor(
 		private personalAccountApiService: PersonalAccountApiService,
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService
@@ -21,5 +25,7 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 	ngOnInit(): void {
 		this.personalAccounts$ = this.personalAccountApiService.getPersonalAccounts();
 		this.investmentAccounts$ = this.investmentAccountFacadeApiService.getInvestmentAccounts();
+
+		this.selectedAccountControl.valueChanges.subscribe(console.log);
 	}
 }

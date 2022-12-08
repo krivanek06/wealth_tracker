@@ -1,7 +1,15 @@
 <h2 mat-dialog-title>Account manager</h2>
 
-<mat-dialog-content> asdasddsa </mat-dialog-content>
+<!-- content -->
+<mat-dialog-content>
+	<app-list-accounts
+		[formControl]="selectedAccountControl"
+		[personalAccounts]="personalAccounts$ | async"
+		[investmentAccounts]="investmentAccounts$ | async"
+	></app-list-accounts>
+</mat-dialog-content>
 
+<!-- action buttons -->
 <mat-dialog-actions>
 	<div class="g-dialog-button-wrapper justify-end">
 		<button mat-stroked-button mat-dialog-close type="button" class="lg:w-auto">Cancel</button>

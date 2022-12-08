@@ -53,3 +53,10 @@ mat-dialog-container {
 .mat-dialog-container {
 	padding: 30px !important;
 }
+
+.g-dialog-button-wrapper {
+	@apply flex flex-col-reverse lg:flex-row items-center gap-2 w-full;
+	button {
+		@apply w-full min-w-[240px];
+	}
+}

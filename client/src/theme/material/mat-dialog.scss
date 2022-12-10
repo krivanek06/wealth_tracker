@@ -13,35 +13,63 @@ mat-dialog-container {
 	// }
 }
 
-.g-mat-dialog-big .mat-dialog-content {
-	max-height: none;
+.g-mat-dialog-big {
+	.mat-dialog-content {
+		max-height: none;
 
-	@screen sm {
-		max-height: 65vh;
+		@screen sm {
+			max-height: 65vh;
+		}
+	}
+
+	.mat-dialog-container {
+		height: 98vh !important;
+
+		@screen sm {
+			height: auto !important;
+		}
+
+		@screen md {
+			width: 80vw !important;
+		}
+
+		@screen xl {
+			width: 70vw !important;
+		}
+
+		@screen 2xl {
+			width: 60vw !important;
+		}
 	}
 }
 
-.g-mat-dialog-big .mat-dialog-container {
-	height: 98vh !important;
+.g-mat-dialog-medium {
+	.mat-dialog-content {
+		max-height: none;
 
-	@screen sm {
-		height: auto !important;
+		@screen sm {
+			max-height: 65vh;
+		}
 	}
 
-	@screen md {
-		width: 80vw !important;
-	}
+	.mat-dialog-container {
+		height: 98vh !important;
 
-	// @screen lg {
-	// 	width: 70vw !important;
-	// }
+		@screen sm {
+			height: auto !important;
+		}
 
-	@screen xl {
-		width: 70vw !important;
-	}
+		@screen md {
+			width: 70vw !important;
+		}
 
-	@screen 2xl {
-		width: 60vw !important;
+		@screen xl {
+			width: 60vw !important;
+		}
+
+		@screen 2xl {
+			width: 50vw !important;
+		}
 	}
 }
 

@@ -1,9 +1,15 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { InvestmentAccountFacadeApiService, PersonalAccountApiService } from '../../../../core/api';
 import { InvestmentAccountOverviewFragment, PersonalAccountOverviewBasicFragment } from '../../../../core/graphql';
-import { GeneralAccounts } from '../../models';
+import { requiredValidator } from '../../../../shared/models';
+import {
+	GeneralAccounts,
+	GeneralAccountType,
+	GeneralAccountTypeInputSource,
+	getGeneralAccountType,
+} from '../../models';
 
 @Component({
 	selector: 'app-manager-account-list-accounts',
@@ -15,7 +21,18 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 	personalAccounts$!: Observable<PersonalAccountOverviewBasicFragment[]>;
 	investmentAccounts$!: Observable<InvestmentAccountOverviewFragment[]>;
 
+	// control to select from existing account
 	selectedAccountControl = new FormControl<GeneralAccounts | null>(null);
+
+	// form to edit account or create new
+	accountForm = new FormGroup({
+		accountName: new FormControl<string | null>(null, { validators: requiredValidator }),
+		accountType: new FormControl<GeneralAccountType | null>(null, { validators: requiredValidator }),
+	});
+
+	showSelectAccount = true;
+
+	GeneralAccountTypeInputSource = GeneralAccountTypeInputSource;
 
 	constructor(
 		private personalAccountApiService: PersonalAccountApiService,
@@ -26,6 +43,54 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 		this.personalAccounts$ = this.personalAccountApiService.getPersonalAccounts();
 		this.investmentAccounts$ = this.investmentAccountFacadeApiService.getInvestmentAccounts();
 
-		this.selectedAccountControl.valueChanges.subscribe(console.log);
+		this.selectedAccountControl.valueChanges.subscribe((value) => {
+			this.showSelectAccount = !value;
+			this.accountForm.setValue({
+				accountName: value?.name || null,
+				accountType: getGeneralAccountType(value),
+			});
+		});
+
+		this.accountForm.valueChanges.subscribe(console.log);
+	}
+
+	onCancelClick(): void {
+		this.showSelectAccount = true;
+		this.selectedAccountControl.patchValue(null);
+	}
+
+	async onSubmit(): Promise<void> {
+		this.accountForm.markAllAsTouched();
+		const accountName = this.accountForm.controls.accountName.value;
+		const accountType = this.accountForm.controls.accountType.value;
+		const isEditing = !!this.selectedAccountControl.value;
+
+		if (this.accountForm.invalid || !accountName || !accountType) {
+			return;
+		}
+
+		// create new personal account
+		if (!isEditing && accountType === GeneralAccountType.PERSONAL_ACCOUNT) {
+			console.log('personal account new');
+		}
+
+		// create new personal account
+		else if (isEditing && accountType === GeneralAccountType.PERSONAL_ACCOUNT) {
+			console.log('personal account edit');
+		}
+
+		// create new personal account
+		else if (!isEditing && accountType === GeneralAccountType.INVESTMENT_ACCOUNT) {
+			console.log('investment account new');
+		}
+
+		// create new personal account
+		else if (isEditing && accountType === GeneralAccountType.INVESTMENT_ACCOUNT) {
+			console.log('investment account edit');
+		}
+	}
+
+	onCreateNewAccountClick(): void {
+		this.showSelectAccount = false;
 	}
 }

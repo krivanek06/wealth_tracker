@@ -1,13 +1,55 @@
-<h2 mat-dialog-title>Account manager</h2>
+<div mat-dialog-title class="flex flex-col sm:flex-row justify-between px-2 items-center">
+	<h2>Account manager</h2>
+	<div>
+		<button *ngIf="showSelectAccount" mat-stroked-button color="accent" (click)="onCreateNewAccountClick()">
+			<mat-icon>add</mat-icon>
+			Create new
+		</button>
+	</div>
+</div>
 
 <!-- content -->
 <mat-dialog-content>
+	<!-- account lists -->
 	<app-list-accounts
+		*ngIf="showSelectAccount"
 		[formControl]="selectedAccountControl"
 		[personalAccounts]="personalAccounts$ | async"
 		[investmentAccounts]="investmentAccounts$ | async"
 	></app-list-accounts>
+
+	<!-- editing form -->
+	<form *ngIf="!showSelectAccount" [formGroup]="accountForm" class="p-4" (ngSubmit)="onSubmit()">
+		<div *ngIf="!selectedAccountControl.value" class="p-2 text-center text-gray-400 text-lg">
+			To create an account, enter the account name and select account type
+		</div>
+
+		<!-- account name -->
+		<app-form-mat-input-wrapper
+			controlName="accountName"
+			hintText="Enter name of your account"
+		></app-form-mat-input-wrapper>
+
+		<!-- account type -->
+		<app-form-mat-input-wrapper
+			controlName="accountType"
+			inputType="SELECT"
+			hintText="Choose your account type"
+			[disabled]="!!selectedAccountControl.value"
+			[inputSource]="GeneralAccountTypeInputSource"
+		></app-form-mat-input-wrapper>
+
+		<!-- form action buttons -->
+		<div class="flex flex-col-reverse sm:flex-row gap-2">
+			<button type="button" mat-stroked-button (click)="onCancelClick()" class="flex-1">Cancel</button>
+			<button type="submit" mat-stroked-button color="primary" class="flex-1">Save</button>
+		</div>
+	</form>
 </mat-dialog-content>
+
+<div class="my-4">
+	<mat-divider></mat-divider>
+</div>
 
 <!-- action buttons -->
 <mat-dialog-actions>

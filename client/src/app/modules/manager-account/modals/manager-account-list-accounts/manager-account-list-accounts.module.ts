@@ -6,8 +6,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { ManagerAccountListAccountsComponent } from './manager-account-list-accounts.component';
+import { FormMatInputWrapperModule } from '../../../../shared/components';
 import { ListAccountsComponent } from './list-accounts/list-accounts.component';
+import { ManagerAccountListAccountsComponent } from './manager-account-list-accounts.component';
 
 @NgModule({
 	declarations: [ManagerAccountListAccountsComponent, ListAccountsComponent],
@@ -19,6 +20,7 @@ import { ListAccountsComponent } from './list-accounts/list-accounts.component';
 		MatDialogModule,
 		MatDividerModule,
 		ReactiveFormsModule,
+		FormMatInputWrapperModule,
 	],
 	exports: [ManagerAccountListAccountsComponent],
 })

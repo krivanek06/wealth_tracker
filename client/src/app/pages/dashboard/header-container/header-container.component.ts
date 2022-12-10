@@ -19,7 +19,7 @@ export class HeaderContainerComponent implements OnInit {
 
 	onManageAccountClick(): void {
 		this.dialog.open(ManagerAccountListAccountsComponent, {
-			panelClass: ['g-mat-dialog-big'],
+			panelClass: ['g-mat-dialog-medium'],
 		});
 	}
 }

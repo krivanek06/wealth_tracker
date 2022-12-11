@@ -104,6 +104,7 @@ export class PersonalAccountDataAggregatorService {
 							? {
 									...d,
 									data: [
+										...d.data,
 										{
 											__typename: 'PersonalAccountAggregationDataOutput',
 											entries: 1,

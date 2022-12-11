@@ -112,7 +112,16 @@ export class InvestmentAccountApiService {
 			},
 			{
 				update: (store: DataProxy, { data }) => {
-					this.apollo.client.cache.evict({ id: `${data?.__typename}:${data?.deleteInvestmentAccount.id}` });
+					// load accounts from cache
+					const accounts = this.investmentAccountCacheService.getInvestmentAccountsFromCache() ?? [];
+					const updatedAccounts = accounts.filter((d) => d.id !== accountId);
+
+					// update cache
+					this.investmentAccountCacheService.updateInvestmentAccountsList([...updatedAccounts]);
+
+					// remove from cache
+					this.apollo.client.cache.evict({ id: `${data?.__typename}:${accountId}` });
+					this.apollo.client.cache.gc();
 				},
 			}
 		);

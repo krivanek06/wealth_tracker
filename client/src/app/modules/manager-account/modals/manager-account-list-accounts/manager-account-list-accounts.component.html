@@ -1,9 +1,28 @@
-<div mat-dialog-title class="flex flex-col sm:flex-row justify-between px-2 items-center">
+<div mat-dialog-title class="flex flex-col items-center justify-between px-2 sm:flex-row">
 	<h2>Account manager</h2>
 	<div>
-		<button *ngIf="showSelectAccount" mat-stroked-button color="accent" (click)="onCreateNewAccountClick()">
+		<!-- create button -->
+		<button
+			*ngIf="showSelectAccount"
+			mat-stroked-button
+			color="accent"
+			(click)="onCreateNewAccountClick()"
+			matTooltip="Create new account"
+		>
 			<mat-icon>add</mat-icon>
 			Create new
+		</button>
+
+		<!-- delete button -->
+		<button
+			*ngIf="!!selectedAccountControl.value"
+			mat-stroked-button
+			color="warn"
+			(click)="onDeleteAccountClick(selectedAccountControl.value)"
+			matTooltip="Delete selected account"
+		>
+			<mat-icon>delete</mat-icon>
+			Delete account
 		</button>
 	</div>
 </div>
@@ -20,7 +39,7 @@
 
 	<!-- editing form -->
 	<form *ngIf="!showSelectAccount" [formGroup]="accountForm" class="p-4" (ngSubmit)="onSubmit()">
-		<div *ngIf="!selectedAccountControl.value" class="p-2 text-center text-gray-400 text-lg">
+		<div *ngIf="!selectedAccountControl.value" class="p-2 text-lg text-center text-gray-400">
 			To create an account, enter the account name and select account type
 		</div>
 
@@ -40,9 +59,12 @@
 		></app-form-mat-input-wrapper>
 
 		<!-- form action buttons -->
-		<div class="flex flex-col-reverse sm:flex-row gap-2">
+		<div class="flex flex-col-reverse gap-2 sm:flex-row">
 			<button type="button" mat-stroked-button (click)="onCancelClick()" class="flex-1">Cancel</button>
-			<button type="submit" mat-stroked-button color="primary" class="flex-1">Save</button>
+			<button type="submit" mat-stroked-button color="primary" class="flex-1">
+				<mat-icon *ngIf="showLoader" class="animate-spin">cached</mat-icon>
+				Save
+			</button>
 		</div>
 	</form>
 </mat-dialog-content>
@@ -53,7 +75,7 @@
 
 <!-- action buttons -->
 <mat-dialog-actions>
-	<div class="g-dialog-button-wrapper justify-end">
+	<div class="justify-end g-dialog-button-wrapper">
 		<button mat-stroked-button mat-dialog-close type="button" class="lg:w-auto">Cancel</button>
 	</div>
 </mat-dialog-actions>

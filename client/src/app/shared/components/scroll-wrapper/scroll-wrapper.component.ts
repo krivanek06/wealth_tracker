@@ -22,6 +22,9 @@ export class ScrollWrapperComponent implements OnInit, AfterViewInit {
 
 	buttonHeightPx = 40;
 
+	isLeftScrollDisabled = true;
+	isRightScrollDisabled = false;
+
 	constructor(private cd: ChangeDetectorRef) {}
 
 	ngOnInit(): void {}
@@ -34,9 +37,25 @@ export class ScrollWrapperComponent implements OnInit, AfterViewInit {
 	onScollChange(change: 'increment' | 'decement'): void {
 		const addValue = change === 'increment' ? 200 : -200;
 		if (this.isFlexRow) {
+			const newValue = this.element.nativeElement.scrollLeft + addValue;
+
+			// increase scroll
 			this.element.nativeElement.scrollLeft += addValue;
+
+			// disable buttons if needed
+			const maxScrollLeft = this.element.nativeElement.scrollWidth - this.element.nativeElement.clientWidth - 5;
+			this.isLeftScrollDisabled = newValue === 0;
+			this.isRightScrollDisabled = newValue >= maxScrollLeft;
 		} else {
+			const newValue = this.element.nativeElement.scrollTop + addValue;
+
+			// increase scroll
 			this.element.nativeElement.scrollTop += addValue;
+
+			// disable buttons if needed
+			const maxScrollLeft = this.element.nativeElement.scrollWidth - this.element.nativeElement.clientWidth - 5;
+			this.isLeftScrollDisabled = newValue <= 0;
+			this.isRightScrollDisabled = newValue >= maxScrollLeft;
 		}
 	}
 }

@@ -122,7 +122,7 @@ export class InvestmentAccountService {
 		);
 
 		// select soonest date to generate date range for chart data
-		const soonestDate = cashGrowth[0]?.date < investedGrowth[0]?.date ? cashGrowth[0].date : investedGrowth[0].date;
+		const soonestDate = cashGrowth[0]?.date < investedGrowth[0]?.date ? cashGrowth[0]?.date : investedGrowth[0]?.date;
 
 		const result = MomentServiceUtil.getDates(soonestDate, yesterDay).map((date) => {
 			const formattedDate = MomentServiceUtil.format(date);

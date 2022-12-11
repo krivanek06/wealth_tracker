@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import {
+	GetInvestmentAccountsDocument,
+	GetInvestmentAccountsQuery,
 	GetTransactionHistoryDocument,
 	GetTransactionHistoryQuery,
 	InvestmentAccountFragment,
@@ -14,6 +16,24 @@ import {
 })
 export class InvestmentAccountCacheService {
 	constructor(private apollo: Apollo) {}
+
+	getInvestmentAccountsFromCache(): InvestmentAccountOverviewFragment[] | undefined {
+		const query = this.apollo.client.readQuery<GetInvestmentAccountsQuery>({
+			query: GetInvestmentAccountsDocument,
+		});
+
+		return query?.getInvestmentAccounts;
+	}
+
+	updateInvestmentAccountsList(data: InvestmentAccountOverviewFragment[]): void {
+		return this.apollo.client.writeQuery<GetInvestmentAccountsQuery>({
+			query: GetInvestmentAccountsDocument,
+			data: {
+				__typename: 'Query',
+				getInvestmentAccounts: [...data],
+			},
+		});
+	}
 
 	getInvestmentAccountFromCache(accountId: string): InvestmentAccountFragment {
 		const fragment = this.apollo.client.readFragment<InvestmentAccountFragment>({

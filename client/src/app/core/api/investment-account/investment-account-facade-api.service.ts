@@ -4,12 +4,16 @@ import { Observable } from 'rxjs';
 import {
 	CreateInvestmentAccountCasheMutation,
 	CreateInvestmentAccountHoldingMutation,
+	CreateInvestmentAccountMutation,
 	DeleteInvestmentAccountCasheMutation,
 	DeleteInvestmentAccountHoldingMutation,
+	DeleteInvestmentAccountMutation,
+	EditInvestmentAccountMutation,
 	InvestmentAccounHoldingCreateInput,
 	InvestmentAccountCashChangeFragment,
 	InvestmentAccountCashCreateInput,
 	InvestmentAccountCashDeleteInput,
+	InvestmentAccountEditInput,
 	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
 	InvestmentAccountOverviewFragment,
@@ -17,6 +21,7 @@ import {
 } from '../../graphql';
 import { InvestmentAccountApiService } from './investment-account-api.service';
 import { InvestmentAccountCashApiService } from './investment-account-cash-api.service';
+import { InvestmentAccountHoldingService } from './investment-account-holding.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -24,7 +29,8 @@ import { InvestmentAccountCashApiService } from './investment-account-cash-api.s
 export class InvestmentAccountFacadeApiService {
 	constructor(
 		private investmentAccountCashApiService: InvestmentAccountCashApiService,
-		private investmentAccountApiService: InvestmentAccountApiService
+		private investmentAccountApiService: InvestmentAccountApiService,
+		private investmentAccountHoldingService: InvestmentAccountHoldingService
 	) {}
 
 	getInvestmentAccounts(): Observable<InvestmentAccountOverviewFragment[]> {
@@ -33,6 +39,18 @@ export class InvestmentAccountFacadeApiService {
 
 	getInvestmentAccountById(accountId: string): Observable<InvestmentAccountFragment> {
 		return this.investmentAccountApiService.getInvestmentAccountById(accountId);
+	}
+
+	createInvestmentAccount(name: string): Observable<FetchResult<CreateInvestmentAccountMutation>> {
+		return this.investmentAccountApiService.createInvestmentAccount(name);
+	}
+
+	editInvestmentAccount(input: InvestmentAccountEditInput): Observable<FetchResult<EditInvestmentAccountMutation>> {
+		return this.investmentAccountApiService.editInvestmentAccount(input);
+	}
+
+	deleteInvestmentAccount(accountId: string): Observable<FetchResult<DeleteInvestmentAccountMutation>> {
+		return this.investmentAccountApiService.deleteInvestmentAccount(accountId);
 	}
 
 	getInvestmentAccountGrowth(accountId: string): Observable<InvestmentAccountGrowth[]> {
@@ -50,14 +68,14 @@ export class InvestmentAccountFacadeApiService {
 	createInvestmentAccountHolding(
 		input: InvestmentAccounHoldingCreateInput
 	): Observable<FetchResult<CreateInvestmentAccountHoldingMutation>> {
-		return this.investmentAccountApiService.createInvestmentAccountHolding(input);
+		return this.investmentAccountHoldingService.createInvestmentAccountHolding(input);
 	}
 
 	deleteInvestmentAccountHolding(
 		accountId: string,
 		history: InvestmentAccountTransactionOutput
 	): Observable<FetchResult<DeleteInvestmentAccountHoldingMutation>> {
-		return this.investmentAccountApiService.deleteInvestmentAccountHolding(accountId, history);
+		return this.investmentAccountHoldingService.deleteInvestmentAccountHolding(accountId, history);
 	}
 
 	createInvestmentAccountCash(

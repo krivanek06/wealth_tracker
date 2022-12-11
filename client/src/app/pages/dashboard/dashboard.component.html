@@ -1,3 +1,6 @@
+<!-- header -->
+<app-header-container></app-header-container>
+
 <!-- display all personal accounts -->
 <ng-container *ngFor="let personalAccountBasic of personalAccountBasic$ | async ">
 	<app-personal-account [personalAccountBasic]="personalAccountBasic"></app-personal-account>

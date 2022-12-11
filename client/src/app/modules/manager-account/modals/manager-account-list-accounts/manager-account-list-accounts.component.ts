@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { InvestmentAccountFacadeApiService, PersonalAccountApiService } from '../../../../core/api';
+import { firstValueFrom, Observable } from 'rxjs';
+import { InvestmentAccountFacadeApiService, PersonalAccountFacadeService } from '../../../../core/api';
 import { InvestmentAccountOverviewFragment, PersonalAccountOverviewBasicFragment } from '../../../../core/graphql';
 import { requiredValidator } from '../../../../shared/models';
 import {
@@ -10,12 +10,13 @@ import {
 	GeneralAccountTypeInputSource,
 	getGeneralAccountType,
 } from '../../models';
+import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.util';
 
 @Component({
 	selector: 'app-manager-account-list-accounts',
 	templateUrl: './manager-account-list-accounts.component.html',
 	styleUrls: ['./manager-account-list-accounts.component.scss'],
-	changeDetection: ChangeDetectionStrategy.OnPush,
+	//changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManagerAccountListAccountsComponent implements OnInit {
 	personalAccounts$!: Observable<PersonalAccountOverviewBasicFragment[]>;
@@ -30,17 +31,21 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 		accountType: new FormControl<GeneralAccountType | null>(null, { validators: requiredValidator }),
 	});
 
+	// if true then shows mat-select for existing accounts
 	showSelectAccount = true;
+
+	// if true then on save a loader is spinning
+	showLoader = false;
 
 	GeneralAccountTypeInputSource = GeneralAccountTypeInputSource;
 
 	constructor(
-		private personalAccountApiService: PersonalAccountApiService,
+		private personalAccountFacadeService: PersonalAccountFacadeService,
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService
 	) {}
 
 	ngOnInit(): void {
-		this.personalAccounts$ = this.personalAccountApiService.getPersonalAccounts();
+		this.personalAccounts$ = this.personalAccountFacadeService.getPersonalAccounts();
 		this.investmentAccounts$ = this.investmentAccountFacadeApiService.getInvestmentAccounts();
 
 		this.selectedAccountControl.valueChanges.subscribe((value) => {
@@ -63,34 +68,66 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 		this.accountForm.markAllAsTouched();
 		const accountName = this.accountForm.controls.accountName.value;
 		const accountType = this.accountForm.controls.accountType.value;
-		const isEditing = !!this.selectedAccountControl.value;
+		const selectedAccountControl = this.selectedAccountControl.value;
+		const isEditing = !!selectedAccountControl;
 
 		if (this.accountForm.invalid || !accountName || !accountType) {
 			return;
 		}
 
+		this.showLoader = true;
+
 		// create new personal account
 		if (!isEditing && accountType === GeneralAccountType.PERSONAL_ACCOUNT) {
-			console.log('personal account new');
+			await firstValueFrom(this.personalAccountFacadeService.createPersonalAccount(accountName));
+			DialogServiceUtil.showNotificationBar(`Personal account ${accountName} has been created`, 'success');
 		}
 
-		// create new personal account
+		// edit personal account
 		else if (isEditing && accountType === GeneralAccountType.PERSONAL_ACCOUNT) {
 			console.log('personal account edit');
+			await firstValueFrom(
+				this.personalAccountFacadeService.editPersonalAccount({
+					id: selectedAccountControl.id,
+					name: accountName,
+				})
+			);
+			DialogServiceUtil.showNotificationBar(`PErsonal account ${accountName} has been edited`, 'success');
 		}
 
-		// create new personal account
+		// create new investment account
 		else if (!isEditing && accountType === GeneralAccountType.INVESTMENT_ACCOUNT) {
-			console.log('investment account new');
+			await firstValueFrom(this.investmentAccountFacadeApiService.createInvestmentAccount(accountName));
+			DialogServiceUtil.showNotificationBar(`Investment account ${accountName} has been created`, 'success');
 		}
 
-		// create new personal account
+		// edit investment account
 		else if (isEditing && accountType === GeneralAccountType.INVESTMENT_ACCOUNT) {
-			console.log('investment account edit');
+			await firstValueFrom(
+				this.investmentAccountFacadeApiService.editInvestmentAccount({
+					name: accountName,
+					investmentAccountId: selectedAccountControl.id,
+				})
+			);
+			DialogServiceUtil.showNotificationBar(`Investment account ${accountName} has been edited`, 'success');
 		}
+
+		this.showLoader = false;
+		this.showSelectAccount = true;
 	}
 
 	onCreateNewAccountClick(): void {
 		this.showSelectAccount = false;
+	}
+
+	async onDeleteAccountClick(account: GeneralAccounts): Promise<void> {
+		if (account.__typename === 'PersonalAccount') {
+			await firstValueFrom(this.personalAccountFacadeService.deletePersonalAccount(account.id));
+		} else if (account.__typename === 'InvestmentAccount') {
+			await firstValueFrom(this.investmentAccountFacadeApiService.deleteInvestmentAccount(account.id));
+		}
+
+		this.onCancelClick();
+		DialogServiceUtil.showNotificationBar(`Account ${account.name} has been removed`, 'success');
 	}
 }

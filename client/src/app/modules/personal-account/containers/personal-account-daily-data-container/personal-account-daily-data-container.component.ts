@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angu
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, map, Observable, startWith, switchMap } from 'rxjs';
-import { PersonalAccountApiService } from './../../../../core/api';
+import { PersonalAccountFacadeService } from './../../../../core/api';
 import {
 	PersonalAccountDailyDataFragment,
 	PersonalAccountMonthlyDataDetailFragment,
@@ -35,7 +35,7 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		tag: [] as string[],
 	});
 
-	constructor(private personalAccountApiService: PersonalAccountApiService, private dialog: MatDialog) {}
+	constructor(private personalAccountFacadeService: PersonalAccountFacadeService, private dialog: MatDialog) {}
 
 	ngOnInit(): void {
 		// set current month to form
@@ -43,7 +43,7 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		this.filterControl.patchValue({ yearAndMonth: `${year}-${month}`, tag: [], week: -1 }, { emitEvent: false });
 
 		// select account overview by ID so we are notified by changes
-		const accountOverview$ = this.personalAccountApiService.getPersonalAccountOverviewById(
+		const accountOverview$ = this.personalAccountFacadeService.getPersonalAccountOverviewById(
 			this.personalAccountBasic.id
 		);
 
@@ -63,7 +63,7 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 				}
 				// TODO this is triggered 3x , why ?
 				console.log('monthlyData', filterValues);
-				return this.personalAccountApiService.getPersonalAccountMonthlyDataById(monthlyDataOverview.id);
+				return this.personalAccountFacadeService.getPersonalAccountMonthlyDataById(monthlyDataOverview.id);
 			})
 		);
 

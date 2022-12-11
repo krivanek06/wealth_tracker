@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { catchError, EMPTY, first, iif, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { InputSource } from '../../../../shared/models';
 import { getTagImageLocation } from '../../models';
-import { PersonalAccountApiService } from './../../../../core/api';
+import { PersonalAccountFacadeService } from './../../../../core/api';
 import {
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataFragment,
@@ -38,7 +38,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	});
 
 	constructor(
-		private personalAccountApiService: PersonalAccountApiService,
+		private personalAccountFacadeService: PersonalAccountFacadeService,
 		private dialogRef: MatDialogRef<PersonalAccountDailyDataEntryComponent>,
 		@Inject(MAT_DIALOG_DATA)
 		public data: {
@@ -70,7 +70,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		}
 		this.isRemoving = true;
 		DialogServiceUtil.showNotificationBar(`Operation sent to the server side`, 'notification');
-		this.personalAccountApiService
+		this.personalAccountFacadeService
 			.deletePersonalAccountDailyEntry({
 				dailyDataId: this.data.dailyData.id,
 				monthlyDataId: this.data.dailyData.monthlyDataId,
@@ -110,8 +110,8 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 				tap(() => DialogServiceUtil.showNotificationBar(`Operation sent to the server side`, 'notification')),
 				switchMap(() =>
 					!editedDailyData
-						? this.personalAccountApiService.createPersonalAccountDailyEntry(dailyDataCreate)
-						: this.personalAccountApiService.editPersonalAccountDailyEntry({
+						? this.personalAccountFacadeService.createPersonalAccountDailyEntry(dailyDataCreate)
+						: this.personalAccountFacadeService.editPersonalAccountDailyEntry({
 								dailyDataCreate,
 								dailyDataDelete: {
 									dailyDataId: editedDailyData.id,
@@ -191,7 +191,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 
 	private initIncomeExpenseTags(): Observable<InputSource[]> {
 		// filter expense tags
-		const displayTagsExponse$ = this.personalAccountApiService.getDefaultTagsExpense().pipe(
+		const displayTagsExponse$ = this.personalAccountFacadeService.getDefaultTagsExpense().pipe(
 			map((tags) =>
 				tags.map((d) => {
 					return { caption: d.name, value: d.id, additionalData: d, image: getTagImageLocation(d.name) } as InputSource;
@@ -200,7 +200,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		);
 
 		// filter income tags
-		const displayTagsIncome$ = this.personalAccountApiService.getDefaultTagsIncome().pipe(
+		const displayTagsIncome$ = this.personalAccountFacadeService.getDefaultTagsIncome().pipe(
 			map((tags) =>
 				tags.map((d) => {
 					return { caption: d.name, value: d.id, additionalData: d, image: getTagImageLocation(d.name) } as InputSource;

@@ -1,14 +1,11 @@
 import { LayoutModule } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatDialogModule } from '@angular/material/dialog';
 import { RouterModule, Routes } from '@angular/router';
 import { InvestmentAccountModule } from '../../modules/investment-account/';
-import { ManagerAccountListAccountsModule } from '../../modules/manager-account/modals';
 import { PersonalAccountModule } from '../../modules/personal-account';
-import { HeaderModule } from '../../shared/components';
+import { HeaderContainerModule } from '../page-shared';
 import { DashboardComponent } from './dashboard.component';
-import { HeaderContainerComponent } from './header-container/header-container.component';
 
 const routes: Routes = [
 	{
@@ -19,16 +16,14 @@ const routes: Routes = [
 ];
 
 @NgModule({
-	declarations: [DashboardComponent, HeaderContainerComponent],
+	declarations: [DashboardComponent],
 	imports: [
 		CommonModule,
 		RouterModule.forChild(routes),
 		PersonalAccountModule,
 		InvestmentAccountModule,
 		LayoutModule,
-		HeaderModule,
-		ManagerAccountListAccountsModule,
-		MatDialogModule,
+		HeaderContainerModule,
 	],
 })
 export class DashboardModule {}

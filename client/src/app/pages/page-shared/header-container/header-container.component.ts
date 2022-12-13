@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ManagerAccountListAccountsComponent } from '../../../modules/manager-account/modals';
+import { LoginModalComponent } from '../../../modules/user-settings';
 
 @Component({
 	selector: 'app-header-container',
@@ -14,7 +15,9 @@ export class HeaderContainerComponent implements OnInit {
 	ngOnInit(): void {}
 
 	onUserAccountClick(): void {
-		console.log('onUserAccountClick');
+		this.dialog.open(LoginModalComponent, {
+			panelClass: ['g-mat-dialog-medium'],
+		});
 	}
 
 	onManageAccountClick(): void {

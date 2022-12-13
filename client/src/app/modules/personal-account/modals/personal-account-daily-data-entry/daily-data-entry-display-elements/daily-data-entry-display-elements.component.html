@@ -3,8 +3,8 @@
 	<div class="c-item-wrapper">
 		<div
 			[ngClass]="{
-      'text-red-500':  tagType === TagDataType.Expense,
-      'text-green-500':  tagType === TagDataType.Income
+      'g-color-danger':  tagType === TagDataType.Expense,
+      'g-color-success':  tagType === TagDataType.Income
     }"
 		>
 			{{ tagType === TagDataType.Expense ? 'Expense' : 'Income' }}:
@@ -35,7 +35,7 @@
 	</div>
 
 	<!-- remove button -->
-	<div *ngIf="isEditing" class="c-item-wrapper p-2">
+	<div *ngIf="isEditing" class="p-2 c-item-wrapper">
 		<button mat-stroked-button color="warn" class="w-full" type="button" (click)="onRemove()">
 			<mat-icon *ngIf="!isRemoving">delete</mat-icon>
 			<mat-icon *ngIf="isRemoving" class="animate-spin">cached</mat-icon>

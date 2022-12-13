@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { combineLatest, map, merge, Observable, reduce, startWith, switchMap } from 'rxjs';
+import { PersonalAccountFacadeService } from '../../../../core/api';
 import { AccountState } from '../../models';
 import { PersonalAccountChartService } from '../../services';
-import { PersonalAccountFacadeService } from './../../../../core/api';
 import {
 	PersonalAccountOverviewBasicFragment,
 	PersonalAccountTagFragment,

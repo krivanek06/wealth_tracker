@@ -4,6 +4,7 @@ button[mat-stroked-button] {
 
 button {
 	border-radius: 12px !important;
+	min-width: 160px !important;
 }
 
 .mat-button.mat-primary.mat-button-disabled,

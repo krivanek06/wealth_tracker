@@ -1,4 +1,4 @@
-<div class="p-2 md:px-8 flex items-center justify-between">
+<div class="flex items-center justify-between p-2 md:px-8">
 	<h2 class="text-3xl text-gray-400">Wealth tracker</h2>
 
 	<!-- right section -->
@@ -9,10 +9,10 @@
 		</button>
 
 		<!-- user image -->
-		<mat-chip-list aria-label="select a shirt size">
+		<!-- <mat-chip-list aria-label="select a shirt size">
 			<mat-chip
 				(click)="onUserAccountClick()"
-				class="p-5 cursor-pointer bg-transparent border-2 g-color-primary border-solid"
+				class="p-5 bg-transparent border-2 border-solid cursor-pointer g-color-primary"
 			>
 				<img
 					matChipAvatar
@@ -21,6 +21,7 @@
 				/>
 				Test user 1
 			</mat-chip>
-		</mat-chip-list>
+		</mat-chip-list> -->
+		<button (click)="onLoginClick()" mat-stroked-button color="primary">Login</button>
 	</div>
 </div>

@@ -15,8 +15,15 @@ export class HeaderContainerComponent implements OnInit {
 	ngOnInit(): void {}
 
 	onUserAccountClick(): void {
+		// this.dialog.open(LoginModalComponent, {
+		// 	panelClass: ['g-mat-dialog-medium'],
+		// });
+		console.log('TODO');
+	}
+
+	onLoginClick(): void {
 		this.dialog.open(LoginModalComponent, {
-			panelClass: ['g-mat-dialog-medium'],
+			panelClass: ['g-mat-dialog-small'],
 		});
 	}
 

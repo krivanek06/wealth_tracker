@@ -3,15 +3,22 @@
 </div>
 
 <!-- content -->
-<mat-dialog-content> </mat-dialog-content>
+<mat-dialog-content>
+	<mat-tab-group>
+		<mat-tab label="Login">
+			<app-form-login></app-form-login>
+		</mat-tab>
+		<mat-tab label="Register">
+			<app-form-register></app-form-register>
+		</mat-tab>
+	</mat-tab-group>
+</mat-dialog-content>
 
 <div class="my-4">
 	<mat-divider></mat-divider>
 </div>
 
-<!-- action buttons -->
+<!-- social media login -->
 <mat-dialog-actions>
-	<div class="justify-end g-dialog-button-wrapper">
-		<button mat-stroked-button mat-dialog-close type="button" class="lg:w-auto">Cancel</button>
-	</div>
+	<button mat-flat-button color="warn" class="w-full">Google</button>
 </mat-dialog-actions>

@@ -54,14 +54,15 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 				type: d.type,
 				color: d.color,
 				data: d.data,
-				zIndex: index === 0 ? 100 : 1, // bring line chart into the front
-				opacity: index <= 3 ? 1 : 0.7,
-				visible: d.name !== 'Income',
+				zIndex: index === 0 ? 100 : -1, // bring line chart into the front
+				opacity: index === 0 || index === 2 ? 1.5 : 0.65,
+				lineWidth: index === 0 || index === 2 ? 4 : 2,
+				visible: true, // d.name !== 'Income'
 				dataLabels: {
 					enabled: d.name === 'Total' || d.name === 'Expense',
 				},
 				stack: index === 0 ? '' : index == 1 ? 'Income' : index == 2 ? 'Expense' : 'ExpenseByTag',
-				yAxis: index === 0 ? 1 : undefined,
+				yAxis: index === 0 ? 1 : index === 1 ? 2 : undefined,
 			} as Highcharts.SeriesOptionsType;
 		});
 	}
@@ -93,6 +94,20 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 					tickPixelInterval: 40,
 					minorGridLineWidth: 0,
 					visible: true,
+				},
+				{
+					title: {
+						text: '',
+					},
+					startOnTick: false,
+					endOnTick: false,
+					gridLineColor: '#66666655',
+					opposite: true,
+					gridLineWidth: 1,
+					minorTickInterval: 'auto',
+					tickPixelInterval: 40,
+					minorGridLineWidth: 0,
+					visible: false,
 				},
 				{
 					title: {
@@ -154,10 +169,10 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 			tooltip: {
 				outside: true,
 				borderWidth: 1,
-				padding: 11,
+				padding: 12,
 				backgroundColor: '#232323',
 				style: {
-					fontSize: '12px',
+					fontSize: '14px',
 					color: '#D9D8D8',
 				},
 				shared: true,
@@ -179,7 +194,7 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 
 					const line = `
             <tr>
-              <td style="color: ${that.series.color}">● ${that.series.name} </td>
+              <td style="color: ${that.series.color}; line-height: 26px">● ${that.series.name} </td>
               <td style="text-align: right"><b style="color: ${valueColor}">$${that.y}</b> USD</td>
             </tr>
           `;

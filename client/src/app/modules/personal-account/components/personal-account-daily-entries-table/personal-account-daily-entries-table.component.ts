@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { PersonalAccountDailyDataFragment } from './../../../../core/graphql';
+import { PersonalAccountDailyDataFragment, TagDataType } from './../../../../core/graphql';
 
 @Component({
 	selector: 'app-personal-account-daily-entries-table',
@@ -25,6 +25,8 @@ export class PersonalAccountDailyEntriesTableComponent implements OnInit {
 	}
 	displayedColumns: string[] = ['tag', 'value', 'date', 'week', 'month'];
 	dataSource!: MatTableDataSource<PersonalAccountDailyDataFragment>;
+
+	TagDataType = TagDataType;
 
 	constructor() {}
 

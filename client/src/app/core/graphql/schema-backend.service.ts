@@ -995,6 +995,24 @@ export type EditPersonalAccountDailyEntryMutationVariables = Exact<{
 
 export type EditPersonalAccountDailyEntryMutation = { __typename?: 'Mutation', editPersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyDataEditOutput', originalDailyData: { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }, modifiedDailyData: { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } } } };
 
+export type UserFragment = { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string };
+
+export type LoggedUserOutputFragment = { __typename?: 'LoggedUserOutput', accessToken: string, user: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string } };
+
+export type LoginUserBasicMutationVariables = Exact<{
+  input: LoginUserInput;
+}>;
+
+
+export type LoginUserBasicMutation = { __typename?: 'Mutation', loginBasic: { __typename?: 'LoggedUserOutput', accessToken: string, user: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string } } };
+
+export type RegisterBasicMutationVariables = Exact<{
+  input: RegisterUserInput;
+}>;
+
+
+export type RegisterBasicMutation = { __typename?: 'Mutation', registerBasic: { __typename?: 'LoggedUserOutput', accessToken: string, user: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string } } };
+
 export const AssetGeneralHistoricalPricesDataFragmentDoc = gql`
     fragment AssetGeneralHistoricalPricesData on AssetGeneralHistoricalPricesData {
   date
@@ -1225,6 +1243,24 @@ export const PersonalAccountOverviewFragmentDoc = gql`
 ${PersonalAccountAggregationDataFragmentDoc}
 ${PersonalAccountWeeklyAggregationFragmentDoc}
 ${PersonalAccountMonthlyDataOverviewFragmentDoc}`;
+export const UserFragmentDoc = gql`
+    fragment User on User {
+  id
+  createdAt
+  imageUrl
+  username
+  email
+  lastSingInDate
+}
+    `;
+export const LoggedUserOutputFragmentDoc = gql`
+    fragment LoggedUserOutput on LoggedUserOutput {
+  accessToken
+  user {
+    ...User
+  }
+}
+    ${UserFragmentDoc}`;
 export const GetAssetHistoricalPricesStartToEndDocument = gql`
     query GetAssetHistoricalPricesStartToEnd($input: AssetGeneralHistoricalPricesInput!) {
   getAssetHistoricalPricesStartToEnd(input: $input) {
@@ -1802,6 +1838,42 @@ export const EditPersonalAccountDailyEntryDocument = gql`
   })
   export class EditPersonalAccountDailyEntryGQL extends Apollo.Mutation<EditPersonalAccountDailyEntryMutation, EditPersonalAccountDailyEntryMutationVariables> {
     override document = EditPersonalAccountDailyEntryDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const LoginUserBasicDocument = gql`
+    mutation LoginUserBasic($input: LoginUserInput!) {
+  loginBasic(input: $input) {
+    ...LoggedUserOutput
+  }
+}
+    ${LoggedUserOutputFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class LoginUserBasicGQL extends Apollo.Mutation<LoginUserBasicMutation, LoginUserBasicMutationVariables> {
+    override document = LoginUserBasicDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const RegisterBasicDocument = gql`
+    mutation RegisterBasic($input: RegisterUserInput!) {
+  registerBasic(input: $input) {
+    ...LoggedUserOutput
+  }
+}
+    ${LoggedUserOutputFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RegisterBasicGQL extends Apollo.Mutation<RegisterBasicMutation, RegisterBasicMutationVariables> {
+    override document = RegisterBasicDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

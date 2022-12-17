@@ -9,3 +9,9 @@ mutation RegisterBasic($input: RegisterUserInput!) {
 		...LoggedUserOutput
 	}
 }
+
+query GetAuthenticatedUser {
+	getAuthenticatedUser {
+		...User
+	}
+}

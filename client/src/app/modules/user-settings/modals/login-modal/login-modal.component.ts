@@ -22,6 +22,11 @@ export class LoginModalComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
+		this.watchLoginUserFormControl();
+		this.watchRegisterUserFormControl();
+	}
+
+	private watchLoginUserFormControl(): void {
 		this.loginUserInputControl.valueChanges
 			.pipe(
 				filter((res): res is LoginUserInput => !!res),
@@ -32,7 +37,9 @@ export class LoginModalComponent implements OnInit {
 				)
 			)
 			.subscribe();
+	}
 
+	private watchRegisterUserFormControl(): void {
 		this.registerUserInputControl.valueChanges
 			.pipe(
 				filter((res): res is RegisterUserInput => !!res),

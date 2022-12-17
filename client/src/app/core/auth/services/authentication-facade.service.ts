@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, tap } from 'rxjs';
+import { catchError, EMPTY, map, Observable, of, switchMap, tap } from 'rxjs';
 import { AuthenticationApiService } from '../../api';
 import { LoggedUserOutputFragment, LoginUserInput, RegisterUserInput, UserFragment } from '../../graphql';
 import { TokenStorageService } from './token-storage.service';
-import { UserStorageService } from './user-storage.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -11,23 +10,36 @@ import { UserStorageService } from './user-storage.service';
 export class AuthenticationFacadeService {
 	constructor(
 		private tokenStorageService: TokenStorageService,
-		private userStorageService: UserStorageService,
 		private authenticationApiService: AuthenticationApiService
 	) {}
+
+	getAuthenticatedUser(): Observable<UserFragment | null> {
+		if (!!this.tokenStorageService.getAccessToken()) {
+			return of(null);
+		}
+
+		return this.authenticationApiService.getAuthenticatedUser();
+	}
 
 	loginUserBasic(input: LoginUserInput): Observable<UserFragment> {
 		return this.authenticationApiService.loginUserBasic(input).pipe(
 			map((res) => res.data?.loginBasic as LoggedUserOutputFragment),
-			tap(console.log),
-			map((res) => res.user)
+			tap((res) => {
+				this.tokenStorageService.setAccessToken(res.accessToken);
+			}),
+			switchMap(() => this.authenticationApiService.getAuthenticatedUser()),
+			catchError(() => EMPTY)
 		);
 	}
 
 	registerBasic(input: RegisterUserInput): Observable<UserFragment> {
 		return this.authenticationApiService.registerBasic(input).pipe(
 			map((res) => res.data?.registerBasic as LoggedUserOutputFragment),
-			tap(console.log),
-			map((res) => res.user)
+			tap((res) => {
+				this.tokenStorageService.setAccessToken(res.accessToken);
+			}),
+			switchMap(() => this.authenticationApiService.getAuthenticatedUser()),
+			catchError(() => EMPTY)
 		);
 	}
 }

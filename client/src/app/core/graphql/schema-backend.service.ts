@@ -371,8 +371,6 @@ export type LoggedUserOutput = {
   __typename?: 'LoggedUserOutput';
   /** Generated user's accessToken, encoded RequestUser */
   accessToken: Scalars['String'];
-  /** Return the authenticated user object */
-  user: User;
 };
 
 export type LoginSocialInput = {
@@ -629,6 +627,8 @@ export type Query = {
   getAssetGeneralHistoricalPricesDataOnDate: AssetGeneralHistoricalPricesData;
   /** Historical prices for an Asset */
   getAssetHistoricalPricesStartToEnd: AssetGeneralHistoricalPrices;
+  /** Return authenticated user based on header information */
+  getAuthenticatedUser: User;
   /** Returns default tags that are shared cross every user */
   getDefaultTags: Array<PersonalAccountTag>;
   /** Returns investment account by id */
@@ -997,21 +997,26 @@ export type EditPersonalAccountDailyEntryMutation = { __typename?: 'Mutation', e
 
 export type UserFragment = { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string };
 
-export type LoggedUserOutputFragment = { __typename?: 'LoggedUserOutput', accessToken: string, user: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string } };
+export type LoggedUserOutputFragment = { __typename?: 'LoggedUserOutput', accessToken: string };
 
 export type LoginUserBasicMutationVariables = Exact<{
   input: LoginUserInput;
 }>;
 
 
-export type LoginUserBasicMutation = { __typename?: 'Mutation', loginBasic: { __typename?: 'LoggedUserOutput', accessToken: string, user: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string } } };
+export type LoginUserBasicMutation = { __typename?: 'Mutation', loginBasic: { __typename?: 'LoggedUserOutput', accessToken: string } };
 
 export type RegisterBasicMutationVariables = Exact<{
   input: RegisterUserInput;
 }>;
 
 
-export type RegisterBasicMutation = { __typename?: 'Mutation', registerBasic: { __typename?: 'LoggedUserOutput', accessToken: string, user: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string } } };
+export type RegisterBasicMutation = { __typename?: 'Mutation', registerBasic: { __typename?: 'LoggedUserOutput', accessToken: string } };
+
+export type GetAuthenticatedUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAuthenticatedUserQuery = { __typename?: 'Query', getAuthenticatedUser: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string } };
 
 export const AssetGeneralHistoricalPricesDataFragmentDoc = gql`
     fragment AssetGeneralHistoricalPricesData on AssetGeneralHistoricalPricesData {
@@ -1256,11 +1261,8 @@ export const UserFragmentDoc = gql`
 export const LoggedUserOutputFragmentDoc = gql`
     fragment LoggedUserOutput on LoggedUserOutput {
   accessToken
-  user {
-    ...User
-  }
 }
-    ${UserFragmentDoc}`;
+    `;
 export const GetAssetHistoricalPricesStartToEndDocument = gql`
     query GetAssetHistoricalPricesStartToEnd($input: AssetGeneralHistoricalPricesInput!) {
   getAssetHistoricalPricesStartToEnd(input: $input) {
@@ -1874,6 +1876,24 @@ export const RegisterBasicDocument = gql`
   })
   export class RegisterBasicGQL extends Apollo.Mutation<RegisterBasicMutation, RegisterBasicMutationVariables> {
     override document = RegisterBasicDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetAuthenticatedUserDocument = gql`
+    query GetAuthenticatedUser {
+  getAuthenticatedUser {
+    ...User
+  }
+}
+    ${UserFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetAuthenticatedUserGQL extends Apollo.Query<GetAuthenticatedUserQuery, GetAuthenticatedUserQueryVariables> {
+    override document = GetAuthenticatedUserDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

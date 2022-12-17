@@ -49,6 +49,6 @@ export class AuthenticationResolver {
 	private prepareLoggedUserOutput(user: UserClient): LoggedUserOutput {
 		const requesterUser = AuthenticationUtil.convertUserClientToRequestUser(user);
 		const accessToken = this.authenticationService.generateJwt(requesterUser);
-		return { accessToken, user };
+		return { accessToken };
 	}
 }

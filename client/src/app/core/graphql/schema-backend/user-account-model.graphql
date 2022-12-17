@@ -9,7 +9,4 @@ fragment User on User {
 
 fragment LoggedUserOutput on LoggedUserOutput {
 	accessToken
-	user {
-		...User
-	}
 }

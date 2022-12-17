@@ -9,6 +9,10 @@ export class TokenStorageService {
 
 	constructor() {}
 
+	getAccessToken(): string | null {
+		return this.accessToken.value;
+	}
+
 	setAccessToken(token: string): void {
 		this.accessToken.next(token);
 	}

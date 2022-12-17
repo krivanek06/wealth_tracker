@@ -2,26 +2,34 @@
 	<h2 class="text-3xl text-gray-400">Wealth tracker</h2>
 
 	<!-- right section -->
-	<div class="flex items-center gap-4">
+	<div *ngIf="authenticatedUser$ | async as user; else noUser" class="flex items-center gap-4">
 		<button (click)="onManageAccountClick()" type="button" mat-stroked-button class="g-color-secondary">
 			<mat-icon>add</mat-icon>
 			Manage accounts
 		</button>
 
 		<!-- user image -->
-		<!-- <mat-chip-list aria-label="select a shirt size">
+		<mat-chip-list aria-label="Authenticated user">
 			<mat-chip
-				(click)="onUserAccountClick()"
+				[matMenuTriggerFor]="menu"
 				class="p-5 bg-transparent border-2 border-solid cursor-pointer g-color-primary"
 			>
-				<img
-					matChipAvatar
-					src="https://material.angular.io/assets/img/examples/shiba1.jpg"
-					alt="Photo of a Shiba Inu"
-				/>
-				Test user 1
+				<img appDefaultImg matChipAvatar [src]="user.imageUrl" alt="Authenticated user photo" />
+				{{user.username}}
 			</mat-chip>
-		</mat-chip-list> -->
-		<button (click)="onLoginClick()" mat-stroked-button color="primary">Login</button>
+		</mat-chip-list>
+
+		<!-- menu when clicking on mat-chip -->
+		<mat-menu #menu="matMenu">
+			<button mat-menu-item (click)="onUserLogout()">
+				<mat-icon>logout</mat-icon>
+				<span>Logout</span>
+			</button>
+		</mat-menu>
 	</div>
+
+	<!-- login section -->
+	<ng-template #noUser>
+		<button (click)="onLoginClick()" mat-stroked-button color="primary">Login</button>
+	</ng-template>
 </div>

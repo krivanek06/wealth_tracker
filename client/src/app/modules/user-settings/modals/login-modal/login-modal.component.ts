@@ -31,9 +31,12 @@ export class LoginModalComponent implements OnInit {
 			.pipe(
 				filter((res): res is LoginUserInput => !!res),
 				switchMap((res) =>
-					this.authenticationFacadeService
-						.loginUserBasic(res)
-						.pipe(tap(() => DialogServiceUtil.showNotificationBar(`You have been successfully logged in`, 'success')))
+					this.authenticationFacadeService.loginUserBasic(res).pipe(
+						tap(() => {
+							DialogServiceUtil.showNotificationBar(`You have been successfully logged in`, 'success');
+							this.dialogRef.close();
+						})
+					)
 				)
 			)
 			.subscribe();
@@ -44,13 +47,12 @@ export class LoginModalComponent implements OnInit {
 			.pipe(
 				filter((res): res is RegisterUserInput => !!res),
 				switchMap((res) =>
-					this.authenticationFacadeService
-						.registerBasic(res)
-						.pipe(
-							tap((res) =>
-								DialogServiceUtil.showNotificationBar(`Account ${res.email} has been successfully created`, 'success')
-							)
-						)
+					this.authenticationFacadeService.registerBasic(res).pipe(
+						tap((res) => {
+							DialogServiceUtil.showNotificationBar(`Account ${res.email} has been successfully created`, 'success');
+							this.dialogRef.close();
+						})
+					)
 				)
 			)
 			.subscribe();

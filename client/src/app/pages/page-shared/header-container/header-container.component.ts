@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+import { AuthenticationFacadeService } from '../../../core/auth';
+import { UserFragment } from '../../../core/graphql';
 import { ManagerAccountListAccountsComponent } from '../../../modules/manager-account/modals';
 import { LoginModalComponent } from '../../../modules/user-settings';
 
@@ -10,15 +13,18 @@ import { LoginModalComponent } from '../../../modules/user-settings';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderContainerComponent implements OnInit {
-	constructor(private dialog: MatDialog) {}
+	authenticatedUser$!: Observable<UserFragment | null>;
 
-	ngOnInit(): void {}
+	constructor(private authenticationFacadeService: AuthenticationFacadeService, private dialog: MatDialog) {}
 
-	onUserAccountClick(): void {
-		// this.dialog.open(LoginModalComponent, {
-		// 	panelClass: ['g-mat-dialog-medium'],
-		// });
-		console.log('TODO');
+	ngOnInit(): void {
+		this.authenticatedUser$ = this.authenticationFacadeService.getAuthenticatedUser();
+
+		this.authenticatedUser$.subscribe(console.log);
+	}
+
+	onUserLogout(): void {
+		this.authenticationFacadeService.logoutUser();
 	}
 
 	onLoginClick(): void {

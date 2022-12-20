@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { LoggedUserOutputFragment } from '../../graphql';
 import { STORAGE_ACCESS_TOKEN } from '../../models';
 import { StorageService } from '../../services/storage.service';
@@ -14,8 +14,8 @@ export class TokenStorageService extends StorageService<LoggedUserOutputFragment
 		super(STORAGE_ACCESS_TOKEN);
 	}
 
-	getAccessToken(): LoggedUserOutputFragment | null {
-		return this.accessToken.value;
+	getAccessToken(): Observable<LoggedUserOutputFragment | null> {
+		return this.accessToken.asObservable();
 	}
 
 	setAccessToken(token: LoggedUserOutputFragment | null): void {

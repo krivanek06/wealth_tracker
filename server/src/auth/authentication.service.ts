@@ -75,7 +75,8 @@ export class AuthenticationService {
 		const { emails, photos, displayName } = profile;
 
 		// load user from DB
-		const user = await this.getUserByEmail(emails[0].value);
+		const email = emails[0].value;
+		const user = await this.getUserByEmail(email);
 
 		// if exists, return
 		if (user) {
@@ -84,10 +85,10 @@ export class AuthenticationService {
 		}
 
 		// register user
-		const newUser = this.prismaService.user.create({
+		const newUser = await this.prismaService.user.create({
 			data: {
 				username: displayName,
-				email: emails[0].value,
+				email: email,
 				imageUrl: photos[0].value,
 				authentication: {
 					authenticationType: input.provider,

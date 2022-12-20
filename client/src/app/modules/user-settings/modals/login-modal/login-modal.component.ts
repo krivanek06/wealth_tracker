@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { filter, switchMap, tap } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../../core/auth';
 import { LoginUserInput, RegisterUserInput } from '../../../../core/graphql';
+import { environment } from './../../../../../environments/environment';
 import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.util';
 
 @Component({
@@ -15,6 +16,8 @@ import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.u
 export class LoginModalComponent implements OnInit {
 	loginUserInputControl = new FormControl<LoginUserInput | null>(null);
 	registerUserInputControl = new FormControl<RegisterUserInput | null>(null);
+
+	loginGoogle = `${environment.backend_url}/auth/google/login`;
 
 	constructor(
 		private authenticationFacadeService: AuthenticationFacadeService,

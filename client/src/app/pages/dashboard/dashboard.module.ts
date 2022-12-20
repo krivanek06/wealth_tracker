@@ -2,6 +2,7 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ResolveTokenGuard } from '../../core/guards';
 import { InvestmentAccountModule } from '../../modules/investment-account/';
 import { PersonalAccountModule } from '../../modules/personal-account';
 import { HeaderContainerModule } from '../page-shared';
@@ -11,6 +12,7 @@ const routes: Routes = [
 	{
 		path: '',
 		component: DashboardComponent,
+		resolve: [ResolveTokenGuard],
 		children: [],
 	},
 ];

@@ -10,9 +10,10 @@ import { FormMatInputWrapperModule } from '../../../../shared/components';
 import { FormLoginComponent } from './form-login/form-login.component';
 import { FormRegisterComponent } from './form-register/form-register.component';
 import { LoginModalComponent } from './login-modal.component';
+import { FormForgotPasswordComponent } from './form-forgot-password/form-forgot-password.component';
 
 @NgModule({
-	declarations: [LoginModalComponent, FormRegisterComponent, FormLoginComponent],
+	declarations: [LoginModalComponent, FormRegisterComponent, FormLoginComponent, FormForgotPasswordComponent],
 	imports: [
 		CommonModule,
 		MatDialogModule,

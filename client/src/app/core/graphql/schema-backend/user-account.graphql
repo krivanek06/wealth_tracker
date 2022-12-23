@@ -10,6 +10,10 @@ mutation RegisterBasic($input: RegisterUserInput!) {
 	}
 }
 
+mutation ResetPassword($input: LoginForgotPasswordInput!) {
+	resetPassword(input: $input)
+}
+
 query GetAuthenticatedUser {
 	getAuthenticatedUser {
 		...User

@@ -1,7 +1,7 @@
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { Input } from './../graphql/args/';
 import { AuthenticationService } from './authentication.service';
-import { LoginUserInput, RegisterUserInput } from './inputs';
+import { LoginForgotPasswordInput, LoginUserInput, RegisterUserInput } from './inputs';
 import { LoggedUserOutput } from './outputs';
 
 @Resolver()
@@ -10,7 +10,10 @@ export class AuthenticationResolver {
 
 	// TODO: change password
 
-	// TODO: reset password
+	@Mutation(() => Boolean)
+	resetPassword(@Input() forgotPasswordInput: LoginForgotPasswordInput): Promise<boolean> {
+		return this.authenticationService.resetPassword(forgotPasswordInput);
+	}
 
 	@Mutation(() => LoggedUserOutput)
 	async registerBasic(@Input() registerUserInput: RegisterUserInput): Promise<LoggedUserOutput> {

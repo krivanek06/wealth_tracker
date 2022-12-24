@@ -1,0 +1,27 @@
+<div mat-dialog-title>
+	<h2>Login</h2>
+</div>
+
+<!-- content -->
+<mat-dialog-content>
+	<mat-tab-group>
+		<mat-tab label="Login">
+			<app-form-login [formControl]="loginUserInputControl"></app-form-login>
+		</mat-tab>
+		<mat-tab label="Register">
+			<app-form-register [formControl]="registerUserInputControl"></app-form-register>
+		</mat-tab>
+		<mat-tab label="Forgot Password">
+			<app-form-forgot-password [formControl]="forgotPasswordInputControl"></app-form-forgot-password>
+		</mat-tab>
+	</mat-tab-group>
+</mat-dialog-content>
+
+<div class="my-4">
+	<mat-divider></mat-divider>
+</div>
+
+<!-- social media login -->
+<mat-dialog-actions>
+	<a mat-flat-button [href]="loginGoogle" color="warn" class="w-full">Google</a>
+</mat-dialog-actions>

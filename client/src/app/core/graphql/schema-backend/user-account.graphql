@@ -1,0 +1,21 @@
+mutation LoginUserBasic($input: LoginUserInput!) {
+	loginBasic(input: $input) {
+		...LoggedUserOutput
+	}
+}
+
+mutation RegisterBasic($input: RegisterUserInput!) {
+	registerBasic(input: $input) {
+		...LoggedUserOutput
+	}
+}
+
+mutation ResetPassword($input: LoginForgotPasswordInput!) {
+	resetPassword(input: $input)
+}
+
+query GetAuthenticatedUser {
+	getAuthenticatedUser {
+		...User
+	}
+}

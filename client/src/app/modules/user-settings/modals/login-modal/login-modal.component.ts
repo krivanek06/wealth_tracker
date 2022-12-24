@@ -1,0 +1,94 @@
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
+import { filter, switchMap, tap } from 'rxjs';
+import { AuthenticationFacadeService } from '../../../../core/auth';
+import { LoginForgotPasswordInput, LoginUserInput, RegisterUserInput } from '../../../../core/graphql';
+import { environment } from './../../../../../environments/environment';
+import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.util';
+
+@Component({
+	selector: 'app-login-modal',
+	templateUrl: './login-modal.component.html',
+	styleUrls: ['./login-modal.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class LoginModalComponent implements OnInit {
+	loginUserInputControl = new FormControl<LoginUserInput | null>(null);
+	registerUserInputControl = new FormControl<RegisterUserInput | null>(null);
+	forgotPasswordInputControl = new FormControl<LoginForgotPasswordInput | null>(null);
+
+	loginGoogle = `${environment.backend_url}/auth/google/login`;
+
+	constructor(
+		private authenticationFacadeService: AuthenticationFacadeService,
+		private dialogRef: MatDialogRef<LoginModalComponent>
+	) {}
+
+	ngOnInit(): void {
+		this.watchLoginUserFormControl();
+		this.watchRegisterUserFormControl();
+		this.watchForgotPasswordFormControl();
+	}
+
+	private watchForgotPasswordFormControl(): void {
+		this.forgotPasswordInputControl.valueChanges
+			.pipe(
+				filter((res): res is LoginForgotPasswordInput => !!res),
+				// notify user
+				tap(() => DialogServiceUtil.showNotificationBar(`Request for passport reset has been sent`, 'notification')),
+				switchMap((res) =>
+					this.authenticationFacadeService.resetPassword(res).pipe(
+						tap((result) => {
+							if (result) {
+								// password was reset
+								DialogServiceUtil.showNotificationBar(
+									`Your password has been reset. Please check your email account`,
+									'success'
+								);
+							} else {
+								// error happened
+								DialogServiceUtil.showNotificationBar(
+									`Unsuccessful password reset. Please contact the support team via email`,
+									'error'
+								);
+							}
+						})
+					)
+				)
+			)
+			.subscribe();
+	}
+
+	private watchLoginUserFormControl(): void {
+		this.loginUserInputControl.valueChanges
+			.pipe(
+				filter((res): res is LoginUserInput => !!res),
+				switchMap((res) =>
+					this.authenticationFacadeService.loginUserBasic(res).pipe(
+						tap(() => {
+							DialogServiceUtil.showNotificationBar(`You have been successfully logged in`, 'success');
+							this.dialogRef.close();
+						})
+					)
+				)
+			)
+			.subscribe();
+	}
+
+	private watchRegisterUserFormControl(): void {
+		this.registerUserInputControl.valueChanges
+			.pipe(
+				filter((res): res is RegisterUserInput => !!res),
+				switchMap((res) =>
+					this.authenticationFacadeService.registerBasic(res).pipe(
+						tap((res) => {
+							DialogServiceUtil.showNotificationBar(`Account ${res.email} has been successfully created`, 'success');
+							this.dialogRef.close();
+						})
+					)
+				)
+			)
+			.subscribe();
+	}
+}

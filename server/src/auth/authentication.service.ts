@@ -2,14 +2,60 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthenticationType, User as UserClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { Profile } from 'passport';
+import { Profile } from 'passport-google-oauth20';
 import { PrismaService } from '../prisma';
+import { SendGridService } from '../providers';
 import { RequestUser } from './authentication.dto';
-import { LoginSocialInput, LoginUserInput, RegisterUserInput } from './inputs';
+import { AuthenticationUtil } from './authentication.util';
+import { LoginForgotPasswordInput, LoginSocialInput, LoginUserInput, RegisterUserInput } from './inputs';
+import { LoggedUserOutput } from './outputs';
 
 @Injectable()
 export class AuthenticationService {
-	constructor(private prismaService: PrismaService, private jwtService: JwtService) {}
+	constructor(
+		private prismaService: PrismaService,
+		private jwtService: JwtService,
+		private sendGridService: SendGridService
+	) {}
+
+	async resetPassword(forgotPasswordInput: LoginForgotPasswordInput): Promise<boolean> {
+		const { email } = forgotPasswordInput;
+
+		// load user from DB
+		const user = await this.getUserByEmail(email);
+
+		// if not exists - throw error
+		if (!user) {
+			throw new HttpException(`Email does not exists`, HttpStatus.FORBIDDEN);
+		}
+
+		const randomPassword = Math.random().toString(36).slice(-8); //  0.123456 -> "0.4fzyo82mvyr" -> "yo82mvyr"
+		const hashedPassowrd = await this.hashPassword(randomPassword);
+		const emailSending = this.sendGridService.createResetPasswordEmail(email, randomPassword);
+
+		try {
+			// update password in DB
+			await this.prismaService.user.update({
+				data: {
+					authentication: {
+						password: hashedPassowrd,
+						authenticationType: AuthenticationType.BASIC_AUTH,
+					},
+				},
+				where: {
+					email,
+				},
+			});
+
+			// send email to user
+			await this.sendGridService.send(emailSending);
+		} catch (err) {
+			console.log(err);
+			return false;
+		}
+
+		return true;
+	}
 
 	/**
 	 *
@@ -30,7 +76,7 @@ export class AuthenticationService {
 
 		// get data
 		const username = email.split('@')[0];
-		const hashedPassowrd = await this.hashPassowrd(password);
+		const hashedPassowrd = await this.hashPassword(password);
 
 		// register user
 		const newUser = this.prismaService.user.create({
@@ -64,29 +110,47 @@ export class AuthenticationService {
 		}
 
 		// update login time in DB
-		await this.prismaService.user.update({
-			data: {
-				lastSingInDate: new Date(),
-			},
-			where: {
-				id: user.id,
-			},
-		});
+		await this.updateUserLastLogin(user);
 
 		return user;
 	}
 
 	async loginSocial(profile: Profile, input: LoginSocialInput): Promise<UserClient> {
+		const { emails, photos, displayName } = profile;
+
 		// load user from DB
+		const email = emails[0].value;
+		const user = await this.getUserByEmail(email);
 
-		// if not exists - create one
+		// if exists, return
+		if (user) {
+			await this.updateUserLastLogin(user);
+			return user;
+		}
 
-		// update login time in DB
+		// register user
+		const newUser = await this.prismaService.user.create({
+			data: {
+				username: displayName,
+				email: email,
+				imageUrl: photos[0].value,
+				authentication: {
+					authenticationType: input.provider,
+					token: input.accessToken,
+				},
+			},
+		});
 
-		return {} as UserClient;
+		return newUser;
 	}
 
-	generateJwt(userClient: RequestUser): string {
+	prepareLoggedUserOutput(user: UserClient): LoggedUserOutput {
+		const requesterUser = AuthenticationUtil.convertUserClientToRequestUser(user);
+		const accessToken = this.generateJwt(requesterUser);
+		return { accessToken };
+	}
+
+	private generateJwt(userClient: RequestUser): string {
 		return this.jwtService.sign(userClient, {
 			secret: process.env.JWT_SECRET,
 		});
@@ -96,7 +160,7 @@ export class AuthenticationService {
 	 * reference: https://docs.nestjs.com/security/encryption-and-hashing
 	 * @param password hashed password
 	 */
-	private async hashPassowrd(password: string): Promise<string> {
+	private async hashPassword(password: string): Promise<string> {
 		const saltOrRounds = 10;
 
 		const hash = await bcrypt.hash(password, saltOrRounds);
@@ -116,6 +180,17 @@ export class AuthenticationService {
 		return this.prismaService.user.findFirst({
 			where: {
 				email,
+			},
+		});
+	}
+
+	private async updateUserLastLogin({ id }: UserClient): Promise<void> {
+		await this.prismaService.user.update({
+			data: {
+				lastSingInDate: new Date(),
+			},
+			where: {
+				id,
 			},
 		});
 	}

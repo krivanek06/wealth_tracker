@@ -1,0 +1,13 @@
+.mat-menu-panel {
+	background-color: var(--color-gray-700) !important;
+
+	.mat-menu-content {
+		button {
+			color: var(--color-gray-200) !important;
+
+			mat-icon {
+				color: var(--color-gray-200) !important;
+			}
+		}
+	}
+}

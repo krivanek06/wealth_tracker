@@ -17,11 +17,6 @@ export type Scalars = {
   DateTime: any;
 };
 
-export enum Authentication_Providers {
-  BasicAuth = 'BASIC_AUTH',
-  Google = 'GOOGLE'
-}
-
 export type AssetGeneral = {
   __typename?: 'AssetGeneral';
   assetIntoLastUpdate: Scalars['DateTime'];
@@ -371,13 +366,10 @@ export type LoggedUserOutput = {
   __typename?: 'LoggedUserOutput';
   /** Generated user's accessToken, encoded RequestUser */
   accessToken: Scalars['String'];
-  /** Return the authenticated user object */
-  user: User;
 };
 
-export type LoginSocialInput = {
-  accessToken: Scalars['String'];
-  provider: Authentication_Providers;
+export type LoginForgotPasswordInput = {
+  email: Scalars['String'];
 };
 
 export type LoginUserInput = {
@@ -403,8 +395,8 @@ export type Mutation = {
   editPersonalAccount: PersonalAccount;
   editPersonalAccountDailyEntry: PersonalAccountDailyDataEditOutput;
   loginBasic: LoggedUserOutput;
-  loginSocial: LoggedUserOutput;
   registerBasic: LoggedUserOutput;
+  resetPassword: Scalars['Boolean'];
 };
 
 
@@ -483,13 +475,13 @@ export type MutationLoginBasicArgs = {
 };
 
 
-export type MutationLoginSocialArgs = {
-  input: LoginSocialInput;
+export type MutationRegisterBasicArgs = {
+  input: RegisterUserInput;
 };
 
 
-export type MutationRegisterBasicArgs = {
-  input: RegisterUserInput;
+export type MutationResetPasswordArgs = {
+  input: LoginForgotPasswordInput;
 };
 
 export type PersonalAccount = {
@@ -629,6 +621,8 @@ export type Query = {
   getAssetGeneralHistoricalPricesDataOnDate: AssetGeneralHistoricalPricesData;
   /** Historical prices for an Asset */
   getAssetHistoricalPricesStartToEnd: AssetGeneralHistoricalPrices;
+  /** Return authenticated user based on header information */
+  getAuthenticatedUser: User;
   /** Returns default tags that are shared cross every user */
   getDefaultTags: Array<PersonalAccountTag>;
   /** Returns investment account by id */
@@ -995,6 +989,36 @@ export type EditPersonalAccountDailyEntryMutationVariables = Exact<{
 
 export type EditPersonalAccountDailyEntryMutation = { __typename?: 'Mutation', editPersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyDataEditOutput', originalDailyData: { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }, modifiedDailyData: { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } } } };
 
+export type UserFragment = { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string };
+
+export type LoggedUserOutputFragment = { __typename?: 'LoggedUserOutput', accessToken: string };
+
+export type LoginUserBasicMutationVariables = Exact<{
+  input: LoginUserInput;
+}>;
+
+
+export type LoginUserBasicMutation = { __typename?: 'Mutation', loginBasic: { __typename?: 'LoggedUserOutput', accessToken: string } };
+
+export type RegisterBasicMutationVariables = Exact<{
+  input: RegisterUserInput;
+}>;
+
+
+export type RegisterBasicMutation = { __typename?: 'Mutation', registerBasic: { __typename?: 'LoggedUserOutput', accessToken: string } };
+
+export type ResetPasswordMutationVariables = Exact<{
+  input: LoginForgotPasswordInput;
+}>;
+
+
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: boolean };
+
+export type GetAuthenticatedUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAuthenticatedUserQuery = { __typename?: 'Query', getAuthenticatedUser: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string } };
+
 export const AssetGeneralHistoricalPricesDataFragmentDoc = gql`
     fragment AssetGeneralHistoricalPricesData on AssetGeneralHistoricalPricesData {
   date
@@ -1225,6 +1249,21 @@ export const PersonalAccountOverviewFragmentDoc = gql`
 ${PersonalAccountAggregationDataFragmentDoc}
 ${PersonalAccountWeeklyAggregationFragmentDoc}
 ${PersonalAccountMonthlyDataOverviewFragmentDoc}`;
+export const UserFragmentDoc = gql`
+    fragment User on User {
+  id
+  createdAt
+  imageUrl
+  username
+  email
+  lastSingInDate
+}
+    `;
+export const LoggedUserOutputFragmentDoc = gql`
+    fragment LoggedUserOutput on LoggedUserOutput {
+  accessToken
+}
+    `;
 export const GetAssetHistoricalPricesStartToEndDocument = gql`
     query GetAssetHistoricalPricesStartToEnd($input: AssetGeneralHistoricalPricesInput!) {
   getAssetHistoricalPricesStartToEnd(input: $input) {
@@ -1802,6 +1841,76 @@ export const EditPersonalAccountDailyEntryDocument = gql`
   })
   export class EditPersonalAccountDailyEntryGQL extends Apollo.Mutation<EditPersonalAccountDailyEntryMutation, EditPersonalAccountDailyEntryMutationVariables> {
     override document = EditPersonalAccountDailyEntryDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const LoginUserBasicDocument = gql`
+    mutation LoginUserBasic($input: LoginUserInput!) {
+  loginBasic(input: $input) {
+    ...LoggedUserOutput
+  }
+}
+    ${LoggedUserOutputFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class LoginUserBasicGQL extends Apollo.Mutation<LoginUserBasicMutation, LoginUserBasicMutationVariables> {
+    override document = LoginUserBasicDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const RegisterBasicDocument = gql`
+    mutation RegisterBasic($input: RegisterUserInput!) {
+  registerBasic(input: $input) {
+    ...LoggedUserOutput
+  }
+}
+    ${LoggedUserOutputFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RegisterBasicGQL extends Apollo.Mutation<RegisterBasicMutation, RegisterBasicMutationVariables> {
+    override document = RegisterBasicDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ResetPasswordDocument = gql`
+    mutation ResetPassword($input: LoginForgotPasswordInput!) {
+  resetPassword(input: $input)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ResetPasswordGQL extends Apollo.Mutation<ResetPasswordMutation, ResetPasswordMutationVariables> {
+    override document = ResetPasswordDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetAuthenticatedUserDocument = gql`
+    query GetAuthenticatedUser {
+  getAuthenticatedUser {
+    ...User
+  }
+}
+    ${UserFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetAuthenticatedUserGQL extends Apollo.Query<GetAuthenticatedUserQuery, GetAuthenticatedUserQueryVariables> {
+    override document = GetAuthenticatedUserDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -17,11 +17,6 @@ export type Scalars = {
   DateTime: any;
 };
 
-export enum Authentication_Providers {
-  BasicAuth = 'BASIC_AUTH',
-  Google = 'GOOGLE'
-}
-
 export type AssetGeneral = {
   __typename?: 'AssetGeneral';
   assetIntoLastUpdate: Scalars['DateTime'];
@@ -373,9 +368,8 @@ export type LoggedUserOutput = {
   accessToken: Scalars['String'];
 };
 
-export type LoginSocialInput = {
-  accessToken: Scalars['String'];
-  provider: Authentication_Providers;
+export type LoginForgotPasswordInput = {
+  email: Scalars['String'];
 };
 
 export type LoginUserInput = {
@@ -401,8 +395,8 @@ export type Mutation = {
   editPersonalAccount: PersonalAccount;
   editPersonalAccountDailyEntry: PersonalAccountDailyDataEditOutput;
   loginBasic: LoggedUserOutput;
-  loginSocial: LoggedUserOutput;
   registerBasic: LoggedUserOutput;
+  resetPassword: Scalars['Boolean'];
 };
 
 
@@ -481,13 +475,13 @@ export type MutationLoginBasicArgs = {
 };
 
 
-export type MutationLoginSocialArgs = {
-  input: LoginSocialInput;
+export type MutationRegisterBasicArgs = {
+  input: RegisterUserInput;
 };
 
 
-export type MutationRegisterBasicArgs = {
-  input: RegisterUserInput;
+export type MutationResetPasswordArgs = {
+  input: LoginForgotPasswordInput;
 };
 
 export type PersonalAccount = {
@@ -1012,6 +1006,13 @@ export type RegisterBasicMutationVariables = Exact<{
 
 
 export type RegisterBasicMutation = { __typename?: 'Mutation', registerBasic: { __typename?: 'LoggedUserOutput', accessToken: string } };
+
+export type ResetPasswordMutationVariables = Exact<{
+  input: LoginForgotPasswordInput;
+}>;
+
+
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: boolean };
 
 export type GetAuthenticatedUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1876,6 +1877,22 @@ export const RegisterBasicDocument = gql`
   })
   export class RegisterBasicGQL extends Apollo.Mutation<RegisterBasicMutation, RegisterBasicMutationVariables> {
     override document = RegisterBasicDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ResetPasswordDocument = gql`
+    mutation ResetPassword($input: LoginForgotPasswordInput!) {
+  resetPassword(input: $input)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ResetPasswordGQL extends Apollo.Mutation<ResetPasswordMutation, ResetPasswordMutationVariables> {
+    override document = ResetPasswordDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

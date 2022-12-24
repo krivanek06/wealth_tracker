@@ -3,12 +3,15 @@ import { FetchResult } from '@apollo/client/core';
 import { map, Observable } from 'rxjs';
 import {
 	GetAuthenticatedUserGQL,
+	LoginForgotPasswordInput,
 	LoginUserBasicGQL,
 	LoginUserBasicMutation,
 	LoginUserInput,
 	RegisterBasicGQL,
 	RegisterBasicMutation,
 	RegisterUserInput,
+	ResetPasswordGQL,
+	ResetPasswordMutation,
 	UserFragment,
 } from '../../graphql';
 
@@ -19,6 +22,7 @@ export class AuthenticationApiService {
 	constructor(
 		private loginUserBasicGQL: LoginUserBasicGQL,
 		private registerBasicGQL: RegisterBasicGQL,
+		private resetPasswordGQL: ResetPasswordGQL,
 		private getAuthenticatedUserGQL: GetAuthenticatedUserGQL
 	) {}
 
@@ -28,6 +32,12 @@ export class AuthenticationApiService {
 
 	loginUserBasic(input: LoginUserInput): Observable<FetchResult<LoginUserBasicMutation>> {
 		return this.loginUserBasicGQL.mutate({
+			input,
+		});
+	}
+
+	resetPassword(input: LoginForgotPasswordInput): Observable<FetchResult<ResetPasswordMutation>> {
+		return this.resetPasswordGQL.mutate({
 			input,
 		});
 	}

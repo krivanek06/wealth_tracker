@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { filter, switchMap, tap } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../../core/auth';
-import { LoginUserInput, RegisterUserInput } from '../../../../core/graphql';
+import { LoginForgotPasswordInput, LoginUserInput, RegisterUserInput } from '../../../../core/graphql';
 import { environment } from './../../../../../environments/environment';
 import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.util';
 
@@ -16,6 +16,7 @@ import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.u
 export class LoginModalComponent implements OnInit {
 	loginUserInputControl = new FormControl<LoginUserInput | null>(null);
 	registerUserInputControl = new FormControl<RegisterUserInput | null>(null);
+	forgotPasswordInputControl = new FormControl<LoginForgotPasswordInput | null>(null);
 
 	loginGoogle = `${environment.backend_url}/auth/google/login`;
 
@@ -27,6 +28,36 @@ export class LoginModalComponent implements OnInit {
 	ngOnInit(): void {
 		this.watchLoginUserFormControl();
 		this.watchRegisterUserFormControl();
+		this.watchForgotPasswordFormControl();
+	}
+
+	private watchForgotPasswordFormControl(): void {
+		this.forgotPasswordInputControl.valueChanges
+			.pipe(
+				filter((res): res is LoginForgotPasswordInput => !!res),
+				// notify user
+				tap(() => DialogServiceUtil.showNotificationBar(`Request for passport reset has been sent`, 'notification')),
+				switchMap((res) =>
+					this.authenticationFacadeService.resetPassword(res).pipe(
+						tap((result) => {
+							if (result) {
+								// password was reset
+								DialogServiceUtil.showNotificationBar(
+									`Your password has been reset. Please check your email account`,
+									'success'
+								);
+							} else {
+								// error happened
+								DialogServiceUtil.showNotificationBar(
+									`Unsuccessful password reset. Please contact the support team via email`,
+									'error'
+								);
+							}
+						})
+					)
+				)
+			)
+			.subscribe();
 	}
 
 	private watchLoginUserFormControl(): void {

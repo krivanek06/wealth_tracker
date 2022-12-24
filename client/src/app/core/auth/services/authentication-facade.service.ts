@@ -2,7 +2,13 @@ import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { catchError, EMPTY, map, Observable, of, switchMap, tap } from 'rxjs';
 import { AuthenticationApiService } from '../../api';
-import { LoggedUserOutputFragment, LoginUserInput, RegisterUserInput, UserFragment } from '../../graphql';
+import {
+	LoggedUserOutputFragment,
+	LoginForgotPasswordInput,
+	LoginUserInput,
+	RegisterUserInput,
+	UserFragment,
+} from '../../graphql';
 import { TokenStorageService } from './token-storage.service';
 
 @Injectable({
@@ -50,6 +56,13 @@ export class AuthenticationFacadeService {
 				this.tokenStorageService.setAccessToken(res);
 			}),
 			switchMap(() => this.authenticationApiService.getAuthenticatedUser()),
+			catchError(() => EMPTY)
+		);
+	}
+
+	resetPassword(input: LoginForgotPasswordInput): Observable<boolean> {
+		return this.authenticationApiService.resetPassword(input).pipe(
+			map((res) => !!res.data?.resetPassword),
 			catchError(() => EMPTY)
 		);
 	}

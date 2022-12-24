@@ -21,6 +21,10 @@
 
 		<!-- menu when clicking on mat-chip -->
 		<mat-menu #menu="matMenu">
+			<button mat-menu-item (click)="onPasswordChange()">
+				<mat-icon>key</mat-icon>
+				<span>Password change</span>
+			</button>
 			<button mat-menu-item (click)="onUserLogout()">
 				<mat-icon>logout</mat-icon>
 				<span>Logout</span>

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, forwardRef, OnInit } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { LoginForgotPasswordInput } from '../../../../../core/graphql';
 import { emailValidator, maxLengthValidator, requiredValidator } from '../../../../../shared/models';
 
 @Component({
@@ -23,7 +24,7 @@ export class FormForgotPasswordComponent implements OnInit, ControlValueAccessor
 		}),
 	});
 
-	onChange: (value: LoginUserInput) => void = () => {};
+	onChange: (value: LoginForgotPasswordInput) => void = () => {};
 	onTouched = () => {};
 
 	constructor() {}
@@ -37,14 +38,14 @@ export class FormForgotPasswordComponent implements OnInit, ControlValueAccessor
 			return;
 		}
 
-		const result: LoginUserInput = {
+		const result: LoginForgotPasswordInput = {
 			email: this.formGroup.controls.email.value,
 		};
 
 		this.onChange(result);
 	}
 
-	writeValue(obj: LoginUserInput): void {}
+	writeValue(obj: LoginForgotPasswordInput): void {}
 
 	/**
 	 * Register Component's ControlValueAccessor onChange callback

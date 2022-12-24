@@ -33,6 +33,10 @@ export class HeaderContainerComponent implements OnInit {
 		});
 	}
 
+	onPasswordChange(): void {
+		console.log('TODO');
+	}
+
 	onManageAccountClick(): void {
 		this.dialog.open(ManagerAccountListAccountsComponent, {
 			panelClass: ['g-mat-dialog-medium'],

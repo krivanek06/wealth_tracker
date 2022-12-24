@@ -1,0 +1,12 @@
+fragment User on User {
+	id
+	createdAt
+	imageUrl
+	username
+	email
+	lastSingInDate
+}
+
+fragment LoggedUserOutput on LoggedUserOutput {
+	accessToken
+}

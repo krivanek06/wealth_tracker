@@ -73,6 +73,36 @@ mat-dialog-container {
 	}
 }
 
+.g-mat-dialog-small {
+	.mat-dialog-content {
+		max-height: none;
+
+		@screen sm {
+			max-height: 65vh;
+		}
+	}
+
+	.mat-dialog-container {
+		height: 98vh !important;
+
+		@screen sm {
+			height: auto !important;
+		}
+
+		@screen md {
+			width: 50vw !important;
+		}
+
+		@screen xl {
+			width: 45vw !important;
+		}
+
+		@screen 2xl {
+			width: 40vw !important;
+		}
+	}
+}
+
 .mat-dialog-actions .mat-button-base + .mat-button-base,
 .mat-dialog-actions .mat-mdc-button-base + .mat-mdc-button-base {
 	margin-left: 0 !important;

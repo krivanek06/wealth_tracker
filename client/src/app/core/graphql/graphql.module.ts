@@ -10,6 +10,7 @@ import { ApolloModule, APOLLO_OPTIONS } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { environment } from '../../../environments/environment';
 import { DialogServiceUtil } from '../../shared/dialogs';
+import { LoggedUserOutputFragment } from './schema-backend.service';
 
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
 	// React only on graphql errors
@@ -42,8 +43,24 @@ const errorLink = onError(({ graphQLErrors, networkError, response }) => {
 	}
 });
 
+const getToken = (): string | null => {
+	const token = localStorage.getItem('ACCESS_TOKEN');
+	if (!token) {
+		return null;
+	}
+
+	try {
+		const parsed = JSON.parse(token) as LoggedUserOutputFragment;
+
+		return parsed.accessToken;
+	} catch (err) {
+		return null;
+	}
+};
+
 const basicContext = setContext((_, { headers }) => {
-	const token = 'random token';
+	const token = getToken();
+
 	return {
 		headers: {
 			...headers,
@@ -69,7 +86,7 @@ export function createDefaultApollo(httpLink: HttpLink): ApolloClientOptions<any
 		options: {
 			reconnect: true,
 			connectionParams: {
-				authorization: `Bearer 1234`, // TODO add authenticated userId
+				authorization: `Bearer ${getToken()}`,
 			},
 		},
 	});

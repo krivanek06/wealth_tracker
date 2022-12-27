@@ -1,0 +1,18 @@
+<div class="flex items-center gap-3">
+	<img [src]="authenticatedUser.imageUrl" alt="user image" class="h-[180px]" />
+
+	<mat-list>
+		<mat-list-item>
+			<div mat-line>Email:</div>
+			<div mat-line>{{authenticatedUser.email}}</div>
+		</mat-list-item>
+		<mat-list-item>
+			<div mat-line>Username:</div>
+			<div mat-line>{{authenticatedUser.username}}</div>
+		</mat-list-item>
+		<mat-list-item>
+			<div mat-line>Create:</div>
+			<div mat-line>{{authenticatedUser.createdAt | date: 'dd.MM.YYYY'}}</div>
+		</mat-list-item>
+	</mat-list>
+</div>

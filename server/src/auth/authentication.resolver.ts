@@ -1,14 +1,25 @@
+import { UseGuards } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { Input } from './../graphql/args/';
+import { RequestUser } from './authentication.dto';
 import { AuthenticationService } from './authentication.service';
-import { LoginForgotPasswordInput, LoginUserInput, RegisterUserInput } from './inputs';
+import { ReqUser } from './decorators';
+import { AuthorizationGuard } from './guards';
+import { ChangePasswordInput, LoginForgotPasswordInput, LoginUserInput, RegisterUserInput } from './inputs';
 import { LoggedUserOutput } from './outputs';
 
 @Resolver()
 export class AuthenticationResolver {
 	constructor(private authenticationService: AuthenticationService) {}
 
-	// TODO: change password
+	@UseGuards(AuthorizationGuard)
+	@Mutation(() => Boolean)
+	changePassword(
+		@Input() changePasswordInput: ChangePasswordInput,
+		@ReqUser() authUser: RequestUser
+	): Promise<boolean> {
+		return this.authenticationService.changePassword(changePasswordInput, authUser);
+	}
 
 	@Mutation(() => Boolean)
 	resetPassword(@Input() forgotPasswordInput: LoginForgotPasswordInput): Promise<boolean> {

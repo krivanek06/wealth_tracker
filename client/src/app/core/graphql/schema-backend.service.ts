@@ -125,6 +125,16 @@ export type AssetStockProfile = {
   zip: Scalars['String'];
 };
 
+export enum AuthenticationType {
+  BasicAuth = 'BASIC_AUTH',
+  Google = 'GOOGLE'
+}
+
+export type ChangePasswordInput = {
+  password: Scalars['String'];
+  passwordRepeat: Scalars['String'];
+};
+
 export enum Data_Modification {
   Created = 'CREATED',
   Removed = 'REMOVED'
@@ -379,6 +389,7 @@ export type LoginUserInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  changePassword: Scalars['Boolean'];
   createInvestmentAccount: InvestmentAccount;
   createInvestmentAccountCashe: InvestmentAccountCashChange;
   createInvestmentAccountHolding: InvestmentAccountActiveHoldingOutputWrapper;
@@ -397,6 +408,11 @@ export type Mutation = {
   loginBasic: LoggedUserOutput;
   registerBasic: LoggedUserOutput;
   resetPassword: Scalars['Boolean'];
+};
+
+
+export type MutationChangePasswordArgs = {
+  input: ChangePasswordInput;
 };
 
 
@@ -734,12 +750,18 @@ export enum TagDataType {
 
 export type User = {
   __typename?: 'User';
+  authentication: UserAuthentication;
   createdAt: Scalars['String'];
   email: Scalars['String'];
   id: Scalars['String'];
   imageUrl?: Maybe<Scalars['String']>;
   lastSingInDate: Scalars['String'];
   username: Scalars['String'];
+};
+
+export type UserAuthentication = {
+  __typename?: 'UserAuthentication';
+  authenticationType: AuthenticationType;
 };
 
 export type AssetGeneralHistoricalPricesDataFragment = { __typename?: 'AssetGeneralHistoricalPricesData', date: string, close: number };
@@ -989,7 +1011,7 @@ export type EditPersonalAccountDailyEntryMutationVariables = Exact<{
 
 export type EditPersonalAccountDailyEntryMutation = { __typename?: 'Mutation', editPersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyDataEditOutput', originalDailyData: { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } }, modifiedDailyData: { __typename?: 'PersonalAccountDailyData', id: string, value: number, date: string, tagId: string, monthlyDataId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, modifiedAt: string, name: string, type: TagDataType, isDefault: string, color: string } } } };
 
-export type UserFragment = { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string };
+export type UserFragment = { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string, authentication: { __typename?: 'UserAuthentication', authenticationType: AuthenticationType } };
 
 export type LoggedUserOutputFragment = { __typename?: 'LoggedUserOutput', accessToken: string };
 
@@ -1014,10 +1036,17 @@ export type ResetPasswordMutationVariables = Exact<{
 
 export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: boolean };
 
+export type ChangePasswordMutationVariables = Exact<{
+  input: ChangePasswordInput;
+}>;
+
+
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: boolean };
+
 export type GetAuthenticatedUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAuthenticatedUserQuery = { __typename?: 'Query', getAuthenticatedUser: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string } };
+export type GetAuthenticatedUserQuery = { __typename?: 'Query', getAuthenticatedUser: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string, authentication: { __typename?: 'UserAuthentication', authenticationType: AuthenticationType } } };
 
 export const AssetGeneralHistoricalPricesDataFragmentDoc = gql`
     fragment AssetGeneralHistoricalPricesData on AssetGeneralHistoricalPricesData {
@@ -1257,6 +1286,9 @@ export const UserFragmentDoc = gql`
   username
   email
   lastSingInDate
+  authentication {
+    authenticationType
+  }
 }
     `;
 export const LoggedUserOutputFragmentDoc = gql`
@@ -1893,6 +1925,22 @@ export const ResetPasswordDocument = gql`
   })
   export class ResetPasswordGQL extends Apollo.Mutation<ResetPasswordMutation, ResetPasswordMutationVariables> {
     override document = ResetPasswordDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ChangePasswordDocument = gql`
+    mutation ChangePassword($input: ChangePasswordInput!) {
+  changePassword(input: $input)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ChangePasswordGQL extends Apollo.Mutation<ChangePasswordMutation, ChangePasswordMutationVariables> {
+    override document = ChangePasswordDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

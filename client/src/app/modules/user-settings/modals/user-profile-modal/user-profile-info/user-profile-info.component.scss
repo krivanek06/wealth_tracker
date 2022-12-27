@@ -1,0 +1,15 @@
+:host {
+	display: block;
+
+	mat-list-item {
+		height: 60px !important;
+
+		:first-child {
+			@apply text-sm text-gray-500;
+		}
+
+		:last-child {
+			@apply text-base;
+		}
+	}
+}

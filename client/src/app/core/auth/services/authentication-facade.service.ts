@@ -3,6 +3,7 @@ import { Apollo } from 'apollo-angular';
 import { catchError, EMPTY, map, Observable, of, switchMap, tap } from 'rxjs';
 import { AuthenticationApiService } from '../../api';
 import {
+	ChangePasswordInput,
 	LoggedUserOutputFragment,
 	LoginForgotPasswordInput,
 	LoginUserInput,
@@ -63,6 +64,13 @@ export class AuthenticationFacadeService {
 	resetPassword(input: LoginForgotPasswordInput): Observable<boolean> {
 		return this.authenticationApiService.resetPassword(input).pipe(
 			map((res) => !!res.data?.resetPassword),
+			catchError(() => EMPTY)
+		);
+	}
+
+	changePassword(input: ChangePasswordInput): Observable<boolean> {
+		return this.authenticationApiService.changePassword(input).pipe(
+			map((res) => !!res.data?.changePassword),
 			catchError(() => EMPTY)
 		);
 	}

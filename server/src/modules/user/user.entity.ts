@@ -1,5 +1,17 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { User as UserClient, UserAuthentication } from '@prisma/client';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { AuthenticationType, User as UserClient, UserAuthentication as UserAuthenticationClient } from '@prisma/client';
+
+registerEnumType(AuthenticationType, {
+	name: 'AuthenticationType',
+});
+
+@ObjectType()
+export class UserAuthentication implements UserAuthenticationClient {
+	@Field(() => AuthenticationType)
+	authenticationType: AuthenticationType;
+	token: string;
+	password: string;
+}
 
 @ObjectType()
 export class User implements UserClient {
@@ -23,5 +35,6 @@ export class User implements UserClient {
 	@Field(() => String)
 	lastSingInDate: Date;
 
+	@Field(() => UserAuthentication)
 	authentication: UserAuthentication;
 }

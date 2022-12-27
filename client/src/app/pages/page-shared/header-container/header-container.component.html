@@ -3,12 +3,6 @@
 
 	<!-- right section -->
 	<div *ngIf="authenticatedUser$ | async as user; else noUser" class="flex items-center gap-4">
-		<button (click)="onManageAccountClick()" type="button" mat-stroked-button class="g-color-secondary">
-			<mat-icon>add</mat-icon>
-			Manage accounts
-		</button>
-
-		<!-- user image -->
 		<mat-chip-list aria-label="Authenticated user">
 			<mat-chip
 				[matMenuTriggerFor]="menu"
@@ -21,9 +15,13 @@
 
 		<!-- menu when clicking on mat-chip -->
 		<mat-menu #menu="matMenu">
-			<button mat-menu-item (click)="onPasswordChange()">
-				<mat-icon>key</mat-icon>
-				<span>Password change</span>
+			<button mat-menu-item (click)="onUserProfile()">
+				<mat-icon>manage_accounts</mat-icon>
+				<span>User profile</span>
+			</button>
+			<button mat-menu-item (click)="onManageAccountClick()">
+				<mat-icon>account_balance_wallet</mat-icon>
+				<span>Manage accounts</span>
 			</button>
 			<button mat-menu-item (click)="onUserLogout()">
 				<mat-icon>logout</mat-icon>

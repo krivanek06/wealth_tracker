@@ -16,6 +16,34 @@ export class GraphQLHelper {
 				credentials: true,
 				origin: true,
 			},
+			subscriptions: {
+				'subscriptions-transport-ws': {
+					onConnect: (context: any) => {
+						const authorization = context?.authorization;
+						return {
+							req: {
+								headers: { authorization: authorization },
+							},
+						};
+					},
+				},
+				'graphql-ws': {
+					onConnect: (context: any) => {
+						const { connectionParams, extra } = context;
+						const authorization = connectionParams?.authorization;
+						// user validation will remain the same as in the example above
+						// when using with graphql-ws, additional context value should be stored in the extra field
+						// extra.user = { user: {} };
+						// TODO: this does not work properly, no token in AuthorizationGuard
+						return {
+							//	...context,
+							req: {
+								headers: { authorization: authorization },
+							},
+						};
+					},
+				},
+			},
 			formatError: (error: ApolloError) => {
 				// Don't give the specific errors to the client.
 				if (error.message.startsWith('Database Error: ')) {
@@ -29,6 +57,7 @@ export class GraphQLHelper {
 				// };
 			},
 			context: ({ req, res, connection, payload, request, reply }) => {
+				// return connection ? { req: connection.context } : { req };
 				return {
 					req,
 					res,

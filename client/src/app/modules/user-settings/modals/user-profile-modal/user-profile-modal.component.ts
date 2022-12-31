@@ -40,12 +40,6 @@ export class UserProfileModalComponent implements OnInit {
 		this.selectedComponent = component;
 	}
 
-	onPasswordReset(authenticatedUser: UserFragment): void {
-		this.authenticationFacadeService.resetPassword({
-			email: authenticatedUser.email,
-		});
-	}
-
 	private watchPasswordChange(): void {
 		this.passwordChangeControl.valueChanges
 			.pipe(

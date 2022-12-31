@@ -1,0 +1,52 @@
+<div mat-dialog-title class="flex flex-col items-center justify-between px-2 sm:flex-row">
+	<h2>My profile</h2>
+</div>
+
+<!-- content -->
+<mat-dialog-content>
+	<div *ngIf="authenticatedUser$ | async as authenticatedUser" class="grid gap-x-8 gap-y-3 lg:grid-cols-3">
+		<div class="order-last md:pl-8 lg:col-span-2 lg:order-first" [ngSwitch]="selectedComponent">
+			<!-- user profile -->
+			<app-user-profile-info
+				*ngSwitchCase="PROFILE_COMPONENTS.USER_INFO"
+				[authenticatedUser]="authenticatedUser"
+			></app-user-profile-info>
+
+			<!-- password change -->
+			<app-change-password-form
+				*ngSwitchCase="PROFILE_COMPONENTS.CHANGE_PASSWORD"
+				[formControl]="passwordChangeControl"
+			></app-change-password-form>
+		</div>
+
+		<!-- action buttons -->
+		<div class="flex flex-col justify-end gap-4 lg:justify-start">
+			<!-- my info -->
+			<button mat-stroked-button color="primary" (click)="onComponentChange(PROFILE_COMPONENTS.USER_INFO)">
+				<mat-icon>person</mat-icon>
+				My info
+			</button>
+			<!-- change password -->
+			<button
+				*ngIf="authenticatedUser.authentication.authenticationType === AuthenticationType.BasicAuth "
+				(click)="onComponentChange(PROFILE_COMPONENTS.CHANGE_PASSWORD)"
+				mat-stroked-button
+				color="accent"
+			>
+				<mat-icon>key</mat-icon>
+				Change password
+			</button>
+		</div>
+	</div>
+</mat-dialog-content>
+
+<div class="my-4">
+	<mat-divider></mat-divider>
+</div>
+
+<!-- action buttons -->
+<mat-dialog-actions>
+	<div class="justify-end g-dialog-button-wrapper">
+		<button mat-stroked-button mat-dialog-close type="button" class="lg:w-auto">Cancel</button>
+	</div>
+</mat-dialog-actions>

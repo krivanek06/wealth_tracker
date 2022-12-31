@@ -14,6 +14,10 @@ mutation ResetPassword($input: LoginForgotPasswordInput!) {
 	resetPassword(input: $input)
 }
 
+mutation ChangePassword($input: ChangePasswordInput!) {
+	changePassword(input: $input)
+}
+
 query GetAuthenticatedUser {
 	getAuthenticatedUser {
 		...User

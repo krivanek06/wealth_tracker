@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
 import { map, Observable } from 'rxjs';
 import {
+	ChangePasswordGQL,
+	ChangePasswordInput,
+	ChangePasswordMutation,
 	GetAuthenticatedUserGQL,
 	LoginForgotPasswordInput,
 	LoginUserBasicGQL,
@@ -23,6 +26,7 @@ export class AuthenticationApiService {
 		private loginUserBasicGQL: LoginUserBasicGQL,
 		private registerBasicGQL: RegisterBasicGQL,
 		private resetPasswordGQL: ResetPasswordGQL,
+		private changePasswordGQL: ChangePasswordGQL,
 		private getAuthenticatedUserGQL: GetAuthenticatedUserGQL
 	) {}
 
@@ -44,6 +48,12 @@ export class AuthenticationApiService {
 
 	registerBasic(input: RegisterUserInput): Observable<FetchResult<RegisterBasicMutation>> {
 		return this.registerBasicGQL.mutate({
+			input,
+		});
+	}
+
+	changePassword(input: ChangePasswordInput): Observable<FetchResult<ChangePasswordMutation>> {
+		return this.changePasswordGQL.mutate({
 			input,
 		});
 	}

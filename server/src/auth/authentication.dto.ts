@@ -5,6 +5,12 @@ import { IsString } from 'class-validator';
  */
 export const REQ_USER_PROPERTY = 'REQ_USER';
 
+export interface RequestUserInt {
+	id: string;
+	username: string;
+	email: string;
+}
+
 export class RequestUser {
 	@IsString()
 	id: string;

@@ -89,6 +89,12 @@ export function createDefaultApollo(httpLink: HttpLink): ApolloClientOptions<any
 				authorization: `Bearer ${getToken()}`,
 			},
 		},
+
+		// createClient({
+		//   url: environment.custom_graphql_backend_ws,
+		//   connectionParams: {
+		//     authorization: `Bearer ${getToken()}`,
+		//   },
 	});
 
 	// depending on what kind of operation is being sent

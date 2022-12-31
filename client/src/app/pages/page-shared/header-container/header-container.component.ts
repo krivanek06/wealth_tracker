@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../core/auth';
 import { UserFragment } from '../../../core/graphql';
 import { ManagerAccountListAccountsComponent } from '../../../modules/manager-account/modals';
-import { LoginModalComponent } from '../../../modules/user-settings';
+import { LoginModalComponent, UserProfileModalComponent } from '../../../modules/user-settings';
 
 @Component({
 	selector: 'app-header-container',
@@ -33,8 +33,10 @@ export class HeaderContainerComponent implements OnInit {
 		});
 	}
 
-	onPasswordChange(): void {
-		console.log('TODO');
+	onUserProfile(): void {
+		this.dialog.open(UserProfileModalComponent, {
+			panelClass: ['g-mat-dialog-medium'],
+		});
 	}
 
 	onManageAccountClick(): void {

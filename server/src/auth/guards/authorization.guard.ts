@@ -1,10 +1,11 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { AuthGuard } from '@nestjs/passport';
 import * as jwt from 'jsonwebtoken';
-import { RequestUser, REQ_USER_PROPERTY } from '../authentication.dto';
+import { RequestUser, RequestUserInt, REQ_USER_PROPERTY } from '../authentication.dto';
 
 @Injectable()
-export class AuthorizationGuard implements CanActivate {
+export class AuthorizationGuard extends AuthGuard('jwt') {
 	private TEST_USER: RequestUser = {
 		id: '63457ee2bb8dd0d311fbbe2b',
 		username: 'Jimmie_Boehm10',
@@ -14,32 +15,42 @@ export class AuthorizationGuard implements CanActivate {
 	canActivate(context: ExecutionContext): boolean | Promise<boolean> {
 		const ctx = GqlExecutionContext.create(context).getContext();
 		// console.log('ctx', ctx.req?.headers);
-		// const authorization = ctx.req?.headers?.authorization;
-		// if (!authorization) {
-		// 	throw new HttpException('Header information not found in the request', HttpStatus.BAD_GATEWAY);
-		// }
+		const authorization = ctx.req?.headers?.authorization; // 'Bearer ....'
+		console.log(authorization);
 
-		//const data = this.validateToken(authorization);
+		const data = this.validateToken(authorization);
 
-		// TODO check if data is RequestUser object
-		//console.log(data);
+		// console.log(data.id);
 
+		// mocked user
 		ctx[REQ_USER_PROPERTY] = new RequestUser({
 			id: this.TEST_USER.id,
 			username: this.TEST_USER.username,
 			email: this.TEST_USER.email,
-		}); // data
+		});
+
+		// current user
+		// ctx[REQ_USER_PROPERTY] = new RequestUser({
+		// 	id: data.id,
+		// 	username: data.username,
+		// 	email: data.email,
+		// });
 
 		return true;
 	}
 
-	validateToken(auth: string) {
-		if (auth.split(' ')[0] !== 'Berear') {
+	validateToken(auth: string): RequestUserInt {
+		if (!auth) {
+			throw new HttpException('Header information not found in the request', HttpStatus.BAD_GATEWAY);
+		}
+
+		if (auth.split(' ')[0] !== 'Bearer') {
 			throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
 		}
 		try {
 			const token = auth.split(' ')[1];
-			return jwt.decode(token);
+			const decoded = jwt.decode(token);
+			return decoded as RequestUserInt;
 		} catch (err) {
 			throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
 		}

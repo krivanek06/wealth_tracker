@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma';
-import { SendGridModule } from '../providers';
+import { SendGridModule } from '../providers/sendgrid';
 import { AuthenticationController } from './authentication.controller';
 import { AuthenticationResolver } from './authentication.resolver';
 import { AuthenticationService } from './authentication.service';

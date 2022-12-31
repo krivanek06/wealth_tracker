@@ -5,6 +5,9 @@ fragment User on User {
 	username
 	email
 	lastSingInDate
+	authentication {
+		authenticationType
+	}
 }
 
 fragment LoggedUserOutput on LoggedUserOutput {

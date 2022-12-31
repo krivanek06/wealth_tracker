@@ -4,7 +4,7 @@
 </div>
 
 <mat-dialog-content>
-	<form (submit)="onSave()" [formGroup]="formGroup" class="lg:basis-3/5 mb-2">
+	<form (ngSubmit)="onSave()" [formGroup]="formGroup" class="lg:basis-3/5 mb-2">
 		<!-- cash state -->
 		<div *ngIf="cashCategory$ | async as cashCategory" class="c-cash-wrapper">
 			<div>

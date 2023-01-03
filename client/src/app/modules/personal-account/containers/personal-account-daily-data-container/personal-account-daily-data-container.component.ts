@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { combineLatest, map, Observable, startWith, switchMap } from 'rxjs';
+import { combineLatest, map, Observable, of, startWith, switchMap } from 'rxjs';
 import { PersonalAccountFacadeService } from './../../../../core/api';
 import {
 	PersonalAccountDailyDataFragment,
@@ -22,9 +22,9 @@ import { PersonalAccountDailyDataEntryComponent } from './../../modals';
 export class PersonalAccountDailyDataContainerComponent implements OnInit {
 	@Input() personalAccountBasic!: PersonalAccountOverviewBasicFragment;
 	weeklyIds$!: Observable<string[]>; // 2022-7-32, 2022-7-33, ...
-	monthlyDataDetail$!: Observable<PersonalAccountMonthlyDataDetailFragment>;
-	monthlyDataDetailTable$!: Observable<PersonalAccountMonthlyDataDetailFragment>;
-	expenseAllocationChartData$!: Observable<GenericChartSeriesPie>;
+	monthlyDataDetail$!: Observable<PersonalAccountMonthlyDataDetailFragment | null>;
+	monthlyDataDetailTable$!: Observable<PersonalAccountMonthlyDataDetailFragment | null>;
+	expenseAllocationChartData$!: Observable<GenericChartSeriesPie | null>;
 
 	ChartType = ChartType;
 
@@ -58,8 +58,9 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 			switchMap(([filterValues, account]) => {
 				const [year, month] = filterValues.yearAndMonth.split('-').map((d) => Number(d));
 				const monthlyDataOverview = account.monthlyData.find((d) => d.year === year && d.month === month);
+				// new month/year - no data was yet created
 				if (!monthlyDataOverview) {
-					throw new Error('Currect monthly data not found');
+					return of(null);
 				}
 				// TODO this is triggered 3x , why ?
 				console.log('monthlyData', filterValues);
@@ -69,6 +70,10 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 
 		this.monthlyDataDetailTable$ = this.monthlyDataDetail$.pipe(
 			map((monthlyDataDetails) => {
+				if (!monthlyDataDetails) {
+					return null;
+				}
+
 				const selectedTagIds = this.filterControl.getRawValue().tag;
 				const selectedWeek = this.filterControl.getRawValue().week;
 
@@ -88,7 +93,7 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 
 		// calculate expense chart for filtered data
 		this.expenseAllocationChartData$ = this.monthlyDataDetail$.pipe(
-			map((result) => this.formatToExpenseAllocationChartDatta(result))
+			map((result) => (!!result ? this.formatToExpenseAllocationChartData(result) : null))
 		);
 	}
 
@@ -103,7 +108,7 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		});
 	}
 
-	private formatToExpenseAllocationChartDatta(data: PersonalAccountMonthlyDataDetailFragment): GenericChartSeriesPie {
+	private formatToExpenseAllocationChartData(data: PersonalAccountMonthlyDataDetailFragment): GenericChartSeriesPie {
 		const seriesData = data.dailyData.reduce((acc, curr) => {
 			// ignore income
 			if (curr.tag.type === TagDataType.Income) {

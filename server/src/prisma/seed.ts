@@ -42,11 +42,12 @@ const randomIntFromInterval = (min: number, max: number) => {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-const personalAccountCreateDailyData = async (accunt: PersonalAccount): Promise<void> => {
-	const defaultTags = accunt.personalAccountTag;
+const personalAccountCreateDailyData = async (account: PersonalAccount): Promise<void> => {
+	const defaultTags = account.personalAccountTag;
+	// console.log(defaultTags);
 
 	// for each day
-	for (let i = 0; i < 100; i++) {
+	for (let i = 0; i < 150; i++) {
 		const randomDailyEntries = randomIntFromInterval(2, 5);
 		console.log(`Daily data: ${i}, entities: ${randomDailyEntries}`);
 		const today = addDays(new Date('2022-08-01'), i);
@@ -58,7 +59,7 @@ const personalAccountCreateDailyData = async (accunt: PersonalAccount): Promise<
 
 			const input: PersonalAccountDailyDataCreate = {
 				date: today.toISOString(),
-				personalAccountId: accunt.id,
+				personalAccountId: account.id,
 				tagId: randomTag.id,
 				value: randomIntFromInterval(11, 66),
 			};
@@ -68,10 +69,10 @@ const personalAccountCreateDailyData = async (accunt: PersonalAccount): Promise<
 	}
 };
 
-const personalAccountDeleteMonthlyData = async (accunt: PersonalAccount): Promise<void> => {
+const personalAccountDeleteMonthlyData = async (account: PersonalAccount): Promise<void> => {
 	const monthlyData = await prisma.personalAccountMonthlyData.findMany({
 		where: {
-			personalAccountId: accunt.id,
+			personalAccountId: account.id,
 		},
 	});
 	for await (const data of monthlyData) {

@@ -42,7 +42,7 @@ export class PersonalAccountService {
 
 		// prevent creating more than 5 personal accounts per user
 		if (personalAccountCount > 4) {
-			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_ALLOWED_TO_CTEATE, HttpStatus.FORBIDDEN);
+			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_ALLOWED_TO_CREATE, HttpStatus.FORBIDDEN);
 		}
 
 		// create personal account

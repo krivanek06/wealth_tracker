@@ -4,7 +4,7 @@ import { PrismaService } from '../../../prisma';
 import { SharedServiceUtil } from '../../../utils';
 import { PERSONAL_ACCOUNT_DEFAULT_TAGS, PERSONAL_ACCOUNT_TAG_ERROR } from '../dto';
 import { PersonalAccountTag } from '../entities';
-import { PersonalAccountTagDataCreate, PersonalAccountTagDataEdit } from '../inputs';
+import { PersonalAccountTagDataCreate, PersonalAccountTagDataDelete, PersonalAccountTagDataEdit } from '../inputs';
 
 @Injectable()
 export class PersonalAccountTagService {
@@ -65,6 +65,27 @@ export class PersonalAccountTagService {
 		await this.saveTags(tagDataEdit.personalAccountId, allSavingTags);
 
 		return modifiedTag;
+	}
+
+	async deletePersonalAccount(
+		tagDataDelete: PersonalAccountTagDataDelete,
+		userId: string
+	): Promise<PersonalAccountTag> {
+		const tags = await this.getTagsForPersonalAccount(tagDataDelete.personalAccountId);
+		const searchedTag = tags.find((d) => d.id === tagDataDelete.id);
+
+		// not found
+		if (!searchedTag) {
+			throw new HttpException(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND_BY_ID, HttpStatus.NOT_FOUND);
+		}
+
+		// update all
+		const allSavingTags = tags.filter((d) => d.id !== tagDataDelete.id);
+
+		// save new tag
+		await this.saveTags(tagDataDelete.personalAccountId, allSavingTags);
+
+		return searchedTag;
 	}
 
 	async getPersonalAccountTagsByTypes(

@@ -3,7 +3,7 @@ import { Mutation, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql/args';
 import { PersonalAccountTag } from '../entities/';
-import { PersonalAccountTagDataCreate, PersonalAccountTagDataEdit } from '../inputs';
+import { PersonalAccountTagDataCreate, PersonalAccountTagDataDelete, PersonalAccountTagDataEdit } from '../inputs';
 import { PersonalAccountTagService } from '../services';
 
 @UseGuards(AuthorizationGuard)
@@ -25,5 +25,13 @@ export class PersonalAccountTagResolver {
 		@Input() input: PersonalAccountTagDataEdit
 	): Promise<PersonalAccountTag> {
 		return this.personalAccountTagService.editPersonalAccountTag(input, authUser.id);
+	}
+
+	@Mutation(() => PersonalAccountTag)
+	deletePersonalAccount(
+		@ReqUser() authUser: RequestUser,
+		@Input() input: PersonalAccountTagDataDelete
+	): Promise<PersonalAccountTag> {
+		return this.personalAccountTagService.deletePersonalAccount(input, authUser.id);
 	}
 }

@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { PersonalAccount as PersonalAccountClient } from '@prisma/client';
+import { PersonalAccountTag } from './personal-account-tag.entity';
 
 @ObjectType()
 export class PersonalAccount implements PersonalAccountClient {
@@ -14,4 +15,7 @@ export class PersonalAccount implements PersonalAccountClient {
 
 	@Field(() => String)
 	userId: string;
+
+	@Field(() => [PersonalAccountTag])
+	personalAccountTag: PersonalAccountTag[];
 }

@@ -16,7 +16,11 @@ const pubsub = new PubSub();
 const personalAccountTagService = new PersonalAccountTagService(prisma);
 const personalAccountDailyService = new PersonalAccountDailyService(prisma, personalAccountTagService, pubsub);
 const personalAccountMonthlyService = new PersonalAccountMonthlyService(prisma, personalAccountTagService);
-const personalAccountService = new PersonalAccountService(prisma, personalAccountMonthlyService);
+const personalAccountService = new PersonalAccountService(
+	prisma,
+	personalAccountMonthlyService,
+	personalAccountTagService
+);
 
 const USER_ID = '63457ee2bb8dd0d311fbbe2b';
 
@@ -39,7 +43,7 @@ const randomIntFromInterval = (min: number, max: number) => {
 };
 
 const personalAccountCreateDailyData = async (accunt: PersonalAccount): Promise<void> => {
-	const defaultTags = personalAccountTagService.getDefaultTags();
+	const defaultTags = accunt.personalAccountTag;
 
 	// for each day
 	for (let i = 0; i < 100; i++) {
@@ -95,9 +99,9 @@ const run = async () => {
 
 		console.log('[Personal account] ----- END');
 
-		console.log('[Investment account] ----- START');
+		// console.log('[Investment account] ----- START');
 
-		console.log('[Investment account] ----- END');
+		// console.log('[Investment account] ----- END');
 	} catch (e) {
 		console.log(e);
 	} finally {

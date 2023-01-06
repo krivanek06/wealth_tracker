@@ -37,9 +37,6 @@ export class PersonalAccountDailyService {
 		const inputDate = new Date(input.date);
 		const uuid = SharedServiceUtil.getUUID();
 
-		// check if tag exists
-		this.personalAccountTagService.getDefaultTagById(input.tagId);
-
 		// calculate date details
 		const { year, month, week } = MomentServiceUtil.getDetailsInformationFromDate(inputDate);
 

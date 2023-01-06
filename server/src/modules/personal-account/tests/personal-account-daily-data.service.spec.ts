@@ -88,7 +88,7 @@ describe('PersonalAccountDailyService', () => {
 	SharedServiceUtil.getUUID = jest.fn().mockReturnValue(MOCK_UUID);
 
 	const personalAccountTagServiceMock: PersonalAccountTagService = createMock<PersonalAccountTagService>({
-		getDefaultTagById: jest.fn(),
+		getPersonalAccountTagById: jest.fn(),
 	});
 	const pubSubMock: PubSubEngine = createMock<PubSubEngine>({
 		publish: jest.fn(),

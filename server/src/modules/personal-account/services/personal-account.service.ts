@@ -5,10 +5,15 @@ import { PersonalAccount } from '../entities';
 import { PersonalAccountCreateInput, PersonalAccountEditInput } from '../inputs';
 import { MomentServiceUtil } from './../../../utils';
 import { PersonalAccountMonthlyService } from './personal-account-monthly.service';
+import { PersonalAccountTagService } from './personal-account-tag.service';
 
 @Injectable()
 export class PersonalAccountService {
-	constructor(private prisma: PrismaService, private personalAccountMonthlyService: PersonalAccountMonthlyService) {}
+	constructor(
+		private prisma: PrismaService,
+		private personalAccountMonthlyService: PersonalAccountMonthlyService,
+		private personalAccountTagService: PersonalAccountTagService
+	) {}
 
 	/* Queries */
 	getPersonalAccountById(personalAccountId: string): Promise<PersonalAccount> {
@@ -45,8 +50,12 @@ export class PersonalAccountService {
 			data: {
 				name,
 				userId,
+				personalAccountTag: [],
 			},
 		});
+
+		// add default tags
+		await this.personalAccountTagService.registerDefaultTagsForPersonalAccountId(personalAccount.id, userId);
 
 		// created date details
 		const { year, month } = MomentServiceUtil.getDetailsInformationFromDate(personalAccount.createdAt);

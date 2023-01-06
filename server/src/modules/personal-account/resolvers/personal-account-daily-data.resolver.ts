@@ -1,28 +1,25 @@
 import { UseGuards } from '@nestjs/common';
-import { Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
-import { PersonalAccountDailyData, PersonalAccountTag } from '../entities';
+import { Mutation, Resolver } from '@nestjs/graphql';
+import { PersonalAccountDailyData } from '../entities';
 import {
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
 } from '../inputs';
 import { PersonalAccountDailyDataEditOutput } from '../outputs';
-import { PersonalAccountDailyService, PersonalAccountTagService } from '../services';
+import { PersonalAccountDailyService } from '../services';
 import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth';
 import { Input } from './../../../graphql/';
 
 @UseGuards(AuthorizationGuard)
 @Resolver(() => PersonalAccountDailyData)
 export class PersonalAccountDailyResolver {
-	constructor(
-		private personalAccountDailyService: PersonalAccountDailyService,
-		private personalAccountTagService: PersonalAccountTagService
-	) {}
+	constructor(private personalAccountDailyService: PersonalAccountDailyService) {}
 
 	/* Mutations */
 
 	@Mutation(() => PersonalAccountDailyData)
-	async createPersonalAccountDailyEntry(
+	createPersonalAccountDailyEntry(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: PersonalAccountDailyDataCreate
 	): Promise<PersonalAccountDailyData> {
@@ -30,7 +27,7 @@ export class PersonalAccountDailyResolver {
 	}
 
 	@Mutation(() => PersonalAccountDailyDataEditOutput)
-	async editPersonalAccountDailyEntry(
+	editPersonalAccountDailyEntry(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: PersonalAccountDailyDataEdit
 	): Promise<PersonalAccountDailyDataEditOutput> {
@@ -38,16 +35,10 @@ export class PersonalAccountDailyResolver {
 	}
 
 	@Mutation(() => PersonalAccountDailyData)
-	async deletePersonalAccountDailyEntry(
+	deletePersonalAccountDailyEntry(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: PersonalAccountDailyDataDelete
 	): Promise<PersonalAccountDailyData> {
 		return this.personalAccountDailyService.deletePersonalAccountDailyEntry(input, authUser.id);
-	}
-
-	/* Resolvers */
-	@ResolveField('tag', () => PersonalAccountTag)
-	getMonthlyDataDailyEntries(@Parent() dailyData: PersonalAccountDailyData): PersonalAccountTag {
-		return this.personalAccountTagService.getDefaultTagById(dailyData.tagId);
 	}
 }

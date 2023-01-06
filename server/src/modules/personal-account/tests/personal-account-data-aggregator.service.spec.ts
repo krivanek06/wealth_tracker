@@ -145,14 +145,14 @@ describe('PersonalAccounDataAggregatorService', () => {
 	];
 
 	const personalAccountTagServiceMock: PersonalAccountTagService = createMock<PersonalAccountTagService>({
-		getDefaultTagById: jest.fn(),
+		getPersonalAccountTagById: jest.fn(),
 	});
 
 	const personalAccountMonthlyServiceMock: PersonalAccountMonthlyService = createMock<PersonalAccountMonthlyService>({
 		getMonthlyDataByAccountId: jest.fn(),
 	});
 
-	when(personalAccountTagServiceMock.getDefaultTagById)
+	when(personalAccountTagServiceMock.getPersonalAccountTagById)
 		.calledWith(mockTag.id)
 		.mockReturnValue(mockTag)
 		.calledWith(mockTag2.id)

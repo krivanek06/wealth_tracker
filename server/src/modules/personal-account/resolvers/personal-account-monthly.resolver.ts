@@ -36,7 +36,7 @@ export class PersonalAccountMonthlyResolver {
 	}
 
 	@ResolveField('monthlyIncome', () => Float)
-	getMonthlyIncome(@Parent() personalAccountMonthlyData: PersonalAccountMonthlyData): number {
+	getMonthlyIncome(@Parent() personalAccountMonthlyData: PersonalAccountMonthlyData): Promise<number> {
 		return this.personalAccountMonthlyService.getMonthlyIncomeOrExpense(
 			personalAccountMonthlyData,
 			PersonalAccountTagDataType.INCOME
@@ -44,7 +44,7 @@ export class PersonalAccountMonthlyResolver {
 	}
 
 	@ResolveField('monthlyExpense', () => Float)
-	getMonthlyExpense(@Parent() personalAccountMonthlyData: PersonalAccountMonthlyData): number {
+	getMonthlyExpense(@Parent() personalAccountMonthlyData: PersonalAccountMonthlyData): Promise<number> {
 		return this.personalAccountMonthlyService.getMonthlyIncomeOrExpense(
 			personalAccountMonthlyData,
 			PersonalAccountTagDataType.EXPENSE

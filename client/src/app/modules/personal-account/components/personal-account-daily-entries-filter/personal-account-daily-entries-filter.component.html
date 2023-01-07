@@ -19,14 +19,6 @@
 		</mat-select>
 	</mat-form-field>
 
-	<!-- display tags in the selected month & week -->
-	<app-form-mat-input-wrapper
-		controlName="tag"
-		inputCaption="Select tag"
-		inputType="MULTISELECT"
-		[inputSource]="displayTagsInputSource$ | async"
-	></app-form-mat-input-wrapper>
-
 	<!-- current month -->
 	<div class="mt-1 h-11">
 		<button mat-stroked-button (click)="onCurrentMonthClick()" type="button" color="primary" class="w-full h-full">

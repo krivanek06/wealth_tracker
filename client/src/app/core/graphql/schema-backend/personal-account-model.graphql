@@ -1,21 +1,22 @@
 fragment PersonalAccountTag on PersonalAccountTag {
 	id
 	createdAt
-	modifiedAt
 	name
 	type
-	isDefault
 	color
+	imageUrl
 }
 
-fragment PersonalAccountDailyData on PersonalAccountDailyData {
+fragment PersonalAccountDailyDataOutput on PersonalAccountDailyDataOutput {
 	id
 	value
 	date
 	tagId
 	monthlyDataId
+	personalAccountId
 	week
-	tag {
+	tagId
+	personalAccountTag {
 		...PersonalAccountTag
 	}
 }
@@ -32,20 +33,30 @@ fragment PersonalAccountMonthlyDataOverview on PersonalAccountMonthlyData {
 
 fragment PersonalAccountMonthlyDataDetail on PersonalAccountMonthlyData {
 	...PersonalAccountMonthlyDataOverview
-	dailyData {
-		...PersonalAccountDailyData
+
+	dailyIncomes {
+		...PersonalAccountDailyDataOutput
+	}
+
+	dailyExpenses {
+		...PersonalAccountDailyDataOutput
 	}
 }
 
-fragment PersonalAccountOverviewBasic on PersonalAccount {
+fragment PersonalAccountOverview on PersonalAccount {
 	id
 	name
 	createdAt
 	userId
+	accountType
 }
 
-fragment PersonalAccountOverview on PersonalAccount {
-	...PersonalAccountOverviewBasic
+fragment PersonalAccountDetails on PersonalAccount {
+	...PersonalAccountOverview
+
+	personalAccountTag {
+		...PersonalAccountTag
+	}
 
 	yearlyAggregaton {
 		...PersonalAccountAggregationData

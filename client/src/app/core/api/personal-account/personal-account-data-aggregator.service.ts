@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
 	PersonalAccountAggregationDataOutput,
-	PersonalAccountDailyDataFragment,
+	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountWeeklyAggregationFragment,
 	PersonalAccountWeeklyAggregationOutput,
 	TagDataType,
@@ -23,14 +23,16 @@ export class PersonalAccountDataAggregatorService {
 	 */
 	updateAggregations(
 		personalAccountId: string,
-		dailyData: PersonalAccountDailyDataFragment,
+		dailyData: PersonalAccountDailyDataOutputFragment,
 		operation: 'increase' | 'decrease'
 	): void {
-		const personalAccount = this.personalAccountCacheService.getPersonalAccountOverview(personalAccountId);
+		const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails(personalAccountId);
 		const dateDetails = DateServiceUtil.getDetailsInformationFromDate(Number(dailyData.date));
 		const multiplyer = operation === 'increase' ? 1 : -1; // add or remove data from aggregation
 
-		const isTagInYearlyAggregatopm = personalAccount.yearlyAggregaton.findIndex((d) => d.tag.id === dailyData.tag.id);
+		const isTagInYearlyAggregatopm = personalAccount.yearlyAggregaton.findIndex(
+			(d) => d.tag.id === dailyData.personalAccountTag.id
+		);
 
 		// update yearlyAggregaton that match tagId or add new yearly data if not found
 		const yearlyAggregaton: PersonalAccountAggregationDataOutput[] =
@@ -50,7 +52,7 @@ export class PersonalAccountDataAggregatorService {
 						{
 							__typename: 'PersonalAccountAggregationDataOutput',
 							entries: 1,
-							tag: dailyData.tag,
+							tag: dailyData.personalAccountTag,
 							value: dailyData.value,
 						},
 				  ];
@@ -65,7 +67,7 @@ export class PersonalAccountDataAggregatorService {
 
 		// if -1 means there is not weekly aggregation for specific TAG
 		const weeklyAggregatonDataIndex = personalAccount.weeklyAggregaton[weeklyAggregatonIndex]?.data?.findIndex(
-			(d) => d.tag.id === dailyData.tag.id
+			(d) => d.tag.id === dailyData.personalAccountTag.id
 		);
 
 		// only used when monthly data not exists
@@ -79,7 +81,7 @@ export class PersonalAccountDataAggregatorService {
 				{
 					__typename: 'PersonalAccountAggregationDataOutput',
 					entries: 1,
-					tag: dailyData.tag,
+					tag: dailyData.personalAccountTag,
 					value: dailyData.value,
 				},
 			],
@@ -108,7 +110,7 @@ export class PersonalAccountDataAggregatorService {
 										{
 											__typename: 'PersonalAccountAggregationDataOutput',
 											entries: 1,
-											tag: dailyData.tag,
+											tag: dailyData.personalAccountTag,
 											value: dailyData.value,
 										},
 									],
@@ -122,7 +124,7 @@ export class PersonalAccountDataAggregatorService {
 									...d,
 									data: d.data.map((dDaily) =>
 										// found tag we want to mutate
-										dDaily.tag.id === dailyData.tag.id
+										dDaily.tag.id === dailyData.personalAccountTag.id
 											? {
 													...dDaily,
 													entries: dDaily.entries + 1 * multiplyer,
@@ -135,8 +137,10 @@ export class PersonalAccountDataAggregatorService {
 				  );
 
 		// update monthly data entries + income/expense
-		const newMonthlyIncome = (dailyData.tag.type === TagDataType.Income ? dailyData.value : 0) * multiplyer;
-		const newMonthlyExpense = (dailyData.tag.type === TagDataType.Expense ? dailyData.value : 0) * multiplyer;
+		const newMonthlyIncome =
+			(dailyData.personalAccountTag.type === TagDataType.Income ? dailyData.value : 0) * multiplyer;
+		const newMonthlyExpense =
+			(dailyData.personalAccountTag.type === TagDataType.Expense ? dailyData.value : 0) * multiplyer;
 		const monthlyData = personalAccount.monthlyData.map((d) => {
 			if (d.id === dailyData.monthlyDataId) {
 				return {
@@ -150,7 +154,7 @@ export class PersonalAccountDataAggregatorService {
 		});
 
 		// update cache
-		this.personalAccountCacheService.updatePersonalAccountOverview(personalAccountId, {
+		this.personalAccountCacheService.updatePersonalAccountDetails(personalAccountId, {
 			...personalAccount,
 			yearlyAggregaton,
 			weeklyAggregaton,

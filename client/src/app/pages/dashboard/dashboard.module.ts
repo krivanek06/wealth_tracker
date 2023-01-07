@@ -1,6 +1,7 @@
 import { LayoutModule } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule, Routes } from '@angular/router';
 import { ResolveTokenGuard } from '../../core/guards';
 import { InvestmentAccountModule } from '../../modules/investment-account/';
@@ -26,6 +27,7 @@ const routes: Routes = [
 		InvestmentAccountModule,
 		LayoutModule,
 		HeaderContainerModule,
+		MatTabsModule,
 	],
 })
 export class DashboardModule {}

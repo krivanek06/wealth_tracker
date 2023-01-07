@@ -3,9 +3,10 @@ import { PubSub } from 'graphql-subscriptions';
 import { PersonalAccount } from './../modules/personal-account/entities/personal-account.entity';
 import { PersonalAccountCreateInput } from './../modules/personal-account/inputs/personal-account-create.input';
 import { PersonalAccountDailyDataCreate } from './../modules/personal-account/inputs/personal-account-daily-data-create.input';
+import { PersonalAccountMonthlyDataRepository } from './../modules/personal-account/repository/personal-account-monthly-data-repository.service';
+import { PersonalAccountRepositoryService } from './../modules/personal-account/repository/personal-account-repository.service';
 import { PersonalAccountDailyService } from './../modules/personal-account/services/personal-account-daily-data.service';
 import { PersonalAccountMonthlyService } from './../modules/personal-account/services/personal-account-monthly.service';
-import { PersonalAccountRepositoryService } from './../modules/personal-account/services/personal-account-repository.service';
 import { PersonalAccountTagService } from './../modules/personal-account/services/personal-account-tag.service';
 import { PersonalAccountService } from './../modules/personal-account/services/personal-account.service';
 
@@ -15,14 +16,15 @@ const prisma = new PrismaService();
 const pubsub = new PubSub();
 
 const personalAccountRepo = new PersonalAccountRepositoryService(prisma);
-const personalAccountTagService = new PersonalAccountTagService(prisma);
-const personalAccountDailyService = new PersonalAccountDailyService(prisma, personalAccountTagService, pubsub);
-const personalAccountMonthlyService = new PersonalAccountMonthlyService(prisma, personalAccountTagService);
-const personalAccountService = new PersonalAccountService(
-	prisma,
-	personalAccountMonthlyService,
-	personalAccountTagService
+const personalAccountMonthlyRepo = new PersonalAccountMonthlyDataRepository(prisma);
+
+const personalAccountTagService = new PersonalAccountTagService(personalAccountRepo);
+const personalAccountDailyService = new PersonalAccountDailyService(personalAccountRepo, personalAccountMonthlyRepo);
+const personalAccountMonthlyService = new PersonalAccountMonthlyService(
+	personalAccountMonthlyRepo,
+	personalAccountRepo
 );
+const personalAccountService = new PersonalAccountService(personalAccountRepo);
 
 const USER_ID = '63457ee2bb8dd0d311fbbe2b';
 

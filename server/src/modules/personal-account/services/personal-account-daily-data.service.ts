@@ -1,30 +1,36 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { PubSubEngine } from 'graphql-subscriptions';
-import { PUB_SUB } from '../../../graphql/graphql.types';
-import { PrismaService } from '../../../prisma';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
-import { CREATED_MONTHLY_DATA, PERSONAL_ACCOUNT_ERROR_DAILY_DATA, PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA } from '../dto';
+import { PERSONAL_ACCOUNT_ERROR_DAILY_DATA, PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA } from '../dto';
 import { PersonalAccountDailyData } from '../entities';
 import {
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
 } from '../inputs';
-import { PersonalAccountDailyDataEditOutput } from '../outputs';
-import { PersonalAccountTagService } from './personal-account-tag.service';
+import { PersonalAccountDailyDataEditOutput, PersonalAccountDailyDataOutput } from '../outputs';
+import { PersonalAccountMonthlyDataRepository, PersonalAccountRepositoryService } from '../repository';
 
 @Injectable()
 export class PersonalAccountDailyService {
 	constructor(
-		private prisma: PrismaService,
-		private personalAccountTagService: PersonalAccountTagService,
-		@Inject(PUB_SUB) private pubSub: PubSubEngine
+		private readonly personalAccountRepositoryService: PersonalAccountRepositoryService,
+		private readonly personalAccountMonthlyDataRepository: PersonalAccountMonthlyDataRepository
 	) {}
+
+	/**
+	 *
+	 * @param data
+	 * @returns output of the data that contains the associated tag object
+	 */
+	async transformDailyDataToOutput(data: PersonalAccountDailyData): Promise<PersonalAccountDailyDataOutput> {
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(data.personalAccountId);
+		const personalAccountTag = personalAccount.personalAccountTag.find((d) => d.id === data.tagId);
+		return { ...data, personalAccountTag };
+	}
 
 	/**
 	 * From the PersonalAccountDailyDataCreate.date we calculate what year and month monthlyData
 	 * we are working with.
-	 * If monthly data does not exist, create one - user may add entry to the future
 	 *
 	 * @param input {PersonalAccountDailyDataCreate} input data to create {PersonalAccountDailyData}
 	 * @param userId {string} of the user who to associate the new PersonalAccountDailyData
@@ -41,26 +47,24 @@ export class PersonalAccountDailyService {
 		const { year, month, week } = MomentServiceUtil.getDetailsInformationFromDate(inputDate);
 
 		// load monthly data to which we want to register the dailyData
-		let monthlyData = await this.prisma.personalAccountMonthlyData.findFirst({
-			where: {
-				personalAccountId: input.personalAccountId,
-				year,
-				month,
-			},
-		});
-		const isMonthlyDataExist = !!monthlyData;
+		const monthlyData = await this.personalAccountMonthlyDataRepository.getMonthlyDataByYearAndMont(
+			input.personalAccountId,
+			year,
+			month
+		);
 
 		// create new monthly data for the new daily data
-		if (!isMonthlyDataExist) {
-			monthlyData = await this.prisma.personalAccountMonthlyData.create({
-				data: {
-					personalAccountId: input.personalAccountId,
-					userId,
-					year,
-					month,
-					dailyData: [],
-				},
-			});
+		if (!!monthlyData) {
+			throw new HttpException(PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA.NOT_FOUND, HttpStatus.NOT_FOUND);
+			// monthlyData = await this.prisma.personalAccountMonthlyData.create({
+			// 	data: {
+			// 		personalAccountId: input.personalAccountId,
+			// 		userId,
+			// 		year,
+			// 		month,
+			// 		dailyData: [],
+			// 	},
+			// });
 		}
 
 		// create entry
@@ -69,27 +73,21 @@ export class PersonalAccountDailyService {
 			userId: userId,
 			tagId: input.tagId,
 			monthlyDataId: monthlyData.id,
+			personalAccountId: input.personalAccountId,
 			value: input.value,
 			week: week,
 			date: inputDate,
 		};
 
 		// save entry
-		const monthlyDataPublish = await this.prisma.personalAccountMonthlyData.update({
-			data: {
-				dailyData: {
-					push: [dailyData],
-				},
-			},
-			where: {
-				id: monthlyData.id,
-			},
+		await this.personalAccountMonthlyDataRepository.updateMonthlyData(monthlyData.id, {
+			dailyData: [...monthlyData.dailyData, dailyData],
 		});
 
 		// subscriptions to publish information about newly created monthly data
-		if (!isMonthlyDataExist) {
-			this.pubSub.publish(CREATED_MONTHLY_DATA, { [CREATED_MONTHLY_DATA]: monthlyDataPublish });
-		}
+		// if (!isMonthlyDataExist) {
+		// 	this.pubSub.publish(CREATED_MONTHLY_DATA, { [CREATED_MONTHLY_DATA]: monthlyDataPublish });
+		// }
 
 		return dailyData;
 	}
@@ -112,12 +110,14 @@ export class PersonalAccountDailyService {
 	): Promise<PersonalAccountDailyDataEditOutput> {
 		// remove old daily data
 		const deletedDailyData = await this.deletePersonalAccountDailyEntry(input.dailyDataDelete, userId);
+		const deletedDailyDataOutput = await this.transformDailyDataToOutput(deletedDailyData);
 
 		// new daily data
 		const newDailyData = await this.createPersonalAccountDailyEntry(input.dailyDataCreate, userId);
+		const newDailyDataOutput = await this.transformDailyDataToOutput(newDailyData);
 
 		// return edited entry
-		return { originalDailyData: deletedDailyData, modifiedDailyData: newDailyData };
+		return { originalDailyData: deletedDailyDataOutput, modifiedDailyData: newDailyDataOutput };
 	}
 
 	/**
@@ -131,11 +131,7 @@ export class PersonalAccountDailyService {
 		{ dailyDataId, monthlyDataId }: PersonalAccountDailyDataDelete,
 		userId: string
 	): Promise<PersonalAccountDailyData> {
-		const monthlyData = await this.prisma.personalAccountMonthlyData.findFirst({
-			where: {
-				id: monthlyDataId,
-			},
-		});
+		const monthlyData = await this.personalAccountMonthlyDataRepository.getMonthlyDataById(monthlyDataId, userId);
 
 		if (!monthlyData) {
 			throw new HttpException(PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -154,18 +150,11 @@ export class PersonalAccountDailyService {
 			throw new HttpException(PERSONAL_ACCOUNT_ERROR_DAILY_DATA.INCORRECT_USER_ID, HttpStatus.FORBIDDEN);
 		}
 
-		// filter array that doesnt match dailyDataId
+		// filter array that doesn't match dailyDataId
 		const filteredDailyData = monthlyData.dailyData.filter((d) => d.id !== dailyDataId);
 
 		// update daily data
-		await this.prisma.personalAccountMonthlyData.update({
-			data: {
-				dailyData: filteredDailyData,
-			},
-			where: {
-				id: monthlyDataId,
-			},
-		});
+		await this.personalAccountMonthlyDataRepository.updateMonthlyData(monthlyDataId, { dailyData: filteredDailyData });
 
 		// return removed entry
 		return dailyData;

@@ -19,11 +19,12 @@ export class PersonalAccountDailyResolver {
 	/* Mutations */
 
 	@Mutation(() => PersonalAccountDailyDataOutput)
-	createPersonalAccountDailyEntry(
+	async createPersonalAccountDailyEntry(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: PersonalAccountDailyDataCreate
 	): Promise<PersonalAccountDailyDataOutput> {
-		return this.personalAccountDailyService.createPersonalAccountDailyEntry(input, authUser.id);
+		const data = await this.personalAccountDailyService.createPersonalAccountDailyEntry(input, authUser.id);
+		return this.personalAccountDailyService.transformDailyDataToOutput(data);
 	}
 
 	@Mutation(() => PersonalAccountDailyDataEditOutput)
@@ -35,10 +36,11 @@ export class PersonalAccountDailyResolver {
 	}
 
 	@Mutation(() => PersonalAccountDailyDataOutput)
-	deletePersonalAccountDailyEntry(
+	async deletePersonalAccountDailyEntry(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: PersonalAccountDailyDataDelete
 	): Promise<PersonalAccountDailyDataOutput> {
-		return this.personalAccountDailyService.deletePersonalAccountDailyEntry(input, authUser.id);
+		const data = await this.personalAccountDailyService.deletePersonalAccountDailyEntry(input, authUser.id);
+		return this.personalAccountDailyService.transformDailyDataToOutput(data);
 	}
 }

@@ -23,6 +23,11 @@ export class PersonalAccountDailyData implements PersonalAccountDailyDataClient 
 	})
 	monthlyDataId: string;
 
+	@Field(() => String, {
+		description: 'Reference to PersonalAccount.id',
+	})
+	personalAccountId: string;
+
 	@Field(() => Float, {
 		description: 'Money amount change for a tagId',
 	})

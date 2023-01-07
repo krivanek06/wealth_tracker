@@ -4,15 +4,10 @@ import { PERSONAL_ACCOUNT_ERROR } from '../dto';
 import { PersonalAccount } from '../entities';
 import { PersonalAccountCreateInput, PersonalAccountEditInput } from '../inputs';
 import { PersonalAccountRepositoryService } from '../repository';
-import { MomentServiceUtil } from './../../../utils';
-import { PersonalAccountMonthlyService } from './personal-account-monthly.service';
 
 @Injectable()
 export class PersonalAccountService {
-	constructor(
-		private personalAccountRepositoryService: PersonalAccountRepositoryService,
-		private personalAccountMonthlyService: PersonalAccountMonthlyService
-	) {}
+	constructor(private readonly personalAccountRepositoryService: PersonalAccountRepositoryService) {}
 
 	/* Queries */
 	getPersonalAccountById(personalAccountId: string): Promise<PersonalAccount> {
@@ -41,10 +36,10 @@ export class PersonalAccountService {
 
 		// TODO: remove this - on dailyData create will be fire to create monthly data
 		// created date details
-		const { year, month } = MomentServiceUtil.getDetailsInformationFromDate(personalAccount.createdAt);
+		// const { year, month } = MomentServiceUtil.getDetailsInformationFromDate(personalAccount.createdAt);
 
-		// create monthly data for the new personal account
-		await this.personalAccountMonthlyService.createMonthlyData(personalAccount, userId, year, month);
+		// // create monthly data for the new personal account
+		// await this.personalAccountMonthlyService.createMonthlyData(personalAccount, userId, year, month);
 
 		return personalAccount;
 	}

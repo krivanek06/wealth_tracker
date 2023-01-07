@@ -28,6 +28,20 @@ export class PersonalAccountMonthlyDataRepository {
 		});
 	}
 
+	getMonthlyDataByYearAndMont(
+		personalAccountId: string,
+		year: number,
+		month: number
+	): Promise<PersonalAccountMonthlyData> {
+		return this.prisma.personalAccountMonthlyData.findFirst({
+			where: {
+				personalAccountId,
+				year,
+				month,
+			},
+		});
+	}
+
 	createMonthlyData(
 		{ id }: PersonalAccount,
 		userId: string,
@@ -41,6 +55,17 @@ export class PersonalAccountMonthlyDataRepository {
 				year,
 				month,
 				dailyData: [],
+			},
+		});
+	}
+
+	updateMonthlyData(accountId: string, data: Partial<PersonalAccountMonthlyData>): Promise<PersonalAccountMonthlyData> {
+		return this.prisma.personalAccountMonthlyData.update({
+			data: {
+				...data,
+			},
+			where: {
+				id: accountId,
 			},
 		});
 	}

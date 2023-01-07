@@ -7,8 +7,8 @@ import { PersonalAccountMonthlyDataRepository, PersonalAccountRepositoryService 
 @Injectable()
 export class PersonalAccountMonthlyService {
 	constructor(
-		private personalAccountMonthlyDataRepository: PersonalAccountMonthlyDataRepository,
-		private personalAccountRepositoryService: PersonalAccountRepositoryService
+		private readonly personalAccountMonthlyDataRepository: PersonalAccountMonthlyDataRepository,
+		private readonly personalAccountRepositoryService: PersonalAccountRepositoryService
 	) {}
 
 	getMonthlyDataByAccountId(id: string): Promise<PersonalAccountMonthlyData[]> {

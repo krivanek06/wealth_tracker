@@ -37,11 +37,4 @@ export class PersonalAccountTag implements PersonalAccountTagClient {
 		nullable: true,
 	})
 	userId: string | null;
-
-	@Field(() => String, {
-		nullable: true,
-		description:
-			'Reference to PersonalAccount.id, if this tag is specific for some personal account. For detault tags this is null',
-	})
-	personalAccountId: string;
 }

@@ -1,21 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PersonalAccountTagDataType } from '@prisma/client';
-import { PrismaService } from '../../../prisma';
 import { SharedServiceUtil } from '../../../utils';
-import { PERSONAL_ACCOUNT_DEFAULT_TAGS, PERSONAL_ACCOUNT_TAG_ERROR } from '../dto';
+import { PERSONAL_ACCOUNT_TAG_ERROR } from '../dto';
 import { PersonalAccountTag } from '../entities';
 import { PersonalAccountTagDataCreate, PersonalAccountTagDataDelete, PersonalAccountTagDataEdit } from '../inputs';
+import { PersonalAccountRepositoryService } from '../repository';
 
 @Injectable()
 export class PersonalAccountTagService {
-	constructor(private readonly prisma: PrismaService) {}
+	constructor(private readonly personalAccountRepositoryService: PersonalAccountRepositoryService) {}
 
 	async getTagsForPersonalAccount(personalAccountId: string): Promise<PersonalAccountTag[]> {
-		const personalAccount = await this.prisma.personalAccount.findFirst({
-			where: {
-				id: personalAccountId,
-			},
-		});
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(personalAccountId);
 
 		return personalAccount.personalAccountTag;
 	}
@@ -24,21 +19,23 @@ export class PersonalAccountTagService {
 		tagDataCreate: PersonalAccountTagDataCreate,
 		userId: string
 	): Promise<PersonalAccountTag> {
-		const data: PersonalAccountTag = {
+		const tags = await this.getTagsForPersonalAccount(tagDataCreate.personalAccountId);
+		const newTag: PersonalAccountTag = {
 			id: SharedServiceUtil.getUUID(),
 			imageUrl: tagDataCreate.imageUrl,
 			userId: userId,
 			createdAt: new Date(),
-			personalAccountId: tagDataCreate.personalAccountId,
 			name: tagDataCreate.name,
 			type: tagDataCreate.type,
 			color: tagDataCreate.color,
 		};
 
 		// save new tag
-		await this.saveTags(tagDataCreate.personalAccountId, [data]);
+		await this.personalAccountRepositoryService.updatePersonalAccount(tagDataCreate.personalAccountId, {
+			personalAccountTag: [...tags, newTag],
+		});
 
-		return data;
+		return newTag;
 	}
 
 	async editPersonalAccountTag(tagDataEdit: PersonalAccountTagDataEdit, userId: string): Promise<PersonalAccountTag> {
@@ -62,12 +59,14 @@ export class PersonalAccountTagService {
 		const allSavingTags = tags.map((d) => (d.id === tagDataEdit.id ? modifiedTag : d));
 
 		// save new tag
-		await this.saveTags(tagDataEdit.personalAccountId, allSavingTags);
+		await this.personalAccountRepositoryService.updatePersonalAccount(tagDataEdit.personalAccountId, {
+			personalAccountTag: allSavingTags,
+		});
 
 		return modifiedTag;
 	}
 
-	async deletePersonalAccount(
+	async deletePersonalAccountTag(
 		tagDataDelete: PersonalAccountTagDataDelete,
 		userId: string
 	): Promise<PersonalAccountTag> {
@@ -83,49 +82,10 @@ export class PersonalAccountTagService {
 		const allSavingTags = tags.filter((d) => d.id !== tagDataDelete.id);
 
 		// save new tag
-		await this.saveTags(tagDataDelete.personalAccountId, allSavingTags);
+		await this.personalAccountRepositoryService.updatePersonalAccount(tagDataDelete.personalAccountId, {
+			personalAccountTag: allSavingTags,
+		});
 
 		return searchedTag;
-	}
-
-	async getPersonalAccountTagsByTypes(
-		personalAccountId: string,
-		tagType: PersonalAccountTagDataType
-	): Promise<PersonalAccountTag[]> {
-		const allTags = await this.getTagsForPersonalAccount(personalAccountId);
-		return allTags.filter((t) => t.type === tagType);
-	}
-
-	async registerDefaultTagsForPersonalAccountId(personalAccountId: string, userId: string): Promise<void> {
-		const defaultTags = PERSONAL_ACCOUNT_DEFAULT_TAGS.map((tag) => {
-			const data: PersonalAccountTag = {
-				id: SharedServiceUtil.getUUID(),
-				imageUrl: tag.url,
-				userId: userId,
-				createdAt: new Date(),
-				personalAccountId: personalAccountId,
-				name: tag.name,
-				type: tag.type,
-				color: tag.color,
-			};
-
-			return data;
-		});
-
-		// save new tag
-		await this.saveTags(personalAccountId, defaultTags);
-	}
-
-	private async saveTags(personalAccountId: string, tags: PersonalAccountTag[]): Promise<void> {
-		await this.prisma.personalAccount.update({
-			data: {
-				personalAccountTag: {
-					push: [...tags],
-				},
-			},
-			where: {
-				id: personalAccountId,
-			},
-		});
 	}
 }

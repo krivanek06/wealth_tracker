@@ -7,18 +7,14 @@ import {
 	PersonalAccountWeeklyAggregationOutput,
 } from '../outputs';
 import { PersonalAccountMonthlyService } from './personal-account-monthly.service';
-import { PersonalAccountTagService } from './personal-account-tag.service';
 
 @Injectable()
-export class PersonalAccounDataAggregatorService {
-	constructor(
-		private personalAccountTagService: PersonalAccountTagService,
-		private personalAccountMonthlyService: PersonalAccountMonthlyService
-	) {}
+export class PersonalAccountDataAggregatorService {
+	constructor(private personalAccountMonthlyService: PersonalAccountMonthlyService) {}
 
 	async getAllYearlyAggregatedData(personalAccount: PersonalAccount): Promise<PersonalAccountAggregationDataOutput[]> {
 		// load user all monthly data - already grouped by YEAR and MONTH
-		const monthlyData = await this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount);
+		const monthlyData = await this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount.id);
 		const availableTags = personalAccount.personalAccountTag;
 
 		// merge together all daily data for each month
@@ -58,7 +54,7 @@ export class PersonalAccounDataAggregatorService {
 		personalAccount: PersonalAccount
 	): Promise<PersonalAccountWeeklyAggregationOutput[]> {
 		// load user all monthly data - already grouped by YEAR and MONTH
-		const monthlyData = await this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount);
+		const monthlyData = await this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount.id);
 
 		const availableTags = personalAccount.personalAccountTag;
 

@@ -47,9 +47,10 @@ enum AuthenticationType {
 // ---------------- Personal account ------------------
 
 model PersonalAccount {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    name      String
-    createdAt DateTime @default(now())
+    id          String      @id @default(auto()) @map("_id") @db.ObjectId
+    name        String
+    createdAt   DateTime    @default(now())
+    accountType AccountType
 
     // 1 - N relationship with PersonalAccountTag
     personalAccountTag PersonalAccountTag[]
@@ -75,9 +76,6 @@ type PersonalAccountTag {
 
     // user who created the tag -  N - 1 relationship with user 
     userId String
-
-    // personal account it belongs to
-    personalAccountId String
 }
 
 enum PersonalAccountTagDataType {
@@ -147,9 +145,10 @@ type PersonalAccountDailyData {
 
 // ---------------- Investment account ------------------
 model InvestmentAccount {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    name      String // custom name for personal account
-    createdAt DateTime @default(now())
+    id          String      @id @default(auto()) @map("_id") @db.ObjectId
+    name        String // custom name for personal account
+    createdAt   DateTime    @default(now())
+    accountType AccountType
 
     // whole history of changed cash on hand
     cashChange InvestmentAccountCashChange[]
@@ -216,6 +215,11 @@ enum InvestmentAccountHoldingType {
     ADR
     MUTUAL_FUND
     COMMODITY
+}
+
+enum AccountType {
+    PERSONAL_ACCOUNT
+    INVESTMENT_ACCOUNT
 }
 
 // ---------------- Asset manager general ------------------

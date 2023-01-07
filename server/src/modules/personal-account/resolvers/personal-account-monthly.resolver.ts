@@ -5,6 +5,7 @@ import { PubSubEngine } from 'graphql-subscriptions';
 import { Input } from 'src/graphql';
 import { CREATED_MONTHLY_DATA } from '../dto';
 import { PersonalAccountMonthlyData } from '../entities';
+import { PersonalAccountDailyDataOutput } from '../outputs';
 import { PersonalAccountMonthlyService } from '../services';
 import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth';
 import { PUB_SUB } from './../../../graphql/graphql.types';
@@ -35,20 +36,44 @@ export class PersonalAccountMonthlyResolver {
 		return personalAccountMonthlyData.dailyData.length;
 	}
 
-	@ResolveField('monthlyIncome', () => Float)
-	getMonthlyIncome(@Parent() personalAccountMonthlyData: PersonalAccountMonthlyData): Promise<number> {
+	@ResolveField('dailyIncomes', () => [PersonalAccountDailyDataOutput])
+	getMonthlyDataDailyIncomes(
+		@Parent() personalAccountMonthlyData: PersonalAccountMonthlyData
+	): Promise<PersonalAccountDailyDataOutput[]> {
 		return this.personalAccountMonthlyService.getMonthlyIncomeOrExpense(
 			personalAccountMonthlyData,
 			PersonalAccountTagDataType.INCOME
 		);
 	}
 
-	@ResolveField('monthlyExpense', () => Float)
-	getMonthlyExpense(@Parent() personalAccountMonthlyData: PersonalAccountMonthlyData): Promise<number> {
+	@ResolveField('dailyExpenses', () => [PersonalAccountDailyDataOutput])
+	getMonthlyDataDailyExpenses(
+		@Parent() personalAccountMonthlyData: PersonalAccountMonthlyData
+	): Promise<PersonalAccountDailyDataOutput[]> {
 		return this.personalAccountMonthlyService.getMonthlyIncomeOrExpense(
 			personalAccountMonthlyData,
 			PersonalAccountTagDataType.EXPENSE
 		);
+	}
+
+	@ResolveField('monthlyIncome', () => Float)
+	async getMonthlyIncome(@Parent() personalAccountMonthlyData: PersonalAccountMonthlyData): Promise<number> {
+		const dailyData = await this.personalAccountMonthlyService.getMonthlyIncomeOrExpense(
+			personalAccountMonthlyData,
+			PersonalAccountTagDataType.INCOME
+		);
+		// calculate total sum
+		return dailyData.reduce((a, b) => a + b.value, 0);
+	}
+
+	@ResolveField('monthlyExpense', () => Float)
+	async getMonthlyExpense(@Parent() personalAccountMonthlyData: PersonalAccountMonthlyData): Promise<number> {
+		const dailyData = await this.personalAccountMonthlyService.getMonthlyIncomeOrExpense(
+			personalAccountMonthlyData,
+			PersonalAccountTagDataType.EXPENSE
+		);
+		// calculate total sum
+		return dailyData.reduce((a, b) => a + b.value, 0);
 	}
 
 	/* Subscriptions */

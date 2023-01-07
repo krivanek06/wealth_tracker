@@ -1,20 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import {
-	GetDefaultTagsDocument,
-	GetDefaultTagsQuery,
 	GetPersonalAccountMonthlyDataByIdDocument,
 	GetPersonalAccountMonthlyDataByIdQuery,
 	GetPersonalAccountsDocument,
 	GetPersonalAccountsQuery,
+	PersonalAccountDetailsFragment,
+	PersonalAccountDetailsFragmentDoc,
 	PersonalAccountMonthlyDataDetailFragment,
 	PersonalAccountMonthlyDataDetailFragmentDoc,
 	PersonalAccountMonthlyDataOverviewFragment,
 	PersonalAccountMonthlyDataOverviewFragmentDoc,
-	PersonalAccountOverviewBasicFragment,
 	PersonalAccountOverviewFragment,
-	PersonalAccountOverviewFragmentDoc,
-	PersonalAccountTag,
+	PersonalAccountTagFragment,
+	PersonalAccountTagFragmentDoc,
 } from '../../graphql';
 
 @Injectable({
@@ -23,12 +22,13 @@ import {
 export class PersonalAccountCacheService {
 	constructor(private apollo: Apollo) {}
 
-	get defaultTagsFromCache(): PersonalAccountTag[] {
-		const query = this.apollo.client.readQuery<GetDefaultTagsQuery>({
-			query: GetDefaultTagsDocument,
+	getPersonalAccountTagFromCache(tagId: string): PersonalAccountTagFragment | null {
+		const fragment = this.apollo.client.readFragment<PersonalAccountTagFragment>({
+			id: `PersonalAccountTag:${tagId}`,
+			fragmentName: 'PersonalAccountTag',
+			fragment: PersonalAccountTagFragmentDoc,
 		});
-
-		return query?.getDefaultTags ?? [];
+		return fragment;
 	}
 
 	getPersonalAccountMonthlyDataByIdFromCache(monthlyDataId?: string): PersonalAccountMonthlyDataDetailFragment | null {
@@ -47,7 +47,7 @@ export class PersonalAccountCacheService {
 		return fragment;
 	}
 
-	getPersonalAccountOverviewBasic(): PersonalAccountOverviewBasicFragment[] {
+	getPersonalAccountsOverview(): PersonalAccountOverviewFragment[] {
 		const query = this.apollo.client.readQuery<GetPersonalAccountsQuery>({
 			query: GetPersonalAccountsDocument,
 		});
@@ -55,7 +55,7 @@ export class PersonalAccountCacheService {
 		return query?.getPersonalAccounts ?? [];
 	}
 
-	updatePersonalAccountsBasic(data: PersonalAccountOverviewBasicFragment[]): void {
+	updatePersonalAccountsOverview(data: PersonalAccountOverviewFragment[]): void {
 		this.apollo.client.writeQuery<GetPersonalAccountsQuery>({
 			query: GetPersonalAccountsDocument,
 			data: {
@@ -79,26 +79,26 @@ export class PersonalAccountCacheService {
 		return fragment;
 	}
 
-	getPersonalAccountOverview(personalAccountId: string): PersonalAccountOverviewFragment {
-		const fragment = this.apollo.client.readFragment<PersonalAccountOverviewFragment>({
+	getPersonalAccountDetails(personalAccountId: string): PersonalAccountDetailsFragment {
+		const fragment = this.apollo.client.readFragment<PersonalAccountDetailsFragment>({
 			id: `PersonalAccount:${personalAccountId}`,
-			fragmentName: 'PersonalAccountOverview',
-			fragment: PersonalAccountOverviewFragmentDoc,
+			fragmentName: 'PersonalAccountDetails',
+			fragment: PersonalAccountDetailsFragmentDoc,
 		});
 
 		// not found - personal account must be in cache
 		if (!fragment) {
-			throw new Error(`[PersonalAccountApiService]: Unable to find the correct personal account`);
+			throw new Error(`[PersonalAccountApiService]: Unable to find the correct personal account details`);
 		}
 
 		return fragment;
 	}
 
-	updatePersonalAccountOverview(accountId: string, data: PersonalAccountOverviewFragment): void {
-		this.apollo.client.writeFragment<PersonalAccountOverviewFragment>({
+	updatePersonalAccountDetails(accountId: string, data: PersonalAccountDetailsFragment): void {
+		this.apollo.client.writeFragment<PersonalAccountDetailsFragment>({
 			id: `PersonalAccount:${accountId}`,
-			fragmentName: 'PersonalAccountOverview',
-			fragment: PersonalAccountOverviewFragmentDoc,
+			fragmentName: 'PersonalAccountDetails',
+			fragment: PersonalAccountDetailsFragmentDoc,
 			data: {
 				...data,
 			},

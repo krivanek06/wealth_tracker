@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { PersonalAccountDailyDataFragment, TagDataType } from './../../../../core/graphql';
+import { PersonalAccountDailyDataOutputFragment, TagDataType } from './../../../../core/graphql';
 
 @Component({
 	selector: 'app-personal-account-daily-entries-table',
@@ -12,19 +12,19 @@ import { PersonalAccountDailyDataFragment, TagDataType } from './../../../../cor
 })
 export class PersonalAccountDailyEntriesTableComponent implements OnInit {
 	@Output() addDailyEntryClickEmitter = new EventEmitter<void>();
-	@Output() editDailyEntryClickEmitter = new EventEmitter<PersonalAccountDailyDataFragment>();
+	@Output() editDailyEntryClickEmitter = new EventEmitter<PersonalAccountDailyDataOutputFragment>();
 
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 	@ViewChild(MatSort) sort!: MatSort;
 
-	@Input() set personalAccountDailyData(data: PersonalAccountDailyDataFragment[] | undefined) {
+	@Input() set personalAccountDailyData(data: PersonalAccountDailyDataOutputFragment[] | undefined) {
 		const dataOrder = (data ?? []).sort((a, b) => Number(b.date) - Number(a.date));
 		this.dataSource = new MatTableDataSource(dataOrder);
 		this.dataSource.paginator = this.paginator;
 		this.dataSource.sort = this.sort;
 	}
 	displayedColumns: string[] = ['tag', 'value', 'date', 'week', 'month'];
-	dataSource!: MatTableDataSource<PersonalAccountDailyDataFragment>;
+	dataSource!: MatTableDataSource<PersonalAccountDailyDataOutputFragment>;
 
 	TagDataType = TagDataType;
 
@@ -32,11 +32,11 @@ export class PersonalAccountDailyEntriesTableComponent implements OnInit {
 
 	ngOnInit(): void {}
 
-	identity(index: number, item: PersonalAccountDailyDataFragment): string {
+	identity(index: number, item: PersonalAccountDailyDataOutputFragment): string {
 		return item.id;
 	}
 
-	onEditDailyEntryClick(data: PersonalAccountDailyDataFragment): void {
+	onEditDailyEntryClick(data: PersonalAccountDailyDataOutputFragment): void {
 		this.editDailyEntryClickEmitter.emit(data);
 	}
 

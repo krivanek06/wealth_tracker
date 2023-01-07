@@ -7,7 +7,7 @@ import { getTagImageLocation } from '../../models';
 import { PersonalAccountFacadeService } from './../../../../core/api';
 import {
 	PersonalAccountDailyDataCreate,
-	PersonalAccountDailyDataFragment,
+	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountTagFragment,
 	TagDataType,
 } from './../../../../core/graphql';
@@ -44,18 +44,23 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		public data: {
 			personalAccountId: string;
 			personalAccountName: string;
-			dailyData: PersonalAccountDailyDataFragment | null;
+			dailyData: PersonalAccountDailyDataOutputFragment | null;
 		}
 	) {}
 
 	ngOnInit(): void {
 		if (this.data.dailyData) {
+			const dailyData = this.data.dailyData;
+			// TODO: Does this work??????
+			const tag = this.personalAccountFacadeService.getPersonalAccountTagFromCache(dailyData.id);
+			console.log('Eduard', tag);
+
 			this.formGroup.setValue({
-				date: new Date(Number(this.data.dailyData.date)),
-				time: new Date(Number(this.data.dailyData.date)),
-				tagId: this.data.dailyData.tag.id,
-				tagType: this.data.dailyData.tag.type,
-				value: this.data.dailyData.value,
+				date: new Date(Number(dailyData.date)),
+				time: new Date(Number(dailyData.date)),
+				tagId: dailyData.tagId,
+				tagType: tag?.type ?? null,
+				value: dailyData.value,
 			});
 		}
 
@@ -190,29 +195,27 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	}
 
 	private initIncomeExpenseTags(): Observable<InputSource[]> {
-		// filter expense tags
-		const displayTagsExponse$ = this.personalAccountFacadeService.getDefaultTagsExpense().pipe(
-			map((tags) =>
-				tags.map((d) => {
-					return { caption: d.name, value: d.id, additionalData: d, image: getTagImageLocation(d.name) } as InputSource;
-				})
-			)
-		);
-
-		// filter income tags
-		const displayTagsIncome$ = this.personalAccountFacadeService.getDefaultTagsIncome().pipe(
-			map((tags) =>
-				tags.map((d) => {
-					return { caption: d.name, value: d.id, additionalData: d, image: getTagImageLocation(d.name) } as InputSource;
-				})
-			)
-		);
+		const expenseTags$ = this.personalAccountFacadeService.getPersonalAccountTagsExpense(this.data.personalAccountId);
+		const incomeTags$ = this.personalAccountFacadeService.getPersonalTagsIncome(this.data.personalAccountId);
 
 		// based on tagType switch which one to display
 		return this.formGroup.controls.tagType.valueChanges.pipe(
 			startWith(this.formGroup.controls.tagType.value),
 			// decide which tag types to display
-			switchMap((tagType) => iif(() => tagType === TagDataType.Expense, displayTagsExponse$, displayTagsIncome$))
+			switchMap((tagType) =>
+				iif(() => tagType === TagDataType.Expense, expenseTags$, incomeTags$).pipe(
+					map((tags) =>
+						tags.map((d) => {
+							return {
+								caption: d.name,
+								value: d.id,
+								additionalData: d,
+								image: getTagImageLocation(d.name),
+							} as InputSource;
+						})
+					)
+				)
+			)
 		);
 	}
 }

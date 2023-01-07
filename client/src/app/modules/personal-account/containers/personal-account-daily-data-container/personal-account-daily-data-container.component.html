@@ -11,7 +11,7 @@
 	mat-stroked-button
 	type="button"
 	color="primary"
-	class="block sm:hidden w-full mb-2"
+	class="block w-full mb-2 sm:hidden"
 >
 	<mat-icon>add</mat-icon>
 	Add daily entry
@@ -19,16 +19,16 @@
 
 <div class="grid grid-cols-1 xl:grid-cols-5 gap-4 min-h-[300px] items-center">
 	<!-- table body -->
-	<div class="col-span-1 xl:col-span-3 h-full">
+	<div class="h-full col-span-1 xl:col-span-3">
 		<app-personal-account-daily-entries-table
 			(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
 			(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
-			[personalAccountDailyData]="(monthlyDataDetailTable$ | async)?.dailyData"
+			[personalAccountDailyData]="(monthlyDataDetailTable$ | async)?.dailyExpenses"
 		></app-personal-account-daily-entries-table>
 	</div>
 
 	<!-- spending allocation by tags -->
-	<div class="col-span-2 hidden xl:block">
+	<div class="hidden col-span-2 xl:block">
 		<ng-container *ngIf="monthlyDataDetail$ | async as monthly">
 			<app-generic-chart
 				*ngIf="expenseAllocationChartData$ | async as series"

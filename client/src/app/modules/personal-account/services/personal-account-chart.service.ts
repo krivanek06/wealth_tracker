@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
 	PersonalAccountAggregationDataOutput,
-	PersonalAccountOverviewFragment,
+	PersonalAccountDetailsFragment,
 	PersonalAccountTagFragment,
 	TagDataType,
 } from '../../../core/graphql';
@@ -20,7 +20,7 @@ export class PersonalAccountChartService {
 	 * @param data
 	 * @returns accumulated expenses, incomes and their difference
 	 */
-	getAccountState(data: PersonalAccountOverviewFragment): AccountState {
+	getAccountState(data: PersonalAccountDetailsFragment): AccountState {
 		const expenseTotal = data.yearlyAggregaton
 			.filter((d) => d.tag.type === TagDataType.Expense)
 			.reduce((a, b) => a + b.value, 0);
@@ -44,7 +44,7 @@ export class PersonalAccountChartService {
 	 * @param aggregation
 	 * @returns weekly or monthly categories in string format
 	 */
-	getChartCategories(data: PersonalAccountOverviewFragment, aggregation: 'week' | 'month' = 'week'): string[] {
+	getChartCategories(data: PersonalAccountDetailsFragment, aggregation: 'week' | 'month' = 'week'): string[] {
 		const categories = data.weeklyAggregaton.map((d) => {
 			const monthName = DateServiceUtil.formatDate(new Date(d.year, d.month), 'LLL');
 			return `Week: ${d.week}, ${monthName}`;
@@ -61,7 +61,7 @@ export class PersonalAccountChartService {
 	 * @returns GenericChartSeries data type
 	 */
 	getAccountGrowthChartData(
-		data: PersonalAccountOverviewFragment,
+		data: PersonalAccountDetailsFragment,
 		aggregation: 'week' | 'month' = 'week',
 		activeTags: PersonalAccountTagFragment[] = []
 	): GenericChartSeries {
@@ -101,7 +101,7 @@ export class PersonalAccountChartService {
 	 * @returns [Income, Expense] chart data based on the aggregation
 	 */
 	getAccountIncomeExpenseChartData(
-		data: PersonalAccountOverviewFragment,
+		data: PersonalAccountDetailsFragment,
 		aggregation: 'week' | 'month' = 'week',
 		activeTags: PersonalAccountTagFragment[] = []
 	): [GenericChartSeries, GenericChartSeries] {
@@ -145,7 +145,7 @@ export class PersonalAccountChartService {
 	 * @returns GenericChartSeries data type
 	 */
 	getWeeklyExpenseChartData(
-		data: PersonalAccountOverviewFragment,
+		data: PersonalAccountDetailsFragment,
 		aggregation: 'week' | 'month' = 'week',
 		availableExpenseTags: PersonalAccountTagFragment[] = [],
 		activeTags: PersonalAccountTagFragment[] = []

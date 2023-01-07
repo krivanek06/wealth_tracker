@@ -1,9 +1,6 @@
 import { ChangeDetectionStrategy, Component, forwardRef, Input, OnInit } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { map, Observable, of, startWith, switchMap } from 'rxjs';
-import { InputSource } from '../../../../shared/models';
-import { getTagImageLocation } from '../../models';
-import { PersonalAccountMonthlyDataDetailFragment, PersonalAccountTagFragment } from './../../../../core/graphql';
+import { PersonalAccountMonthlyDataDetailFragment } from './../../../../core/graphql';
 import { DateServiceUtil } from './../../../../shared/utils';
 
 @Component({
@@ -38,59 +35,19 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	@Input() set selectedMonthlyDataDetail(data: PersonalAccountMonthlyDataDetailFragment | null) {
 		if (!data) {
 			this.displayWeeksInMonth = [];
-			this.displayTagsInputSource$ = of([]);
 			this.formGroup.controls.week.reset(-1, { emitEvent: false });
-			this.formGroup.controls.tag.reset([], { emitEvent: false });
 			return;
 		}
-		this.displayWeeksInMonth = [-1, ...new Set(data.dailyData.map((d) => d.week))];
+		this.displayWeeksInMonth = [-1, ...new Set(data.dailyExpenses.map((d) => d.week))];
 
 		// save selected month-year into the form
 		this.formGroup.controls.yearAndMonth.patchValue(`${data.year}-${data.month}`, { emitEvent: false, onlySelf: true });
-
-		/**
-		 * based on the selected week -> filter out avaiable tags,
-		 * if no week chosen (-1) then show every tag
-		 */
-		this.displayTagsInputSource$ = this.formGroup.controls.week.valueChanges.pipe(
-			startWith(-1),
-			switchMap(() => of(data)),
-			map((monthlyData) => {
-				const selectedWeek = this.formGroup.controls.week.getRawValue();
-
-				// data that match selectedWeek or all
-				const dailyData = monthlyData.dailyData.filter((d) => (selectedWeek !== -1 ? d.week === selectedWeek : true));
-
-				const result: { total: number; tag: PersonalAccountTagFragment }[] = dailyData.reduce((acc, curr) => {
-					const existingIndex = acc.findIndex((d) => d.tag.id === curr.tag.id);
-					if (existingIndex === -1) {
-						// add tag to acc
-						acc.push({ total: 1, tag: curr.tag });
-					} else {
-						// increment total
-						acc[existingIndex].total += 1;
-					}
-
-					return acc;
-				}, [] as { total: number; tag: PersonalAccountTagFragment }[]);
-
-				return result;
-			}),
-			map((results) =>
-				results.map((data) => {
-					return {
-						caption: `${data.tag.name} (${data.total})`,
-						value: data.tag.id,
-						additionalData: data.tag,
-						image: getTagImageLocation(data.tag.name),
-					} as InputSource;
-				})
-			)
-		);
 	}
 
+	// @Input() set dailyData
+
 	/**
-	 * propery to store `${year}-${month}` format from yearsAndMonths
+	 * property to store `${year}-${month}` format from yearsAndMonths
 	 */
 	displayYearsAndMonths!: string[];
 
@@ -99,15 +56,9 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	 */
 	displayWeeksInMonth: number[] = [];
 
-	/**
-	 * property to store available tags from a selected month & week
-	 */
-	displayTagsInputSource$?: Observable<InputSource[]>;
-
 	readonly formGroup = new FormGroup({
 		yearAndMonth: new FormControl<string | null>(''),
 		week: new FormControl<number>(-1),
-		tag: new FormControl<string[]>([]),
 	});
 
 	onChange: (filterState?: unknown) => void = () => {
@@ -123,19 +74,19 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 		this.formGroup.controls.yearAndMonth.valueChanges.subscribe(() => {
 			// on month change reset weeks and tags
 			this.formGroup.controls.week.reset(-1, { emitEvent: false, onlySelf: true });
-			this.formGroup.controls.tag.reset([], { emitEvent: false, onlySelf: true });
+			// this.formGroup.controls.tag.reset([], { emitEvent: false, onlySelf: true });
 			this.notifyParent();
 		});
 
 		this.formGroup.controls.week.valueChanges.subscribe(() => {
 			// on week change reset tags
-			this.formGroup.controls.tag.reset([], { emitEvent: false, onlySelf: true });
+			// this.formGroup.controls.tag.reset([], { emitEvent: false, onlySelf: true });
 			this.notifyParent();
 		});
 
-		this.formGroup.controls.tag.valueChanges.subscribe(() => {
-			this.notifyParent();
-		});
+		// this.formGroup.controls.tag.valueChanges.subscribe(() => {
+		// 	this.notifyParent();
+		// });
 	}
 
 	onCurrentMonthClick(): void {

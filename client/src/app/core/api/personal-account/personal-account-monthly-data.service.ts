@@ -3,9 +3,10 @@ import { map, Observable, tap } from 'rxjs';
 import {
 	CreatedMonthlyDataSubscriptionGQL,
 	GetPersonalAccountMonthlyDataByIdGQL,
-	PersonalAccountDailyDataFragment,
+	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountMonthlyDataDetailFragment,
 	PersonalAccountMonthlyDataOverviewFragment,
+	TagDataType,
 } from '../../graphql';
 import { PersonalAccountCacheService } from './personal-account-cache.service';
 
@@ -37,7 +38,7 @@ export class PersonalAccountMonthlyDataService {
 	 * @param operation
 	 * @returns
 	 */
-	updateMonthlyDailyData(dailyData: PersonalAccountDailyDataFragment, operation: 'add' | 'remove'): void {
+	updateMonthlyDailyData(dailyData: PersonalAccountDailyDataOutputFragment, operation: 'add' | 'remove'): void {
 		const monthlyDetails = this.personalAccountCacheService.getPersonalAccountMonthlyDataByIdFromCache(
 			dailyData.monthlyDataId
 		);
@@ -47,16 +48,19 @@ export class PersonalAccountMonthlyDataService {
 			return;
 		}
 
+		// determine key whether it is an expense or income
+		const dailyDataKey = dailyData.personalAccountTag.type === TagDataType.Expense ? 'dailyExpenses' : 'dailyExpenses';
+
 		// add or remove dailyData into array
 		const updatedDailyData =
 			operation === 'add'
-				? [...monthlyDetails.dailyData, dailyData]
-				: monthlyDetails.dailyData.filter((d) => d.id !== dailyData.id);
+				? [...monthlyDetails[dailyDataKey], dailyData]
+				: monthlyDetails[dailyDataKey].filter((d) => d.id !== dailyData.id);
 
 		// update cache
 		this.personalAccountCacheService.updatePersonalAccountMonthly(monthlyDetails.id, {
 			...monthlyDetails,
-			dailyData: updatedDailyData,
+			[dailyDataKey]: updatedDailyData,
 		});
 	}
 
@@ -69,7 +73,7 @@ export class PersonalAccountMonthlyDataService {
 				}
 				console.log('subscription', createdMonthlyData);
 				// save createdMonthlyData into PersonalAccount.monthlyData
-				const personalAccount = this.personalAccountCacheService.getPersonalAccountOverview(
+				const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails(
 					createdMonthlyData.personalAccountId
 				);
 
@@ -79,7 +83,7 @@ export class PersonalAccountMonthlyDataService {
 				);
 
 				// update cache
-				this.personalAccountCacheService.updatePersonalAccountOverview(personalAccount.id, {
+				this.personalAccountCacheService.updatePersonalAccountDetails(personalAccount.id, {
 					...personalAccount,
 					monthlyData: mergedMonthlyData,
 				});

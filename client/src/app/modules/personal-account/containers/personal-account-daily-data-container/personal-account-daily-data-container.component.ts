@@ -4,10 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, map, Observable, of, startWith, switchMap } from 'rxjs';
 import { PersonalAccountFacadeService } from './../../../../core/api';
 import {
-	PersonalAccountDailyDataFragment,
+	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountMonthlyDataDetailFragment,
-	PersonalAccountOverviewBasicFragment,
-	TagDataType,
+	PersonalAccountOverviewFragment,
 } from './../../../../core/graphql';
 import { ChartType, GenericChartSeriesData, GenericChartSeriesPie } from './../../../../shared/models';
 import { DateServiceUtil } from './../../../../shared/utils';
@@ -20,9 +19,10 @@ import { PersonalAccountDailyDataEntryComponent } from './../../modals';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountDailyDataContainerComponent implements OnInit {
-	@Input() personalAccountBasic!: PersonalAccountOverviewBasicFragment;
+	@Input() personalAccountBasic!: PersonalAccountOverviewFragment;
 	weeklyIds$!: Observable<string[]>; // 2022-7-32, 2022-7-33, ...
 	monthlyDataDetail$!: Observable<PersonalAccountMonthlyDataDetailFragment | null>;
+	monthlyDataDetailAvailableWeeks$!: Observable<number>;
 	monthlyDataDetailTable$!: Observable<PersonalAccountMonthlyDataDetailFragment | null>;
 	expenseAllocationChartData$!: Observable<GenericChartSeriesPie | null>;
 
@@ -43,17 +43,17 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		this.filterControl.patchValue({ yearAndMonth: `${year}-${month}`, tag: [], week: -1 }, { emitEvent: false });
 
 		// select account overview by ID so we are notified by changes
-		const accountOverview$ = this.personalAccountFacadeService.getPersonalAccountOverviewById(
+		const accountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsById(
 			this.personalAccountBasic.id
 		);
 
 		// 2022-7-32, 2022-7-33, ...
-		this.weeklyIds$ = accountOverview$.pipe(map((account) => account.weeklyAggregaton.map((d) => d.id)));
+		this.weeklyIds$ = accountDetails$.pipe(map((account) => account.weeklyAggregaton.map((d) => d.id)));
 
 		// load / filter date based on filter change
 		this.monthlyDataDetail$ = combineLatest([
 			this.filterControl.valueChanges.pipe(startWith(this.filterControl.getRawValue())),
-			accountOverview$,
+			accountDetails$,
 		]).pipe(
 			switchMap(([filterValues, account]) => {
 				const [year, month] = filterValues.yearAndMonth.split('-').map((d) => Number(d));
@@ -77,8 +77,8 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 				const selectedTagIds = this.filterControl.getRawValue().tag;
 				const selectedWeek = this.filterControl.getRawValue().week;
 
-				const filteredDailyData = monthlyDataDetails.dailyData.filter((d) => {
-					if (selectedTagIds.length !== 0 && !selectedTagIds.includes(d.tag.id)) {
+				const filteredDailyData = monthlyDataDetails.dailyExpenses.filter((d) => {
+					if (selectedTagIds.length !== 0 && !selectedTagIds.includes(d.tagId)) {
 						return false;
 					}
 					if (selectedWeek !== -1 && selectedWeek !== d.week) {
@@ -97,7 +97,7 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		);
 	}
 
-	onDailyEntryClick(editingDailyData: PersonalAccountDailyDataFragment | null): void {
+	onDailyEntryClick(editingDailyData: PersonalAccountDailyDataOutputFragment | null): void {
 		this.dialog.open(PersonalAccountDailyDataEntryComponent, {
 			data: {
 				dailyData: editingDailyData,
@@ -109,15 +109,11 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 	}
 
 	private formatToExpenseAllocationChartData(data: PersonalAccountMonthlyDataDetailFragment): GenericChartSeriesPie {
-		const seriesData = data.dailyData.reduce((acc, curr) => {
-			// ignore income
-			if (curr.tag.type === TagDataType.Income) {
-				return acc;
-			}
+		const seriesData = data.dailyExpenses.reduce((acc, curr) => {
 			// find index of saved tag
-			const dataIndex = acc.findIndex((d) => d.name === curr.tag.name);
+			const dataIndex = acc.findIndex((d) => d.name === curr.personalAccountTag.name);
 			if (dataIndex === -1) {
-				acc = [...acc, { name: curr.tag.name, y: curr.value }]; // new tag
+				acc = [...acc, { name: curr.personalAccountTag.name, y: curr.value }]; // new tag
 			} else {
 				acc[dataIndex].y += curr.value; // increase value for tag
 			}

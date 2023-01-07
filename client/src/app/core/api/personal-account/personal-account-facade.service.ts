@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
-import { Observable, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import {
 	CreatePersonalAccountMutation,
 	DeletePersonalAccountMutation,
@@ -9,12 +9,14 @@ import {
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
 	PersonalAccountDailyDataEditOutput,
-	PersonalAccountDailyDataFragment,
+	PersonalAccountDailyDataOutputFragment,
+	PersonalAccountDetailsFragment,
 	PersonalAccountEditInput,
 	PersonalAccountMonthlyDataDetailFragment,
-	PersonalAccountOverviewBasicFragment,
 	PersonalAccountOverviewFragment,
 	PersonalAccountTag,
+	PersonalAccountTagFragment,
+	TagDataType,
 } from '../../graphql';
 import { PersonalAccountApiService } from './personal-account-api.service';
 import { PersonalAccountCacheService } from './personal-account-cache.service';
@@ -32,12 +34,16 @@ export class PersonalAccountFacadeService {
 		private personalAccountCacheService: PersonalAccountCacheService
 	) {}
 
-	getPersonalAccounts(): Observable<PersonalAccountOverviewBasicFragment[]> {
+	getPersonalAccounts(): Observable<PersonalAccountOverviewFragment[]> {
 		return this.personalAccountApiService.getPersonalAccounts();
 	}
 
-	getPersonalAccountOverviewById(input: string): Observable<PersonalAccountOverviewFragment> {
-		return this.personalAccountApiService.getPersonalAccountOverviewById(input);
+	getPersonalAccountDetailsById(input: string): Observable<PersonalAccountDetailsFragment> {
+		return this.personalAccountApiService.getPersonalAccountDetailsById(input);
+	}
+
+	getPersonalAccountTagFromCache(tagId: string): PersonalAccountTagFragment | null {
+		return this.personalAccountCacheService.getPersonalAccountTagFromCache(tagId);
 	}
 
 	createPersonalAccount(name: string): Observable<FetchResult<CreatePersonalAccountMutation>> {
@@ -52,20 +58,30 @@ export class PersonalAccountFacadeService {
 		return this.personalAccountApiService.deletePersonalAccount(accountId);
 	}
 
-	getDefaultTags(): Observable<PersonalAccountTag[]> {
-		return this.personalAccountApiService.getDefaultTags();
+	getPersonalAccountTags(accountId: string): Observable<PersonalAccountTag[]> {
+		return this.getPersonalAccountDetailsById(accountId).pipe(map((account) => account.personalAccountTag));
 	}
 
-	getDefaultTagsExpense(): Observable<PersonalAccountTag[]> {
-		return this.personalAccountApiService.getDefaultTagsExpense();
+	getPersonalAccountTagsExpense(accountId: string): Observable<PersonalAccountTag[]> {
+		return this.getPersonalAccountTags(accountId).pipe(
+			map((tags) => tags.filter((d) => d.type === TagDataType.Expense))
+		);
 	}
 
-	getDefaultTagsIncome(): Observable<PersonalAccountTag[]> {
-		return this.personalAccountApiService.getDefaultTagsIncome();
+	getPersonalTagsIncome(accountId: string): Observable<PersonalAccountTag[]> {
+		return this.getPersonalAccountTags(accountId).pipe(
+			map((tags) => tags.filter((d) => d.type === TagDataType.Income))
+		);
 	}
-	createPersonalAccountDailyEntry(input: PersonalAccountDailyDataCreate): Observable<PersonalAccountDailyDataFragment> {
+	createPersonalAccountDailyEntry(
+		input: PersonalAccountDailyDataCreate
+	): Observable<PersonalAccountDailyDataOutputFragment | undefined> {
 		return this.personalAccountApiService.createPersonalAccountDailyEntry(input).pipe(
 			tap((entry) => {
+				if (!entry) {
+					return;
+				}
+
 				// update yearly, monthly, weekly aggregation
 				this.personalAccountDataAggregatorService.updateAggregations(input.personalAccountId, entry, 'increase');
 
@@ -78,8 +94,8 @@ export class PersonalAccountFacadeService {
 	editPersonalAccountDailyEntry(input: PersonalAccountDailyDataEdit): Observable<PersonalAccountDailyDataEditOutput> {
 		return this.personalAccountApiService.editPersonalAccountDailyEntry(input).pipe(
 			tap((entry) => {
-				const removedDailyData = entry.originalDailyData as PersonalAccountDailyDataFragment;
-				const addedDailyData = entry.modifiedDailyData as PersonalAccountDailyDataFragment;
+				const removedDailyData = entry.originalDailyData as PersonalAccountDailyDataOutputFragment;
+				const addedDailyData = entry.modifiedDailyData as PersonalAccountDailyDataOutputFragment;
 
 				// subtract old data
 				this.personalAccountDataAggregatorService.updateAggregations(
@@ -103,9 +119,15 @@ export class PersonalAccountFacadeService {
 		);
 	}
 
-	deletePersonalAccountDailyEntry(input: PersonalAccountDailyDataDelete): Observable<PersonalAccountDailyDataFragment> {
+	deletePersonalAccountDailyEntry(
+		input: PersonalAccountDailyDataDelete
+	): Observable<PersonalAccountDailyDataOutputFragment | undefined> {
 		return this.personalAccountApiService.deletePersonalAccountDailyEntry(input).pipe(
 			tap((entry) => {
+				if (!entry) {
+					return;
+				}
+
 				// update yearly, monthly, weekly aggregation
 				this.personalAccountDataAggregatorService.updateAggregations(input.personalAccountId, entry, 'decrease');
 
@@ -130,7 +152,7 @@ export class PersonalAccountFacadeService {
 	 * @param operation
 	 * @returns
 	 */
-	updateMonthlyDailyData(dailyData: PersonalAccountDailyDataFragment, operation: 'add' | 'remove'): void {
+	updateMonthlyDailyData(dailyData: PersonalAccountDailyDataOutputFragment, operation: 'add' | 'remove'): void {
 		this.personalAccountMonthlyDataService.updateMonthlyDailyData(dailyData, operation);
 	}
 }

@@ -6,7 +6,7 @@ import {
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
 } from '../inputs';
-import { PersonalAccountDailyDataEditOutput } from '../outputs';
+import { PersonalAccountDailyDataEditOutput, PersonalAccountDailyDataOutput } from '../outputs';
 import { PersonalAccountDailyService } from '../services';
 import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth';
 import { Input } from './../../../graphql/';
@@ -18,11 +18,11 @@ export class PersonalAccountDailyResolver {
 
 	/* Mutations */
 
-	@Mutation(() => PersonalAccountDailyData)
+	@Mutation(() => PersonalAccountDailyDataOutput)
 	createPersonalAccountDailyEntry(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: PersonalAccountDailyDataCreate
-	): Promise<PersonalAccountDailyData> {
+	): Promise<PersonalAccountDailyDataOutput> {
 		return this.personalAccountDailyService.createPersonalAccountDailyEntry(input, authUser.id);
 	}
 
@@ -34,11 +34,11 @@ export class PersonalAccountDailyResolver {
 		return this.personalAccountDailyService.editPersonalAccountDailyEntry(input, authUser.id);
 	}
 
-	@Mutation(() => PersonalAccountDailyData)
+	@Mutation(() => PersonalAccountDailyDataOutput)
 	deletePersonalAccountDailyEntry(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: PersonalAccountDailyDataDelete
-	): Promise<PersonalAccountDailyData> {
+	): Promise<PersonalAccountDailyDataOutput> {
 		return this.personalAccountDailyService.deletePersonalAccountDailyEntry(input, authUser.id);
 	}
 }

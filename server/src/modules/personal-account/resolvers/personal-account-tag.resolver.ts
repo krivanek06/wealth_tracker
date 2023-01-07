@@ -12,7 +12,7 @@ export class PersonalAccountTagResolver {
 	constructor(private readonly personalAccountTagService: PersonalAccountTagService) {}
 
 	@Mutation(() => PersonalAccountTag)
-	createPersonalAccount(
+	createPersonalAccountTag(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: PersonalAccountTagDataCreate
 	): Promise<PersonalAccountTag> {
@@ -20,7 +20,7 @@ export class PersonalAccountTagResolver {
 	}
 
 	@Mutation(() => PersonalAccountTag)
-	editPersonalAccount(
+	editPersonalAccountTag(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: PersonalAccountTagDataEdit
 	): Promise<PersonalAccountTag> {
@@ -28,10 +28,10 @@ export class PersonalAccountTagResolver {
 	}
 
 	@Mutation(() => PersonalAccountTag)
-	deletePersonalAccount(
+	deletePersonalAccountTag(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: PersonalAccountTagDataDelete
 	): Promise<PersonalAccountTag> {
-		return this.personalAccountTagService.deletePersonalAccount(input, authUser.id);
+		return this.personalAccountTagService.deletePersonalAccountTag(input, authUser.id);
 	}
 }

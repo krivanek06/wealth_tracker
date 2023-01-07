@@ -6,7 +6,7 @@ import { PersonalAccount, PersonalAccountMonthlyData } from '../entities';
 import { PersonalAccountCreateInput, PersonalAccountEditInput } from '../inputs';
 import { PersonalAccountAggregationDataOutput, PersonalAccountWeeklyAggregationOutput } from '../outputs';
 import {
-	PersonalAccounDataAggregatorService,
+	PersonalAccountDataAggregatorService,
 	PersonalAccountMonthlyService,
 	PersonalAccountService,
 } from '../services';
@@ -17,7 +17,7 @@ export class PersonalAccountResolver {
 	constructor(
 		private personalAccountService: PersonalAccountService,
 		private personalAccountMonthlyService: PersonalAccountMonthlyService,
-		private personalAccounDataAggregatorService: PersonalAccounDataAggregatorService
+		private personalAccounDataAggregatorService: PersonalAccountDataAggregatorService
 	) {}
 
 	/* Queries */
@@ -66,7 +66,7 @@ export class PersonalAccountResolver {
 
 	@ResolveField('monthlyData', () => [PersonalAccountMonthlyData])
 	getMonthlyData(@Parent() personalAccount: PersonalAccount): Promise<PersonalAccountMonthlyData[]> {
-		return this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount);
+		return this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount.id);
 	}
 
 	@ResolveField('weeklyAggregaton', () => [PersonalAccountWeeklyAggregationOutput])

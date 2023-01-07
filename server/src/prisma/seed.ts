@@ -5,6 +5,7 @@ import { PersonalAccountCreateInput } from './../modules/personal-account/inputs
 import { PersonalAccountDailyDataCreate } from './../modules/personal-account/inputs/personal-account-daily-data-create.input';
 import { PersonalAccountDailyService } from './../modules/personal-account/services/personal-account-daily-data.service';
 import { PersonalAccountMonthlyService } from './../modules/personal-account/services/personal-account-monthly.service';
+import { PersonalAccountRepositoryService } from './../modules/personal-account/services/personal-account-repository.service';
 import { PersonalAccountTagService } from './../modules/personal-account/services/personal-account-tag.service';
 import { PersonalAccountService } from './../modules/personal-account/services/personal-account.service';
 
@@ -13,6 +14,7 @@ import { PrismaService } from './prisma.service';
 const prisma = new PrismaService();
 const pubsub = new PubSub();
 
+const personalAccountRepo = new PersonalAccountRepositoryService(prisma);
 const personalAccountTagService = new PersonalAccountTagService(prisma);
 const personalAccountDailyService = new PersonalAccountDailyService(prisma, personalAccountTagService, pubsub);
 const personalAccountMonthlyService = new PersonalAccountMonthlyService(prisma, personalAccountTagService);

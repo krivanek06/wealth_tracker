@@ -25,7 +25,7 @@ export class PersonalAccountMonthlyService {
 		year: number,
 		month: number
 	): Promise<PersonalAccountMonthlyData> {
-		return this.personalAccountMonthlyDataRepository.createMonthlyData(personalAccount, userId, year, month);
+		return this.personalAccountMonthlyDataRepository.createMonthlyData(personalAccount.id, userId, year, month);
 	}
 
 	/**

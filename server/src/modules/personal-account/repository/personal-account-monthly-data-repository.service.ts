@@ -1,5 +1,5 @@
 import { PrismaService } from '../../../prisma';
-import { PersonalAccount, PersonalAccountMonthlyData } from '../entities';
+import { PersonalAccountMonthlyData } from '../entities';
 
 export class PersonalAccountMonthlyDataRepository {
 	constructor(private prisma: PrismaService) {}
@@ -43,14 +43,14 @@ export class PersonalAccountMonthlyDataRepository {
 	}
 
 	createMonthlyData(
-		{ id }: PersonalAccount,
+		personalAccountId: string,
 		userId: string,
 		year: number,
 		month: number
 	): Promise<PersonalAccountMonthlyData> {
 		return this.prisma.personalAccountMonthlyData.create({
 			data: {
-				personalAccountId: id,
+				personalAccountId,
 				userId,
 				year,
 				month,

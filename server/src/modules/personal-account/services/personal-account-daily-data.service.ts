@@ -1,6 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { PubSubEngine } from 'graphql-subscriptions';
+import { PUB_SUB } from '../../../graphql/graphql.types';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
-import { PERSONAL_ACCOUNT_ERROR_DAILY_DATA, PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA } from '../dto';
+import { CREATED_MONTHLY_DATA, PERSONAL_ACCOUNT_ERROR_DAILY_DATA, PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA } from '../dto';
 import { PersonalAccountDailyData } from '../entities';
 import {
 	PersonalAccountDailyDataCreate,
@@ -14,7 +16,8 @@ import { PersonalAccountMonthlyDataRepository, PersonalAccountRepositoryService 
 export class PersonalAccountDailyService {
 	constructor(
 		private readonly personalAccountRepositoryService: PersonalAccountRepositoryService,
-		private readonly personalAccountMonthlyDataRepository: PersonalAccountMonthlyDataRepository
+		private readonly personalAccountMonthlyDataRepository: PersonalAccountMonthlyDataRepository,
+		@Inject(PUB_SUB) private pubSub: PubSubEngine
 	) {}
 
 	/**
@@ -47,24 +50,21 @@ export class PersonalAccountDailyService {
 		const { year, month, week } = MomentServiceUtil.getDetailsInformationFromDate(inputDate);
 
 		// load monthly data to which we want to register the dailyData
-		const monthlyData = await this.personalAccountMonthlyDataRepository.getMonthlyDataByYearAndMont(
+		let monthlyData = await this.personalAccountMonthlyDataRepository.getMonthlyDataByYearAndMont(
 			input.personalAccountId,
 			year,
 			month
 		);
+		const isMonthlyDataExist = !monthlyData;
 
 		// create new monthly data for the new daily data
-		if (!!monthlyData) {
-			throw new HttpException(PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA.NOT_FOUND, HttpStatus.NOT_FOUND);
-			// monthlyData = await this.prisma.personalAccountMonthlyData.create({
-			// 	data: {
-			// 		personalAccountId: input.personalAccountId,
-			// 		userId,
-			// 		year,
-			// 		month,
-			// 		dailyData: [],
-			// 	},
-			// });
+		if (!isMonthlyDataExist) {
+			monthlyData = await this.personalAccountMonthlyDataRepository.createMonthlyData(
+				input.personalAccountId,
+				userId,
+				year,
+				month
+			);
 		}
 
 		// create entry
@@ -80,14 +80,14 @@ export class PersonalAccountDailyService {
 		};
 
 		// save entry
-		await this.personalAccountMonthlyDataRepository.updateMonthlyData(monthlyData.id, {
+		const monthlyDataPublish = await this.personalAccountMonthlyDataRepository.updateMonthlyData(monthlyData.id, {
 			dailyData: [...monthlyData.dailyData, dailyData],
 		});
 
 		// subscriptions to publish information about newly created monthly data
-		// if (!isMonthlyDataExist) {
-		// 	this.pubSub.publish(CREATED_MONTHLY_DATA, { [CREATED_MONTHLY_DATA]: monthlyDataPublish });
-		// }
+		if (!isMonthlyDataExist) {
+			this.pubSub.publish(CREATED_MONTHLY_DATA, { [CREATED_MONTHLY_DATA]: monthlyDataPublish });
+		}
 
 		return dailyData;
 	}

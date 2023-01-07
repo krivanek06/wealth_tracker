@@ -1,7 +1,10 @@
-import { UseGuards } from '@nestjs/common';
-import { Float, Int, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Inject, UseGuards } from '@nestjs/common';
+import { Float, Int, Parent, Query, ResolveField, Resolver, Subscription } from '@nestjs/graphql';
 import { PersonalAccountTagDataType } from '@prisma/client';
+import { PubSubEngine } from 'graphql-subscriptions';
 import { Input } from 'src/graphql';
+import { PUB_SUB } from '../../../graphql/graphql.types';
+import { CREATED_MONTHLY_DATA } from '../dto';
 import { PersonalAccountMonthlyData } from '../entities';
 import { PersonalAccountDailyDataOutput } from '../outputs';
 import { PersonalAccountMonthlyService } from '../services';
@@ -11,7 +14,8 @@ import { AuthorizationGuard, RequestUser, ReqUser } from './../../../auth';
 @Resolver(() => PersonalAccountMonthlyData)
 export class PersonalAccountMonthlyResolver {
 	constructor(
-		private personalAccountMonthlyService: PersonalAccountMonthlyService // @Inject(PUB_SUB) private pubSub: PubSubEngine
+		private personalAccountMonthlyService: PersonalAccountMonthlyService,
+		@Inject(PUB_SUB) private pubSub: PubSubEngine
 	) {}
 
 	@Query(() => PersonalAccountMonthlyData, {
@@ -74,8 +78,8 @@ export class PersonalAccountMonthlyResolver {
 
 	/* Subscriptions */
 
-	// @Subscription(() => PersonalAccountMonthlyData)
-	// createdMonthlyData() {
-	// 	return this.pubSub.asyncIterator(CREATED_MONTHLY_DATA);
-	// }
+	@Subscription(() => PersonalAccountMonthlyData)
+	createdMonthlyData() {
+		return this.pubSub.asyncIterator(CREATED_MONTHLY_DATA);
+	}
 }

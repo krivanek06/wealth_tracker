@@ -19,7 +19,11 @@ const personalAccountRepo = new PersonalAccountRepositoryService(prisma);
 const personalAccountMonthlyRepo = new PersonalAccountMonthlyDataRepository(prisma);
 
 const personalAccountTagService = new PersonalAccountTagService(personalAccountRepo);
-const personalAccountDailyService = new PersonalAccountDailyService(personalAccountRepo, personalAccountMonthlyRepo);
+const personalAccountDailyService = new PersonalAccountDailyService(
+	personalAccountRepo,
+	personalAccountMonthlyRepo,
+	pubsub
+);
 const personalAccountMonthlyService = new PersonalAccountMonthlyService(
 	personalAccountMonthlyRepo,
 	personalAccountRepo

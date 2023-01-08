@@ -2,7 +2,7 @@ import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PersonalAccountResolver } from '../resolvers/personal-account.resolver';
 import {
-	PersonalAccounDataAggregatorService,
+	PersonalAccountDataAggregatorService,
 	PersonalAccountMonthlyService,
 	PersonalAccountService,
 } from '../services';
@@ -12,7 +12,7 @@ describe('PersonalAccountResolver', () => {
 
 	const personalAccountServiceMock = createMock<PersonalAccountService>();
 	const personalAccountMonthlyServiceMock = createMock<PersonalAccountMonthlyService>();
-	const personalAccountWeeklyServiceMock = createMock<PersonalAccounDataAggregatorService>();
+	const personalAccountWeeklyServiceMock = createMock<PersonalAccountDataAggregatorService>();
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -20,7 +20,7 @@ describe('PersonalAccountResolver', () => {
 				PersonalAccountResolver,
 				{ provide: PersonalAccountService, useValue: personalAccountServiceMock },
 				{ provide: PersonalAccountMonthlyService, useValue: personalAccountMonthlyServiceMock },
-				{ provide: PersonalAccounDataAggregatorService, useValue: personalAccountWeeklyServiceMock },
+				{ provide: PersonalAccountDataAggregatorService, useValue: personalAccountWeeklyServiceMock },
 			],
 		}).compile();
 

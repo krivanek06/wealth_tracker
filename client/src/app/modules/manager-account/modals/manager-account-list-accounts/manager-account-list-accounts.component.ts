@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { firstValueFrom, Observable } from 'rxjs';
 import { InvestmentAccountFacadeApiService, PersonalAccountFacadeService } from '../../../../core/api';
-import { InvestmentAccountOverviewFragment, PersonalAccountOverviewBasicFragment } from '../../../../core/graphql';
-import { requiredValidator } from '../../../../shared/models';
 import {
-	GeneralAccounts,
-	GeneralAccountType,
-	GeneralAccountTypeInputSource,
-	getGeneralAccountType,
-} from '../../models';
+	AccountIdentification,
+	AccountType,
+	InvestmentAccountOverviewFragment,
+	PersonalAccountOverviewFragment,
+} from '../../../../core/graphql';
+import { requiredValidator } from '../../../../shared/models';
+import { GeneralAccountTypeInputSource } from '../../models';
 import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.util';
 
 @Component({
@@ -19,16 +19,16 @@ import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.u
 	//changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManagerAccountListAccountsComponent implements OnInit {
-	personalAccounts$!: Observable<PersonalAccountOverviewBasicFragment[]>;
+	personalAccounts$!: Observable<PersonalAccountOverviewFragment[]>;
 	investmentAccounts$!: Observable<InvestmentAccountOverviewFragment[]>;
 
 	// control to select from existing account
-	selectedAccountControl = new FormControl<GeneralAccounts | null>(null);
+	selectedAccountControl = new FormControl<AccountIdentification | null>(null);
 
 	// form to edit account or create new
 	accountForm = new FormGroup({
 		accountName: new FormControl<string | null>(null, { validators: requiredValidator }),
-		accountType: new FormControl<GeneralAccountType | null>(null, { validators: requiredValidator }),
+		accountType: new FormControl<AccountType | null>(null, { validators: requiredValidator }),
 	});
 
 	// if true then shows mat-select for existing accounts
@@ -52,7 +52,7 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 			this.showSelectAccount = !value;
 			this.accountForm.setValue({
 				accountName: value?.name || null,
-				accountType: getGeneralAccountType(value),
+				accountType: value?.accountType || null,
 			});
 		});
 
@@ -78,13 +78,13 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 		this.showLoader = true;
 
 		// create new personal account
-		if (!isEditing && accountType === GeneralAccountType.PERSONAL_ACCOUNT) {
+		if (!isEditing && accountType === AccountType.PersonalAccount) {
 			await firstValueFrom(this.personalAccountFacadeService.createPersonalAccount(accountName));
 			DialogServiceUtil.showNotificationBar(`Personal account ${accountName} has been created`, 'success');
 		}
 
 		// edit personal account
-		else if (isEditing && accountType === GeneralAccountType.PERSONAL_ACCOUNT) {
+		else if (isEditing && accountType === AccountType.PersonalAccount) {
 			console.log('personal account edit');
 			await firstValueFrom(
 				this.personalAccountFacadeService.editPersonalAccount({
@@ -96,13 +96,13 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 		}
 
 		// create new investment account
-		else if (!isEditing && accountType === GeneralAccountType.INVESTMENT_ACCOUNT) {
+		else if (!isEditing && accountType === AccountType.InvestmentAccount) {
 			await firstValueFrom(this.investmentAccountFacadeApiService.createInvestmentAccount(accountName));
 			DialogServiceUtil.showNotificationBar(`Investment account ${accountName} has been created`, 'success');
 		}
 
 		// edit investment account
-		else if (isEditing && accountType === GeneralAccountType.INVESTMENT_ACCOUNT) {
+		else if (isEditing && accountType === AccountType.InvestmentAccount) {
 			await firstValueFrom(
 				this.investmentAccountFacadeApiService.editInvestmentAccount({
 					name: accountName,
@@ -120,10 +120,10 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 		this.showSelectAccount = false;
 	}
 
-	async onDeleteAccountClick(account: GeneralAccounts): Promise<void> {
-		if (account.__typename === 'PersonalAccount') {
+	async onDeleteAccountClick(account: AccountIdentification): Promise<void> {
+		if (account.accountType === AccountType.PersonalAccount) {
 			await firstValueFrom(this.personalAccountFacadeService.deletePersonalAccount(account.id));
-		} else if (account.__typename === 'InvestmentAccount') {
+		} else if (account.accountType === AccountType.InvestmentAccount) {
 			await firstValueFrom(this.investmentAccountFacadeApiService.deleteInvestmentAccount(account.id));
 		}
 

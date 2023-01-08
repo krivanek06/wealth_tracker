@@ -6,7 +6,7 @@ import { PersonalAccount, PersonalAccountMonthlyData } from '../entities';
 import { PersonalAccountCreateInput, PersonalAccountEditInput } from '../inputs';
 import { PersonalAccountAggregationDataOutput, PersonalAccountWeeklyAggregationOutput } from '../outputs';
 import {
-	PersonalAccounDataAggregatorService,
+	PersonalAccountDataAggregatorService,
 	PersonalAccountMonthlyService,
 	PersonalAccountService,
 } from '../services';
@@ -17,7 +17,7 @@ export class PersonalAccountResolver {
 	constructor(
 		private personalAccountService: PersonalAccountService,
 		private personalAccountMonthlyService: PersonalAccountMonthlyService,
-		private personalAccounDataAggregatorService: PersonalAccounDataAggregatorService
+		private personalAccountDataAggregatorService: PersonalAccountDataAggregatorService
 	) {}
 
 	/* Queries */
@@ -66,20 +66,20 @@ export class PersonalAccountResolver {
 
 	@ResolveField('monthlyData', () => [PersonalAccountMonthlyData])
 	getMonthlyData(@Parent() personalAccount: PersonalAccount): Promise<PersonalAccountMonthlyData[]> {
-		return this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount);
+		return this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount.id);
 	}
 
 	@ResolveField('weeklyAggregaton', () => [PersonalAccountWeeklyAggregationOutput])
 	getAllWeeklyAggregatedData(
 		@Parent() personalAccount: PersonalAccount
 	): Promise<PersonalAccountWeeklyAggregationOutput[]> {
-		return this.personalAccounDataAggregatorService.getAllWeeklyAggregatedData(personalAccount);
+		return this.personalAccountDataAggregatorService.getAllWeeklyAggregatedData(personalAccount);
 	}
 
 	@ResolveField('yearlyAggregaton', () => [PersonalAccountAggregationDataOutput])
 	getAllYearlyAggregatedData(
 		@Parent() personalAccount: PersonalAccount
 	): Promise<PersonalAccountAggregationDataOutput[]> {
-		return this.personalAccounDataAggregatorService.getAllYearlyAggregatedData(personalAccount);
+		return this.personalAccountDataAggregatorService.getAllYearlyAggregatedData(personalAccount);
 	}
 }

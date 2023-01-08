@@ -71,6 +71,7 @@ export class GraphQLHelper {
 	}
 
 	static getStatusAndMessage(error: unknown): { statusCode: HttpStatus; message: string } {
+		console.log(error);
 		const statusCode = error?.['extensions']?.['exception']?.['status'];
 		const message = error?.['extensions']?.['exception']?.['message'];
 

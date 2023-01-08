@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, forwardRef, Input, OnInit } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { GeneralAccounts } from '../../../models';
+import { AccountIdentification } from '../../../../../core/graphql';
 
 @Component({
 	selector: 'app-list-accounts',
@@ -16,12 +16,12 @@ import { GeneralAccounts } from '../../../models';
 	],
 })
 export class ListAccountsComponent implements OnInit, ControlValueAccessor {
-	@Input() personalAccounts!: GeneralAccounts[] | null;
-	@Input() investmentAccounts!: GeneralAccounts[] | null;
+	@Input() personalAccounts!: AccountIdentification[] | null;
+	@Input() investmentAccounts!: AccountIdentification[] | null;
 
-	selectedAccountControl = new FormControl<GeneralAccounts[]>([], { nonNullable: true });
+	selectedAccountControl = new FormControl<AccountIdentification[]>([], { nonNullable: true });
 
-	onChange: (data: GeneralAccounts) => void = () => {};
+	onChange: (data: AccountIdentification) => void = () => {};
 	onTouched = () => {};
 
 	constructor() {}

@@ -1,67 +1,63 @@
 import { Injectable } from '@nestjs/common';
 import { PersonalAccountTagDataType } from '@prisma/client';
-import { PrismaService } from '../../../prisma';
-import { PersonalAccount, PersonalAccountMonthlyData } from '../entities';
-import { PersonalAccountTagService } from './personal-account-tag.service';
+import { PersonalAccountMonthlyData } from '../entities';
+import { PersonalAccountDailyDataOutput } from '../outputs';
+import { PersonalAccountMonthlyDataRepositoryService, PersonalAccountRepositoryService } from '../repository';
 
 @Injectable()
 export class PersonalAccountMonthlyService {
-	constructor(private prisma: PrismaService, private personalAccountTagService: PersonalAccountTagService) {}
+	constructor(
+		private readonly personalAccountMonthlyDataRepository: PersonalAccountMonthlyDataRepositoryService,
+		private readonly personalAccountRepositoryService: PersonalAccountRepositoryService
+	) {}
 
-	async getMonthlyDataByAccountId({ id }: PersonalAccount): Promise<PersonalAccountMonthlyData[]> {
-		const monthlyData = await this.prisma.personalAccountMonthlyData.findMany({
-			where: {
-				personalAccountId: id,
-			},
-		});
-
-		// sort ASC
-		const mergedMonthlyData = monthlyData.sort((a, b) =>
-			b.year > a.year ? -1 : b.year === a.year && b.month > a.month ? -1 : 1
-		);
-
-		return mergedMonthlyData;
+	getMonthlyDataByAccountId(id: string): Promise<PersonalAccountMonthlyData[]> {
+		return this.personalAccountMonthlyDataRepository.getMonthlyDataByAccountId(id);
 	}
 
-	getMonthlyDataById(monthlyDataId: string, userId: string): Promise<PersonalAccountMonthlyData> {
-		return this.prisma.personalAccountMonthlyData.findFirst({
-			where: {
-				id: monthlyDataId,
-				userId,
-			},
-		});
-	}
+	// async getMonthlyDataById(monthlyDataId: string, userId: string): Promise<PersonalAccountMonthlyData> {
+	// 	try {
+	// 		const data = await this.personalAccountMonthlyDataRepository.getMonthlyDataById(monthlyDataId, userId);
+	// 		return data;
+	// 	} catch (e) {
+	// 		console.log(e);
+	// 		throw new HttpException(PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA.NOT_FOUND, HttpStatus.NOT_FOUND);
+	// 	}
+	// }
 
-	createMonthlyData({ id }: PersonalAccount, userId: string, year, month): Promise<PersonalAccountMonthlyData> {
-		return this.prisma.personalAccountMonthlyData.create({
-			data: {
-				personalAccountId: id,
-				userId,
-				year,
-				month,
-				dailyData: [],
-			},
-		});
-	}
+	// createMonthlyData(
+	// 	personalAccount: PersonalAccount,
+	// 	userId: string,
+	// 	year: number,
+	// 	month: number
+	// ): Promise<PersonalAccountMonthlyData> {
+	// 	return this.personalAccountMonthlyDataRepository.createMonthlyData(personalAccount.id, userId, year, month);
+	// }
 
 	/**
 	 *
 	 * @param personalAccountMonthlyData
 	 * @returns the sum of PersonalAccountMonthlyData.dailyData that has an income tag associated with it
 	 */
-	getMonthlyIncomeOrExpense(
+	async getMonthlyIncomeOrExpense(
 		personalAccountMonthlyData: PersonalAccountMonthlyData,
 		tagType: PersonalAccountTagDataType
-	): number {
-		const defaultTagTypes = this.personalAccountTagService.getDefaultTagsByTypes(tagType);
-		const defaultTagTypesIds = defaultTagTypes.map((x) => x.id);
+	): Promise<PersonalAccountDailyDataOutput[]> {
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(
+			personalAccountMonthlyData.personalAccountId
+		);
+
+		const personalAccountTags = personalAccount.personalAccountTag.filter((d) => d.type === tagType);
+		const personalAccountTagIds = personalAccountTags.map((x) => x.id);
 
 		// filter out daily data
-		const dailyIncomeData = personalAccountMonthlyData.dailyData.filter((d) => defaultTagTypesIds.includes(d.tagId));
+		const dailyData = personalAccountMonthlyData.dailyData
+			.filter((d) => personalAccountTagIds.includes(d.tagId))
+			.map((d) => {
+				const personalAccountTag = personalAccountTags.find((tag) => tag.id === d.tagId);
+				return { ...d, personalAccountTag } as PersonalAccountDailyDataOutput;
+			});
 
-		// calculate total sum
-		const dailyIncomSum = dailyIncomeData.reduce((a, b) => a + b.value, 0);
-
-		return dailyIncomSum;
+		return dailyData;
 	}
 }

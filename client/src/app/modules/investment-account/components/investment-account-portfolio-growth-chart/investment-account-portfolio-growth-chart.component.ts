@@ -37,7 +37,6 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 		balance: number[][];
 		ownedAssets: number[][];
 	} {
-		// console.log('eeeeee', cash);
 		const cash = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.cash]);
 
 		const balance = data

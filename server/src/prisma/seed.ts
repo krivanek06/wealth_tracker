@@ -3,6 +3,8 @@ import { PubSub } from 'graphql-subscriptions';
 import { PersonalAccount } from './../modules/personal-account/entities/personal-account.entity';
 import { PersonalAccountCreateInput } from './../modules/personal-account/inputs/personal-account-create.input';
 import { PersonalAccountDailyDataCreate } from './../modules/personal-account/inputs/personal-account-daily-data-create.input';
+import { PersonalAccountMonthlyDataRepositoryService } from './../modules/personal-account/repository/personal-account-monthly-data-repository.service';
+import { PersonalAccountRepositoryService } from './../modules/personal-account/repository/personal-account-repository.service';
 import { PersonalAccountDailyService } from './../modules/personal-account/services/personal-account-daily-data.service';
 import { PersonalAccountMonthlyService } from './../modules/personal-account/services/personal-account-monthly.service';
 import { PersonalAccountTagService } from './../modules/personal-account/services/personal-account-tag.service';
@@ -13,10 +15,16 @@ import { PrismaService } from './prisma.service';
 const prisma = new PrismaService();
 const pubsub = new PubSub();
 
-const personalAccountTagService = new PersonalAccountTagService(prisma);
-const personalAccountDailyService = new PersonalAccountDailyService(prisma, personalAccountTagService, pubsub);
-const personalAccountMonthlyService = new PersonalAccountMonthlyService(prisma, personalAccountTagService);
-const personalAccountService = new PersonalAccountService(prisma, personalAccountMonthlyService);
+const personalAccountRepo = new PersonalAccountRepositoryService(prisma);
+const personalAccountMonthlyRepo = new PersonalAccountMonthlyDataRepositoryService(prisma);
+
+const personalAccountTagService = new PersonalAccountTagService(personalAccountRepo);
+const personalAccountDailyService = new PersonalAccountDailyService(personalAccountRepo, personalAccountMonthlyRepo);
+const personalAccountMonthlyService = new PersonalAccountMonthlyService(
+	personalAccountMonthlyRepo,
+	personalAccountRepo
+);
+const personalAccountService = new PersonalAccountService(personalAccountRepo);
 
 const USER_ID = '63457ee2bb8dd0d311fbbe2b';
 
@@ -38,11 +46,12 @@ const randomIntFromInterval = (min: number, max: number) => {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-const personalAccountCreateDailyData = async (accunt: PersonalAccount): Promise<void> => {
-	const defaultTags = personalAccountTagService.getDefaultTags();
+const personalAccountCreateDailyData = async (account: PersonalAccount): Promise<void> => {
+	const defaultTags = account.personalAccountTag;
+	// console.log(defaultTags);
 
 	// for each day
-	for (let i = 0; i < 100; i++) {
+	for (let i = 0; i < 150; i++) {
 		const randomDailyEntries = randomIntFromInterval(2, 5);
 		console.log(`Daily data: ${i}, entities: ${randomDailyEntries}`);
 		const today = addDays(new Date('2022-08-01'), i);
@@ -54,7 +63,7 @@ const personalAccountCreateDailyData = async (accunt: PersonalAccount): Promise<
 
 			const input: PersonalAccountDailyDataCreate = {
 				date: today.toISOString(),
-				personalAccountId: accunt.id,
+				personalAccountId: account.id,
 				tagId: randomTag.id,
 				value: randomIntFromInterval(11, 66),
 			};
@@ -64,10 +73,10 @@ const personalAccountCreateDailyData = async (accunt: PersonalAccount): Promise<
 	}
 };
 
-const personalAccountDeleteMonthlyData = async (accunt: PersonalAccount): Promise<void> => {
+const personalAccountDeleteMonthlyData = async (account: PersonalAccount): Promise<void> => {
 	const monthlyData = await prisma.personalAccountMonthlyData.findMany({
 		where: {
-			personalAccountId: accunt.id,
+			personalAccountId: account.id,
 		},
 	});
 	for await (const data of monthlyData) {
@@ -95,9 +104,9 @@ const run = async () => {
 
 		console.log('[Personal account] ----- END');
 
-		console.log('[Investment account] ----- START');
+		// console.log('[Investment account] ----- START');
 
-		console.log('[Investment account] ----- END');
+		// console.log('[Investment account] ----- END');
 	} catch (e) {
 		console.log(e);
 	} finally {

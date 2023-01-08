@@ -4,10 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, map, Observable, startWith } from 'rxjs';
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
+	AccountIdentification,
 	InvestmentAccountActiveHoldingOutputFragment,
 	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
-	InvestmentAccountOverviewFragment,
 } from '../../../../core/graphql';
 import { ValuePresentItem } from '../../../../shared/models';
 import {
@@ -25,7 +25,7 @@ import { InvestmentAccountCalculatorService } from '../../services';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvestmentAccountComponent implements OnInit {
-	@Input() investmentAccountsOverivew!: InvestmentAccountOverviewFragment;
+	@Input() investmentAccountsOverview!: AccountIdentification;
 
 	investmentAccount$!: Observable<InvestmentAccountFragment>;
 
@@ -76,7 +76,7 @@ export class InvestmentAccountComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.investmentId = this.investmentAccountsOverivew.id;
+		this.investmentId = this.investmentAccountsOverview.id;
 		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.investmentId);
 		this.investmentAccountGrowth$ = this.investmentAccountFacadeApiService.getInvestmentAccountGrowth(
 			this.investmentId

@@ -1,25 +1,26 @@
 import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
-import { Observable, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import {
-	CreatePersonalAccountMutation,
-	DeletePersonalAccountMutation,
 	EditPersonalAccountMutation,
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
 	PersonalAccountDailyDataEditOutput,
-	PersonalAccountDailyDataFragment,
+	PersonalAccountDailyDataOutputFragment,
+	PersonalAccountDailyDataQuery,
+	PersonalAccountDetailsFragment,
 	PersonalAccountEditInput,
-	PersonalAccountMonthlyDataDetailFragment,
-	PersonalAccountOverviewBasicFragment,
+	PersonalAccountMonthlyDataOverviewFragment,
 	PersonalAccountOverviewFragment,
 	PersonalAccountTag,
+	PersonalAccountTagFragment,
+	TagDataType,
 } from '../../graphql';
+import { DateServiceUtil } from './../../../shared/utils/date-service.util';
 import { PersonalAccountApiService } from './personal-account-api.service';
 import { PersonalAccountCacheService } from './personal-account-cache.service';
 import { PersonalAccountDataAggregatorService } from './personal-account-data-aggregator.service';
-import { PersonalAccountMonthlyDataService } from './personal-account-monthly-data.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -28,49 +29,134 @@ export class PersonalAccountFacadeService {
 	constructor(
 		private personalAccountApiService: PersonalAccountApiService,
 		private personalAccountDataAggregatorService: PersonalAccountDataAggregatorService,
-		private personalAccountMonthlyDataService: PersonalAccountMonthlyDataService,
 		private personalAccountCacheService: PersonalAccountCacheService
 	) {}
 
-	getPersonalAccounts(): Observable<PersonalAccountOverviewBasicFragment[]> {
+	getPersonalAccounts(): Observable<PersonalAccountOverviewFragment[]> {
 		return this.personalAccountApiService.getPersonalAccounts();
 	}
 
-	getPersonalAccountOverviewById(input: string): Observable<PersonalAccountOverviewFragment> {
-		return this.personalAccountApiService.getPersonalAccountOverviewById(input);
+	getPersonalAccountDetailsById(input: string): Observable<PersonalAccountDetailsFragment> {
+		return this.personalAccountApiService.getPersonalAccountDetailsById(input);
 	}
 
-	createPersonalAccount(name: string): Observable<FetchResult<CreatePersonalAccountMutation>> {
-		return this.personalAccountApiService.createPersonalAccount(name);
+	getPersonalAccountTagFromCache(tagId: string): PersonalAccountTagFragment | null {
+		return this.personalAccountCacheService.getPersonalAccountTagFromCache(tagId);
+	}
+
+	createPersonalAccount(name: string): Observable<PersonalAccountOverviewFragment | undefined> {
+		return this.personalAccountApiService.createPersonalAccount(name).pipe(
+			tap((result) => {
+				if (!result) {
+					return;
+				}
+
+				const accounts = this.personalAccountCacheService.getPersonalAccountsOverview();
+
+				// update cache
+				this.personalAccountCacheService.updatePersonalAccountsOverview([...accounts, result]);
+			})
+		);
 	}
 
 	editPersonalAccount(input: PersonalAccountEditInput): Observable<FetchResult<EditPersonalAccountMutation>> {
 		return this.personalAccountApiService.editPersonalAccount(input);
 	}
 
-	deletePersonalAccount(accountId: string): Observable<FetchResult<DeletePersonalAccountMutation>> {
-		return this.personalAccountApiService.deletePersonalAccount(accountId);
+	deletePersonalAccount(accountId: string): Observable<PersonalAccountOverviewFragment | undefined> {
+		return this.personalAccountApiService.deletePersonalAccount(accountId).pipe(
+			tap((res) => {
+				// load accounts from cache
+				const accounts = this.personalAccountCacheService.getPersonalAccountsOverview();
+				const updatedAccounts = accounts.filter((d) => d.id !== accountId);
+
+				// update cache
+				this.personalAccountCacheService.updatePersonalAccountsOverview([...updatedAccounts]);
+
+				// remove from cache - TODO: gives error
+				// this.personalAccountCacheService.removePersonalAccountFromCache(accountId);
+			})
+		);
 	}
 
-	getDefaultTags(): Observable<PersonalAccountTag[]> {
-		return this.personalAccountApiService.getDefaultTags();
+	getPersonalAccountTags(accountId: string): Observable<PersonalAccountTag[]> {
+		return this.getPersonalAccountDetailsById(accountId).pipe(map((account) => account.personalAccountTag));
 	}
 
-	getDefaultTagsExpense(): Observable<PersonalAccountTag[]> {
-		return this.personalAccountApiService.getDefaultTagsExpense();
+	getPersonalAccountTagsExpense(accountId: string): Observable<PersonalAccountTag[]> {
+		return this.getPersonalAccountTags(accountId).pipe(
+			map((tags) => tags.filter((d) => d.type === TagDataType.Expense))
+		);
 	}
 
-	getDefaultTagsIncome(): Observable<PersonalAccountTag[]> {
-		return this.personalAccountApiService.getDefaultTagsIncome();
+	getPersonalTagsIncome(accountId: string): Observable<PersonalAccountTag[]> {
+		return this.getPersonalAccountTags(accountId).pipe(
+			map((tags) => tags.filter((d) => d.type === TagDataType.Income))
+		);
 	}
-	createPersonalAccountDailyEntry(input: PersonalAccountDailyDataCreate): Observable<PersonalAccountDailyDataFragment> {
+
+	getPersonalAccountDailyData(
+		input: PersonalAccountDailyDataQuery
+	): Observable<PersonalAccountDailyDataOutputFragment[]> {
+		return this.personalAccountApiService.getPersonalAccountDailyData(input);
+	}
+
+	createPersonalAccountDailyEntry(
+		input: PersonalAccountDailyDataCreate
+	): Observable<PersonalAccountDailyDataOutputFragment | undefined> {
 		return this.personalAccountApiService.createPersonalAccountDailyEntry(input).pipe(
 			tap((entry) => {
+				if (!entry) {
+					return;
+				}
+				const personalAccountId = input.personalAccountId;
+
+				// check if daily data for specific data is in cache, if so, add this one too
+				const { year, month } = DateServiceUtil.getDetailsInformationFromDate(input.date);
+				const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails(personalAccountId);
+				const dailyDataCache = this.personalAccountCacheService.getPersonalAccountDailyDataFromCache({
+					personalAccountId,
+					year,
+					month,
+				});
+
+				// if daily data is loaded, add this on too sorted
+				if (dailyDataCache) {
+					this.personalAccountCacheService.updatePersonalAccountDailyDataCache([...dailyDataCache, entry], {
+						personalAccountId,
+						year,
+						month,
+					});
+				}
+
+				// check if year and month is possible to select
+				// not present if creating data into the future/past where this is the first daily data
+				const monthlyDataExistence = personalAccount.monthlyData.find((d) => d.year === year && d.month === month);
+				if (!monthlyDataExistence) {
+					const newMonthlyData: PersonalAccountMonthlyDataOverviewFragment = {
+						__typename: 'PersonalAccountMonthlyData',
+						dailyEntries: 1,
+						monthlyIncome: entry.personalAccountTag.type === TagDataType.Income ? entry.value : 0,
+						monthlyExpense: entry.personalAccountTag.type === TagDataType.Expense ? entry.value : 0,
+						year,
+						month,
+					};
+
+					// merge and sort monthly data by date
+					// TODO - small bug with sorting, Dec 2022 if after Jan. 2023 if I create a new month
+					const mergedMonthlyData = [...(personalAccount.monthlyData ?? []), newMonthlyData]
+						.slice()
+						.sort((a, b) => new Date(a.year, a.month, 1).getTime() - new Date(b.year, b.month, 1).getTime());
+
+					// update cache
+					this.personalAccountCacheService.updatePersonalAccountDetails(personalAccountId, {
+						...personalAccount,
+						monthlyData: mergedMonthlyData,
+					});
+				}
+
 				// update yearly, monthly, weekly aggregation
 				this.personalAccountDataAggregatorService.updateAggregations(input.personalAccountId, entry, 'increase');
-
-				// add daily data into monthly details
-				this.personalAccountMonthlyDataService.updateMonthlyDailyData(entry, 'add');
 			})
 		);
 	}
@@ -78,8 +164,8 @@ export class PersonalAccountFacadeService {
 	editPersonalAccountDailyEntry(input: PersonalAccountDailyDataEdit): Observable<PersonalAccountDailyDataEditOutput> {
 		return this.personalAccountApiService.editPersonalAccountDailyEntry(input).pipe(
 			tap((entry) => {
-				const removedDailyData = entry.originalDailyData as PersonalAccountDailyDataFragment;
-				const addedDailyData = entry.modifiedDailyData as PersonalAccountDailyDataFragment;
+				const removedDailyData = entry.originalDailyData as PersonalAccountDailyDataOutputFragment;
+				const addedDailyData = entry.modifiedDailyData as PersonalAccountDailyDataOutputFragment;
 
 				// subtract old data
 				this.personalAccountDataAggregatorService.updateAggregations(
@@ -87,7 +173,6 @@ export class PersonalAccountFacadeService {
 					removedDailyData,
 					'decrease'
 				);
-				this.personalAccountMonthlyDataService.updateMonthlyDailyData(removedDailyData, 'remove');
 
 				// add new data
 				this.personalAccountDataAggregatorService.updateAggregations(
@@ -95,7 +180,6 @@ export class PersonalAccountFacadeService {
 					addedDailyData,
 					'increase'
 				);
-				this.personalAccountMonthlyDataService.updateMonthlyDailyData(addedDailyData, 'add');
 
 				// remove from cache
 				this.personalAccountCacheService.removePersonalAccountDailyDataFromCache(removedDailyData.id);
@@ -103,34 +187,21 @@ export class PersonalAccountFacadeService {
 		);
 	}
 
-	deletePersonalAccountDailyEntry(input: PersonalAccountDailyDataDelete): Observable<PersonalAccountDailyDataFragment> {
+	deletePersonalAccountDailyEntry(
+		input: PersonalAccountDailyDataDelete
+	): Observable<PersonalAccountDailyDataOutputFragment | undefined> {
 		return this.personalAccountApiService.deletePersonalAccountDailyEntry(input).pipe(
 			tap((entry) => {
+				if (!entry) {
+					return;
+				}
+
 				// update yearly, monthly, weekly aggregation
 				this.personalAccountDataAggregatorService.updateAggregations(input.personalAccountId, entry, 'decrease');
-
-				// add daily data into monthly details
-				this.personalAccountMonthlyDataService.updateMonthlyDailyData(entry, 'remove');
 
 				// remove from cache
 				this.personalAccountCacheService.removePersonalAccountDailyDataFromCache(entry.id);
 			})
 		);
-	}
-
-	getPersonalAccountMonthlyDataById(monthlyDataId: string): Observable<PersonalAccountMonthlyDataDetailFragment> {
-		return this.personalAccountMonthlyDataService.getPersonalAccountMonthlyDataById(monthlyDataId);
-	}
-
-	/**
-	 * Persist daily data into monthly.dailyData array
-	 * if monthly data not loaded, skip the operation, daily data will be loaded by getPersonalAccountMonthlyDataById
-	 *
-	 * @param dailyData
-	 * @param operation
-	 * @returns
-	 */
-	updateMonthlyDailyData(dailyData: PersonalAccountDailyDataFragment, operation: 'add' | 'remove'): void {
-		this.personalAccountMonthlyDataService.updateMonthlyDailyData(dailyData, operation);
 	}
 }

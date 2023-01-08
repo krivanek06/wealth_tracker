@@ -1,18 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsObject } from 'class-validator';
-import { PersonalAccountDailyData } from '../entities';
+import { PersonalAccountDailyDataOutput } from './personal-account-daily-data.output';
 
 @ObjectType()
 export class PersonalAccountDailyDataEditOutput {
-	@Field(() => PersonalAccountDailyData, {
+	@Field(() => PersonalAccountDailyDataOutput, {
 		description: 'Original object before edit',
 	})
 	@IsObject()
-	originalDailyData: PersonalAccountDailyData;
+	originalDailyData: PersonalAccountDailyDataOutput;
 
-	@Field(() => PersonalAccountDailyData, {
+	@Field(() => PersonalAccountDailyDataOutput, {
 		description: 'Edited object',
 	})
 	@IsObject()
-	modifiedDailyData: PersonalAccountDailyData;
+	modifiedDailyData: PersonalAccountDailyDataOutput;
 }

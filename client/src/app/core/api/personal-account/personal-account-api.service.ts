@@ -1,21 +1,17 @@
 import { Injectable } from '@angular/core';
-import { DataProxy, FetchResult } from '@apollo/client/core';
+import { FetchResult } from '@apollo/client/core';
 import { map, Observable } from 'rxjs';
 import {
 	CreatePersonalAccountDailyEntryGQL,
 	CreatePersonalAccountGQL,
-	CreatePersonalAccountMutation,
 	DeletePersonalAccountDailyEntryGQL,
 	DeletePersonalAccountGQL,
-	DeletePersonalAccountMutation,
 	EditPersonalAccountDailyEntryGQL,
 	EditPersonalAccountGQL,
 	EditPersonalAccountMutation,
 	GetPersonalAccountByIdGQL,
 	GetPersonalAccountDailyDataGQL,
-	GetPersonalAccountsDocument,
 	GetPersonalAccountsGQL,
-	GetPersonalAccountsQuery,
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
@@ -26,7 +22,6 @@ import {
 	PersonalAccountEditInput,
 	PersonalAccountOverviewFragment,
 } from '../../graphql';
-import { PersonalAccountCacheService } from './personal-account-cache.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -41,8 +36,7 @@ export class PersonalAccountApiService {
 		private createPersonalAccountDailyEntryGQL: CreatePersonalAccountDailyEntryGQL,
 		private editPersonalAccountDailyEntryGQL: EditPersonalAccountDailyEntryGQL,
 		private deletePersonalAccountDailyEntryGQL: DeletePersonalAccountDailyEntryGQL,
-		private getPersonalAccountDailyDataGQL: GetPersonalAccountDailyDataGQL,
-		private personalAccountCacheService: PersonalAccountCacheService
+		private getPersonalAccountDailyDataGQL: GetPersonalAccountDailyDataGQL
 	) {}
 
 	getPersonalAccounts(): Observable<PersonalAccountOverviewFragment[]> {
@@ -57,30 +51,12 @@ export class PersonalAccountApiService {
 			.valueChanges.pipe(map((res) => res.data.getPersonalAccountById));
 	}
 
-	createPersonalAccount(name: string): Observable<FetchResult<CreatePersonalAccountMutation>> {
-		return this.createPersonalAccountGQL.mutate(
-			{
+	createPersonalAccount(name: string): Observable<PersonalAccountOverviewFragment | undefined> {
+		return this.createPersonalAccountGQL
+			.mutate({
 				name,
-			},
-			{
-				update: (store: DataProxy, { data }) => {
-					const result = data?.createPersonalAccount as PersonalAccountOverviewFragment;
-
-					// query movies from cache
-					const query = store.readQuery<GetPersonalAccountsQuery>({
-						query: GetPersonalAccountsDocument,
-					});
-
-					// no data in cache
-					if (!query?.getPersonalAccounts) {
-						return;
-					}
-
-					// update cache
-					this.personalAccountCacheService.updatePersonalAccountsOverview([...query.getPersonalAccounts, result]);
-				},
-			}
-		);
+			})
+			.pipe(map((res) => res.data?.createPersonalAccount));
 	}
 
 	editPersonalAccount(input: PersonalAccountEditInput): Observable<FetchResult<EditPersonalAccountMutation>> {
@@ -89,25 +65,12 @@ export class PersonalAccountApiService {
 		});
 	}
 
-	deletePersonalAccount(accountId: string): Observable<FetchResult<DeletePersonalAccountMutation>> {
-		return this.deletePersonalAccountGQL.mutate(
-			{
+	deletePersonalAccount(accountId: string): Observable<PersonalAccountOverviewFragment | undefined> {
+		return this.deletePersonalAccountGQL
+			.mutate({
 				accountId,
-			},
-			{
-				update: (store: DataProxy, { data }) => {
-					// load accounts from cache
-					const accounts = this.personalAccountCacheService.getPersonalAccountsOverview();
-					const updatedAccounts = accounts.filter((d) => d.id !== accountId);
-
-					// update cache
-					this.personalAccountCacheService.updatePersonalAccountsOverview([...updatedAccounts]);
-
-					// remove from cache - TODO: gives error
-					// this.personalAccountCacheService.removePersonalAccountFromCache(accountId);
-				},
-			}
-		);
+			})
+			.pipe(map((res) => res.data?.deletePersonalAccount));
 	}
 
 	createPersonalAccountDailyEntry(

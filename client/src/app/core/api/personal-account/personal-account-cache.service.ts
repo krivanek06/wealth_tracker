@@ -9,8 +9,6 @@ import {
 	PersonalAccountDailyDataQuery,
 	PersonalAccountDetailsFragment,
 	PersonalAccountDetailsFragmentDoc,
-	PersonalAccountMonthlyDataOverviewFragment,
-	PersonalAccountMonthlyDataOverviewFragmentDoc,
 	PersonalAccountOverviewFragment,
 	PersonalAccountTagFragment,
 	PersonalAccountTagFragmentDoc,
@@ -22,7 +20,9 @@ import {
 export class PersonalAccountCacheService {
 	constructor(private apollo: Apollo) {}
 
-	getPersonalAccountDailyDataFromCache(input: PersonalAccountDailyDataQuery): PersonalAccountDailyDataOutputFragment[] {
+	getPersonalAccountDailyDataFromCache(
+		input: PersonalAccountDailyDataQuery
+	): PersonalAccountDailyDataOutputFragment[] | undefined {
 		const query = this.apollo.client.readQuery<GetPersonalAccountDailyDataQuery>({
 			query: GetPersonalAccountDailyDataDocument,
 			variables: {
@@ -30,7 +30,23 @@ export class PersonalAccountCacheService {
 			},
 		});
 
-		return query?.getPersonalAccountDailyData ?? [];
+		return query?.getPersonalAccountDailyData;
+	}
+
+	updatePersonalAccountDailyDataCache(
+		data: PersonalAccountDailyDataOutputFragment[],
+		input: PersonalAccountDailyDataQuery
+	): void {
+		this.apollo.client.writeQuery<GetPersonalAccountDailyDataQuery>({
+			query: GetPersonalAccountDailyDataDocument,
+			variables: {
+				input,
+			},
+			data: {
+				__typename: 'Query',
+				getPersonalAccountDailyData: data,
+			},
+		});
 	}
 
 	getPersonalAccountTagFromCache(tagId: string): PersonalAccountTagFragment | null {
@@ -58,20 +74,6 @@ export class PersonalAccountCacheService {
 				getPersonalAccounts: [...data],
 			},
 		});
-	}
-
-	getPersonalAccountMonthlyDataOverviewFromCache(monthlyDataId: string): PersonalAccountMonthlyDataOverviewFragment {
-		const fragment = this.apollo.client.readFragment<PersonalAccountMonthlyDataOverviewFragment>({
-			id: `PersonalAccountMonthlyData:${monthlyDataId}`,
-			fragmentName: 'PersonalAccountMonthlyDataOverview',
-			fragment: PersonalAccountMonthlyDataOverviewFragmentDoc,
-		});
-
-		if (!fragment) {
-			throw new Error('Personal account monthly overview not found');
-		}
-
-		return fragment;
 	}
 
 	getPersonalAccountDetails(personalAccountId: string): PersonalAccountDetailsFragment {

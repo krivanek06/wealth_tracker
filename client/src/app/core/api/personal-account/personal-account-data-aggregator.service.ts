@@ -28,7 +28,7 @@ export class PersonalAccountDataAggregatorService {
 	): void {
 		const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails(personalAccountId);
 		const dateDetails = DateServiceUtil.getDetailsInformationFromDate(Number(dailyData.date));
-		const multiplyer = operation === 'increase' ? 1 : -1; // add or remove data from aggregation
+		const multiplier = operation === 'increase' ? 1 : -1; // add or remove data from aggregation
 
 		const isTagInYearlyAggregation = personalAccount.yearlyAggregaton.findIndex(
 			(d) => d.tag.id === dailyData.personalAccountTag.id
@@ -41,8 +41,8 @@ export class PersonalAccountDataAggregatorService {
 						if (data.tag.id === dailyData.tagId) {
 							return {
 								...data,
-								value: data.value + dailyData.value * multiplyer,
-								entries: data.entries + 1 * multiplyer,
+								value: data.value + dailyData.value * multiplier,
+								entries: data.entries + 1 * multiplier,
 							};
 						}
 						return data;
@@ -127,8 +127,8 @@ export class PersonalAccountDataAggregatorService {
 										dDaily.tag.id === dailyData.personalAccountTag.id
 											? {
 													...dDaily,
-													entries: dDaily.entries + 1 * multiplyer,
-													value: dDaily.value + dailyData.value * multiplyer,
+													entries: dDaily.entries + 1 * multiplier,
+													value: dDaily.value + dailyData.value * multiplier,
 											  }
 											: { ...dDaily }
 									),
@@ -138,14 +138,15 @@ export class PersonalAccountDataAggregatorService {
 
 		// update monthly data entries + income/expense
 		const newMonthlyIncome =
-			(dailyData.personalAccountTag.type === TagDataType.Income ? dailyData.value : 0) * multiplyer;
+			(dailyData.personalAccountTag.type === TagDataType.Income ? dailyData.value : 0) * multiplier;
 		const newMonthlyExpense =
-			(dailyData.personalAccountTag.type === TagDataType.Expense ? dailyData.value : 0) * multiplyer;
+			(dailyData.personalAccountTag.type === TagDataType.Expense ? dailyData.value : 0) * multiplier;
+		const dailyDataDate = DateServiceUtil.getDetailsInformationFromDate(dailyData.date);
 		const monthlyData = personalAccount.monthlyData.map((d) => {
-			if (d.id === dailyData.monthlyDataId) {
+			if (d.year === dailyDataDate.year && d.month === dailyDataDate.month) {
 				return {
 					...d,
-					dailyEntries: d.dailyEntries + 1 * multiplyer,
+					dailyEntries: d.dailyEntries + 1 * multiplier,
 					monthlyIncome: d.monthlyIncome + newMonthlyIncome,
 					monthlyExpense: d.monthlyExpense + newMonthlyExpense,
 				};

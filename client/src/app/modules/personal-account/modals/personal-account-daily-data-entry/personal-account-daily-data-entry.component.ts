@@ -51,9 +51,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	ngOnInit(): void {
 		if (this.data.dailyData) {
 			const dailyData = this.data.dailyData;
-			// TODO: Does this work??????
-			const tag = this.personalAccountFacadeService.getPersonalAccountTagFromCache(dailyData.id);
-			console.log('Eduard', tag);
+			const tag = this.personalAccountFacadeService.getPersonalAccountTagFromCache(dailyData.tagId);
 
 			this.formGroup.setValue({
 				date: new Date(Number(dailyData.date)),

@@ -9,11 +9,12 @@
 				*ngSwitchCase="AccountType.PersonalAccount"
 				[personalAccountBasic]="account"
 			></app-personal-account>
+
 			<!-- investment account -->
-			<!-- <app-investment-account
-				*ngSwitchCase="AccountType.PersonalAccount"
+			<app-investment-account
+				*ngSwitchCase="AccountType.InvestmentAccount"
 				[investmentAccountsOverview]="account"
-			></app-investment-account> -->
+			></app-investment-account>
 		</ng-container>
 	</mat-tab>
 </mat-tab-group>

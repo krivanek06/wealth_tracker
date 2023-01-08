@@ -22,9 +22,6 @@ import { PersonalAccountDailyDataEntryComponent } from './../../modals';
 export class PersonalAccountDailyDataContainerComponent implements OnInit {
 	@Input() personalAccountBasic!: PersonalAccountOverviewFragment;
 	weeklyIds$!: Observable<string[]>; // 2022-7-32, 2022-7-33, ...
-	// monthlyDataDetail$!: Observable<PersonalAccountMonthlyDataDetailFragment | null>;
-	// monthlyDataDetailAvailableWeeks$!: Observable<number>;
-	// monthlyDataDetailTable$!: Observable<PersonalAccountMonthlyDataDetailFragment | null>;
 	expenseAllocationChartData$!: Observable<GenericChartSeriesPie | null>;
 	personalAccountDailyData$!: Observable<PersonalAccountDailyDataOutputFragment[]>;
 
@@ -73,49 +70,6 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 					)
 			)
 		);
-
-		this.personalAccountDailyData$.subscribe((d) => console.log('eee', d));
-
-		// load / filter date based on filter change
-		// this.monthlyDataDetail$ = combineLatest([
-		// 	this.filterControl.valueChanges.pipe(startWith(this.filterControl.getRawValue())),
-		// 	accountDetails$,
-		// ]).pipe(
-		// 	switchMap(([filterValues, account]) => {
-		// 		const [year, month] = filterValues.yearAndMonth.split('-').map((d) => Number(d));
-		// 		const monthlyDataOverview = account.monthlyData.find((d) => d.year === year && d.month === month);
-		// 		// new month/year - no data was yet created
-		// 		if (!monthlyDataOverview) {
-		// 			return of(null);
-		// 		}
-		// 		// TODO this is triggered 3x , why ?
-		// 		console.log('monthlyData', filterValues);
-		// 		return this.personalAccountFacadeService.getPersonalAccountMonthlyDataById(monthlyDataOverview.id);
-		// 	})
-		// );
-
-		// this.monthlyDataDetailTable$ = this.monthlyDataDetail$.pipe(
-		// 	map((monthlyDataDetails) => {
-		// 		if (!monthlyDataDetails) {
-		// 			return null;
-		// 		}
-
-		// 		const selectedTagIds = this.filterControl.getRawValue().tag;
-		// 		const selectedWeek = this.filterControl.getRawValue().week;
-
-		// 		const filteredDailyData = monthlyDataDetails.dailyExpenses.filter((d) => {
-		// 			if (selectedTagIds.length !== 0 && !selectedTagIds.includes(d.tagId)) {
-		// 				return false;
-		// 			}
-		// 			if (selectedWeek !== -1 && selectedWeek !== d.week) {
-		// 				return false;
-		// 			}
-
-		// 			return true;
-		// 		});
-		// 		return { ...monthlyDataDetails, dailyData: filteredDailyData, dailyEntries: filteredDailyData.length };
-		// 	})
-		// );
 
 		// calculate expense chart for filtered data
 		this.expenseAllocationChartData$ = this.personalAccountDailyData$.pipe(

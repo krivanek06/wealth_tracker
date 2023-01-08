@@ -63,7 +63,6 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 
 	writeValue(obj: PersonalAccountFilterFormValues): void {
 		console.log('value form filter component', obj);
-		// throw new Error('Method not implemented.');
 
 		// save selected month-year into the form
 		this.formGroup.controls.week.reset(-1, { emitEvent: false });

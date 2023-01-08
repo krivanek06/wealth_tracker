@@ -30,13 +30,13 @@ export class PersonalAccountDataAggregatorService {
 		const dateDetails = DateServiceUtil.getDetailsInformationFromDate(Number(dailyData.date));
 		const multiplyer = operation === 'increase' ? 1 : -1; // add or remove data from aggregation
 
-		const isTagInYearlyAggregatopm = personalAccount.yearlyAggregaton.findIndex(
+		const isTagInYearlyAggregation = personalAccount.yearlyAggregaton.findIndex(
 			(d) => d.tag.id === dailyData.personalAccountTag.id
 		);
 
-		// update yearlyAggregaton that match tagId or add new yearly data if not found
-		const yearlyAggregaton: PersonalAccountAggregationDataOutput[] =
-			isTagInYearlyAggregatopm !== -1
+		// update yearlyAggregation that match tagId or add new yearly data if not found
+		const yearlyAggregation: PersonalAccountAggregationDataOutput[] =
+			isTagInYearlyAggregation !== -1
 				? personalAccount.yearlyAggregaton.map((data) => {
 						if (data.tag.id === dailyData.tagId) {
 							return {
@@ -156,7 +156,7 @@ export class PersonalAccountDataAggregatorService {
 		// update cache
 		this.personalAccountCacheService.updatePersonalAccountDetails(personalAccountId, {
 			...personalAccount,
-			yearlyAggregaton,
+			yearlyAggregaton: yearlyAggregation,
 			weeklyAggregaton,
 			monthlyData,
 		});

@@ -12,6 +12,7 @@ import {
 	EditPersonalAccountGQL,
 	EditPersonalAccountMutation,
 	GetPersonalAccountByIdGQL,
+	GetPersonalAccountDailyDataGQL,
 	GetPersonalAccountsDocument,
 	GetPersonalAccountsGQL,
 	GetPersonalAccountsQuery,
@@ -20,6 +21,7 @@ import {
 	PersonalAccountDailyDataEdit,
 	PersonalAccountDailyDataEditOutput,
 	PersonalAccountDailyDataOutputFragment,
+	PersonalAccountDailyDataQuery,
 	PersonalAccountDetailsFragment,
 	PersonalAccountEditInput,
 	PersonalAccountOverviewFragment,
@@ -39,6 +41,7 @@ export class PersonalAccountApiService {
 		private createPersonalAccountDailyEntryGQL: CreatePersonalAccountDailyEntryGQL,
 		private editPersonalAccountDailyEntryGQL: EditPersonalAccountDailyEntryGQL,
 		private deletePersonalAccountDailyEntryGQL: DeletePersonalAccountDailyEntryGQL,
+		private getPersonalAccountDailyDataGQL: GetPersonalAccountDailyDataGQL,
 		private personalAccountCacheService: PersonalAccountCacheService
 	) {}
 
@@ -133,5 +136,15 @@ export class PersonalAccountApiService {
 				input,
 			})
 			.pipe(map((res) => res.data?.deletePersonalAccountDailyEntry));
+	}
+
+	getPersonalAccountDailyData(
+		input: PersonalAccountDailyDataQuery
+	): Observable<PersonalAccountDailyDataOutputFragment[]> {
+		return this.getPersonalAccountDailyDataGQL
+			.watch({
+				input,
+			})
+			.valueChanges.pipe(map((res) => res.data.getPersonalAccountDailyData));
 	}
 }

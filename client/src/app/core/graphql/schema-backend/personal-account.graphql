@@ -49,20 +49,13 @@ mutation DeletePersonalAccountTag($input: PersonalAccountTagDataDelete!) {
 	}
 }
 
-### Monthly data
-query getPersonalAccountMonthlyDataById($input: String!) {
-	getPersonalAccountMonthlyDataById(input: $input) {
-		...PersonalAccountMonthlyDataDetail
-	}
-}
-
-subscription createdMonthlyDataSubscription {
-	createdMonthlyData {
-		...PersonalAccountMonthlyDataOverview
-	}
-}
-
 ### Daily data
+query GetPersonalAccountDailyData($input: PersonalAccountDailyDataQuery!) {
+	getPersonalAccountDailyData(input: $input) {
+		...PersonalAccountDailyDataOutput
+	}
+}
+
 mutation CreatePersonalAccountDailyEntry($input: PersonalAccountDailyDataCreate!) {
 	createPersonalAccountDailyEntry(input: $input) {
 		...PersonalAccountDailyDataOutput

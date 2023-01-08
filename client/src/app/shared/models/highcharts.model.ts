@@ -20,6 +20,7 @@ export interface GenericChartSeries {
 
 // Used only for Pie charts
 export interface GenericChartSeriesPie {
+	title?: string;
 	type?: ChartType;
 	name?: string;
 	data: GenericChartSeriesData[];

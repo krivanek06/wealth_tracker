@@ -1,5 +1,5 @@
 export enum PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA {
-	NOT_FOUND = 'Unable to found associated month. Can not add daily entry before you used the service, or in the future months',
+	NOT_FOUND = 'Monthly data was not found',
 }
 
 export enum PERSONAL_ACCOUNT_ERROR_DAILY_DATA {

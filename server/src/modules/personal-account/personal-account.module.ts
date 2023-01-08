@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLPubsubBackendModule } from '../../graphql';
 import { PrismaService } from '../../prisma';
-import { PersonalAccountMonthlyDataRepository, PersonalAccountRepositoryService } from './repository';
+import { PersonalAccountMonthlyDataRepositoryService, PersonalAccountRepositoryService } from './repository';
 import {
 	PersonalAccountDailyResolver,
 	PersonalAccountMonthlyResolver,
@@ -30,7 +30,7 @@ import {
 		PersonalAccountTagResolver,
 		PersonalAccountDataAggregatorService,
 		PersonalAccountRepositoryService,
-		PersonalAccountMonthlyDataRepository,
+		PersonalAccountMonthlyDataRepositoryService,
 	],
 	exports: [
 		PersonalAccountResolver,

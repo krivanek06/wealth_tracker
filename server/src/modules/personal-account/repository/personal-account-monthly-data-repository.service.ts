@@ -1,7 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma';
 import { PersonalAccountMonthlyData } from '../entities';
 
-export class PersonalAccountMonthlyDataRepository {
+@Injectable()
+export class PersonalAccountMonthlyDataRepositoryService {
 	constructor(private prisma: PrismaService) {}
 
 	async getMonthlyDataByAccountId(id: string): Promise<PersonalAccountMonthlyData[]> {
@@ -20,7 +22,7 @@ export class PersonalAccountMonthlyDataRepository {
 	}
 
 	getMonthlyDataById(monthlyDataId: string, userId: string): Promise<PersonalAccountMonthlyData> {
-		return this.prisma.personalAccountMonthlyData.findFirst({
+		return this.prisma.personalAccountMonthlyData.findFirstOrThrow({
 			where: {
 				id: monthlyDataId,
 				userId,

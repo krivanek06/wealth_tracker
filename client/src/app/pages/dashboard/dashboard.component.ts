@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { mergeMap, Observable, zip } from 'rxjs';
 import { InvestmentAccountFacadeApiService, PersonalAccountFacadeService } from '../../core/api';
-import { AccountIdentification } from '../../core/graphql';
+import { AccountIdentification, AccountType } from '../../core/graphql';
 
 @Component({
 	selector: 'app-dashboard',
@@ -11,6 +11,8 @@ import { AccountIdentification } from '../../core/graphql';
 })
 export class DashboardComponent implements OnInit {
 	availableAccounts$!: Observable<AccountIdentification[]>;
+
+	AccountType = AccountType;
 
 	constructor(
 		private personalAccountFacadeService: PersonalAccountFacadeService,
@@ -24,7 +26,5 @@ export class DashboardComponent implements OnInit {
 			// flatten by merge map
 			this.investmentAccountFacadeApiService.getInvestmentAccounts().pipe(mergeMap((d) => d))
 		);
-
-		this.availableAccounts$.subscribe(console.log);
 	}
 }

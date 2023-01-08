@@ -3,7 +3,7 @@ import { PubSub } from 'graphql-subscriptions';
 import { PersonalAccount } from './../modules/personal-account/entities/personal-account.entity';
 import { PersonalAccountCreateInput } from './../modules/personal-account/inputs/personal-account-create.input';
 import { PersonalAccountDailyDataCreate } from './../modules/personal-account/inputs/personal-account-daily-data-create.input';
-import { PersonalAccountMonthlyDataRepository } from './../modules/personal-account/repository/personal-account-monthly-data-repository.service';
+import { PersonalAccountMonthlyDataRepositoryService } from './../modules/personal-account/repository/personal-account-monthly-data-repository.service';
 import { PersonalAccountRepositoryService } from './../modules/personal-account/repository/personal-account-repository.service';
 import { PersonalAccountDailyService } from './../modules/personal-account/services/personal-account-daily-data.service';
 import { PersonalAccountMonthlyService } from './../modules/personal-account/services/personal-account-monthly.service';
@@ -16,7 +16,7 @@ const prisma = new PrismaService();
 const pubsub = new PubSub();
 
 const personalAccountRepo = new PersonalAccountRepositoryService(prisma);
-const personalAccountMonthlyRepo = new PersonalAccountMonthlyDataRepository(prisma);
+const personalAccountMonthlyRepo = new PersonalAccountMonthlyDataRepositoryService(prisma);
 
 const personalAccountTagService = new PersonalAccountTagService(personalAccountRepo);
 const personalAccountDailyService = new PersonalAccountDailyService(

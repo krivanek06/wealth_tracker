@@ -4,7 +4,12 @@ import { combineLatest, map, merge, Observable, reduce, startWith, switchMap } f
 import { PersonalAccountFacadeService } from '../../../../core/api';
 import { AccountState } from '../../models';
 import { PersonalAccountChartService } from '../../services';
-import { PersonalAccountOverviewFragment, PersonalAccountTagFragment, TagDataType } from './../../../../core/graphql';
+import {
+	AccountIdentification,
+	PersonalAccountDetailsFragment,
+	PersonalAccountTagFragment,
+	TagDataType,
+} from './../../../../core/graphql';
 import { ChartType, GenericChartSeries, ValuePresentItem } from './../../../../shared/models';
 
 @Component({
@@ -14,7 +19,9 @@ import { ChartType, GenericChartSeries, ValuePresentItem } from './../../../../s
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountComponent implements OnInit {
-	@Input() personalAccountBasic!: PersonalAccountOverviewFragment;
+	@Input() personalAccountBasic!: AccountIdentification;
+
+	personalAccountDetails$!: Observable<PersonalAccountDetailsFragment>;
 
 	yearlyExpenseTags$!: Observable<ValuePresentItem<PersonalAccountTagFragment>[]>;
 
@@ -41,30 +48,33 @@ export class PersonalAccountComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
+		console.log('ON INIT');
+		this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsById(
+			this.personalAccountBasic.id
+		);
+
 		// calculate account state - balance, cash, invested
-		this.accountState$ = this.personalAccountFacadeService
-			.getPersonalAccountDetailsById(this.personalAccountBasic.id)
-			.pipe(map((account) => this.personalAccountChartService.getAccountState(account)));
+		this.accountState$ = this.personalAccountDetails$.pipe(
+			map((account) => this.personalAccountChartService.getAccountState(account))
+		);
 
 		// filter out expense tags to show them to the user
-		this.yearlyExpenseTags$ = this.personalAccountFacadeService
-			.getPersonalAccountDetailsById(this.personalAccountBasic.id)
-			.pipe(
-				map((account) => account.yearlyAggregaton.filter((d) => d.tag.type === TagDataType.Expense)),
-				map((expenseTags) => this.personalAccountChartService.createValuePresentItemFromTag(expenseTags))
-			);
+		this.yearlyExpenseTags$ = this.personalAccountDetails$.pipe(
+			map((account) => account.yearlyAggregaton.filter((d) => d.tag.type === TagDataType.Expense)),
+			map((expenseTags) => this.personalAccountChartService.createValuePresentItemFromTag(expenseTags))
+		);
 
 		// get chart categoties displayed on X-axis
-		this.categories$ = this.personalAccountFacadeService
-			.getPersonalAccountDetailsById(this.personalAccountBasic.id)
-			.pipe(map((account) => this.personalAccountChartService.getChartCategories(account)));
+		this.categories$ = this.personalAccountDetails$.pipe(
+			map((account) => this.personalAccountChartService.getChartCategories(account))
+		);
 
 		// construct expense chart by the selected expenses tags
 		this.expenseTagsChartData$ = combineLatest([
 			// selected expenses
 			this.expenseFormControl.valueChanges.pipe(startWith(this.expenseFormControl.value)),
 			// account
-			this.personalAccountFacadeService.getPersonalAccountDetailsById(this.personalAccountBasic.id),
+			this.personalAccountDetails$,
 			// passing all avilable expense tags to create chart
 			this.yearlyExpenseTags$.pipe(map((yearlyExpenseTags) => yearlyExpenseTags.map((d) => d.item))),
 		]).pipe(
@@ -83,7 +93,7 @@ export class PersonalAccountComponent implements OnInit {
 			// selected expenses
 			this.expenseFormControl.valueChanges.pipe(startWith(this.expenseFormControl.value)),
 			// account
-			this.personalAccountFacadeService.getPersonalAccountDetailsById(this.personalAccountBasic.id),
+			this.personalAccountDetails$,
 		]).pipe(
 			switchMap(([selectedTags, account]) =>
 				merge(

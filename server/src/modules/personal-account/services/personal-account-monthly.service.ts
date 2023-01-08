@@ -1,9 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PersonalAccountTagDataType } from '@prisma/client';
-import { PersonalAccount, PersonalAccountMonthlyData } from '../entities';
+import { PersonalAccountMonthlyData } from '../entities';
 import { PersonalAccountDailyDataOutput } from '../outputs';
 import { PersonalAccountMonthlyDataRepositoryService, PersonalAccountRepositoryService } from '../repository';
-import { PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA } from './../dto';
 
 @Injectable()
 export class PersonalAccountMonthlyService {
@@ -16,24 +15,24 @@ export class PersonalAccountMonthlyService {
 		return this.personalAccountMonthlyDataRepository.getMonthlyDataByAccountId(id);
 	}
 
-	async getMonthlyDataById(monthlyDataId: string, userId: string): Promise<PersonalAccountMonthlyData> {
-		try {
-			const data = await this.personalAccountMonthlyDataRepository.getMonthlyDataById(monthlyDataId, userId);
-			return data;
-		} catch (e) {
-			console.log(e);
-			throw new HttpException(PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA.NOT_FOUND, HttpStatus.NOT_FOUND);
-		}
-	}
+	// async getMonthlyDataById(monthlyDataId: string, userId: string): Promise<PersonalAccountMonthlyData> {
+	// 	try {
+	// 		const data = await this.personalAccountMonthlyDataRepository.getMonthlyDataById(monthlyDataId, userId);
+	// 		return data;
+	// 	} catch (e) {
+	// 		console.log(e);
+	// 		throw new HttpException(PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA.NOT_FOUND, HttpStatus.NOT_FOUND);
+	// 	}
+	// }
 
-	createMonthlyData(
-		personalAccount: PersonalAccount,
-		userId: string,
-		year: number,
-		month: number
-	): Promise<PersonalAccountMonthlyData> {
-		return this.personalAccountMonthlyDataRepository.createMonthlyData(personalAccount.id, userId, year, month);
-	}
+	// createMonthlyData(
+	// 	personalAccount: PersonalAccount,
+	// 	userId: string,
+	// 	year: number,
+	// 	month: number
+	// ): Promise<PersonalAccountMonthlyData> {
+	// 	return this.personalAccountMonthlyDataRepository.createMonthlyData(personalAccount.id, userId, year, month);
+	// }
 
 	/**
 	 *

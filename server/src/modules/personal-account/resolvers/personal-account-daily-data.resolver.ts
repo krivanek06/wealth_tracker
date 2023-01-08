@@ -1,10 +1,11 @@
 import { UseGuards } from '@nestjs/common';
-import { Mutation, Resolver } from '@nestjs/graphql';
+import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PersonalAccountDailyData } from '../entities';
 import {
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
+	PersonalAccountDailyDataQuery,
 } from '../inputs';
 import { PersonalAccountDailyDataEditOutput, PersonalAccountDailyDataOutput } from '../outputs';
 import { PersonalAccountDailyService } from '../services';
@@ -16,15 +17,24 @@ import { Input } from './../../../graphql/';
 export class PersonalAccountDailyResolver {
 	constructor(private personalAccountDailyService: PersonalAccountDailyService) {}
 
-	/* Mutations */
+	@Query(() => [PersonalAccountDailyDataOutput], {
+		description: 'Returns queried daily data',
+		defaultValue: [],
+	})
+	getPersonalAccountDailyData(
+		@ReqUser() authUser: RequestUser,
+		@Input() input: PersonalAccountDailyDataQuery
+	): Promise<PersonalAccountDailyDataOutput[]> {
+		return this.personalAccountDailyService.getPersonalAccountDailyData(input, authUser.id);
+	}
 
+	/* Mutations */
 	@Mutation(() => PersonalAccountDailyDataOutput)
-	async createPersonalAccountDailyEntry(
+	createPersonalAccountDailyEntry(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: PersonalAccountDailyDataCreate
 	): Promise<PersonalAccountDailyDataOutput> {
-		const data = await this.personalAccountDailyService.createPersonalAccountDailyEntry(input, authUser.id);
-		return this.personalAccountDailyService.transformDailyDataToOutput(data);
+		return this.personalAccountDailyService.createPersonalAccountDailyEntry(input, authUser.id);
 	}
 
 	@Mutation(() => PersonalAccountDailyDataEditOutput)
@@ -36,11 +46,10 @@ export class PersonalAccountDailyResolver {
 	}
 
 	@Mutation(() => PersonalAccountDailyDataOutput)
-	async deletePersonalAccountDailyEntry(
+	deletePersonalAccountDailyEntry(
 		@ReqUser() authUser: RequestUser,
 		@Input() input: PersonalAccountDailyDataDelete
 	): Promise<PersonalAccountDailyDataOutput> {
-		const data = await this.personalAccountDailyService.deletePersonalAccountDailyEntry(input, authUser.id);
-		return this.personalAccountDailyService.transformDailyDataToOutput(data);
+		return this.personalAccountDailyService.deletePersonalAccountDailyEntry(input, authUser.id);
 	}
 }

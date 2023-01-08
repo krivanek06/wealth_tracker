@@ -1,13 +1,12 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { PubSubEngine } from 'graphql-subscriptions';
-import { PUB_SUB } from '../../../graphql/graphql.types';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
-import { CREATED_MONTHLY_DATA, PERSONAL_ACCOUNT_ERROR_DAILY_DATA, PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA } from '../dto';
+import { PERSONAL_ACCOUNT_ERROR_DAILY_DATA, PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA } from '../dto';
 import { PersonalAccountDailyData } from '../entities';
 import {
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
+	PersonalAccountDailyDataQuery,
 } from '../inputs';
 import { PersonalAccountDailyDataEditOutput, PersonalAccountDailyDataOutput } from '../outputs';
 import { PersonalAccountMonthlyDataRepositoryService, PersonalAccountRepositoryService } from '../repository';
@@ -16,19 +15,31 @@ import { PersonalAccountMonthlyDataRepositoryService, PersonalAccountRepositoryS
 export class PersonalAccountDailyService {
 	constructor(
 		private readonly personalAccountRepositoryService: PersonalAccountRepositoryService,
-		private readonly personalAccountMonthlyDataRepositoryService: PersonalAccountMonthlyDataRepositoryService,
-		@Inject(PUB_SUB) private pubSub: PubSubEngine
+		private readonly personalAccountMonthlyDataRepositoryService: PersonalAccountMonthlyDataRepositoryService
 	) {}
 
-	/**
-	 *
-	 * @param data
-	 * @returns output of the data that contains the associated tag object
-	 */
-	async transformDailyDataToOutput(data: PersonalAccountDailyData): Promise<PersonalAccountDailyDataOutput> {
-		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(data.personalAccountId);
-		const personalAccountTag = personalAccount.personalAccountTag.find((d) => d.id === data.tagId);
-		return { ...data, personalAccountTag };
+	async getPersonalAccountDailyData(
+		input: PersonalAccountDailyDataQuery,
+		userId: string
+	): Promise<PersonalAccountDailyDataOutput[]> {
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(input.personalAccountId);
+		const monthlyData = await this.personalAccountMonthlyDataRepositoryService.getMonthlyDataByYearAndMont(
+			input.personalAccountId,
+			input.year,
+			input.month
+		);
+
+		if (!personalAccount || !monthlyData) {
+			return [];
+		}
+
+		// create correct returning object
+		const transformedDailyData: PersonalAccountDailyDataOutput[] = monthlyData.dailyData.map((d) => {
+			const personalAccountTag = personalAccount.personalAccountTag.find((tag) => tag.id === d.tagId);
+			return { ...d, personalAccountTag };
+		});
+
+		return transformedDailyData;
 	}
 
 	/**
@@ -42,7 +53,7 @@ export class PersonalAccountDailyService {
 	async createPersonalAccountDailyEntry(
 		input: PersonalAccountDailyDataCreate,
 		userId: string
-	): Promise<PersonalAccountDailyData> {
+	): Promise<PersonalAccountDailyDataOutput> {
 		const inputDate = new Date(input.date);
 		const uuid = SharedServiceUtil.getUUID();
 
@@ -80,19 +91,13 @@ export class PersonalAccountDailyService {
 		};
 
 		// save entry
-		const monthlyDataPublish = await this.personalAccountMonthlyDataRepositoryService.updateMonthlyData(
-			monthlyData.id,
-			{
-				dailyData: [...monthlyData.dailyData, dailyData],
-			}
-		);
+		await this.personalAccountMonthlyDataRepositoryService.updateMonthlyData(monthlyData.id, {
+			dailyData: [...monthlyData.dailyData, dailyData],
+		});
 
-		// subscriptions to publish information about newly created monthly data
-		if (!isMonthlyDataExist) {
-			this.pubSub.publish(CREATED_MONTHLY_DATA, { [CREATED_MONTHLY_DATA]: monthlyDataPublish });
-		}
-
-		return dailyData;
+		// transform & return
+		const transformedData = await this.transformDailyDataToOutput(dailyData);
+		return transformedData;
 	}
 
 	/**
@@ -133,7 +138,7 @@ export class PersonalAccountDailyService {
 	async deletePersonalAccountDailyEntry(
 		{ dailyDataId, monthlyDataId }: PersonalAccountDailyDataDelete,
 		userId: string
-	): Promise<PersonalAccountDailyData> {
+	): Promise<PersonalAccountDailyDataOutput> {
 		const monthlyData = await this.personalAccountMonthlyDataRepositoryService.getMonthlyDataById(
 			monthlyDataId,
 			userId
@@ -164,7 +169,19 @@ export class PersonalAccountDailyService {
 			dailyData: filteredDailyData,
 		});
 
-		// return removed entry
-		return dailyData;
+		// transform & return
+		const transformedData = await this.transformDailyDataToOutput(dailyData);
+		return transformedData;
+	}
+
+	/**
+	 *
+	 * @param data
+	 * @returns output of the data that contains the associated tag object
+	 */
+	private async transformDailyDataToOutput(data: PersonalAccountDailyData): Promise<PersonalAccountDailyDataOutput> {
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(data.personalAccountId);
+		const personalAccountTag = personalAccount.personalAccountTag.find((d) => d.id === data.tagId);
+		return { ...data, personalAccountTag };
 	}
 }

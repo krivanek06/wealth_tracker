@@ -17,7 +17,7 @@ export class PersonalAccountResolver {
 	constructor(
 		private personalAccountService: PersonalAccountService,
 		private personalAccountMonthlyService: PersonalAccountMonthlyService,
-		private personalAccounDataAggregatorService: PersonalAccountDataAggregatorService
+		private personalAccountDataAggregatorService: PersonalAccountDataAggregatorService
 	) {}
 
 	/* Queries */
@@ -73,13 +73,13 @@ export class PersonalAccountResolver {
 	getAllWeeklyAggregatedData(
 		@Parent() personalAccount: PersonalAccount
 	): Promise<PersonalAccountWeeklyAggregationOutput[]> {
-		return this.personalAccounDataAggregatorService.getAllWeeklyAggregatedData(personalAccount);
+		return this.personalAccountDataAggregatorService.getAllWeeklyAggregatedData(personalAccount);
 	}
 
 	@ResolveField('yearlyAggregaton', () => [PersonalAccountAggregationDataOutput])
 	getAllYearlyAggregatedData(
 		@Parent() personalAccount: PersonalAccount
 	): Promise<PersonalAccountAggregationDataOutput[]> {
-		return this.personalAccounDataAggregatorService.getAllYearlyAggregatedData(personalAccount);
+		return this.personalAccountDataAggregatorService.getAllYearlyAggregatedData(personalAccount);
 	}
 }

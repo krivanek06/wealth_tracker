@@ -41,5 +41,6 @@
 
 <!-- daily data filter + table + spending allocation -->
 <app-personal-account-daily-data-container
-	[personalAccountBasic]="personalAccountBasic"
+	*ngIf="personalAccountDetails$ | async as personalAccountDetails"
+	[personalAccountBasic]="personalAccountDetails"
 ></app-personal-account-daily-data-container>

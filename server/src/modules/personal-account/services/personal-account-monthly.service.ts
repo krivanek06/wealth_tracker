@@ -1,13 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PersonalAccountTagDataType } from '@prisma/client';
 import { PersonalAccount, PersonalAccountMonthlyData } from '../entities';
 import { PersonalAccountDailyDataOutput } from '../outputs';
-import { PersonalAccountMonthlyDataRepository, PersonalAccountRepositoryService } from '../repository';
+import { PersonalAccountMonthlyDataRepositoryService, PersonalAccountRepositoryService } from '../repository';
+import { PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA } from './../dto';
 
 @Injectable()
 export class PersonalAccountMonthlyService {
 	constructor(
-		private readonly personalAccountMonthlyDataRepository: PersonalAccountMonthlyDataRepository,
+		private readonly personalAccountMonthlyDataRepository: PersonalAccountMonthlyDataRepositoryService,
 		private readonly personalAccountRepositoryService: PersonalAccountRepositoryService
 	) {}
 
@@ -15,8 +16,14 @@ export class PersonalAccountMonthlyService {
 		return this.personalAccountMonthlyDataRepository.getMonthlyDataByAccountId(id);
 	}
 
-	getMonthlyDataById(monthlyDataId: string, userId: string): Promise<PersonalAccountMonthlyData> {
-		return this.personalAccountMonthlyDataRepository.getMonthlyDataById(monthlyDataId, userId);
+	async getMonthlyDataById(monthlyDataId: string, userId: string): Promise<PersonalAccountMonthlyData> {
+		try {
+			const data = await this.personalAccountMonthlyDataRepository.getMonthlyDataById(monthlyDataId, userId);
+			return data;
+		} catch (e) {
+			console.log(e);
+			throw new HttpException(PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA.NOT_FOUND, HttpStatus.NOT_FOUND);
+		}
 	}
 
 	createMonthlyData(

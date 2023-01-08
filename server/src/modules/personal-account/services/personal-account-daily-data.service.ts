@@ -10,13 +10,13 @@ import {
 	PersonalAccountDailyDataEdit,
 } from '../inputs';
 import { PersonalAccountDailyDataEditOutput, PersonalAccountDailyDataOutput } from '../outputs';
-import { PersonalAccountMonthlyDataRepository, PersonalAccountRepositoryService } from '../repository';
+import { PersonalAccountMonthlyDataRepositoryService, PersonalAccountRepositoryService } from '../repository';
 
 @Injectable()
 export class PersonalAccountDailyService {
 	constructor(
 		private readonly personalAccountRepositoryService: PersonalAccountRepositoryService,
-		private readonly personalAccountMonthlyDataRepository: PersonalAccountMonthlyDataRepository,
+		private readonly personalAccountMonthlyDataRepositoryService: PersonalAccountMonthlyDataRepositoryService,
 		@Inject(PUB_SUB) private pubSub: PubSubEngine
 	) {}
 
@@ -50,16 +50,16 @@ export class PersonalAccountDailyService {
 		const { year, month, week } = MomentServiceUtil.getDetailsInformationFromDate(inputDate);
 
 		// load monthly data to which we want to register the dailyData
-		let monthlyData = await this.personalAccountMonthlyDataRepository.getMonthlyDataByYearAndMont(
+		let monthlyData = await this.personalAccountMonthlyDataRepositoryService.getMonthlyDataByYearAndMont(
 			input.personalAccountId,
 			year,
 			month
 		);
-		const isMonthlyDataExist = !monthlyData;
+		const isMonthlyDataExist = !!monthlyData;
 
 		// create new monthly data for the new daily data
 		if (!isMonthlyDataExist) {
-			monthlyData = await this.personalAccountMonthlyDataRepository.createMonthlyData(
+			monthlyData = await this.personalAccountMonthlyDataRepositoryService.createMonthlyData(
 				input.personalAccountId,
 				userId,
 				year,
@@ -80,9 +80,12 @@ export class PersonalAccountDailyService {
 		};
 
 		// save entry
-		const monthlyDataPublish = await this.personalAccountMonthlyDataRepository.updateMonthlyData(monthlyData.id, {
-			dailyData: [...monthlyData.dailyData, dailyData],
-		});
+		const monthlyDataPublish = await this.personalAccountMonthlyDataRepositoryService.updateMonthlyData(
+			monthlyData.id,
+			{
+				dailyData: [...monthlyData.dailyData, dailyData],
+			}
+		);
 
 		// subscriptions to publish information about newly created monthly data
 		if (!isMonthlyDataExist) {
@@ -131,7 +134,10 @@ export class PersonalAccountDailyService {
 		{ dailyDataId, monthlyDataId }: PersonalAccountDailyDataDelete,
 		userId: string
 	): Promise<PersonalAccountDailyData> {
-		const monthlyData = await this.personalAccountMonthlyDataRepository.getMonthlyDataById(monthlyDataId, userId);
+		const monthlyData = await this.personalAccountMonthlyDataRepositoryService.getMonthlyDataById(
+			monthlyDataId,
+			userId
+		);
 
 		if (!monthlyData) {
 			throw new HttpException(PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -154,7 +160,9 @@ export class PersonalAccountDailyService {
 		const filteredDailyData = monthlyData.dailyData.filter((d) => d.id !== dailyDataId);
 
 		// update daily data
-		await this.personalAccountMonthlyDataRepository.updateMonthlyData(monthlyDataId, { dailyData: filteredDailyData });
+		await this.personalAccountMonthlyDataRepositoryService.updateMonthlyData(monthlyDataId, {
+			dailyData: filteredDailyData,
+		});
 
 		// return removed entry
 		return dailyData;

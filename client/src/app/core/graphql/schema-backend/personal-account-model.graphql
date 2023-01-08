@@ -31,18 +31,6 @@ fragment PersonalAccountMonthlyDataOverview on PersonalAccountMonthlyData {
 	monthlyExpense
 }
 
-fragment PersonalAccountMonthlyDataDetail on PersonalAccountMonthlyData {
-	...PersonalAccountMonthlyDataOverview
-
-	dailyIncomes {
-		...PersonalAccountDailyDataOutput
-	}
-
-	dailyExpenses {
-		...PersonalAccountDailyDataOutput
-	}
-}
-
 fragment PersonalAccountOverview on PersonalAccount {
 	id
 	name

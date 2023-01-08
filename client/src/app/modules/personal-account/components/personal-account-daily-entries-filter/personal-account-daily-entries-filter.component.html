@@ -13,8 +13,9 @@
 	<mat-form-field appearance="outline">
 		<mat-label>Select week</mat-label>
 		<mat-select formControlName="week">
-			<mat-option *ngFor="let data of displayWeeksInMonth" [value]="data">
-				{{ data === -1 ? 'Unselect' : 'Week ' + data }}
+			<mat-option [value]="-1">Unselect</mat-option>
+			<mat-option *ngFor="let data of formGroup.controls.yearAndMonth.value | weeksInMonth" [value]="data">
+				{{ 'Week ' + data }}
 			</mat-option>
 		</mat-select>
 	</mat-form-field>

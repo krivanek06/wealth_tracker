@@ -198,8 +198,8 @@ export class PersonalAccountChartService {
 		return tags.map((d) => {
 			const data: ValuePresentItem<PersonalAccountTagFragment> = {
 				color: d.tag.color,
-				imageSrc: d.tag.name,
-				imageType: 'tags',
+				imageSrc: d.tag.imageUrl,
+				imageType: 'url',
 				name: d.tag.name,
 				value: d.value,
 				valuePrct: d.value / totalValue,

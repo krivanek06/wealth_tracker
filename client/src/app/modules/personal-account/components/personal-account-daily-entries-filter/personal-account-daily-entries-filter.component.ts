@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, forwardRef, Input, OnInit } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { PersonalAccountMonthlyDataDetailFragment } from './../../../../core/graphql';
+import { PersonalAccountFilterFormValues } from '../../models';
 import { DateServiceUtil } from './../../../../shared/utils';
 
 @Component({
@@ -30,63 +30,30 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	}
 
 	/**
-	 * which monthly details is selected by the parent component
-	 */
-	@Input() set selectedMonthlyDataDetail(data: PersonalAccountMonthlyDataDetailFragment | null) {
-		if (!data) {
-			this.displayWeeksInMonth = [];
-			this.formGroup.controls.week.reset(-1, { emitEvent: false });
-			return;
-		}
-		this.displayWeeksInMonth = [-1, ...new Set(data.dailyExpenses.map((d) => d.week))];
-
-		// save selected month-year into the form
-		this.formGroup.controls.yearAndMonth.patchValue(`${data.year}-${data.month}`, { emitEvent: false, onlySelf: true });
-	}
-
-	// @Input() set dailyData
-
-	/**
 	 * property to store `${year}-${month}` format from yearsAndMonths
 	 */
 	displayYearsAndMonths!: string[];
 
-	/**
-	 * property to store available weeks from a selected month
-	 */
-	displayWeeksInMonth: number[] = [];
-
 	readonly formGroup = new FormGroup({
-		yearAndMonth: new FormControl<string | null>(''),
-		week: new FormControl<number>(-1),
+		yearAndMonth: new FormControl<string>('', { nonNullable: true }),
+		week: new FormControl<number>(-1, { nonNullable: true }),
 	});
 
-	onChange: (filterState?: unknown) => void = () => {
-		/** empty */
-	};
-	// onTouched callback that will be overridden using `registerOnTouched`
-	onTouched = () => {
-		/** empty */
-	};
+	onChange: (filterState?: PersonalAccountFilterFormValues) => void = () => {};
+	onTouched = () => {};
+
 	constructor() {}
 
 	ngOnInit(): void {
 		this.formGroup.controls.yearAndMonth.valueChanges.subscribe(() => {
 			// on month change reset weeks and tags
 			this.formGroup.controls.week.reset(-1, { emitEvent: false, onlySelf: true });
-			// this.formGroup.controls.tag.reset([], { emitEvent: false, onlySelf: true });
 			this.notifyParent();
 		});
 
 		this.formGroup.controls.week.valueChanges.subscribe(() => {
-			// on week change reset tags
-			// this.formGroup.controls.tag.reset([], { emitEvent: false, onlySelf: true });
 			this.notifyParent();
 		});
-
-		// this.formGroup.controls.tag.valueChanges.subscribe(() => {
-		// 	this.notifyParent();
-		// });
 	}
 
 	onCurrentMonthClick(): void {
@@ -94,8 +61,13 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 		this.formGroup.controls.yearAndMonth.patchValue(`${year}-${month}`);
 	}
 
-	writeValue(obj: any): void {
+	writeValue(obj: PersonalAccountFilterFormValues): void {
+		console.log('value form filter component', obj);
 		// throw new Error('Method not implemented.');
+
+		// save selected month-year into the form
+		this.formGroup.controls.week.reset(-1, { emitEvent: false });
+		this.formGroup.controls.yearAndMonth.patchValue(`${obj.year}-${obj.month}`, { emitEvent: false, onlySelf: true });
 	}
 	/**
 	 * Register Component's ControlValueAccessor onChange callback
@@ -112,6 +84,9 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	}
 
 	private notifyParent(): void {
-		this.onChange(this.formGroup.getRawValue());
+		const [year, month] = this.formGroup.controls.yearAndMonth.value.split('-').map((d) => Number(d));
+		const week = this.formGroup.controls.week.value;
+
+		this.onChange({ year, month, week });
 	}
 }

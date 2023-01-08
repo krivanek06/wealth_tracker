@@ -1,14 +1,17 @@
 import {
 	differenceInBusinessDays,
 	differenceInDays,
+	eachWeekOfInterval,
+	endOfMonth,
 	format,
 	getDay,
 	getMonth,
 	getWeek,
 	getYear,
 	isWeekend,
+	startOfMonth,
 } from 'date-fns';
-export type DateServiceUtilDateInformations = {
+export type DateServiceUtilDateInformation = {
 	year: number;
 	month: number;
 	week: number;
@@ -18,7 +21,7 @@ export type DateServiceUtilDateInformations = {
 type DateInput = string | number | Date;
 
 export class DateServiceUtil {
-	static getDetailsInformationFromDate(input: string | Date | number): DateServiceUtilDateInformations {
+	static getDetailsInformationFromDate(input: string | Date | number): DateServiceUtilDateInformation {
 		const date = new Date(input);
 
 		return {
@@ -27,6 +30,13 @@ export class DateServiceUtil {
 			week: getWeek(date),
 			day: getDay(date),
 		};
+	}
+
+	static getWeeksInMonth(year: number, month: number): number[] {
+		const date = new Date(year, month, 1); // first day of the month
+		const start = startOfMonth(date);
+		const end = endOfMonth(date);
+		return eachWeekOfInterval({ start, end }).map((d) => getWeek(d));
 	}
 
 	/**

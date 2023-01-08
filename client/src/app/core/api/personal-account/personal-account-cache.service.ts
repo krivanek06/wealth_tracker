@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import {
-	GetPersonalAccountMonthlyDataByIdDocument,
-	GetPersonalAccountMonthlyDataByIdQuery,
+	GetPersonalAccountDailyDataDocument,
+	GetPersonalAccountDailyDataQuery,
 	GetPersonalAccountsDocument,
 	GetPersonalAccountsQuery,
+	PersonalAccountDailyDataOutputFragment,
+	PersonalAccountDailyDataQuery,
 	PersonalAccountDetailsFragment,
 	PersonalAccountDetailsFragmentDoc,
-	PersonalAccountMonthlyDataDetailFragment,
-	PersonalAccountMonthlyDataDetailFragmentDoc,
 	PersonalAccountMonthlyDataOverviewFragment,
 	PersonalAccountMonthlyDataOverviewFragmentDoc,
 	PersonalAccountOverviewFragment,
@@ -22,27 +22,22 @@ import {
 export class PersonalAccountCacheService {
 	constructor(private apollo: Apollo) {}
 
+	getPersonalAccountDailyDataFromCache(input: PersonalAccountDailyDataQuery): PersonalAccountDailyDataOutputFragment[] {
+		const query = this.apollo.client.readQuery<GetPersonalAccountDailyDataQuery>({
+			query: GetPersonalAccountDailyDataDocument,
+			variables: {
+				input,
+			},
+		});
+
+		return query?.getPersonalAccountDailyData ?? [];
+	}
+
 	getPersonalAccountTagFromCache(tagId: string): PersonalAccountTagFragment | null {
 		const fragment = this.apollo.client.readFragment<PersonalAccountTagFragment>({
 			id: `PersonalAccountTag:${tagId}`,
 			fragmentName: 'PersonalAccountTag',
 			fragment: PersonalAccountTagFragmentDoc,
-		});
-		return fragment;
-	}
-
-	getPersonalAccountMonthlyDataByIdFromCache(monthlyDataId?: string): PersonalAccountMonthlyDataDetailFragment | null {
-		if (!monthlyDataId) {
-			return null;
-		}
-
-		const fragment = this.apollo.client.readFragment<PersonalAccountMonthlyDataDetailFragment>({
-			id: `PersonalAccountMonthlyData:${monthlyDataId}`,
-			fragmentName: 'PersonalAccountMonthlyDataDetail',
-			fragment: PersonalAccountMonthlyDataDetailFragmentDoc,
-			variables: {
-				input: monthlyDataId,
-			},
 		});
 		return fragment;
 	}
@@ -105,23 +100,8 @@ export class PersonalAccountCacheService {
 		});
 	}
 
-	updatePersonalAccountMonthly(accountId: string, data: PersonalAccountMonthlyDataDetailFragment) {
-		this.apollo.client.writeQuery<GetPersonalAccountMonthlyDataByIdQuery>({
-			variables: {
-				input: accountId,
-			},
-			query: GetPersonalAccountMonthlyDataByIdDocument,
-			data: {
-				__typename: 'Query',
-				getPersonalAccountMonthlyDataById: {
-					...data,
-				},
-			},
-		});
-	}
-
 	removePersonalAccountDailyDataFromCache(accountId: string): void {
-		this.apollo.client.cache.evict({ id: `PersonalAccountDailyData:${accountId}` });
+		this.apollo.client.cache.evict({ id: `PersonalAccountDailyDataOutput:${accountId}` });
 		this.apollo.client.cache.gc();
 	}
 

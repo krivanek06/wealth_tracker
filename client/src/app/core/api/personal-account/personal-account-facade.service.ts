@@ -10,9 +10,9 @@ import {
 	PersonalAccountDailyDataEdit,
 	PersonalAccountDailyDataEditOutput,
 	PersonalAccountDailyDataOutputFragment,
+	PersonalAccountDailyDataQuery,
 	PersonalAccountDetailsFragment,
 	PersonalAccountEditInput,
-	PersonalAccountMonthlyDataDetailFragment,
 	PersonalAccountOverviewFragment,
 	PersonalAccountTag,
 	PersonalAccountTagFragment,
@@ -21,7 +21,6 @@ import {
 import { PersonalAccountApiService } from './personal-account-api.service';
 import { PersonalAccountCacheService } from './personal-account-cache.service';
 import { PersonalAccountDataAggregatorService } from './personal-account-data-aggregator.service';
-import { PersonalAccountMonthlyDataService } from './personal-account-monthly-data.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -30,7 +29,6 @@ export class PersonalAccountFacadeService {
 	constructor(
 		private personalAccountApiService: PersonalAccountApiService,
 		private personalAccountDataAggregatorService: PersonalAccountDataAggregatorService,
-		private personalAccountMonthlyDataService: PersonalAccountMonthlyDataService,
 		private personalAccountCacheService: PersonalAccountCacheService
 	) {}
 
@@ -73,6 +71,13 @@ export class PersonalAccountFacadeService {
 			map((tags) => tags.filter((d) => d.type === TagDataType.Income))
 		);
 	}
+
+	getPersonalAccountDailyData(
+		input: PersonalAccountDailyDataQuery
+	): Observable<PersonalAccountDailyDataOutputFragment[]> {
+		return this.personalAccountApiService.getPersonalAccountDailyData(input);
+	}
+
 	createPersonalAccountDailyEntry(
 		input: PersonalAccountDailyDataCreate
 	): Observable<PersonalAccountDailyDataOutputFragment | undefined> {
@@ -84,9 +89,6 @@ export class PersonalAccountFacadeService {
 
 				// update yearly, monthly, weekly aggregation
 				this.personalAccountDataAggregatorService.updateAggregations(input.personalAccountId, entry, 'increase');
-
-				// add daily data into monthly details
-				this.personalAccountMonthlyDataService.updateMonthlyDailyData(entry, 'add');
 			})
 		);
 	}
@@ -103,7 +105,6 @@ export class PersonalAccountFacadeService {
 					removedDailyData,
 					'decrease'
 				);
-				this.personalAccountMonthlyDataService.updateMonthlyDailyData(removedDailyData, 'remove');
 
 				// add new data
 				this.personalAccountDataAggregatorService.updateAggregations(
@@ -111,7 +112,6 @@ export class PersonalAccountFacadeService {
 					addedDailyData,
 					'increase'
 				);
-				this.personalAccountMonthlyDataService.updateMonthlyDailyData(addedDailyData, 'add');
 
 				// remove from cache
 				this.personalAccountCacheService.removePersonalAccountDailyDataFromCache(removedDailyData.id);
@@ -131,28 +131,9 @@ export class PersonalAccountFacadeService {
 				// update yearly, monthly, weekly aggregation
 				this.personalAccountDataAggregatorService.updateAggregations(input.personalAccountId, entry, 'decrease');
 
-				// add daily data into monthly details
-				this.personalAccountMonthlyDataService.updateMonthlyDailyData(entry, 'remove');
-
 				// remove from cache
 				this.personalAccountCacheService.removePersonalAccountDailyDataFromCache(entry.id);
 			})
 		);
-	}
-
-	getPersonalAccountMonthlyDataById(monthlyDataId: string): Observable<PersonalAccountMonthlyDataDetailFragment> {
-		return this.personalAccountMonthlyDataService.getPersonalAccountMonthlyDataById(monthlyDataId);
-	}
-
-	/**
-	 * Persist daily data into monthly.dailyData array
-	 * if monthly data not loaded, skip the operation, daily data will be loaded by getPersonalAccountMonthlyDataById
-	 *
-	 * @param dailyData
-	 * @param operation
-	 * @returns
-	 */
-	updateMonthlyDailyData(dailyData: PersonalAccountDailyDataOutputFragment, operation: 'add' | 'remove'): void {
-		this.personalAccountMonthlyDataService.updateMonthlyDailyData(dailyData, operation);
 	}
 }

@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { combineLatest, map, Observable, of, startWith, switchMap } from 'rxjs';
+import { map, Observable, startWith, switchMap } from 'rxjs';
+import { PersonalAccountFilterFormValues } from '../../models';
 import { PersonalAccountFacadeService } from './../../../../core/api';
 import {
-	PersonalAccountDailyDataFragment,
-	PersonalAccountMonthlyDataDetailFragment,
-	PersonalAccountOverviewBasicFragment,
+	PersonalAccountDailyDataOutputFragment,
+	PersonalAccountOverviewFragment,
 	TagDataType,
 } from './../../../../core/graphql';
 import { ChartType, GenericChartSeriesData, GenericChartSeriesPie } from './../../../../shared/models';
@@ -20,84 +20,64 @@ import { PersonalAccountDailyDataEntryComponent } from './../../modals';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountDailyDataContainerComponent implements OnInit {
-	@Input() personalAccountBasic!: PersonalAccountOverviewBasicFragment;
+	@Input() personalAccountBasic!: PersonalAccountOverviewFragment;
 	weeklyIds$!: Observable<string[]>; // 2022-7-32, 2022-7-33, ...
-	monthlyDataDetail$!: Observable<PersonalAccountMonthlyDataDetailFragment | null>;
-	monthlyDataDetailTable$!: Observable<PersonalAccountMonthlyDataDetailFragment | null>;
 	expenseAllocationChartData$!: Observable<GenericChartSeriesPie | null>;
+	personalAccountDailyData$!: Observable<PersonalAccountDailyDataOutputFragment[]>;
 
 	ChartType = ChartType;
 
-	private fb = inject(FormBuilder);
-	readonly filterControl = this.fb.nonNullable.control({
-		yearAndMonth: '',
-		week: -1,
-		tag: [] as string[],
-	});
+	readonly filterControl = new FormControl<PersonalAccountFilterFormValues>(
+		{
+			year: -1,
+			month: -1,
+			week: -1,
+		},
+		{ nonNullable: true }
+	);
 
 	constructor(private personalAccountFacadeService: PersonalAccountFacadeService, private dialog: MatDialog) {}
 
 	ngOnInit(): void {
 		// set current month to form
 		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(new Date());
-		this.filterControl.patchValue({ yearAndMonth: `${year}-${month}`, tag: [], week: -1 }, { emitEvent: false });
+		this.filterControl.patchValue({ year, month, week: -1 }, { emitEvent: false });
 
 		// select account overview by ID so we are notified by changes
-		const accountOverview$ = this.personalAccountFacadeService.getPersonalAccountOverviewById(
+		const accountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsById(
 			this.personalAccountBasic.id
 		);
 
 		// 2022-7-32, 2022-7-33, ...
-		this.weeklyIds$ = accountOverview$.pipe(map((account) => account.weeklyAggregaton.map((d) => d.id)));
+		this.weeklyIds$ = accountDetails$.pipe(map((account) => account.weeklyAggregaton.map((d) => d.id)));
 
-		// load / filter date based on filter change
-		this.monthlyDataDetail$ = combineLatest([
-			this.filterControl.valueChanges.pipe(startWith(this.filterControl.getRawValue())),
-			accountOverview$,
-		]).pipe(
-			switchMap(([filterValues, account]) => {
-				const [year, month] = filterValues.yearAndMonth.split('-').map((d) => Number(d));
-				const monthlyDataOverview = account.monthlyData.find((d) => d.year === year && d.month === month);
-				// new month/year - no data was yet created
-				if (!monthlyDataOverview) {
-					return of(null);
-				}
-				// TODO this is triggered 3x , why ?
-				console.log('monthlyData', filterValues);
-				return this.personalAccountFacadeService.getPersonalAccountMonthlyDataById(monthlyDataOverview.id);
-			})
-		);
-
-		this.monthlyDataDetailTable$ = this.monthlyDataDetail$.pipe(
-			map((monthlyDataDetails) => {
-				if (!monthlyDataDetails) {
-					return null;
-				}
-
-				const selectedTagIds = this.filterControl.getRawValue().tag;
-				const selectedWeek = this.filterControl.getRawValue().week;
-
-				const filteredDailyData = monthlyDataDetails.dailyData.filter((d) => {
-					if (selectedTagIds.length !== 0 && !selectedTagIds.includes(d.tag.id)) {
-						return false;
-					}
-					if (selectedWeek !== -1 && selectedWeek !== d.week) {
-						return false;
-					}
-
-					return true;
-				});
-				return { ...monthlyDataDetails, dailyData: filteredDailyData, dailyEntries: filteredDailyData.length };
-			})
+		this.personalAccountDailyData$ = this.filterControl.valueChanges.pipe(
+			startWith(this.filterControl.getRawValue()),
+			switchMap((formResult) =>
+				this.personalAccountFacadeService
+					.getPersonalAccountDailyData({
+						personalAccountId: this.personalAccountBasic.id,
+						year: formResult.year ?? year,
+						month: formResult.month ?? month,
+					})
+					.pipe(
+						// filter out correct week if selected
+						map((dailyDataArray) =>
+							formResult.week === -1
+								? dailyDataArray
+								: dailyDataArray.filter((dailyData) => dailyData.week === formResult.week)
+						)
+					)
+			)
 		);
 
 		// calculate expense chart for filtered data
-		this.expenseAllocationChartData$ = this.monthlyDataDetail$.pipe(
+		this.expenseAllocationChartData$ = this.personalAccountDailyData$.pipe(
 			map((result) => (!!result ? this.formatToExpenseAllocationChartData(result) : null))
 		);
 	}
 
-	onDailyEntryClick(editingDailyData: PersonalAccountDailyDataFragment | null): void {
+	onDailyEntryClick(editingDailyData: PersonalAccountDailyDataOutputFragment | null): void {
 		this.dialog.open(PersonalAccountDailyDataEntryComponent, {
 			data: {
 				dailyData: editingDailyData,
@@ -108,16 +88,17 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		});
 	}
 
-	private formatToExpenseAllocationChartData(data: PersonalAccountMonthlyDataDetailFragment): GenericChartSeriesPie {
-		const seriesData = data.dailyData.reduce((acc, curr) => {
+	private formatToExpenseAllocationChartData(data: PersonalAccountDailyDataOutputFragment[]): GenericChartSeriesPie {
+		const seriesData = data.reduce((acc, curr) => {
 			// ignore income
-			if (curr.tag.type === TagDataType.Income) {
+			if (curr.personalAccountTag.type === TagDataType.Income) {
 				return acc;
 			}
+
 			// find index of saved tag
-			const dataIndex = acc.findIndex((d) => d.name === curr.tag.name);
+			const dataIndex = acc.findIndex((d) => d.name === curr.personalAccountTag.name);
 			if (dataIndex === -1) {
-				acc = [...acc, { name: curr.tag.name, y: curr.value }]; // new tag
+				acc = [...acc, { name: curr.personalAccountTag.name, y: curr.value }]; // new tag
 			} else {
 				acc[dataIndex].y += curr.value; // increase value for tag
 			}

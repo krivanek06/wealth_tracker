@@ -3,11 +3,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import { PersonalAccount, PersonalAccountMonthlyData, PersonalAccountTag } from '../entities';
 import { PersonalAccountAggregationDataOutput, PersonalAccountWeeklyAggregationOutput } from '../outputs';
-import { PersonalAccounDataAggregatorService, PersonalAccountTagService } from '../services';
+import { PersonalAccountDataAggregatorService, PersonalAccountTagService } from '../services';
 import { PersonalAccountMonthlyService } from './../services/personal-account-monthly.service';
 
 describe('PersonalAccounDataAggregatorService', () => {
-	let service: PersonalAccounDataAggregatorService;
+	let service: PersonalAccountDataAggregatorService;
 	const USER_ID_MOCK = 'TEST_USER_1234';
 
 	const PERSONAL_ACCOUNT_ID_EMPTY = { id: 'EMPTY' } as PersonalAccount;
@@ -145,14 +145,14 @@ describe('PersonalAccounDataAggregatorService', () => {
 	];
 
 	const personalAccountTagServiceMock: PersonalAccountTagService = createMock<PersonalAccountTagService>({
-		getDefaultTagById: jest.fn(),
+		getPersonalAccountTagById: jest.fn(),
 	});
 
 	const personalAccountMonthlyServiceMock: PersonalAccountMonthlyService = createMock<PersonalAccountMonthlyService>({
 		getMonthlyDataByAccountId: jest.fn(),
 	});
 
-	when(personalAccountTagServiceMock.getDefaultTagById)
+	when(personalAccountTagServiceMock.getPersonalAccountTagById)
 		.calledWith(mockTag.id)
 		.mockReturnValue(mockTag)
 		.calledWith(mockTag2.id)
@@ -161,13 +161,13 @@ describe('PersonalAccounDataAggregatorService', () => {
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
-				PersonalAccounDataAggregatorService,
+				PersonalAccountDataAggregatorService,
 				{ provide: PersonalAccountMonthlyService, useValue: personalAccountMonthlyServiceMock },
 				{ provide: PersonalAccountTagService, useValue: personalAccountTagServiceMock },
 			],
 		}).compile();
 
-		service = module.get<PersonalAccounDataAggregatorService>(PersonalAccounDataAggregatorService);
+		service = module.get<PersonalAccountDataAggregatorService>(PersonalAccountDataAggregatorService);
 
 		when(personalAccountMonthlyServiceMock.getMonthlyDataByAccountId)
 			.calledWith(PERSONAL_ACCOUNT_ID_EMPTY)

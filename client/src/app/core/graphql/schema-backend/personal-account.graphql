@@ -1,74 +1,80 @@
 ### Personal account
 query getPersonalAccounts {
 	getPersonalAccounts {
-		...PersonalAccountOverviewBasic
+		...PersonalAccountOverview
 	}
 }
 
 query getPersonalAccountById($input: String!) {
 	getPersonalAccountById(input: $input) {
-		...PersonalAccountOverview
+		...PersonalAccountDetails
 	}
 }
 
 mutation CreatePersonalAccount($name: String!) {
 	createPersonalAccount(input: { name: $name }) {
-		...PersonalAccountOverviewBasic
+		...PersonalAccountOverview
 	}
 }
 
 mutation EditPersonalAccount($input: PersonalAccountEditInput!) {
 	editPersonalAccount(input: $input) {
-		...PersonalAccountOverviewBasic
+		...PersonalAccountOverview
 	}
 }
 
 mutation DeletePersonalAccount($accountId: String!) {
 	deletePersonalAccount(input: $accountId) {
-		...PersonalAccountOverviewBasic
+		...PersonalAccountOverview
 	}
 }
 
 ### TAGS
-query getDefaultTags {
-	getDefaultTags {
+
+mutation CreatePersonalAccountTag($input: PersonalAccountTagDataCreate!) {
+	createPersonalAccountTag(input: $input) {
 		...PersonalAccountTag
 	}
 }
 
-### Monthly data
-query getPersonalAccountMonthlyDataById($input: String!) {
-	getPersonalAccountMonthlyDataById(input: $input) {
-		...PersonalAccountMonthlyDataDetail
+mutation EditPersonalAccountTag($input: PersonalAccountTagDataEdit!) {
+	editPersonalAccountTag(input: $input) {
+		...PersonalAccountTag
 	}
 }
 
-subscription createdMonthlyDataSubscription {
-	createdMonthlyData {
-		...PersonalAccountMonthlyDataOverview
+mutation DeletePersonalAccountTag($input: PersonalAccountTagDataDelete!) {
+	deletePersonalAccountTag(input: $input) {
+		...PersonalAccountTag
 	}
 }
 
 ### Daily data
+query GetPersonalAccountDailyData($input: PersonalAccountDailyDataQuery!) {
+	getPersonalAccountDailyData(input: $input) {
+		...PersonalAccountDailyDataOutput
+	}
+}
+
 mutation CreatePersonalAccountDailyEntry($input: PersonalAccountDailyDataCreate!) {
 	createPersonalAccountDailyEntry(input: $input) {
-		...PersonalAccountDailyData
+		...PersonalAccountDailyDataOutput
 	}
 }
 
 mutation DeletePersonalAccountDailyEntry($input: PersonalAccountDailyDataDelete!) {
 	deletePersonalAccountDailyEntry(input: $input) {
-		...PersonalAccountDailyData
+		...PersonalAccountDailyDataOutput
 	}
 }
 
 mutation EditPersonalAccountDailyEntry($input: PersonalAccountDailyDataEdit!) {
 	editPersonalAccountDailyEntry(input: $input) {
 		originalDailyData {
-			...PersonalAccountDailyData
+			...PersonalAccountDailyDataOutput
 		}
 		modifiedDailyData {
-			...PersonalAccountDailyData
+			...PersonalAccountDailyDataOutput
 		}
 	}
 }

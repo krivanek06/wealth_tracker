@@ -1,7 +1,9 @@
 import { UseGuards } from '@nestjs/common';
-import { Query, Resolver } from '@nestjs/graphql';
-import { AuthorizationGuard } from '../../../auth';
+import { Mutation, Resolver } from '@nestjs/graphql';
+import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
+import { Input } from '../../../graphql/args';
 import { PersonalAccountTag } from '../entities/';
+import { PersonalAccountTagDataCreate, PersonalAccountTagDataDelete, PersonalAccountTagDataEdit } from '../inputs';
 import { PersonalAccountTagService } from '../services';
 
 @UseGuards(AuthorizationGuard)
@@ -9,11 +11,27 @@ import { PersonalAccountTagService } from '../services';
 export class PersonalAccountTagResolver {
 	constructor(private readonly personalAccountTagService: PersonalAccountTagService) {}
 
-	@Query(() => [PersonalAccountTag], {
-		description: 'Returns default tags that are shared cross every user',
-		defaultValue: [],
-	})
-	getDefaultTags(): PersonalAccountTag[] {
-		return this.personalAccountTagService.getDefaultTags();
+	@Mutation(() => PersonalAccountTag)
+	createPersonalAccountTag(
+		@ReqUser() authUser: RequestUser,
+		@Input() input: PersonalAccountTagDataCreate
+	): Promise<PersonalAccountTag> {
+		return this.personalAccountTagService.createPersonalAccountTag(input, authUser.id);
+	}
+
+	@Mutation(() => PersonalAccountTag)
+	editPersonalAccountTag(
+		@ReqUser() authUser: RequestUser,
+		@Input() input: PersonalAccountTagDataEdit
+	): Promise<PersonalAccountTag> {
+		return this.personalAccountTagService.editPersonalAccountTag(input, authUser.id);
+	}
+
+	@Mutation(() => PersonalAccountTag)
+	deletePersonalAccountTag(
+		@ReqUser() authUser: RequestUser,
+		@Input() input: PersonalAccountTagDataDelete
+	): Promise<PersonalAccountTag> {
+		return this.personalAccountTagService.deletePersonalAccountTag(input, authUser.id);
 	}
 }

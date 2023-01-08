@@ -30,10 +30,10 @@ export class DefaultImgDirective implements OnChanges {
 			return 'assets/image-placeholder.jpg';
 		}
 
-		if (this.imageType === 'tags') {
-			const formattedName = location.toLowerCase().split(' ').join('_');
-			return `assets/personal-account-tags/${formattedName}.svg`;
-		}
+		// if (this.imageType === 'tags') {
+		// 	const formattedName = location.toLowerCase().split(' ').join('_');
+		// 	return `assets/personal-account-tags/${formattedName}.svg`;
+		// }
 
 		if (this.imageType === 'investment_cash') {
 			console.log({ location });

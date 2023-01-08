@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { AccountType } from '@prisma/client';
 import { PrismaService } from '../../../prisma';
 import { INVESTMENT_ACCOUNT_ERROR } from '../dto';
 import { InvestmentAccount } from '../entities';
@@ -37,6 +38,7 @@ export class InvestmentAccountRepositoryService {
 			data: {
 				name,
 				userId,
+				accountType: AccountType.INVESTMENT_ACCOUNT,
 				holdings: [],
 				cashChange: [],
 			},

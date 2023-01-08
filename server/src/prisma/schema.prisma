@@ -18,18 +18,15 @@ model User {
     // how user created his account
     authentication UserAuthentication
 
-    // 1 - 1 relationship with user tags
-    // one user can craete multiple tags
-    personalAccountTags PersonalAccountTag[]
-
     // 1 - N relationship with multiple investment accounts
     // one user can craete multiple investment accounts
     investmentAccounts InvestmentAccount[]
 
     // 1 - N relationship with multiple personal accounts
     // one user can craete multiple personal accounts & monthly data
-    personalAccounts           PersonalAccount[]
-    personalAccountMonthlyData PersonalAccountMonthlyData[]
+    personalAccounts                PersonalAccount[]
+    personalAccountMonthlyData      PersonalAccountMonthlyData[]
+    PersonalAccountRecurringExpense PersonalAccountRecurringExpense[]
 }
 
 type UserAuthentication {
@@ -50,41 +47,35 @@ enum AuthenticationType {
 // ---------------- Personal account ------------------
 
 model PersonalAccount {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    name      String
-    createdAt DateTime @default(now())
+    id          String      @id @default(auto()) @map("_id") @db.ObjectId
+    name        String
+    createdAt   DateTime    @default(now())
+    accountType AccountType
+
+    // 1 - N relationship with PersonalAccountTag
+    personalAccountTag PersonalAccountTag[]
 
     // 1 - N reference with PersonalAccountMonthlyData
     MonthlyData PersonalAccountMonthlyData[]
 
-    // 1 - N relationship with user
+    // N - 1 relationship with user
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String @db.ObjectId
 
-    // 1 - N relationship with PersonalAccountTag
-    PersonalAccountTag PersonalAccountTag[]
+    // 1 - N relationship with PersonalAccountReccuringExpense
+    PersonalAccountRecurringExpense PersonalAccountRecurringExpense[]
 }
 
-model PersonalAccountTag {
-    id         String                     @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt  DateTime                   @default(now())
-    modifiedAt DateTime                   @updatedAt
-    name       String // custom name for personal account
-    color      String
-    type       PersonalAccountTagDataType
+type PersonalAccountTag {
+    id        String
+    createdAt DateTime                   @default(now())
+    name      String // custom name 
+    color     String
+    imageUrl  String
+    type      PersonalAccountTagDataType
 
-    // True only for default Tags - by admin
-    isDefault Boolean @default(false)
-
-    // N - 1 relationship with user 
-    // user who created the tag
-    user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String? @unique
-
-    // N - 1 relationship with PersonalAccount
-    // Used to display this Tag only for one specific account 
-    PersonalAccounSpecific PersonalAccount? @relation(fields: [personalAccountId], references: [id])
-    personalAccountId      String?          @unique
+    // user who created the tag -  N - 1 relationship with user 
+    userId String
 }
 
 enum PersonalAccountTagDataType {
@@ -92,10 +83,41 @@ enum PersonalAccountTagDataType {
     EXPENSE
 }
 
+model PersonalAccountRecurringExpense {
+    id                String   @id @default(auto()) @map("_id") @db.ObjectId
+    name              String
+    tagId             String
+    createdAt         DateTime @default(now())
+    executedAt        DateTime @updatedAt // when this was last executed
+    executionNextTime DateTime // when it should be executed next
+    value             Float // how much to subscract
+
+    // timestamp how often this should be execuced
+    // increment value in days (min 1 day)
+    executionFrequency Float
+
+    // executed items
+    items PersonalAccountRecurringExpenseItem[]
+
+    // N - 1 reference to PersonalAccount
+    PersonalAccount   PersonalAccount @relation(fields: [personalAccountId], references: [id], onDelete: Cascade)
+    personalAccountId String          @db.ObjectId
+
+    // N - 1 reference to User
+    User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @db.ObjectId
+}
+
+type PersonalAccountRecurringExpenseItem {
+    id         String
+    executedAt DateTime
+    value      Float
+}
+
 // Created by cloud functions that runs once per month
 model PersonalAccountMonthlyData {
     id    String @id @default(auto()) @map("_id") @db.ObjectId
-    month Int // 8 == 'September', 0 == 'Januar',
+    month Int // 8 == 'September', 0 == 'January',
     year  Int // 2022
 
     // daily entries of user's expenses / incomes - changed on user's input
@@ -111,10 +133,11 @@ model PersonalAccountMonthlyData {
 }
 
 type PersonalAccountDailyData {
-    id            String // random UUID 
-    tagId         String // ID of TagData -> Can be modified, resolved on the FE!
-    userId        String // user who created the daily entry
-    monthlyDataId String // PersonalAccountMonthlyData.id
+    id                String // random UUID 
+    tagId             String // ID of TagData -> Can be modified, resolved on the FE!
+    userId            String // user who created the daily entry
+    monthlyDataId     String // PersonalAccountMonthlyData.id
+    personalAccountId String // PersonalAccount.id
 
     value Float // $ how much I paid / received
     date  DateTime // what date this entry is associated
@@ -123,9 +146,10 @@ type PersonalAccountDailyData {
 
 // ---------------- Investment account ------------------
 model InvestmentAccount {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    name      String // custom name for personal account
-    createdAt DateTime @default(now())
+    id          String      @id @default(auto()) @map("_id") @db.ObjectId
+    name        String // custom name for personal account
+    createdAt   DateTime    @default(now())
+    accountType AccountType
 
     // whole history of changed cash on hand
     cashChange InvestmentAccountCashChange[]
@@ -192,6 +216,11 @@ enum InvestmentAccountHoldingType {
     ADR
     MUTUAL_FUND
     COMMODITY
+}
+
+enum AccountType {
+    PERSONAL_ACCOUNT
+    INVESTMENT_ACCOUNT
 }
 
 // ---------------- Asset manager general ------------------

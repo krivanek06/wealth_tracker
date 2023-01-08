@@ -111,14 +111,14 @@ describe('PersonalAccountTagService', () => {
 
 	describe('Test: getDefaultTagById()', () => {
 		it('should find tag by tagId', () => {
-			const tag = service.getDefaultTagById(mockTags[0].id);
+			const tag = service.getPersonalAccountTagById(mockTags[0].id);
 			const expectedResult = mockTags[0];
 
 			expect(tag).toStrictEqual(expectedResult);
 		});
 
 		it('should thrown an error if tag not found by tagId', () => {
-			expect(service.getDefaultTagById('NOT_EXISTS')).toThrowError(
+			expect(service.getPersonalAccountTagById('NOT_EXISTS')).toThrowError(
 				new HttpException(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND_BY_ID, HttpStatus.NOT_FOUND)
 			);
 		});

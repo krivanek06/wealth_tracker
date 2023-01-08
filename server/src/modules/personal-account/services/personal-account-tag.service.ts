@@ -1,73 +1,91 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PersonalAccountTagDataType } from '@prisma/client';
-import { PrismaService } from '../../../prisma';
-import { PERSONAL_ACCOUNT_DEFAULT_TAGS, PERSONAL_ACCOUNT_TAG_ERROR } from '../dto';
-import { PersonalAccountTag } from '../entities/personal-account-tag.entity';
+import { SharedServiceUtil } from '../../../utils';
+import { PERSONAL_ACCOUNT_TAG_ERROR } from '../dto';
+import { PersonalAccountTag } from '../entities';
+import { PersonalAccountTagDataCreate, PersonalAccountTagDataDelete, PersonalAccountTagDataEdit } from '../inputs';
+import { PersonalAccountRepositoryService } from '../repository';
 
 @Injectable()
 export class PersonalAccountTagService {
-	// caching default tags from DB to prevent multiple loading
-	private defaultTags: PersonalAccountTag[] = [];
-	constructor(private readonly prisma: PrismaService) {
-		this.registerDefaultTags();
-		this.loadDefaultTags();
+	constructor(private readonly personalAccountRepositoryService: PersonalAccountRepositoryService) {}
+
+	async getTagsForPersonalAccount(personalAccountId: string): Promise<PersonalAccountTag[]> {
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(personalAccountId);
+
+		return personalAccount.personalAccountTag;
 	}
 
-	getDefaultTags(): PersonalAccountTag[] {
-		if (this.defaultTags.length === 0) {
-			throw new HttpException(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
-		}
-		return this.defaultTags;
+	async createPersonalAccountTag(
+		tagDataCreate: PersonalAccountTagDataCreate,
+		userId: string
+	): Promise<PersonalAccountTag> {
+		const tags = await this.getTagsForPersonalAccount(tagDataCreate.personalAccountId);
+		const newTag: PersonalAccountTag = {
+			id: SharedServiceUtil.getUUID(),
+			imageUrl: tagDataCreate.imageUrl,
+			userId: userId,
+			createdAt: new Date(),
+			name: tagDataCreate.name,
+			type: tagDataCreate.type,
+			color: tagDataCreate.color,
+		};
+
+		// save new tag
+		await this.personalAccountRepositoryService.updatePersonalAccount(tagDataCreate.personalAccountId, {
+			personalAccountTag: [...tags, newTag],
+		});
+
+		return newTag;
 	}
 
-	getDefaultTagById(tagId: string): PersonalAccountTag | null {
-		const allTags = this.getDefaultTags();
-		const tag = allTags.find((t) => t.id === tagId);
-		if (!tag) {
+	async editPersonalAccountTag(tagDataEdit: PersonalAccountTagDataEdit, userId: string): Promise<PersonalAccountTag> {
+		const tags = await this.getTagsForPersonalAccount(tagDataEdit.personalAccountId);
+		const searchedTag = tags.find((d) => d.id === tagDataEdit.id);
+
+		// not found
+		if (!searchedTag) {
 			throw new HttpException(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND_BY_ID, HttpStatus.NOT_FOUND);
 		}
-		return tag;
-	}
 
-	getDefaultTagsByTypes(tagType: PersonalAccountTagDataType): PersonalAccountTag[] {
-		const allTags = this.getDefaultTags();
-		return allTags.filter((t) => t.type === tagType);
-	}
+		// create a modified one
+		const modifiedTag: PersonalAccountTag = {
+			...searchedTag,
+			name: tagDataEdit.name,
+			color: tagDataEdit.color,
+			imageUrl: tagDataEdit.imageUrl,
+		};
 
-	private async loadDefaultTags(): Promise<void> {
-		this.defaultTags = await this.prisma.personalAccountTag.findMany({
-			where: {
-				isDefault: true,
-			},
+		// update all
+		const allSavingTags = tags.map((d) => (d.id === tagDataEdit.id ? modifiedTag : d));
+
+		// save new tag
+		await this.personalAccountRepositoryService.updatePersonalAccount(tagDataEdit.personalAccountId, {
+			personalAccountTag: allSavingTags,
 		});
+
+		return modifiedTag;
 	}
 
-	private async registerDefaultTags(): Promise<void> {
-		for await (const defaultTag of PERSONAL_ACCOUNT_DEFAULT_TAGS) {
-			// check if exists
-			const defaultTagDB = await this.prisma.personalAccountTag.findFirst({
-				where: {
-					name: defaultTag.name,
-					isDefault: true,
-				},
-			});
+	async deletePersonalAccountTag(
+		tagDataDelete: PersonalAccountTagDataDelete,
+		userId: string
+	): Promise<PersonalAccountTag> {
+		const tags = await this.getTagsForPersonalAccount(tagDataDelete.personalAccountId);
+		const searchedTag = tags.find((d) => d.id === tagDataDelete.id);
 
-			// if exists, continue
-			if (defaultTagDB) {
-				continue;
-			}
-
-			// save new tag
-			await this.prisma.personalAccountTag.create({
-				data: {
-					name: defaultTag.name,
-					type: defaultTag.type,
-					color: defaultTag.color,
-					isDefault: true,
-				},
-			});
-
-			// console.log(`PersonalAccountTagService: created default tag, name: ${defaultTag.name}, type: ${defaultTag.type}`);
+		// not found
+		if (!searchedTag) {
+			throw new HttpException(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND_BY_ID, HttpStatus.NOT_FOUND);
 		}
+
+		// update all
+		const allSavingTags = tags.filter((d) => d.id !== tagDataDelete.id);
+
+		// save new tag
+		await this.personalAccountRepositoryService.updatePersonalAccount(tagDataDelete.personalAccountId, {
+			personalAccountTag: allSavingTags,
+		});
+
+		return searchedTag;
 	}
 }

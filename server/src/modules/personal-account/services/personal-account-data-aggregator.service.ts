@@ -7,18 +7,15 @@ import {
 	PersonalAccountWeeklyAggregationOutput,
 } from '../outputs';
 import { PersonalAccountMonthlyService } from './personal-account-monthly.service';
-import { PersonalAccountTagService } from './personal-account-tag.service';
 
 @Injectable()
-export class PersonalAccounDataAggregatorService {
-	constructor(
-		private personalAccountTagService: PersonalAccountTagService,
-		private personalAccountMonthlyService: PersonalAccountMonthlyService
-	) {}
+export class PersonalAccountDataAggregatorService {
+	constructor(private personalAccountMonthlyService: PersonalAccountMonthlyService) {}
 
 	async getAllYearlyAggregatedData(personalAccount: PersonalAccount): Promise<PersonalAccountAggregationDataOutput[]> {
 		// load user all monthly data - already grouped by YEAR and MONTH
-		const monthlyData = await this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount);
+		const monthlyData = await this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount.id);
+		const availableTags = personalAccount.personalAccountTag;
 
 		// merge together all daily data for each month
 		const allDailyData = monthlyData.reduce(
@@ -31,7 +28,7 @@ export class PersonalAccounDataAggregatorService {
 
 			// create new or increate previous PersonalAccountAggregationDataOutput
 			const data = !previousAggregation
-				? this.createPersonalAccountAggregationDataOutput(curr.tagId, curr.value)
+				? { entries: 1, value: curr.value, tag: availableTags.find((d) => d.id === curr.tagId) }
 				: ({
 						...previousAggregation,
 						entries: previousAggregation.entries + 1,
@@ -54,10 +51,12 @@ export class PersonalAccounDataAggregatorService {
 	 * by each distinct tag in a distinct [year, month, week] period.
 	 * */
 	async getAllWeeklyAggregatedData(
-		personlaAccount: PersonalAccount
+		personalAccount: PersonalAccount
 	): Promise<PersonalAccountWeeklyAggregationOutput[]> {
 		// load user all monthly data - already grouped by YEAR and MONTH
-		const monthlyData = await this.personalAccountMonthlyService.getMonthlyDataByAccountId(personlaAccount);
+		const monthlyData = await this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount.id);
+
+		const availableTags = personalAccount.personalAccountTag;
 
 		// adding 'YEAR' and 'MONTH' keys to the daily data for easier manipulation
 		const monthlyDataModified = monthlyData.map((m) => {
@@ -125,7 +124,7 @@ export class PersonalAccounDataAggregatorService {
 					weeklyAggregation.data[index].value += curr.value;
 				} else {
 					// add new data
-					const data = this.createPersonalAccountAggregationDataOutput(curr.tagId, curr.value);
+					const data = { entries: 1, value: curr.value, tag: availableTags.find((d) => d.id === curr.tagId) };
 					weeklyAggregation.data = [...weeklyAggregation.data, data];
 				}
 
@@ -162,13 +161,5 @@ export class PersonalAccounDataAggregatorService {
 		};
 
 		return data;
-	}
-
-	private createPersonalAccountAggregationDataOutput(
-		tagId: string,
-		value: number
-	): PersonalAccountAggregationDataOutput {
-		const defaultTag = this.personalAccountTagService.getDefaultTagById(tagId);
-		return { entries: 1, value, tag: defaultTag };
 	}
 }

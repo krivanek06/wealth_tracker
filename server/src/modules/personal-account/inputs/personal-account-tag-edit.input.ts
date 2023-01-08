@@ -1,16 +1,16 @@
 import { ArgsType, Field, InputType } from '@nestjs/graphql';
-import { PersonalAccountTagDataType } from '@prisma/client';
 import { MaxLength } from 'class-validator';
 
 @InputType()
 @ArgsType()
-export class PersonalAccountTagDataCreate {
+export class PersonalAccountTagDataEdit {
+	@Field(() => String)
+	@MaxLength(100)
+	id: string;
+
 	@Field(() => String)
 	@MaxLength(30)
 	name: string;
-
-	@Field(() => PersonalAccountTagDataType)
-	type: PersonalAccountTagDataType;
 
 	@Field(() => String)
 	@MaxLength(8)

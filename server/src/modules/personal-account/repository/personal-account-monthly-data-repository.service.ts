@@ -22,7 +22,7 @@ export class PersonalAccountMonthlyDataRepositoryService {
 	}
 
 	getMonthlyDataById(monthlyDataId: string, userId: string): Promise<PersonalAccountMonthlyData> {
-		return this.prisma.personalAccountMonthlyData.findFirstOrThrow({
+		return this.prisma.personalAccountMonthlyData.findFirst({
 			where: {
 				id: monthlyDataId,
 				userId,

@@ -27,8 +27,8 @@ export class PersonalAccountMonthlyData implements PersonalAccountMonthlyDataCli
 	})
 	year: number;
 
-	@Field(() => [PersonalAccountDailyData], {
-		description: 'List of daily expenses user has made during this month period',
-	})
+	// @Field(() => [PersonalAccountDailyData], {
+	// 	description: 'List of daily expenses user has made during this month period',
+	// })
 	dailyData: PersonalAccountDailyData[];
 }

@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
-import { ChartType, GenericChartSeries, GenericChartSeriesPie } from '../../models';
+import { ChartType, GenericChartSeries, GenericChartSeriesPie } from '../../../models';
 
 NoDataToDisplay(Highcharts);
 // highcharts3D(Highcharts);

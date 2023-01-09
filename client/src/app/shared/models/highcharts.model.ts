@@ -20,21 +20,15 @@ export interface GenericChartSeries {
 
 // Used only for Pie charts
 export interface GenericChartSeriesPie {
-	title?: string;
-	type?: ChartType;
 	name?: string;
 	data: GenericChartSeriesData[];
-	color?: string | any;
-	lineWidth?: number;
 	colorByPoint?: boolean;
 	innerSize?: string;
-	minPointSize?: number;
+	type: 'pie';
 }
 
 export interface GenericChartSeriesData {
 	name?: string;
-	sliced?: boolean;
 	y: number;
 	color?: string;
-	z?: number;
 }

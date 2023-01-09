@@ -21,7 +21,7 @@ import { PersonalAccountDailyDataEntryComponent } from './../../modals';
 })
 export class PersonalAccountDailyDataContainerComponent implements OnInit {
 	@Input() personalAccountBasic!: PersonalAccountOverviewFragment;
-	weeklyIds$!: Observable<string[]>; // 2022-7-32, 2022-7-33, ...
+	weeklyIds$!: Observable<string[] | undefined>; // 2022-7-32, 2022-7-33, ...
 	expenseAllocationChartData$!: Observable<GenericChartSeriesPie | null>;
 	personalAccountDailyData$!: Observable<PersonalAccountDailyDataOutputFragment[]>;
 
@@ -49,7 +49,7 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 		);
 
 		// 2022-7-32, 2022-7-33, ...
-		this.weeklyIds$ = accountDetails$.pipe(map((account) => account.weeklyAggregaton.map((d) => d.id)));
+		this.weeklyIds$ = accountDetails$.pipe(map((account) => account?.weeklyAggregaton.map((d) => d.id)));
 
 		this.personalAccountDailyData$ = this.filterControl.valueChanges.pipe(
 			startWith(this.filterControl.getRawValue()),
@@ -106,6 +106,6 @@ export class PersonalAccountDailyDataContainerComponent implements OnInit {
 			return acc;
 		}, [] as GenericChartSeriesData[]);
 
-		return { data: seriesData, colorByPoint: true, name: 'Expenses', innerSize: '30%' };
+		return { data: seriesData, colorByPoint: true, name: 'Expenses', innerSize: '30%', type: 'pie' };
 	}
 }

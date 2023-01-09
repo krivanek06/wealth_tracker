@@ -7,6 +7,7 @@ import { ResolveTokenGuard } from '../../core/guards';
 import { InvestmentAccountModule } from '../../modules/investment-account/';
 import { PersonalAccountModule } from '../../modules/personal-account';
 import { HeaderContainerModule } from '../page-shared';
+import { PersonalAccountMobileViewComponent } from './../../modules/personal-account/pages/personal-account-mobile-view/personal-account-mobile-view.component';
 import { DashboardComponent } from './dashboard.component';
 
 const routes: Routes = [
@@ -14,7 +15,6 @@ const routes: Routes = [
 		path: '',
 		component: DashboardComponent,
 		resolve: [ResolveTokenGuard],
-		children: [],
 	},
 ];
 
@@ -28,6 +28,7 @@ const routes: Routes = [
 		LayoutModule,
 		HeaderContainerModule,
 		MatTabsModule,
+		PersonalAccountMobileViewComponent,
 	],
 })
 export class DashboardModule {}

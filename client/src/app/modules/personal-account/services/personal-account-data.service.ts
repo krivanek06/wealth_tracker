@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
-import { PersonalAccountWeeklyAggregationFragment } from '../../../core/graphql';
-import { InputSource, InputSourceWrapper } from '../../../shared/models';
+import {
+	PersonalAccountAggregationDataOutput,
+	PersonalAccountTagFragment,
+	PersonalAccountWeeklyAggregationFragment,
+} from '../../../core/graphql';
+import { InputSource, InputSourceWrapper, ValuePresentItem } from '../../../shared/models';
 import { DateServiceUtil } from '../../../shared/utils';
 
 @Injectable({
@@ -23,7 +27,7 @@ export class PersonalAccountDataService {
 				// format to 'January, 2022'
 				const keyId = `${DateServiceUtil.formatDate(new Date(curr.year, curr.month, 1), 'LLLL')}, ${curr.year}`;
 
-				const lastElement = acc[acc.length - 1];
+				const lastElement: InputSourceWrapper | undefined = acc[acc.length - 1];
 
 				// item that will be added
 				const weeklyItem: InputSource = {
@@ -46,5 +50,25 @@ export class PersonalAccountDataService {
 				return [...acc, { name: keyId, items: [monthlyItem, weeklyItem] }] as InputSourceWrapper[];
 			}, [] as InputSourceWrapper[])
 			.reverse();
+	}
+
+	createValuePresentItemFromTag(
+		tags: PersonalAccountAggregationDataOutput[]
+	): ValuePresentItem<PersonalAccountTagFragment>[] {
+		const totalValue = tags.reduce((a, b) => a + b.value, 0);
+
+		return tags.map((d) => {
+			const data: ValuePresentItem<PersonalAccountTagFragment> = {
+				color: d.tag.color,
+				imageSrc: d.tag.imageUrl,
+				imageType: 'url',
+				name: d.tag.name,
+				value: d.value,
+				valuePrct: d.value / totalValue,
+				item: d.tag,
+			};
+
+			return data;
+		});
 	}
 }

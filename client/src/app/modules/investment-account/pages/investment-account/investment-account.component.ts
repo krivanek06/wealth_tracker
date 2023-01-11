@@ -76,7 +76,6 @@ export class InvestmentAccountComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		console.log('INVESTMENT ACCOUNT');
 		this.investmentId = this.investmentAccountsOverview.id;
 		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.investmentId);
 		this.investmentAccountGrowth$ = this.investmentAccountFacadeApiService.getInvestmentAccountGrowth(

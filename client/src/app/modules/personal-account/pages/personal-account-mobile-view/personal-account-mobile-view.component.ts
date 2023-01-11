@@ -15,14 +15,15 @@ import { PersonalAccountParent } from '../../classes';
 	imports: [CommonModule, PieChartComponent, FormMatInputWrapperModule, ReactiveFormsModule],
 })
 export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {
-	expenseTags$!: Observable<GenericChartSeriesPie>;
+	// daily data transformed into expense chart
+	expenseAllocationChartData$!: Observable<GenericChartSeriesPie | null>;
 
 	constructor() {
 		super();
 	}
 
 	ngOnInit(): void {
-		this.filterForm.valueChanges.subscribe(console.log);
+		// this.expenseAllocationChartData$ = this.filterForm.valueChanges.subscribe(console.log);
 		this.filterDateInputSourceWrapper$.subscribe(console.log);
 	}
 }

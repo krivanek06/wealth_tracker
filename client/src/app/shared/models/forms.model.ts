@@ -6,6 +6,11 @@ export type ModelFormGroup<T> = FormGroup<{
 	[K in keyof T]: FormControl<T[K]>;
 }>;
 
+export interface InputSourceWrapper {
+	name: string;
+	items: InputSource[];
+}
+
 export interface InputSource {
 	image?: string;
 	value: string | number;
@@ -34,6 +39,7 @@ export enum InputTypeEnum {
 	MULTISELECT = 'MULTISELECT',
 	DATEPICKER = 'DATEPICKER',
 	TIMEPICKER = 'TIMEPICKER',
+	SELECT_SOURCE_WRAPPER = 'SELECT_SOURCE_WRAPPER',
 }
 
 export type InputType =
@@ -49,4 +55,5 @@ export type InputType =
 	| 'SELECT'
 	| 'SELECTSEARCH'
 	| 'MULTISELECT'
+	| 'SELECT_SOURCE_WRAPPER'
 	| 'TEXTAREA';

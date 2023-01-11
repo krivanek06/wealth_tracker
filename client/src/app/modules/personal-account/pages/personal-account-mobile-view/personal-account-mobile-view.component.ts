@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { PersonalAccountFacadeService } from '../../../../core/api';
-import { AccountIdentification, PersonalAccountDetailsFragment } from '../../../../core/graphql';
-import { PieChartComponent } from '../../../../shared/components';
+import { FormMatInputWrapperModule, PieChartComponent } from '../../../../shared/components';
 import { GenericChartSeriesPie } from '../../../../shared/models';
+import { PersonalAccountParent } from '../../classes';
 
 @Component({
 	selector: 'app-personal-account-mobile-view',
@@ -12,22 +12,17 @@ import { GenericChartSeriesPie } from '../../../../shared/models';
 	styleUrls: ['./personal-account-mobile-view.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	standalone: true,
-	imports: [CommonModule, PieChartComponent],
+	imports: [CommonModule, PieChartComponent, FormMatInputWrapperModule, ReactiveFormsModule],
 })
-export class PersonalAccountMobileViewComponent implements OnInit {
-	@Input() set accountIdentification(data: AccountIdentification | null) {
-		this.personalAccountBasic = data;
-		this.initData();
-	}
-
-	personalAccountDetails$!: Observable<PersonalAccountDetailsFragment | null>;
+export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {
 	expenseTags$!: Observable<GenericChartSeriesPie>;
 
-	private personalAccountBasic: AccountIdentification | null = null;
+	constructor() {
+		super();
+	}
 
-	constructor(private personalAccountFacadeService: PersonalAccountFacadeService) {}
-
-	ngOnInit(): void {}
-
-	private initData(): void {}
+	ngOnInit(): void {
+		this.filterForm.valueChanges.subscribe(console.log);
+		this.filterDateInputSourceWrapper$.subscribe(console.log);
+	}
 }

@@ -1,5 +1,5 @@
 import { Directive, inject, Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { combineLatest, map, merge, Observable, reduce, startWith, switchMap } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../core/api';
 import {
@@ -8,9 +8,9 @@ import {
 	PersonalAccountTagFragment,
 	TagDataType,
 } from '../../../core/graphql';
-import { GenericChartSeries, ValuePresentItem } from '../../../shared/models';
+import { GenericChartSeries, InputSourceWrapper, ValuePresentItem } from '../../../shared/models';
 import { AccountState } from '../models';
-import { PersonalAccountChartService } from '../services';
+import { PersonalAccountChartService, PersonalAccountDataService } from '../services';
 
 @Directive()
 export abstract class PersonalAccountParent {
@@ -37,6 +37,13 @@ export abstract class PersonalAccountParent {
 	// chart categories for X-axis
 	categories$!: Observable<string[]>;
 
+	// values to filter daily data based on some date (year-month-week)
+	filterDateInputSourceWrapper$!: Observable<InputSourceWrapper[]>;
+
+	filterForm = new FormGroup({
+		dateFilter: new FormControl<string>('', { nonNullable: true }),
+	});
+
 	// keeps track of visible tags, if empty -> all is visible
 	expenseFormControl = new FormControl<PersonalAccountTagFragment[]>([], { nonNullable: true });
 
@@ -44,11 +51,16 @@ export abstract class PersonalAccountParent {
 
 	personalAccountFacadeService = inject(PersonalAccountFacadeService);
 	personalAccountChartService = inject(PersonalAccountChartService);
+	personalAccountDataService = inject(PersonalAccountDataService);
 
 	constructor() {}
 
 	private initData(account: AccountIdentification): void {
 		this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsById(account.id);
+
+		this.filterDateInputSourceWrapper$ = this.personalAccountDetails$.pipe(
+			map((data) => this.personalAccountDataService.getMonthlyInputSource(data.weeklyAggregaton))
+		);
 
 		// calculate account state - balance, cash, invested
 		this.accountState$ = this.personalAccountDetails$.pipe(

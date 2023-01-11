@@ -20,6 +20,32 @@
 			>
 			</textarea>
 
+			<!-- select source wrapper -->
+			<ng-container *ngSwitchCase="'SELECT_SOURCE_WRAPPER'">
+				<mat-select
+					[disableRipple]="disabled"
+					[formControl]="formInputControl"
+					placeholder="Select value"
+					[ngClass]="{'disabled-element': disabled}"
+				>
+					<input
+						#matSearchSelectInput
+						(keyup)="multiSelectKeyPressWrapper($event)"
+						class="select-input"
+						placeholder="Search"
+						tabindex="0"
+					/>
+					<mat-optgroup *ngFor="let source of inputSourceWrapper" [label]="source.name">
+						<mat-option *ngFor="let optionData of source.items" [value]="optionData.value">
+							<div class="flex items-center gap-2">
+								<img *ngIf="optionData?.image" [src]="optionData.image" alt="" />
+								{{ optionData.caption }}
+							</div>
+						</mat-option>
+					</mat-optgroup>
+				</mat-select>
+			</ng-container>
+
 			<!-- select & multiselect and search select-->
 			<ng-container *ngSwitchCase="'SELECT'">
 				<ng-container *ngTemplateOutlet="selectTemplate"></ng-container>
@@ -41,7 +67,7 @@
 				>
 					<mat-select-trigger
 						*ngIf="selectedInputSource$ | async as selectedInputSource"
-						class="flex gap-2 items-center"
+						class="flex items-center gap-2"
 					>
 						<img *ngIf="selectedInputSource?.image" [src]="selectedInputSource.image" alt="" />
 						{{ selectedInputSource.caption }}
@@ -55,7 +81,7 @@
 						tabindex="0"
 					/>
 					<mat-option *ngFor="let optionData of inputSource" [value]="optionData.value">
-						<div class="flex gap-2 items-center">
+						<div class="flex items-center gap-2">
 							<img *ngIf="optionData?.image" [src]="optionData.image" alt="" />
 							{{ optionData.caption }}
 						</div>

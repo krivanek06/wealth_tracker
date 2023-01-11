@@ -1,2 +1,11 @@
 <p>personal-account-mobile-view works!</p>
 <app-pie-chart [chartData]="expenseTags$ | async"></app-pie-chart>
+
+<ng-container [formGroup]="filterForm">
+	<app-form-mat-input-wrapper
+		inputCaption="Filter by date"
+		controlName="dateFilter"
+		inputType="SELECT_SOURCE_WRAPPER"
+		[inputSourceWrapper]="filterDateInputSourceWrapper$ | async"
+	></app-form-mat-input-wrapper>
+</ng-container>

@@ -58,6 +58,7 @@ export abstract class PersonalAccountParent {
 	private initData(account: AccountIdentification): void {
 		this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsById(account.id);
 
+		// get dates that we can filter by
 		this.filterDateInputSourceWrapper$ = this.personalAccountDetails$.pipe(
 			map((data) => this.personalAccountDataService.getMonthlyInputSource(data.weeklyAggregaton))
 		);
@@ -70,7 +71,7 @@ export abstract class PersonalAccountParent {
 		// filter out expense tags to show them to the user
 		this.yearlyExpenseTags$ = this.personalAccountDetails$.pipe(
 			map((account) => account.yearlyAggregaton.filter((d) => d.tag.type === TagDataType.Expense)),
-			map((expenseTags) => this.personalAccountChartService.createValuePresentItemFromTag(expenseTags))
+			map((expenseTags) => this.personalAccountDataService.createValuePresentItemFromTag(expenseTags))
 		);
 
 		// get chart categories displayed on X-axis
@@ -84,7 +85,7 @@ export abstract class PersonalAccountParent {
 			this.expenseFormControl.valueChanges.pipe(startWith(this.expenseFormControl.value)),
 			// account
 			this.personalAccountDetails$,
-			// passing all avilable expense tags to create chart
+			// passing all available expense tags to create chart
 			this.yearlyExpenseTags$.pipe(map((yearlyExpenseTags) => yearlyExpenseTags.map((d) => d.item))),
 		]).pipe(
 			map(([activeExpenses, account, availableExpenseTags]) =>

@@ -15,6 +15,7 @@ import { GenericChartSeriesPie } from '../../../models';
 export class PieChartComponent implements OnInit {
 	@Input() set chartData(data: GenericChartSeriesPie | null) {
 		if (data) {
+			console.log('initing');
 			this.initChart(data);
 		}
 	}

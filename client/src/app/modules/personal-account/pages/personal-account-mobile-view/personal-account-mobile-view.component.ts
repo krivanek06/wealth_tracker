@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { FormMatInputWrapperModule, PieChartComponent } from '../../../../shared/components';
-import { GenericChartSeriesPie } from '../../../../shared/models';
 import { PersonalAccountParent } from '../../classes';
 
 @Component({
@@ -15,15 +13,9 @@ import { PersonalAccountParent } from '../../classes';
 	imports: [CommonModule, PieChartComponent, FormMatInputWrapperModule, ReactiveFormsModule],
 })
 export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {
-	// daily data transformed into expense chart
-	expenseAllocationChartData$!: Observable<GenericChartSeriesPie | null>;
-
 	constructor() {
 		super();
 	}
 
-	ngOnInit(): void {
-		// this.expenseAllocationChartData$ = this.filterForm.valueChanges.subscribe(console.log);
-		this.filterDateInputSourceWrapper$.subscribe(console.log);
-	}
+	ngOnInit(): void {}
 }

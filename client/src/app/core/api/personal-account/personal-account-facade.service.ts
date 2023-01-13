@@ -8,7 +8,6 @@ import {
 	PersonalAccountDailyDataEdit,
 	PersonalAccountDailyDataEditOutput,
 	PersonalAccountDailyDataOutputFragment,
-	PersonalAccountDailyDataQuery,
 	PersonalAccountDetailsFragment,
 	PersonalAccountEditInput,
 	PersonalAccountMonthlyDataOverviewFragment,
@@ -95,10 +94,32 @@ export class PersonalAccountFacadeService {
 		);
 	}
 
+	/**
+	 *
+	 * @param personalAccountId
+	 * @param dateFormat - year-month-week
+	 * @returns
+	 */
 	getPersonalAccountDailyData(
-		input: PersonalAccountDailyDataQuery
+		personalAccountId: string,
+		dateFormat: string
 	): Observable<PersonalAccountDailyDataOutputFragment[]> {
-		return this.personalAccountApiService.getPersonalAccountDailyData(input);
+		console.log('eee', dateFormat);
+		const [year, month, week] = dateFormat.split('-').map((d) => Number(d));
+		console.log({ year, month, week });
+
+		return this.personalAccountApiService
+			.getPersonalAccountDailyData({
+				personalAccountId,
+				year,
+				month,
+			})
+			.pipe(
+				// filter out correct week if selected
+				map((dailyDataArray) =>
+					!week ? dailyDataArray : dailyDataArray.filter((dailyData) => dailyData.week === week)
+				)
+			);
 	}
 
 	createPersonalAccountDailyEntry(

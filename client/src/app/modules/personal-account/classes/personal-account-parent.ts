@@ -4,54 +4,86 @@ import { combineLatest, map, merge, Observable, reduce, startWith, switchMap } f
 import { PersonalAccountFacadeService } from '../../../core/api';
 import {
 	AccountIdentification,
+	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountDetailsFragment,
 	PersonalAccountTagFragment,
 	TagDataType,
 } from '../../../core/graphql';
-import { GenericChartSeries, InputSourceWrapper, ValuePresentItem } from '../../../shared/models';
+import {
+	ChartType,
+	GenericChartSeries,
+	GenericChartSeriesPie,
+	InputSourceWrapper,
+	ValuePresentItem,
+} from '../../../shared/models';
+import { DateServiceUtil } from '../../../shared/utils';
 import { AccountState } from '../models';
 import { PersonalAccountChartService, PersonalAccountDataService } from '../services';
 
 @Directive()
 export abstract class PersonalAccountParent {
-	@Input() set accountIdentification(data: AccountIdentification | null) {
+	@Input() set accountIdentification(data: AccountIdentification) {
 		this.personalAccountBasic = data;
-		if (data) {
-			this.initData(data);
-		}
+		this.initData(data);
 	}
 
 	personalAccountDetails$!: Observable<PersonalAccountDetailsFragment>;
 
 	yearlyExpenseTags$!: Observable<ValuePresentItem<PersonalAccountTagFragment>[]>;
 
-	// current account state totalIncome, totalExpense and difference
+	/**
+	 * current account state totalIncome, totalExpense and difference
+	 */
 	accountState$!: Observable<AccountState>;
 
-	// growth chart by selected expenses
+	/**
+	 * growth chart by selected expenses
+	 */
 	accountOverviewChartData$!: Observable<GenericChartSeries[]>;
 
-	// expense chart by the selected expenses tags
+	/**
+	 * expense chart by the selected expenses tags
+	 */
 	expenseTagsChartData$!: Observable<GenericChartSeries[]>;
 
-	// chart categories for X-axis
+	/**
+	 * chart categories for X-axis, example: Week 40. Sep
+	 */
 	categories$!: Observable<string[]>;
 
-	// values to filter daily data based on some date (year-month-week)
+	/**
+	 * values to filter daily data based on some date (year-month-week)
+	 */
 	filterDateInputSourceWrapper$!: Observable<InputSourceWrapper[]>;
 
-	filterForm = new FormGroup({
-		dateFilter: new FormControl<string>('', { nonNullable: true }),
+	/**
+	 * daily data based on select date interval
+	 */
+	personalAccountDailyData$!: Observable<PersonalAccountDailyDataOutputFragment[]>;
+
+	/**
+	 * Daily data transformed into expense allocation chart
+	 */
+	personalAccountDailyExpensePieChart$!: Observable<GenericChartSeriesPie | null>;
+
+	/**
+	 * form used to filter daily data
+	 */
+	today = DateServiceUtil.getDetailsInformationFromDate(new Date());
+	readonly filterDailyDataGroup = new FormGroup({
+		dateFilter: new FormControl<string>(`${this.today.year}-${this.today.month}`, { nonNullable: true }),
 	});
 
 	// keeps track of visible tags, if empty -> all is visible
-	expenseFormControl = new FormControl<PersonalAccountTagFragment[]>([], { nonNullable: true });
+	readonly expenseFormControl = new FormControl<PersonalAccountTagFragment[]>([], { nonNullable: true });
 
-	personalAccountBasic: AccountIdentification | null = null;
+	personalAccountBasic!: AccountIdentification;
 
 	personalAccountFacadeService = inject(PersonalAccountFacadeService);
 	personalAccountChartService = inject(PersonalAccountChartService);
 	personalAccountDataService = inject(PersonalAccountDataService);
+
+	ChartType = ChartType;
 
 	constructor() {}
 
@@ -111,6 +143,21 @@ export abstract class PersonalAccountParent {
 					this.personalAccountChartService.getAccountIncomeExpenseChartData(account, 'week', selectedTags)
 				).pipe(reduce((acc, curr) => [...acc, curr], [] as GenericChartSeries[]))
 			)
+		);
+
+		this.personalAccountDailyData$ = this.filterDailyDataGroup.valueChanges.pipe(
+			startWith(this.filterDailyDataGroup.getRawValue()),
+			switchMap((formResult) =>
+				this.personalAccountFacadeService.getPersonalAccountDailyData(
+					this.personalAccountBasic.id,
+					formResult.dateFilter!
+				)
+			)
+		);
+
+		// calculate expense chart for filtered data
+		this.personalAccountDailyExpensePieChart$ = this.personalAccountDailyData$.pipe(
+			map((result) => (!!result ? this.personalAccountChartService.getExpenseAllocationChartData(result) : null))
 		);
 	}
 }

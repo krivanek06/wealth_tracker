@@ -18,6 +18,8 @@ export class PersonalAccountDataService {
 	 * and items will be weeks in that month
 	 * it is used for filtering account data based on month/week
 	 *
+	 * Values for a month: [year-month-week] [2022-1, 2022-1-1, 2022-1-2, 2022-1-3, 2022-1-4]
+	 *
 	 * @param weeklyData
 	 * @returns
 	 */
@@ -32,7 +34,7 @@ export class PersonalAccountDataService {
 				// item that will be added
 				const weeklyItem: InputSource = {
 					caption: `Week: ${curr.week}, ${keyId}`,
-					value: curr.id,
+					value: curr.id, // year-month-week: 2022-2-12
 				};
 
 				// key in array, append curr as last item for the key

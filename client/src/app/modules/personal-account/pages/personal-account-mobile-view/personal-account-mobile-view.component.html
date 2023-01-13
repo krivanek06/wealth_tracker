@@ -1,7 +1,7 @@
-<p>personal-account-mobile-view works!</p>
-<!-- <app-pie-chart [chartData]="expenseTags$ | async"></app-pie-chart> -->
+<app-pie-chart [chartData]="personalAccountDailyExpensePieChart$ | async"></app-pie-chart>
 
-<ng-container [formGroup]="filterForm">
+<!-- table filter -->
+<ng-container [formGroup]="filterDailyDataGroup">
 	<app-form-mat-input-wrapper
 		inputCaption="Filter by date"
 		controlName="dateFilter"

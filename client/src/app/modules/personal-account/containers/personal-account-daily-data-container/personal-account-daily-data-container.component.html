@@ -1,7 +1,7 @@
 <!-- table filter -->
 <app-personal-account-daily-entries-filter
-	[formControl]="filterControl"
-	[weeklyIds]="weeklyIds$ | async"
+	[formControl]="dailyDataAggregator.filterControl"
+	[weeklyIds]="dailyDataAggregator.weeklyIds$ | async"
 ></app-personal-account-daily-entries-filter>
 
 <!-- add button -->
@@ -22,16 +22,16 @@
 		<app-personal-account-daily-entries-table
 			(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
 			(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
-			[personalAccountDailyData]="personalAccountDailyData$ | async"
+			[personalAccountDailyData]="dailyDataAggregator.personalAccountDailyData$ | async"
 		></app-personal-account-daily-entries-table>
 	</div>
 
 	<!-- spending allocation by tags -->
 	<div class="hidden col-span-2 xl:block">
 		<app-generic-chart
-			*ngIf="expenseAllocationChartData$ | async as series"
+			*ngIf="dailyDataAggregator.expenseAllocationChartData$ | async as series"
 			chartTitlePosition="center"
-			[chartType]="ChartType.pie"
+			[chartType]="dailyDataAggregator.ChartType.pie"
 			[heightPx]="375"
 			[showDataLabel]="true"
 			[series]="[series]"

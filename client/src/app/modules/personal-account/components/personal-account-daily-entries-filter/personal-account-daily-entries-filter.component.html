@@ -1,29 +1,16 @@
-<form [formGroup]="formGroup" class="c-wrapper">
-	<!-- display months -->
-	<mat-form-field appearance="outline">
-		<mat-label>Select month</mat-label>
-		<mat-select formControlName="yearAndMonth">
-			<mat-option *ngFor="let date of displayYearsAndMonths" [value]="date">
-				{{date | dateFormatter: 'monthName'}} {{ date | dateFormatter: 'yearName' }}
-			</mat-option>
-		</mat-select>
-	</mat-form-field>
+<div class="flex flex-wrap gap-4">
+	<div [formGroup]="formGroup" class="w-full md:w-[250px]">
+		<app-form-mat-input-wrapper
+			inputCaption="Filter by date"
+			controlName="dateFilter"
+			inputType="SELECT_SOURCE_WRAPPER"
+			[inputSourceWrapper]="filterDateInputSourceWrapper"
+		></app-form-mat-input-wrapper>
+	</div>
 
-	<!-- display weeks in the selected month -->
-	<mat-form-field appearance="outline">
-		<mat-label>Select week</mat-label>
-		<mat-select formControlName="week">
-			<mat-option [value]="-1">Unselect</mat-option>
-			<mat-option *ngFor="let data of formGroup.controls.yearAndMonth.value | weeksInMonth" [value]="data">
-				{{ 'Week ' + data }}
-			</mat-option>
-		</mat-select>
-	</mat-form-field>
-
-	<!-- current month -->
 	<div class="mt-1 h-11">
 		<button mat-stroked-button (click)="onCurrentMonthClick()" type="button" color="primary" class="w-full h-full">
 			Current month
 		</button>
 	</div>
-</form>
+</div>

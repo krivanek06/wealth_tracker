@@ -39,8 +39,43 @@
 	></app-personal-account-overview-chart>
 </div>
 
-<!-- daily data filter + table + spending allocation -->
-<app-personal-account-daily-data-container
-	*ngIf="personalAccountDetails$ | async as personalAccountDetails"
-	[personalAccountBasic]="personalAccountDetails"
-></app-personal-account-daily-data-container>
+<!-- date filter control -->
+<app-personal-account-daily-entries-filter
+	[formControl]="filterDailyDataGroup.controls.dateFilter"
+	[filterDateInputSourceWrapper]="filterDateInputSourceWrapper$ | async"
+></app-personal-account-daily-entries-filter>
+
+<!-- add button -->
+<button
+	(click)="onDailyEntryClick(null)"
+	mat-stroked-button
+	type="button"
+	color="primary"
+	class="block w-full mb-2 sm:hidden"
+>
+	<mat-icon>add</mat-icon>
+	Add daily entry
+</button>
+
+<div class="grid grid-cols-1 xl:grid-cols-5 gap-4 min-h-[300px] items-center">
+	<!-- table body -->
+	<div class="h-full col-span-1 xl:col-span-3">
+		<app-personal-account-daily-entries-table
+			(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
+			(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
+			[personalAccountDailyData]="personalAccountDailyData$ | async"
+		></app-personal-account-daily-entries-table>
+	</div>
+
+	<!-- spending allocation by tags -->
+	<div class="hidden col-span-2 xl:block">
+		<app-generic-chart
+			*ngIf="personalAccountDailyExpensePieChart$ | async as series"
+			chartTitlePosition="center"
+			[chartType]="ChartType.pie"
+			[heightPx]="375"
+			[showDataLabel]="true"
+			[series]="[series]"
+		></app-generic-chart>
+	</div>
+</div>

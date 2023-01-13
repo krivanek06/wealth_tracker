@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PersonalAccountParent } from '../../classes';
 import { PersonalAccountOverviewChartModule } from '../../components';
-import { PersonalAccountDailyDataContainerModule } from '../../containers';
+import { PersonalAccountDailyDataContainerComponent } from '../../containers';
 import { GenericChartModule, ScrollWrapperModule, ValuePresentationItemModule } from './../../../../shared/components';
 import { ChartType } from './../../../../shared/models';
 
@@ -12,7 +12,7 @@ import { ChartType } from './../../../../shared/models';
 	standalone: true,
 	imports: [
 		CommonModule,
-		PersonalAccountDailyDataContainerModule,
+		PersonalAccountDailyDataContainerComponent,
 		GenericChartModule,
 		ValuePresentationItemModule,
 		ScrollWrapperModule,

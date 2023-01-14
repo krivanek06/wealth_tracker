@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
-import { ChartType, GenericChartSeries, GenericChartSeriesPie } from '../../models';
+import { ChartType, GenericChartSeries, GenericChartSeriesPie } from '../../../models';
 
 NoDataToDisplay(Highcharts);
 // highcharts3D(Highcharts);
@@ -87,9 +87,6 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 			this.chartOptions.xAxis.type = 'category';
 		} else if (this.chartType === ChartType.areaChange) {
 			this.initAreaChange();
-		} else if (this.chartType === ChartType.pie) {
-			this.initPieChart();
-			return;
 		}
 
 		if (this.categories.length > 0) {
@@ -326,11 +323,22 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 					tooltip: {
 						headerFormat: null,
 						style: {
-							fontSize: '12px',
+							fontSize: '13px',
 							color: '#D9D8D8',
 						},
-						pointFormat:
-							'<span style="color:{point.color}; font-weight: bold">{point.name}</span> :<b>{point.percentage:.1f} %</b><br/>',
+						pointFormatter: function () {
+							const that = this as any;
+							// rounded value
+							const rounded = Math.round(that.percentage * 100) / 100;
+
+							const result = `
+              <div class="text-sm">
+                  <span style="color: ${that.color}">● ${that.name}: </span>
+                  <span>${rounded}%</span>
+              </div>
+                `;
+							return result;
+						},
 					},
 					dataLabels: {
 						style: {
@@ -399,16 +407,6 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 					},
 				},
 			},
-		};
-	}
-
-	private initPieChart() {
-		if (this.showDataLabel) {
-			return;
-		}
-		this.chartOptions.legend.labelFormatter = function () {
-			const value = this.percentage.toFixed(2);
-			return '<span style="color:' + this.color + '">' + this.name + ': </span>(<b>' + value + '%)<br/>';
 		};
 	}
 }

@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import {
-	PersonalAccountAggregationDataOutput,
+	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountDetailsFragment,
 	PersonalAccountTagFragment,
 	TagDataType,
 } from '../../../core/graphql';
-import { ChartType, GenericChartSeries, ValuePresentItem } from '../../../shared/models';
+import { ChartType, GenericChartSeries, GenericChartSeriesData, GenericChartSeriesPie } from '../../../shared/models';
 import { DateServiceUtil } from '../../../shared/utils';
 import { AccountState, TagColors } from '../models';
 
@@ -190,23 +190,26 @@ export class PersonalAccountChartService {
 		return series;
 	}
 
-	createValuePresentItemFromTag(
-		tags: PersonalAccountAggregationDataOutput[]
-	): ValuePresentItem<PersonalAccountTagFragment>[] {
-		const totalValue = tags.reduce((a, b) => a + b.value, 0);
+	getExpenseAllocationChartData(data: PersonalAccountDailyDataOutputFragment[]): GenericChartSeriesPie {
+		const seriesData = data.reduce((acc, curr) => {
+			// ignore income
+			if (curr.personalAccountTag.type === TagDataType.Income) {
+				return acc;
+			}
 
-		return tags.map((d) => {
-			const data: ValuePresentItem<PersonalAccountTagFragment> = {
-				color: d.tag.color,
-				imageSrc: d.tag.imageUrl,
-				imageType: 'url',
-				name: d.tag.name,
-				value: d.value,
-				valuePrct: d.value / totalValue,
-				item: d.tag,
-			};
+			// find index of saved tag
+			const dataIndex = acc.findIndex((d) => d.name === curr.personalAccountTag.name);
+			if (dataIndex === -1) {
+				// new tag
+				acc = [...acc, { name: curr.personalAccountTag.name, y: curr.value, color: curr.personalAccountTag.color }];
+			} else {
+				// increase value for tag
+				acc[dataIndex].y += curr.value;
+			}
 
-			return data;
-		});
+			return acc;
+		}, [] as GenericChartSeriesData[]);
+
+		return { data: seriesData, colorByPoint: true, name: 'Expenses', innerSize: '70%', type: 'pie' };
 	}
 }

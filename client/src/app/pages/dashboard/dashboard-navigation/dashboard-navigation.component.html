@@ -1,0 +1,14 @@
+<!-- navigation medium and up -->
+<mat-tab-group dynamicHeight class="hidden sm:block" (selectedTabChange)="onSelectChange($event)">
+	<mat-tab *ngFor="let account of availableAccounts" [label]="account.name"> </mat-tab>
+</mat-tab-group>
+
+<!-- navigation small -->
+<div class="block sm:hidden">
+	<mat-form-field appearance="outline" class="w-full mb-3">
+		<mat-label>Select account</mat-label>
+		<mat-select [formControl]="accountFormControl">
+			<mat-option *ngFor="let account of availableAccounts" [value]="account"> {{account.name}} </mat-option>
+		</mat-select>
+	</mat-form-field>
+</div>

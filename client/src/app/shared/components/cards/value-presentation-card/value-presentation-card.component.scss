@@ -1,11 +1,5 @@
 :host {
-	.c-overflow-scroll {
-		overflow: scroll;
-	}
-
-	mat-card {
-		background-color: #2f3474 !important;
-	}
+	display: block;
 
 	mat-card-content {
 		height: inherit;

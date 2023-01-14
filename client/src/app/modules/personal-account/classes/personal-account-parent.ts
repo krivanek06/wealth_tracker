@@ -19,7 +19,7 @@ import {
 } from '../../../shared/models';
 import { DateServiceUtil } from '../../../shared/utils';
 import { PersonalAccountDailyDataEntryComponent } from '../modals';
-import { AccountState } from '../models';
+import { AccountState, PersonalAccountTagAggregation } from '../models';
 import { PersonalAccountChartService, PersonalAccountDataService } from '../services';
 
 @Directive()
@@ -67,6 +67,11 @@ export abstract class PersonalAccountParent {
 	 * Daily data transformed into expense allocation chart
 	 */
 	personalAccountDailyExpensePieChart$!: Observable<GenericChartSeriesPie | null>;
+
+	/**
+	 * Aggregating daily data by distinct tag for a time period (month/week)
+	 */
+	accountTagAggregationForTimePeriod$!: Observable<PersonalAccountTagAggregation[]>;
 
 	/**
 	 * form used to filter daily data
@@ -162,6 +167,14 @@ export abstract class PersonalAccountParent {
 		this.personalAccountDailyExpensePieChart$ = this.personalAccountDailyData$.pipe(
 			map((result) => (!!result ? this.personalAccountChartService.getExpenseAllocationChartData(result) : null))
 		);
+
+		// aggregate daily data by tag
+		this.accountTagAggregationForTimePeriod$ = this.personalAccountDailyData$.pipe(
+			map((result) => this.personalAccountDataService.getPersonalAccountTagAggregation(result))
+		);
+
+		// TODO - implement UI
+		this.accountTagAggregationForTimePeriod$.subscribe((res) => console.log('eeee', res));
 	}
 
 	onDailyEntryClick(editingDailyData: PersonalAccountDailyDataOutputFragment | null): void {

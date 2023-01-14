@@ -104,9 +104,7 @@ export class PersonalAccountFacadeService {
 		personalAccountId: string,
 		dateFormat: string
 	): Observable<PersonalAccountDailyDataOutputFragment[]> {
-		console.log('eee', dateFormat);
 		const [year, month, week] = dateFormat.split('-').map((d) => Number(d));
-		console.log({ year, month, week });
 
 		return this.personalAccountApiService
 			.getPersonalAccountDailyData({
@@ -150,6 +148,7 @@ export class PersonalAccountFacadeService {
 					});
 				}
 
+				// TODO - fix this, this is no longer valid
 				// check if year and month is possible to select
 				// not present if creating data into the future/past where this is the first daily data
 				const monthlyDataExistence = personalAccount.monthlyData.find((d) => d.year === year && d.month === month);

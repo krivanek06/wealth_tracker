@@ -67,12 +67,13 @@ model PersonalAccount {
 }
 
 type PersonalAccountTag {
-    id        String
-    createdAt DateTime                   @default(now())
-    name      String // custom name 
-    color     String
-    imageUrl  String
-    type      PersonalAccountTagDataType
+    id            String
+    createdAt     DateTime                   @default(now())
+    name          String // custom name 
+    color         String
+    imageUrl      String
+    type          PersonalAccountTagDataType
+    budgetMonthly Float?
 
     // user who created the tag -  N - 1 relationship with user 
     userId String

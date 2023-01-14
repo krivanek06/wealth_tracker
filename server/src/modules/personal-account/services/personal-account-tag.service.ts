@@ -28,6 +28,7 @@ export class PersonalAccountTagService {
 			name: tagDataCreate.name,
 			type: tagDataCreate.type,
 			color: tagDataCreate.color,
+			budgetMonthly: tagDataCreate.budgetMonthly,
 		};
 
 		// save new tag
@@ -53,6 +54,7 @@ export class PersonalAccountTagService {
 			name: tagDataEdit.name,
 			color: tagDataEdit.color,
 			imageUrl: tagDataEdit.imageUrl,
+			budgetMonthly: tagDataEdit.budgetMonthly ?? searchedTag.budgetMonthly,
 		};
 
 		// update all

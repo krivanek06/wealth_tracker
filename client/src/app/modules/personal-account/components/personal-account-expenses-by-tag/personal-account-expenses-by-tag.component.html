@@ -1,0 +1,32 @@
+<button mat-button class="flex items-center gap-2" (click)="onClick()">
+	<!-- tag image -->
+	<div class="bg-[#{{personalAccountTagAggregation.color}}] p-4 w-12 h-12">
+		<img appDefaultImg [src]="personalAccountTagAggregation.imageUrl" alt="tag image" />
+	</div>
+
+	<div class="flex justify-between">
+		<!-- tag name & entries -->
+		<div>
+			<div class="text-base">
+				<span class="text-[#{{personalAccountTagAggregation.color}}]">{{ personalAccountTagAggregation.name }}</span>
+				<span>( {{ personalAccountTagAggregation.totalEntries }} )</span>
+			</div>
+			<div class="text-gray-400">
+				Last entry: {{ personalAccountTagAggregation.lastDataEntryDate | date: 'MMM. d' }}
+			</div>
+		</div>
+
+		<div>
+			<!-- total spending and budget -->
+			<div>
+				<span class="text-white">{{ personalAccountTagAggregation.totalValue | currency }}</span>
+				<ng-container personalAccountTagAggregation.budgetToTimePeriod>
+					<span>/</span>
+					<span class="text-gray-400">{{ personalAccountTagAggregation.budgetToTimePeriod | currency }}</span>
+				</ng-container>
+			</div>
+			<!-- progress bar -->
+			<div>TODO progress bar</div>
+		</div>
+	</div>
+</button>

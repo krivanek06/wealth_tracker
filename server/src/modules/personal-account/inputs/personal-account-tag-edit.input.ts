@@ -1,5 +1,5 @@
-import { ArgsType, Field, InputType } from '@nestjs/graphql';
-import { MaxLength } from 'class-validator';
+import { ArgsType, Field, Float, InputType } from '@nestjs/graphql';
+import { MaxLength, Min } from 'class-validator';
 
 @InputType()
 @ArgsType()
@@ -23,4 +23,10 @@ export class PersonalAccountTagDataEdit {
 	@Field(() => String)
 	@MaxLength(100)
 	personalAccountId: string;
+
+	@Field(() => Float, {
+		defaultValue: null,
+	})
+	@Min(0)
+	budgetMonthly?: number;
 }

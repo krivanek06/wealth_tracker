@@ -5,6 +5,7 @@ fragment PersonalAccountTag on PersonalAccountTag {
 	type
 	color
 	imageUrl
+	budgetMonthly
 }
 
 fragment PersonalAccountDailyDataOutput on PersonalAccountDailyDataOutput {

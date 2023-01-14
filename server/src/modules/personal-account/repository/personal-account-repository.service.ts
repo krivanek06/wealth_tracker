@@ -44,6 +44,7 @@ export class PersonalAccountRepositoryService {
 				name: tag.name,
 				type: tag.type,
 				color: tag.color,
+				budgetMonthly: null,
 			};
 
 			return data;

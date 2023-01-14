@@ -1,6 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, forwardRef, Input, OnInit } from '@angular/core';
-import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { PersonalAccountFilterFormValues } from '../../models';
+import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { FormMatInputWrapperModule } from '../../../../shared/components';
+import { InputSourceWrapper } from '../../../../shared/models';
 import { DateServiceUtil } from './../../../../shared/utils';
 
 @Component({
@@ -8,6 +11,8 @@ import { DateServiceUtil } from './../../../../shared/utils';
 	templateUrl: './personal-account-daily-entries-filter.component.html',
 	styleUrls: ['./personal-account-daily-entries-filter.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
+	imports: [CommonModule, ReactiveFormsModule, FormMatInputWrapperModule, MatButtonModule],
 	providers: [
 		{
 			provide: NG_VALUE_ACCESSOR,
@@ -17,56 +22,34 @@ import { DateServiceUtil } from './../../../../shared/utils';
 	],
 })
 export class PersonalAccountDailyEntriesFilterComponent implements OnInit, ControlValueAccessor {
-	// 2022-7-32, 2022-7-33,
-	@Input() set weeklyIds(ids: string[] | null) {
-		this.displayYearsAndMonths = [
-			...new Set(
-				(ids ?? []).map((d) => {
-					const [year, month] = d.split('-');
-					return `${year}-${month}`;
-				})
-			),
-		];
-	}
-
-	/**
-	 * property to store `${year}-${month}` format from yearsAndMonths
-	 */
-	displayYearsAndMonths!: string[];
+	@Input() filterDateInputSourceWrapper: InputSourceWrapper[] | null = null;
 
 	readonly formGroup = new FormGroup({
-		yearAndMonth: new FormControl<string>('', { nonNullable: true }),
-		week: new FormControl<number>(-1, { nonNullable: true }),
+		dateFilter: new FormControl<string>('', { nonNullable: true }),
 	});
 
-	onChange: (filterState?: PersonalAccountFilterFormValues) => void = () => {};
+	onChange: (dateFilter?: string) => void = () => {};
 	onTouched = () => {};
 
 	constructor() {}
 
 	ngOnInit(): void {
-		this.formGroup.controls.yearAndMonth.valueChanges.subscribe(() => {
-			// on month change reset weeks and tags
-			this.formGroup.controls.week.reset(-1, { emitEvent: false, onlySelf: true });
-			this.notifyParent();
-		});
-
-		this.formGroup.controls.week.valueChanges.subscribe(() => {
-			this.notifyParent();
+		this.formGroup.controls.dateFilter.valueChanges.subscribe((value) => {
+			// value in format year-month-week
+			this.onChange(value);
 		});
 	}
 
 	onCurrentMonthClick(): void {
 		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(new Date());
-		this.formGroup.controls.yearAndMonth.patchValue(`${year}-${month}`);
+		this.formGroup.controls.dateFilter.patchValue(`${year}-${month}`);
 	}
 
-	writeValue(obj: PersonalAccountFilterFormValues): void {
-		console.log('value form filter component', obj);
+	writeValue(value: string): void {
+		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(new Date());
 
 		// save selected month-year into the form
-		this.formGroup.controls.week.reset(-1, { emitEvent: false });
-		this.formGroup.controls.yearAndMonth.patchValue(`${obj.year}-${obj.month}`, { emitEvent: false, onlySelf: true });
+		this.formGroup.controls.dateFilter.reset(`${year}-${month}`, { emitEvent: false });
 	}
 	/**
 	 * Register Component's ControlValueAccessor onChange callback
@@ -80,12 +63,5 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	 */
 	registerOnTouched(fn: PersonalAccountDailyEntriesFilterComponent['onTouched']): void {
 		this.onTouched = fn;
-	}
-
-	private notifyParent(): void {
-		const [year, month] = this.formGroup.controls.yearAndMonth.value.split('-').map((d) => Number(d));
-		const week = this.formGroup.controls.week.value;
-
-		this.onChange({ year, month, week });
 	}
 }

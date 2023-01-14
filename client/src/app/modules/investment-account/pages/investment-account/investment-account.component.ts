@@ -81,7 +81,6 @@ export class InvestmentAccountComponent implements OnInit {
 		this.investmentAccountGrowth$ = this.investmentAccountFacadeApiService.getInvestmentAccountGrowth(
 			this.investmentId
 		);
-
 		this.filteredActiveHoldings$ = combineLatest([
 			this.investmentAccount$,
 			this.sectorFormControl.valueChanges.pipe(startWith(this.sectorFormControl.value)),
@@ -92,22 +91,18 @@ export class InvestmentAccountComponent implements OnInit {
 				)
 			)
 		);
-
 		this.sectorAllocation$ = this.investmentAccount$.pipe(
 			map((acount) => this.investmentAccountCalculatorService.getSectorAllocation(acount))
 		);
-
 		this.totalInvestedAmount$ = this.investmentAccount$.pipe(
 			map((acount) => this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(acount))
 		);
-
 		this.currentInvestedAmout$ = this.investmentAccount$.pipe(
 			map((account) => this.investmentAccountCalculatorService.getInvestmentAccountByIdCurrentInvestedAmout(account))
 		);
 		this.dailyInvestmentChange$ = this.investmentAccount$.pipe(
 			map((account) => this.investmentAccountCalculatorService.getDailyInvestmentChange(account))
 		);
-
 		this.accountPeriodChange$ = combineLatest([this.investmentAccount$, this.investmentAccountGrowth$]).pipe(
 			map(([account, growth]) =>
 				this.investmentAccountCalculatorService.getInvestmentAccountPeriodChange(account.activeHoldings, growth)

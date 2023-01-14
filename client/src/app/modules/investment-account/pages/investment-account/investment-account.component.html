@@ -20,13 +20,13 @@
 
 		<!-- sector allocation -->
 		<app-scroll-wrapper [isFlexRow]="false" [flexColHeightPx]="540" class="hidden 2xl:flex items-center">
-			<app-value-presentation-item
+			<app-value-presentation-button-control
 				[isFlexRow]="false"
 				[formControl]="sectorFormControl"
 				[items]="sectorAllocation$ | async"
 				[multiSelect]="false"
 				itemKey="sectorName"
-			></app-value-presentation-item>
+			></app-value-presentation-button-control>
 		</app-scroll-wrapper>
 	</div>
 
@@ -42,13 +42,13 @@
 
 	<!-- sector allocation -->
 	<app-scroll-wrapper [isFlexRow]="true" class="block 2xl:hidden">
-		<app-value-presentation-item
+		<app-value-presentation-button-control
 			[isFlexRow]="true"
 			[formControl]="sectorFormControl"
 			[items]="sectorAllocation$ | async"
 			[multiSelect]="false"
 			itemKey="sectorName"
-		></app-value-presentation-item>
+		></app-value-presentation-button-control>
 	</app-scroll-wrapper>
 
 	<!-- active investments table -->

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ScrollWrapperModule, ValuePresentationItemModule } from '../../../../shared/components';
+import { ScrollWrapperModule, ValuePresentationButtonControlComponent } from '../../../../shared/components';
 import {
 	InvestmentAccountActiveHoldingsTableModule,
 	InvestmentAccountPeriodChangeModule,
@@ -23,7 +23,7 @@ import { InvestmentAccountComponent } from './investment-account.component';
 		InvestmentAccountStateModule,
 		InvestmentAccountPortfolioGrowthChartModule,
 		ScrollWrapperModule,
-		ValuePresentationItemModule,
+		ValuePresentationButtonControlComponent,
 		ReactiveFormsModule,
 		InvestmentAccountCashChangeModule,
 		InvestmentAccountTransactionsModule,

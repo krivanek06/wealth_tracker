@@ -200,14 +200,16 @@ export class PersonalAccountChartService {
 			// find index of saved tag
 			const dataIndex = acc.findIndex((d) => d.name === curr.personalAccountTag.name);
 			if (dataIndex === -1) {
-				acc = [...acc, { name: curr.personalAccountTag.name, y: curr.value }]; // new tag
+				// new tag
+				acc = [...acc, { name: curr.personalAccountTag.name, y: curr.value, color: curr.personalAccountTag.color }];
 			} else {
-				acc[dataIndex].y += curr.value; // increase value for tag
+				// increase value for tag
+				acc[dataIndex].y += curr.value;
 			}
 
 			return acc;
 		}, [] as GenericChartSeriesData[]);
 
-		return { data: seriesData, colorByPoint: true, name: 'Expenses', innerSize: '30%', type: 'pie' };
+		return { data: seriesData, colorByPoint: true, name: 'Expenses', innerSize: '70%', type: 'pie' };
 	}
 }

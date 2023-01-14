@@ -1,21 +1,27 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, forwardRef, Input, OnInit } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { ValuePresentItem } from '../../models';
+import { MatButtonModule } from '@angular/material/button';
+import { DefaultImgDirective } from '../../../directives';
+import { ValuePresentItem } from '../../../models';
+import { InArrayPipe } from '../../../pipes';
 
 @Component({
-	selector: 'app-value-presentation-item',
-	templateUrl: './value-presentation-item.component.html',
-	styleUrls: ['./value-presentation-item.component.scss'],
+	selector: 'app-value-presentation-button-control',
+	templateUrl: './value-presentation-button-control.component.html',
+	styleUrls: ['./value-presentation-button-control.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
+	imports: [CommonModule, MatButtonModule, DefaultImgDirective, InArrayPipe],
 	providers: [
 		{
 			provide: NG_VALUE_ACCESSOR,
-			useExisting: forwardRef(() => ValuePresentationItemComponent),
+			useExisting: forwardRef(() => ValuePresentationButtonControlComponent),
 			multi: true,
 		},
 	],
 })
-export class ValuePresentationItemComponent<T> implements OnInit, ControlValueAccessor {
+export class ValuePresentationButtonControlComponent<T> implements OnInit, ControlValueAccessor {
 	@Input() items: ValuePresentItem<T>[] | null = [];
 	@Input() itemKey!: keyof T;
 	@Input() multiSelect = true;
@@ -53,14 +59,14 @@ export class ValuePresentationItemComponent<T> implements OnInit, ControlValueAc
 	/**
 	 * Register Component's ControlValueAccessor onChange callback
 	 */
-	registerOnChange(fn: ValuePresentationItemComponent<T>['onChange']): void {
+	registerOnChange(fn: ValuePresentationButtonControlComponent<T>['onChange']): void {
 		this.onChange = fn;
 	}
 
 	/**
 	 * Register Component's ControlValueAccessor onTouched callback
 	 */
-	registerOnTouched(fn: ValuePresentationItemComponent<T>['onTouched']): void {
+	registerOnTouched(fn: ValuePresentationButtonControlComponent<T>['onTouched']): void {
 		this.onTouched = fn;
 	}
 }

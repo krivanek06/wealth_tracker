@@ -16,7 +16,7 @@ import {
 	FormMatInputWrapperModule,
 	GenericChartModule,
 	ScrollWrapperModule,
-	ValuePresentationItemModule,
+	ValuePresentationButtonControlComponent,
 } from './../../../../shared/components';
 
 @Component({
@@ -25,7 +25,7 @@ import {
 	imports: [
 		CommonModule,
 		GenericChartModule,
-		ValuePresentationItemModule,
+		ValuePresentationButtonControlComponent,
 		ScrollWrapperModule,
 		PersonalAccountOverviewChartModule,
 		ReactiveFormsModule,

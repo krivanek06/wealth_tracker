@@ -1,0 +1,22 @@
+<mat-card
+	[ngClass]="{
+    'bg-transparent shadow-none': !showDataInCard,
+    'mat-elevation-z3 bg-gradient-to-r from-wt-color-background-dark to-wt-color-background-medium': showDataInCard
+}"
+>
+	<!-- title -->
+	<mat-card-header class="justify-center">
+		<mat-card-title class="mb-0">
+			<img *ngIf="titleImgUrl" appDefaultImg [src]="titleImgUrl" />
+			<h3 class="mb-0 text-xl g-color-primary">{{ title }}</h3>
+		</mat-card-title>
+	</mat-card-header>
+
+	<!-- content -->
+	<mat-card-content>
+		<!-- default content -->
+		<div class="default g-color-secondary">No data has been found</div>
+
+		<ng-content></ng-content>
+	</mat-card-content>
+</mat-card>

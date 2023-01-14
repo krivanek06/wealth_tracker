@@ -1,11 +1,8 @@
-<app-generic-chart
-	*ngIf="personalAccountDailyExpensePieChart$ | async as series"
-	chartTitlePosition="center"
-	[chartType]="ChartType.pie"
-	[heightPx]="325"
-	[showDataLabel]="false"
-	[series]="[series]"
-></app-generic-chart>
+<!-- account state with chart -->
+<app-personal-account-overview-chart-mobile
+	[chartData]="personalAccountDailyExpensePieChart$ | async"
+	[accountState]="accountState$ | async"
+></app-personal-account-overview-chart-mobile>
 
 <!-- table filter -->
 <ng-container [formGroup]="filterDailyDataGroup">

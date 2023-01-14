@@ -10,7 +10,12 @@ module.exports = {
 			sans: ['sans-serif', 'Poppins'],
 			serif: ['sans-serif', 'Poppins'],
 		},
-		extend: {},
+		extend: {
+			colors: {
+				'wt-color-background-dark': 'var(--color-background-dark)',
+				'wt-color-background-medium': 'var(--color-background-medium)',
+			},
+		},
 		screens: {
 			xs: '475px',
 			...defaultTheme.screens,

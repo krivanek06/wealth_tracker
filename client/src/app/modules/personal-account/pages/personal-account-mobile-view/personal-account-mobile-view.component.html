@@ -4,12 +4,27 @@
 	[accountState]="accountState$ | async"
 ></app-personal-account-overview-chart-mobile>
 
+<mat-divider></mat-divider>
+
 <!-- table filter -->
-<ng-container [formGroup]="filterDailyDataGroup">
-	<app-form-mat-input-wrapper
-		inputCaption="Filter by date"
-		controlName="dateFilter"
-		inputType="SELECT_SOURCE_WRAPPER"
-		[inputSourceWrapper]="filterDateInputSourceWrapper$ | async"
-	></app-form-mat-input-wrapper>
-</ng-container>
+<div class="flex justify-between my-4">
+	<ng-container [formGroup]="filterDailyDataGroup">
+		<app-form-mat-input-wrapper
+			inputCaption="Filter by date"
+			controlName="dateFilter"
+			inputType="SELECT_SOURCE_WRAPPER"
+			[inputSourceWrapper]="filterDateInputSourceWrapper$ | async"
+		></app-form-mat-input-wrapper>
+	</ng-container>
+
+	<div>
+		<mat-checkbox class="mt-4 mr-3" [formControl]="showHistoryFormControl">History</mat-checkbox>
+	</div>
+</div>
+
+<!-- table -->
+<app-personal-account-daily-entries-table
+	(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
+	(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
+	[personalAccountDailyData]="personalAccountDailyData$ | async"
+></app-personal-account-daily-entries-table>

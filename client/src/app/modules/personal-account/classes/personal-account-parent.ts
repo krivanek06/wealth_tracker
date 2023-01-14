@@ -1,5 +1,6 @@
 import { Directive, inject, Input } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, map, merge, Observable, reduce, startWith, switchMap } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../core/api';
 import {
@@ -17,6 +18,7 @@ import {
 	ValuePresentItem,
 } from '../../../shared/models';
 import { DateServiceUtil } from '../../../shared/utils';
+import { PersonalAccountDailyDataEntryComponent } from '../modals';
 import { AccountState } from '../models';
 import { PersonalAccountChartService, PersonalAccountDataService } from '../services';
 
@@ -82,6 +84,7 @@ export abstract class PersonalAccountParent {
 	personalAccountFacadeService = inject(PersonalAccountFacadeService);
 	personalAccountChartService = inject(PersonalAccountChartService);
 	personalAccountDataService = inject(PersonalAccountDataService);
+	dialog = inject(MatDialog);
 
 	ChartType = ChartType;
 
@@ -159,5 +162,16 @@ export abstract class PersonalAccountParent {
 		this.personalAccountDailyExpensePieChart$ = this.personalAccountDailyData$.pipe(
 			map((result) => (!!result ? this.personalAccountChartService.getExpenseAllocationChartData(result) : null))
 		);
+	}
+
+	onDailyEntryClick(editingDailyData: PersonalAccountDailyDataOutputFragment | null): void {
+		this.dialog.open(PersonalAccountDailyDataEntryComponent, {
+			data: {
+				dailyData: editingDailyData,
+				personalAccountId: this.personalAccountBasic.id,
+				personalAccountName: this.personalAccountBasic.name,
+			},
+			panelClass: ['g-mat-dialog-big'],
+		});
 	}
 }

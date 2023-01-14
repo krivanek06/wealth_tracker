@@ -1,20 +1,20 @@
 <div class="relative">
-	<!-- income -->
-	<div class="absolute top-[-7%] right-[-7%]">
-		<app-value-presentation-card title="Income" [showDataInCard]="false">
-			<div class="text-xl text-center text-white">{{ accountState?.incomeTotal| currency }}</div>
-		</app-value-presentation-card>
-	</div>
-
 	<!-- expense -->
-	<div class="absolute top-[-7%] left-[-7%]">
+	<div class="absolute top-[0] left-[-5%]">
 		<app-value-presentation-card title="Expense" [showDataInCard]="false">
 			<div class="text-xl text-center text-white">{{ accountState?.incomeTotal| currency }}</div>
 		</app-value-presentation-card>
 	</div>
 
+	<!-- income -->
+	<div class="absolute top-[0] right-[-5%]">
+		<app-value-presentation-card title="Income" [showDataInCard]="false">
+			<div class="text-xl text-center text-white">{{ accountState?.incomeTotal| currency }}</div>
+		</app-value-presentation-card>
+	</div>
+
 	<!-- expense chart -->
-	<div class="p-4">
+	<div class="p-8">
 		<app-generic-chart
 			*ngIf="chartData"
 			chartTitlePosition="center"
@@ -26,21 +26,21 @@
 	</div>
 
 	<!-- balance -->
-	<div class="absolute top-[35%] left-[30%]">
+	<div class="absolute top-[37%] left-[30%]">
 		<app-value-presentation-card title="Balance" [showDataInCard]="false">
 			<div class="text-xl text-center text-white">{{ accountState?.total | currency }}</div>
 		</app-value-presentation-card>
 	</div>
 
 	<!-- entries -->
-	<div class="absolute bottom-[0] left-[-5%]">
+	<div class="absolute bottom-[4%] left-[-2%]">
 		<app-value-presentation-card title="Entries" [showDataInCard]="false">
 			<div class="text-xl text-center text-white">TODO</div>
 		</app-value-presentation-card>
 	</div>
 
 	<!-- recurring -->
-	<div class="absolute bottom-[0] right-[-12%]">
+	<div class="absolute bottom-[4%] right-[-9%]">
 		<app-value-presentation-card title="Recurring" [showDataInCard]="false">
 			<div class="text-xl text-center text-white">TODO</div>
 		</app-value-presentation-card>

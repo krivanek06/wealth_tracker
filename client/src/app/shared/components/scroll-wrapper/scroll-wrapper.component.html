@@ -3,6 +3,7 @@
 	[ngClass]="{'flex-col': !isFlexRow}"
 	[style.max-height.px]="flexColHeightPx"
 >
+	<!-- left / top arrow -->
 	<button
 		mat-stroked-button
 		[disabled]="isLeftScrollDisabled"
@@ -19,6 +20,7 @@
 		<ng-content></ng-content>
 	</div>
 
+	<!-- right / bottom arrow -->
 	<button
 		[disabled]="isRightScrollDisabled"
 		mat-stroked-button

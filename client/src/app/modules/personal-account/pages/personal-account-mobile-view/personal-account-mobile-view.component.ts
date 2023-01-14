@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FormMatInputWrapperModule, PieChartComponent } from '../../../../shared/components';
+import { FormMatInputWrapperModule, GenericChartModule } from '../../../../shared/components';
 import { PersonalAccountParent } from '../../classes';
 
 @Component({
@@ -10,7 +10,7 @@ import { PersonalAccountParent } from '../../classes';
 	styleUrls: ['./personal-account-mobile-view.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	standalone: true,
-	imports: [CommonModule, PieChartComponent, FormMatInputWrapperModule, ReactiveFormsModule],
+	imports: [CommonModule, FormMatInputWrapperModule, ReactiveFormsModule, GenericChartModule],
 })
 export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {
 	constructor() {

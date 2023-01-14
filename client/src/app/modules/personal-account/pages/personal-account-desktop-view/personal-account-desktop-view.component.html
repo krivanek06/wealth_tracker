@@ -16,11 +16,11 @@
 
 <!-- tag expense legend -->
 <app-scroll-wrapper>
-	<app-value-presentation-item
+	<app-value-presentation-button-control
 		[formControl]="expenseFormControl"
 		[items]="yearlyExpenseTags$ | async"
 		itemKey="id"
-	></app-value-presentation-item>
+	></app-value-presentation-button-control>
 </app-scroll-wrapper>
 
 <div

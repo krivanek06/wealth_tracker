@@ -2,6 +2,7 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule, Routes } from '@angular/router';
 import { ResolveTokenGuard } from '../../core/guards';
 import { InvestmentAccountModule } from '../../modules/investment-account/';
@@ -31,6 +32,7 @@ const routes: Routes = [
 		DashboardNavigationComponent,
 		PersonalAccountMobileViewComponent,
 		ReactiveFormsModule,
+		MatDividerModule,
 	],
 })
 export class DashboardModule {}

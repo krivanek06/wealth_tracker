@@ -8,6 +8,8 @@
 	[formControl]="accountFormControl"
 ></app-dashboard-navigation>
 
+<mat-divider class="sm:hidden"></mat-divider>
+
 <ng-container *ngIf="accountFormControl.value">
 	<!-- personal account -->
 	<app-personal-account

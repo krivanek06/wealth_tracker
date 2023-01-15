@@ -117,6 +117,7 @@ export class PersonalAccountDataService {
 			const budgetToTimePeriod = isWeeklyView && budgetMonthly ? budgetMonthly / weeksInMonth : budgetMonthly;
 
 			const newData: PersonalAccountTagAggregation = {
+				id: curr.tagId,
 				name: curr.personalAccountTag.name,
 				color: curr.personalAccountTag.color,
 				imageUrl: curr.personalAccountTag.imageUrl,

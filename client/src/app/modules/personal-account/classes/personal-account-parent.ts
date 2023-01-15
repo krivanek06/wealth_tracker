@@ -46,7 +46,7 @@ export abstract class PersonalAccountParent {
 	/**
 	 * expense chart by the selected expenses tags
 	 */
-	expenseTagsChartData$!: Observable<GenericChartSeries[]>;
+	totalExpenseTagsChartData$!: Observable<GenericChartSeries[]>;
 
 	/**
 	 * chart categories for X-axis, example: Week 40. Sep
@@ -59,9 +59,9 @@ export abstract class PersonalAccountParent {
 	filterDateInputSourceWrapper$!: Observable<InputSourceWrapper[]>;
 
 	/**
-	 * daily data based on select date interval
+	 * daily data based on select date interval and tags
 	 */
-	personalAccountDailyData$!: Observable<PersonalAccountDailyDataOutputFragment[]>;
+	filteredDailyData$!: Observable<PersonalAccountDailyDataOutputFragment[]>;
 
 	/**
 	 * Daily data transformed into expense allocation chart
@@ -78,11 +78,11 @@ export abstract class PersonalAccountParent {
 	 */
 	today = DateServiceUtil.getDetailsInformationFromDate(new Date());
 	readonly filterDailyDataGroup = new FormGroup({
+		// selected month - format year-month-week, week is optional
 		dateFilter: new FormControl<string>(`${this.today.year}-${this.today.month}`, { nonNullable: true }),
+		// keeps track of visible tags, if empty -> all is visible
+		selectedTagIds: new FormControl<string[]>([], { nonNullable: true }),
 	});
-
-	// keeps track of visible tags, if empty -> all is visible
-	readonly expenseFormControl = new FormControl<PersonalAccountTagFragment[]>([], { nonNullable: true });
 
 	personalAccountBasic!: AccountIdentification;
 
@@ -120,61 +120,71 @@ export abstract class PersonalAccountParent {
 		);
 
 		// construct expense chart by the selected expenses tags
-		this.expenseTagsChartData$ = combineLatest([
+		this.totalExpenseTagsChartData$ = combineLatest([
 			// selected expenses
-			this.expenseFormControl.valueChanges.pipe(startWith(this.expenseFormControl.value)),
+			this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.pipe(
+				startWith(this.filterDailyDataGroup.controls.selectedTagIds.value)
+			),
 			// account
 			this.personalAccountDetails$,
 			// passing all available expense tags to create chart
 			this.yearlyExpenseTags$.pipe(map((yearlyExpenseTags) => yearlyExpenseTags.map((d) => d.item))),
 		]).pipe(
-			map(([activeExpenses, account, availableExpenseTags]) =>
-				this.personalAccountChartService.getWeeklyExpenseChartData(
-					account,
-					'week',
-					availableExpenseTags,
-					activeExpenses
-				)
+			map(([activeTagIds, account, availableExpenseTags]) =>
+				this.personalAccountChartService.getWeeklyExpenseChartData(account, 'week', availableExpenseTags, activeTagIds)
 			)
 		);
 
 		// construct account overview vy the selected expense tags
 		this.accountOverviewChartData$ = combineLatest([
 			// selected expenses
-			this.expenseFormControl.valueChanges.pipe(startWith(this.expenseFormControl.value)),
+			this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.pipe(
+				startWith(this.filterDailyDataGroup.controls.selectedTagIds.value)
+			),
 			// account
 			this.personalAccountDetails$,
 		]).pipe(
-			switchMap(([selectedTags, account]) =>
+			switchMap(([activeTagIds, account]) =>
 				merge(
-					[this.personalAccountChartService.getAccountGrowthChartData(account, 'week', selectedTags)],
-					this.personalAccountChartService.getAccountIncomeExpenseChartData(account, 'week', selectedTags)
+					[this.personalAccountChartService.getAccountGrowthChartData(account, 'week', activeTagIds)],
+					this.personalAccountChartService.getAccountIncomeExpenseChartData(account, 'week', activeTagIds)
 				).pipe(reduce((acc, curr) => [...acc, curr], [] as GenericChartSeries[]))
 			)
 		);
 
-		this.personalAccountDailyData$ = this.filterDailyDataGroup.valueChanges.pipe(
-			startWith(this.filterDailyDataGroup.getRawValue()),
-			switchMap((formResult) =>
-				this.personalAccountFacadeService.getPersonalAccountDailyData(
-					this.personalAccountBasic.id,
-					formResult.dateFilter!
-				)
+		// all daily data for a period
+		const totalDailyDataForTimePeriod$ = this.filterDailyDataGroup.controls.dateFilter.valueChanges.pipe(
+			startWith(this.filterDailyDataGroup.controls.dateFilter.getRawValue()),
+			switchMap((dateFilter) =>
+				this.personalAccountFacadeService.getPersonalAccountDailyData(this.personalAccountBasic.id, dateFilter)
 			)
 		);
 
+		// daily data displayed on UI - filtered by selected tag ids
+		this.filteredDailyData$ = combineLatest([
+			totalDailyDataForTimePeriod$,
+			this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.pipe(startWith([] as string[])),
+		]).pipe(
+			map(([totalDailyData, selectedTagIds]) => {
+				// no tag id is selected
+				if (selectedTagIds.length === 0) {
+					return totalDailyData;
+				}
+
+				// filter by selected tag id
+				return totalDailyData.filter((d) => selectedTagIds.includes(d.tagId));
+			})
+		);
+
 		// calculate expense chart for filtered data
-		this.personalAccountDailyExpensePieChart$ = this.personalAccountDailyData$.pipe(
+		this.personalAccountDailyExpensePieChart$ = totalDailyDataForTimePeriod$.pipe(
 			map((result) => (!!result ? this.personalAccountChartService.getExpenseAllocationChartData(result) : null))
 		);
 
 		// aggregate daily data by tag
-		this.accountTagAggregationForTimePeriod$ = this.personalAccountDailyData$.pipe(
+		this.accountTagAggregationForTimePeriod$ = totalDailyDataForTimePeriod$.pipe(
 			map((result) => this.personalAccountDataService.getPersonalAccountTagAggregation(result))
 		);
-
-		// TODO - implement UI
-		this.accountTagAggregationForTimePeriod$.subscribe((res) => console.log('eeee', res));
 	}
 
 	onDailyEntryClick(editingDailyData: PersonalAccountDailyDataOutputFragment | null): void {

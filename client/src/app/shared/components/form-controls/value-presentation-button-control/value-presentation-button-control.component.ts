@@ -27,9 +27,17 @@ export class ValuePresentationButtonControlComponent<T> implements OnInit, Contr
 	@Input() multiSelect = true;
 	@Input() isFlexRow = true;
 
+	/**
+	 * put to false if you want to notify the parent only by <keyof T> or false for <T>
+	 */
+	@Input() selectWholeItem = true;
+
 	activeItems: T[] = [];
 
-	onChange: (data?: T[]) => void = () => {};
+	/**
+	 * parent can be notified by the whole object <T[]> or by its key <T[keyof T][]>
+	 */
+	onChange: (data?: T[] | T[keyof T][]) => void = () => {};
 	onTouched = () => {};
 
 	constructor() {}
@@ -49,11 +57,16 @@ export class ValuePresentationButtonControlComponent<T> implements OnInit, Contr
 		}
 
 		// notify parent
-		this.onChange(this.activeItems);
+		if (this.selectWholeItem) {
+			this.onChange(this.activeItems);
+		} else {
+			const keyValue = this.activeItems.map((d) => d[this.itemKey]);
+			this.onChange(keyValue);
+		}
 	}
 
-	writeValue(tags: T[]): void {
-		this.activeItems = [...tags];
+	writeValue(items: T[]): void {
+		this.activeItems = [...items];
 	}
 
 	/**

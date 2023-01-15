@@ -1,0 +1,53 @@
+<ng-container *ngIf="aggregations">
+	<button
+		*ngFor="let aggregation of aggregations"
+		mat-button
+		(click)="onClick(aggregation)"
+		class="w-full p-0 mb-2 shadow-lg md:py-4 g-background-card-color h-[75px]"
+	>
+		<div class="flex items-center gap-2">
+			<!-- tag image -->
+			<div class="p-2 rounded-l-xl w-14 h-[75px]" style="background-color: {{aggregation.color}};">
+				<img appDefaultImg [src]="aggregation.imageUrl" imageType="url" alt="tag image" class="h-8 m-auto mt-3" />
+			</div>
+
+			<div class="flex items-start justify-between flex-1 pr-4">
+				<!-- tag name & entries -->
+				<div class="text-start">
+					<div class="space-x-1 text-sm">
+						<span style="color: {{aggregation.color}}">{{ aggregation.name }}</span>
+						<span class="text-gray-400">({{ aggregation.totalEntries }})</span>
+					</div>
+					<div class="text-gray-400">Last: {{ aggregation.lastDataEntryDate | date: 'MMM. d' }}</div>
+				</div>
+
+				<div class="text-end min-w-[100px]">
+					<!-- total spending and budget -->
+					<div>
+						<span class="text-white">{{ aggregation.totalValue | currency }}</span>
+						<ng-container *ngIf="aggregation.budgetToTimePeriod">
+							<span>/</span>
+							<span class="text-gray-400">{{ aggregation.budgetToTimePeriod | currency }}</span>
+						</ng-container>
+					</div>
+					<!-- progress bar -->
+					<div>
+						<mat-progress-bar
+							mode="determinate"
+							class="h-2 rounded-lg"
+							[value]="aggregation.budgetToTimePeriodFilledPrct"
+							[ngClass]="{
+              'VERY_LOW_VALUE': aggregation.budgetToTimePeriodFilledPrct <= 15,
+              'LOW_VALUE': aggregation.budgetToTimePeriodFilledPrct > 15 && aggregation.budgetToTimePeriodFilledPrct <= 30,
+              'MEDIUM':  aggregation.budgetToTimePeriodFilledPrct > 30 && aggregation.budgetToTimePeriodFilledPrct <= 45,
+              'HIGH':  aggregation.budgetToTimePeriodFilledPrct > 45 && aggregation.budgetToTimePeriodFilledPrct <= 65,
+              'VERY_HIGH':  aggregation.budgetToTimePeriodFilledPrct > 65 && aggregation.budgetToTimePeriodFilledPrct <= 85,
+              'TOO_MUCH':  aggregation.budgetToTimePeriodFilledPrct > 80
+          }"
+						></mat-progress-bar>
+					</div>
+				</div>
+			</div>
+		</div>
+	</button>
+</ng-container>

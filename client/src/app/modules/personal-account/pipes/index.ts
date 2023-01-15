@@ -1,1 +1,1 @@
-export * from './personal-account-daily-entry-filter.pipe';
+export * from './get-tag-by-id.pipe';

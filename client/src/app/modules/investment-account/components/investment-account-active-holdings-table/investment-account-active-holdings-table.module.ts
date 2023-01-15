@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { ProgressItemModule } from '../../../../shared/components';
+import { ProgressItemComponent } from '../../../../shared/components';
 import {
 	DefaultImgDirective,
 	PerceptageIncreaseDirective,
@@ -28,7 +28,7 @@ import { InvestmentAccountActiveHoldingsTableComponent } from './investment-acco
 		MatButtonModule,
 		DefaultImgDirective,
 		LargeNumberFormatterPipe,
-		ProgressItemModule,
+		ProgressItemComponent,
 		PerceptageIncreaseDirective,
 	],
 	exports: [InvestmentAccountActiveHoldingsTableComponent],

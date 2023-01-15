@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, Float, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { PersonalAccountTag as PersonalAccountTagClient, PersonalAccountTagDataType } from '@prisma/client';
 
 registerEnumType(PersonalAccountTagDataType, {
@@ -37,4 +37,10 @@ export class PersonalAccountTag implements PersonalAccountTagClient {
 		nullable: true,
 	})
 	userId: string | null;
+
+	@Field(() => Float, {
+		description: 'Monthly budget for a tag',
+		nullable: true,
+	})
+	budgetMonthly: number | null;
 }

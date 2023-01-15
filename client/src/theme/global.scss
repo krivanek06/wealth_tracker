@@ -85,3 +85,7 @@ body {
 	color: var(--color-primary-500) !important;
 	@apply text-2xl;
 }
+
+.g-background-card-color {
+	@apply bg-gradient-to-r from-wt-color-background-dark to-wt-color-background-medium;
+}

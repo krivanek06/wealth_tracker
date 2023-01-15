@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 
 @Component({
@@ -5,6 +6,8 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
 	templateUrl: './progress-item.component.html',
 	styleUrls: ['./progress-item.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
+	imports: [CommonModule],
 })
 export class ProgressItemComponent implements OnInit {
 	@Input() min!: number;

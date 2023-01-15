@@ -102,6 +102,10 @@ export class PersonalAccountDataService {
 							totalValue: selectedTag.totalValue + curr.value,
 							// save last entry time period
 							lastDataEntryDate: curr.date > selectedTag.lastDataEntryDate ? curr.date : selectedTag.lastDataEntryDate,
+							// increase budgetToTimePeriodFilled
+							budgetToTimePeriodFilledPrct:
+								selectedTag.budgetToTimePeriodFilledPrct +
+								(selectedTag.budgetToTimePeriod ? curr.value / selectedTag.budgetToTimePeriod : 0),
 						},
 					},
 				};
@@ -122,6 +126,7 @@ export class PersonalAccountDataService {
 				lastDataEntryDate: curr.date,
 				isWeeklyView,
 				budgetToTimePeriod,
+				budgetToTimePeriodFilledPrct: budgetToTimePeriod ? curr.value / budgetToTimePeriod : 0,
 			};
 			return { ...acc, [key]: newData };
 		}, {} as { [key: string]: PersonalAccountTagAggregation });

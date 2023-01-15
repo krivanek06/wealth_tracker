@@ -22,9 +22,17 @@
 	</div>
 </div>
 
+<!-- tag aggregation -->
+<div>
+	<app-personal-account-expenses-by-tag
+		*ngFor="let data of accountTagAggregationForTimePeriod$ | async"
+		[aggregation]="data"
+	></app-personal-account-expenses-by-tag>
+</div>
+
 <!-- table -->
-<app-personal-account-daily-entries-table
+<!-- <app-personal-account-daily-entries-table
 	(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
 	(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
 	[personalAccountDailyData]="personalAccountDailyData$ | async"
-></app-personal-account-daily-entries-table>
+></app-personal-account-daily-entries-table> -->

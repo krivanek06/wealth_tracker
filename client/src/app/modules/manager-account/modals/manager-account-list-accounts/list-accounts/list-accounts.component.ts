@@ -45,8 +45,4 @@ export class ListAccountsComponent implements OnInit, ControlValueAccessor {
 	registerOnTouched(fn: ListAccountsComponent['onTouched']): void {
 		this.onTouched = fn;
 	}
-
-	setDisabledState?(isDisabled: boolean): void {
-		throw new Error('Method not implemented.');
-	}
 }

@@ -43,9 +43,5 @@ export class PersonalAccountDesktopViewComponent extends PersonalAccountParent i
 		super();
 	}
 
-	ngOnInit(): void {
-		console.log('ON INIT');
-
-		this.accountOverviewChartData$.subscribe((x) => console.log('accountOverviewChartData$', x));
-	}
+	ngOnInit(): void {}
 }

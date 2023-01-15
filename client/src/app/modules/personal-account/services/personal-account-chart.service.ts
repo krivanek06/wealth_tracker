@@ -63,10 +63,8 @@ export class PersonalAccountChartService {
 	getAccountGrowthChartData(
 		data: PersonalAccountDetailsFragment,
 		aggregation: 'week' | 'month' = 'week',
-		activeTags: PersonalAccountTagFragment[] = []
+		activeTagIds: string[] = []
 	): GenericChartSeries {
-		const activeTagIds = activeTags.map((d) => d.id);
-
 		// aggregates total income / expenses on a weekly bases
 		const weeklyAggregation: number[] = data.weeklyAggregaton.map((d) =>
 			d.data.reduce((acc, curr) => {
@@ -103,10 +101,8 @@ export class PersonalAccountChartService {
 	getAccountIncomeExpenseChartData(
 		data: PersonalAccountDetailsFragment,
 		aggregation: 'week' | 'month' = 'week',
-		activeTags: PersonalAccountTagFragment[] = []
+		activeTagIds: string[] = []
 	): [GenericChartSeries, GenericChartSeries] {
-		const activeTagIds = activeTags.map((d) => d.id);
-
 		// reduce data
 		const income: number[] = data.weeklyAggregaton.map((d) =>
 			d.data.filter((d) => d.tag.type === TagDataType.Income).reduce((acc, curr) => acc + curr.value, 0)
@@ -148,10 +144,8 @@ export class PersonalAccountChartService {
 		data: PersonalAccountDetailsFragment,
 		aggregation: 'week' | 'month' = 'week',
 		availableExpenseTags: PersonalAccountTagFragment[] = [],
-		activeTags: PersonalAccountTagFragment[] = []
+		activeTagIds: string[] = []
 	): GenericChartSeries[] {
-		const activeTagIds = activeTags.map((d) => d.id);
-
 		// go through all weekly data and for each availableExpenseTags save a value
 		// if tag not exist for the specifc week, put 0
 		const series = data.weeklyAggregaton

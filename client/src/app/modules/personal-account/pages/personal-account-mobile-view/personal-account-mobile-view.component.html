@@ -6,8 +6,18 @@
 
 <mat-divider></mat-divider>
 
+<!-- action button to add new entry -->
+<div class="w-full h-12 mt-4 mb-1">
+	<button (click)="onDailyEntryClick(null)" mat-stroked-button type="button" color="primary" class="w-full">
+		<mat-icon>add</mat-icon>
+		Add daily entry
+	</button>
+</div>
+
+<mat-divider></mat-divider>
+
 <!-- table filter -->
-<div class="flex justify-between my-4">
+<div class="mt-3">
 	<ng-container [formGroup]="filterDailyDataGroup">
 		<app-form-mat-input-wrapper
 			inputCaption="Filter by date"
@@ -16,23 +26,45 @@
 			[inputSourceWrapper]="filterDateInputSourceWrapper$ | async"
 		></app-form-mat-input-wrapper>
 	</ng-container>
+</div>
 
-	<div>
-		<mat-checkbox class="mt-4 mr-3" [formControl]="showHistoryFormControl">History</mat-checkbox>
+<!-- title & show history checkbox -->
+<div class="flex items-center justify-between mb-4">
+	<div class="text-base">
+		<ng-container *ngIf="!showHistoryFormControl.value">Tag aggregation</ng-container>
+		<ng-container *ngIf="showHistoryFormControl.value">
+			<ng-container *ngIf="filterDailyDataGroup.controls.selectedTagIds.value.length > 0">
+				Tag:
+				<ng-container
+					*ngIf="personalAccountBasic | getTagById: filterDailyDataGroup.controls.selectedTagIds.value[0] | async as selectedTag"
+				>
+					<span style="color: {{selectedTag.color}}"> {{ selectedTag.name}} </span>
+				</ng-container>
+			</ng-container>
+			<ng-container *ngIf="filterDailyDataGroup.controls.selectedTagIds.value.length === 0">
+				Show History
+			</ng-container>
+		</ng-container>
 	</div>
+
+	<mat-checkbox class="mr-3" [formControl]="showHistoryFormControl">Show history</mat-checkbox>
 </div>
 
 <!-- tag aggregation -->
-<div>
+<ng-container *ngIf="!showHistoryFormControl.value">
 	<app-personal-account-expenses-by-tag
-		*ngFor="let data of accountTagAggregationForTimePeriod$ | async"
-		[aggregation]="data"
+		[formControl]="filterDailyDataGroup.controls.selectedTagIds"
+		[aggregations]="accountTagAggregationForTimePeriod$ | async"
+		[multiple]="false"
 	></app-personal-account-expenses-by-tag>
-</div>
+</ng-container>
 
-<!-- table -->
-<!-- <app-personal-account-daily-entries-table
-	(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
-	(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
-	[personalAccountDailyData]="personalAccountDailyData$ | async"
-></app-personal-account-daily-entries-table> -->
+<!-- historical data -->
+<ng-container *ngIf="filteredDailyData$ | async as filteredDailyData">
+	<app-personal-account-daily-entries-table
+		*ngIf="showHistoryFormControl.value"
+		(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
+		(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
+		[personalAccountDailyData]="filteredDailyData"
+	></app-personal-account-daily-entries-table>
+</ng-container>

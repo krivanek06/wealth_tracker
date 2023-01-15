@@ -13,6 +13,7 @@ export interface AccountState {
  *  - total entries - how many entries were created for a time period
  */
 export interface PersonalAccountTagAggregation {
+	id: string;
 	color: string;
 	/** URL to image */
 	imageUrl: string;

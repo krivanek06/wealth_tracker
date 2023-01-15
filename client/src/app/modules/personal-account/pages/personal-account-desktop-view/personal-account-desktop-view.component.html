@@ -17,16 +17,17 @@
 <!-- tag expense legend -->
 <app-scroll-wrapper>
 	<app-value-presentation-button-control
-		[formControl]="expenseFormControl"
+		[formControl]="filterDailyDataGroup.controls.selectedTagIds"
 		[items]="yearlyExpenseTags$ | async"
 		itemKey="id"
+		[selectWholeItem]="false"
 	></app-value-presentation-button-control>
 </app-scroll-wrapper>
 
 <div
 	*ngIf="{
   categories: categories$ | async,
-  expenseTagsChartData : expenseTagsChartData$ | async ,
+  expenseTagsChartData : totalExpenseTagsChartData$ | async ,
   accountOverviewChartData: accountOverviewChartData$ | async
 } as obs"
 >
@@ -63,7 +64,7 @@
 		<app-personal-account-daily-entries-table
 			(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
 			(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
-			[personalAccountDailyData]="personalAccountDailyData$ | async"
+			[personalAccountDailyData]="filteredDailyData$ | async"
 		></app-personal-account-daily-entries-table>
 	</div>
 

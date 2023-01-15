@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import {
 	PersonalAccountAggregationDataOutput,
+	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountTagFragment,
 	PersonalAccountWeeklyAggregationFragment,
 } from '../../../core/graphql';
 import { InputSource, InputSourceWrapper, ValuePresentItem } from '../../../shared/models';
 import { DateServiceUtil } from '../../../shared/utils';
+import { PersonalAccountTagAggregation } from '../models';
 
 @Injectable({
 	providedIn: 'root',
@@ -54,6 +56,11 @@ export class PersonalAccountDataService {
 			.reverse();
 	}
 
+	/**
+	 *
+	 * @param tags
+	 * @returns transformed tags into a value type that is displayed for filtering purposes
+	 */
 	createValuePresentItemFromTag(
 		tags: PersonalAccountAggregationDataOutput[]
 	): ValuePresentItem<PersonalAccountTagFragment>[] {
@@ -72,5 +79,59 @@ export class PersonalAccountDataService {
 
 			return data;
 		});
+	}
+
+	getPersonalAccountTagAggregation(
+		dailyData: PersonalAccountDailyDataOutputFragment[],
+		isWeeklyView = false
+	): PersonalAccountTagAggregation[] {
+		const data = dailyData.reduce((acc, curr) => {
+			const key = curr.tagId;
+			const selectedTag: PersonalAccountTagAggregation = acc[key];
+
+			// already in accumulator
+			if (selectedTag) {
+				return {
+					...acc,
+					...{
+						[key]: {
+							...acc[key],
+							// increase total entry
+							totalEntries: selectedTag.totalEntries + 1,
+							// add total value
+							totalValue: selectedTag.totalValue + curr.value,
+							// save last entry time period
+							lastDataEntryDate: curr.date > selectedTag.lastDataEntryDate ? curr.date : selectedTag.lastDataEntryDate,
+							// increase budgetToTimePeriodFilled
+							budgetToTimePeriodFilledPrct:
+								selectedTag.budgetToTimePeriodFilledPrct +
+								(selectedTag.budgetToTimePeriod ? curr.value / selectedTag.budgetToTimePeriod : 0),
+						},
+					},
+				};
+			}
+
+			// data not yet present
+			const weeksInMonth = DateServiceUtil.getWeeksInMonth(Number(curr.date));
+			const budgetMonthly = curr.personalAccountTag.budgetMonthly;
+			const budgetToTimePeriod = isWeeklyView && budgetMonthly ? budgetMonthly / weeksInMonth : budgetMonthly;
+
+			const newData: PersonalAccountTagAggregation = {
+				id: curr.tagId,
+				name: curr.personalAccountTag.name,
+				color: curr.personalAccountTag.color,
+				imageUrl: curr.personalAccountTag.imageUrl,
+				type: curr.personalAccountTag.type,
+				totalEntries: 1,
+				totalValue: curr.value,
+				lastDataEntryDate: curr.date,
+				isWeeklyView,
+				budgetToTimePeriod,
+				budgetToTimePeriodFilledPrct: budgetToTimePeriod ? curr.value / budgetToTimePeriod : 0,
+			};
+			return { ...acc, [key]: newData };
+		}, {} as { [key: string]: PersonalAccountTagAggregation });
+
+		return Object.values(data);
 	}
 }

@@ -641,6 +641,8 @@ export type PersonalAccountMonthlyData = {
 
 export type PersonalAccountTag = {
   __typename?: 'PersonalAccountTag';
+  /** Monthly budget for a tag */
+  budgetMonthly?: Maybe<Scalars['Float']>;
   /** Color of the tag */
   color: Scalars['String'];
   createdAt: Scalars['String'];
@@ -655,6 +657,7 @@ export type PersonalAccountTag = {
 };
 
 export type PersonalAccountTagDataCreate = {
+  budgetMonthly?: InputMaybe<Scalars['Float']>;
   color: Scalars['String'];
   imageUrl: Scalars['String'];
   name: Scalars['String'];
@@ -669,6 +672,7 @@ export type PersonalAccountTagDataDelete = {
 };
 
 export type PersonalAccountTagDataEdit = {
+  budgetMonthly?: InputMaybe<Scalars['Float']>;
   color: Scalars['String'];
   id: Scalars['String'];
   imageUrl: Scalars['String'];
@@ -981,19 +985,19 @@ export type GetTransactionSymbolsQueryVariables = Exact<{
 
 export type GetTransactionSymbolsQuery = { __typename?: 'Query', getTransactionSymbols: Array<string> };
 
-export type PersonalAccountTagFragment = { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string };
+export type PersonalAccountTagFragment = { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null };
 
-export type PersonalAccountDailyDataOutputFragment = { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, monthlyDataId: string, personalAccountId: string, week: number, personalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } };
+export type PersonalAccountDailyDataOutputFragment = { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, monthlyDataId: string, personalAccountId: string, week: number, personalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } };
 
 export type PersonalAccountMonthlyDataOverviewFragment = { __typename?: 'PersonalAccountMonthlyData', month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number };
 
 export type PersonalAccountOverviewFragment = { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType };
 
-export type PersonalAccountDetailsFragment = { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType, personalAccountTag: Array<{ __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string }>, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> };
+export type PersonalAccountDetailsFragment = { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType, personalAccountTag: Array<{ __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null }>, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> };
 
-export type PersonalAccountAggregationDataFragment = { __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } };
+export type PersonalAccountAggregationDataFragment = { __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } };
 
-export type PersonalAccountWeeklyAggregationFragment = { __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } }> };
+export type PersonalAccountWeeklyAggregationFragment = { __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } }> };
 
 export type GetPersonalAccountsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1005,7 +1009,7 @@ export type GetPersonalAccountByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetPersonalAccountByIdQuery = { __typename?: 'Query', getPersonalAccountById: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType, personalAccountTag: Array<{ __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string }>, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> } };
+export type GetPersonalAccountByIdQuery = { __typename?: 'Query', getPersonalAccountById: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType, personalAccountTag: Array<{ __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null }>, yearlyAggregaton: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } }>, weeklyAggregaton: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } }> }>, monthlyData: Array<{ __typename?: 'PersonalAccountMonthlyData', month: number, year: number, dailyEntries: number, monthlyIncome: number, monthlyExpense: number }> } };
 
 export type CreatePersonalAccountMutationVariables = Exact<{
   name: Scalars['String'];
@@ -1033,49 +1037,49 @@ export type CreatePersonalAccountTagMutationVariables = Exact<{
 }>;
 
 
-export type CreatePersonalAccountTagMutation = { __typename?: 'Mutation', createPersonalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } };
+export type CreatePersonalAccountTagMutation = { __typename?: 'Mutation', createPersonalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } };
 
 export type EditPersonalAccountTagMutationVariables = Exact<{
   input: PersonalAccountTagDataEdit;
 }>;
 
 
-export type EditPersonalAccountTagMutation = { __typename?: 'Mutation', editPersonalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } };
+export type EditPersonalAccountTagMutation = { __typename?: 'Mutation', editPersonalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } };
 
 export type DeletePersonalAccountTagMutationVariables = Exact<{
   input: PersonalAccountTagDataDelete;
 }>;
 
 
-export type DeletePersonalAccountTagMutation = { __typename?: 'Mutation', deletePersonalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } };
+export type DeletePersonalAccountTagMutation = { __typename?: 'Mutation', deletePersonalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } };
 
 export type GetPersonalAccountDailyDataQueryVariables = Exact<{
   input: PersonalAccountDailyDataQuery;
 }>;
 
 
-export type GetPersonalAccountDailyDataQuery = { __typename?: 'Query', getPersonalAccountDailyData: Array<{ __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, monthlyDataId: string, personalAccountId: string, week: number, personalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } }> };
+export type GetPersonalAccountDailyDataQuery = { __typename?: 'Query', getPersonalAccountDailyData: Array<{ __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, monthlyDataId: string, personalAccountId: string, week: number, personalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } }> };
 
 export type CreatePersonalAccountDailyEntryMutationVariables = Exact<{
   input: PersonalAccountDailyDataCreate;
 }>;
 
 
-export type CreatePersonalAccountDailyEntryMutation = { __typename?: 'Mutation', createPersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, monthlyDataId: string, personalAccountId: string, week: number, personalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } } };
+export type CreatePersonalAccountDailyEntryMutation = { __typename?: 'Mutation', createPersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, monthlyDataId: string, personalAccountId: string, week: number, personalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } } };
 
 export type DeletePersonalAccountDailyEntryMutationVariables = Exact<{
   input: PersonalAccountDailyDataDelete;
 }>;
 
 
-export type DeletePersonalAccountDailyEntryMutation = { __typename?: 'Mutation', deletePersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, monthlyDataId: string, personalAccountId: string, week: number, personalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } } };
+export type DeletePersonalAccountDailyEntryMutation = { __typename?: 'Mutation', deletePersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, monthlyDataId: string, personalAccountId: string, week: number, personalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } } };
 
 export type EditPersonalAccountDailyEntryMutationVariables = Exact<{
   input: PersonalAccountDailyDataEdit;
 }>;
 
 
-export type EditPersonalAccountDailyEntryMutation = { __typename?: 'Mutation', editPersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyDataEditOutput', originalDailyData: { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, monthlyDataId: string, personalAccountId: string, week: number, personalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } }, modifiedDailyData: { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, monthlyDataId: string, personalAccountId: string, week: number, personalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string } } } };
+export type EditPersonalAccountDailyEntryMutation = { __typename?: 'Mutation', editPersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyDataEditOutput', originalDailyData: { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, monthlyDataId: string, personalAccountId: string, week: number, personalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } }, modifiedDailyData: { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, monthlyDataId: string, personalAccountId: string, week: number, personalAccountTag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } } } };
 
 export type UserFragment = { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string, authentication: { __typename?: 'UserAuthentication', authenticationType: AuthenticationType } };
 
@@ -1264,6 +1268,7 @@ export const PersonalAccountTagFragmentDoc = gql`
   type
   color
   imageUrl
+  budgetMonthly
 }
     `;
 export const PersonalAccountDailyDataOutputFragmentDoc = gql`

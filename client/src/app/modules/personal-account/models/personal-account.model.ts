@@ -37,4 +37,10 @@ export interface PersonalAccountTagAggregation {
 	 * otherwise it is weekly budget (budgedMonthly / weeks in month)
 	 */
 	budgetToTimePeriod?: number | null;
+
+	/**
+	 * basically how much % is totalValue from budgetToTimePeriod,
+	 * so if we under the budget it will be under 100%, or can be over
+	 */
+	budgetToTimePeriodFilledPrct: number;
 }

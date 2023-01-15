@@ -1,32 +1,46 @@
-<button mat-button class="flex items-center gap-2" (click)="onClick()">
-	<!-- tag image -->
-	<div class="bg-[#{{personalAccountTagAggregation.color}}] p-4 w-12 h-12">
-		<img appDefaultImg [src]="personalAccountTagAggregation.imageUrl" alt="tag image" />
-	</div>
-
-	<div class="flex justify-between">
-		<!-- tag name & entries -->
-		<div>
-			<div class="text-base">
-				<span class="text-[#{{personalAccountTagAggregation.color}}]">{{ personalAccountTagAggregation.name }}</span>
-				<span>( {{ personalAccountTagAggregation.totalEntries }} )</span>
-			</div>
-			<div class="text-gray-400">
-				Last entry: {{ personalAccountTagAggregation.lastDataEntryDate | date: 'MMM. d' }}
-			</div>
+<button mat-button (click)="onClick()" class="w-full p-0 md:py-4 g-background-card-color">
+	<div class="flex items-center gap-2">
+		<!-- tag image -->
+		<div class="p-2 rounded-l-xl w-14 h-14" style="background-color: {{aggregation.color}};">
+			<img appDefaultImg [src]="aggregation.imageUrl" imageType="url" alt="tag image" class="h-8 m-auto mt-1" />
 		</div>
 
-		<div>
-			<!-- total spending and budget -->
-			<div>
-				<span class="text-white">{{ personalAccountTagAggregation.totalValue | currency }}</span>
-				<ng-container personalAccountTagAggregation.budgetToTimePeriod>
-					<span>/</span>
-					<span class="text-gray-400">{{ personalAccountTagAggregation.budgetToTimePeriod | currency }}</span>
-				</ng-container>
+		<div class="flex items-center justify-between flex-1 pr-4">
+			<!-- tag name & entries -->
+			<div class="leading-6 text-start">
+				<div class="space-x-1 text-sm">
+					<span style="color: {{aggregation.color}}">{{ aggregation.name }}</span>
+					<span class="text-gray-400">({{ aggregation.totalEntries }})</span>
+				</div>
+				<div class="text-gray-400">Last: {{ aggregation.lastDataEntryDate | date: 'MMM. d' }}</div>
 			</div>
-			<!-- progress bar -->
-			<div>TODO progress bar</div>
+
+			<div class="leading-6 text-end min-w-[100px]">
+				<!-- total spending and budget -->
+				<div>
+					<span class="text-white">{{ aggregation.totalValue | currency }}</span>
+					<ng-container *ngIf="aggregation.budgetToTimePeriod">
+						<span>/</span>
+						<span class="text-gray-400">{{ aggregation.budgetToTimePeriod | currency }}</span>
+					</ng-container>
+				</div>
+				<!-- progress bar -->
+				<div>
+					<mat-progress-bar
+						mode="determinate"
+						class="h-2 rounded-lg"
+						[value]="aggregation.budgetToTimePeriodFilledPrct"
+						[ngClass]="{
+              'VERY_LOW_VALUE': aggregation.budgetToTimePeriodFilledPrct <= 15,
+              'LOW_VALUE': aggregation.budgetToTimePeriodFilledPrct > 15 && aggregation.budgetToTimePeriodFilledPrct <= 30,
+              'MEDIUM':  aggregation.budgetToTimePeriodFilledPrct > 30 && aggregation.budgetToTimePeriodFilledPrct <= 45,
+              'HIGH':  aggregation.budgetToTimePeriodFilledPrct > 45 && aggregation.budgetToTimePeriodFilledPrct <= 65,
+              'VERY_HIGH':  aggregation.budgetToTimePeriodFilledPrct > 65 && aggregation.budgetToTimePeriodFilledPrct <= 85,
+              'TOO_MUCH':  aggregation.budgetToTimePeriodFilledPrct > 80
+          }"
+					></mat-progress-bar>
+				</div>
+			</div>
 		</div>
 	</div>
 </button>

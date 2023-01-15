@@ -5,7 +5,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { FormMatInputWrapperModule } from '../../../../shared/components';
 import { PersonalAccountParent } from '../../classes';
-import { PersonalAccountDailyEntriesTableModule, PersonalAccountOverviewChartMobileComponent } from '../../components';
+import {
+	PersonalAccountDailyEntriesTableModule,
+	PersonalAccountExpensesByTagComponent,
+	PersonalAccountOverviewChartMobileComponent,
+} from '../../components';
 @Component({
 	selector: 'app-personal-account-mobile-view',
 	templateUrl: './personal-account-mobile-view.component.html',
@@ -20,6 +24,7 @@ import { PersonalAccountDailyEntriesTableModule, PersonalAccountOverviewChartMob
 		PersonalAccountDailyEntriesTableModule,
 		MatCheckboxModule,
 		MatDividerModule,
+		PersonalAccountExpensesByTagComponent,
 	],
 })
 export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {

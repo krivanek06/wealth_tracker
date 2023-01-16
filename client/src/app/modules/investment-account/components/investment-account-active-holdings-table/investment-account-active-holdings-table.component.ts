@@ -15,7 +15,7 @@ import {
 	InvestmentAccountActiveHoldingOutput,
 	InvestmentAccountActiveHoldingOutputFragment,
 } from '../../../../core/graphql';
-import { GeneralFunctionUtil } from '../../../../shared/utils';
+import { GeneralFunctionUtil } from '../../../../core/utils';
 
 @Component({
 	selector: 'app-investment-account-active-holdings-table',

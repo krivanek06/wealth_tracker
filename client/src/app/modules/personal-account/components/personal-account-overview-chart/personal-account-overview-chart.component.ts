@@ -151,7 +151,7 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 				enabled: false,
 			},
 			legend: {
-				enabled: true,
+				enabled: false,
 				itemStyle: {
 					color: '#acacac',
 					cursor: 'pointer',

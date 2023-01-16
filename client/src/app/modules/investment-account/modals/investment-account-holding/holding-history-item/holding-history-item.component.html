@@ -4,12 +4,12 @@
 	<div class="flex flex-col">
 		<!-- asset symbol + type -->
 		<div class="flex flex-row gap-x-2">
-			<span class="g-color-text-normal flex gap-1 items-center"> {{ history.assetId }} </span>
+			<span class="text-wt-gray-light flex gap-1 items-center"> {{ history.assetId }} </span>
 			<span class="text-gray-500">|</span>
 			<span
 				[ngClass]="{
-                'g-color-danger': history.type === InvestmentAccountHoldingHistoryType.Sell,
-                'g-color-success': history.type === InvestmentAccountHoldingHistoryType.Buy
+                'text-wt-danger-medium': history.type === InvestmentAccountHoldingHistoryType.Sell,
+                'text-wt-success-medium': history.type === InvestmentAccountHoldingHistoryType.Buy
               }"
 				>{{ history.type }}</span
 			>
@@ -23,7 +23,7 @@
 <!-- total value -->
 <div class="flex flex-col items-end leading-6">
 	<div class="flex items-center gap-x-2 flex-col sm:flex-row">
-		<span class="g-color-text-normal text-base">{{ history.units * history.unitValue | currency}}</span>
+		<span class="text-wt-gray-light text-base">{{ history.units * history.unitValue | currency}}</span>
 
 		<!-- SELL operation -->
 		<div

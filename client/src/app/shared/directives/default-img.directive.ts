@@ -1,6 +1,6 @@
 import { Directive, ElementRef, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { GeneralFunctionUtil } from '../../core/utils';
 import { DefaultImageType } from '../models';
-import { GeneralFunctionUtil } from '../utils';
 
 @Directive({
 	selector: '[appDefaultImg]',

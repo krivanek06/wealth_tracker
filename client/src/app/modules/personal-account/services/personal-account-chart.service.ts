@@ -5,8 +5,8 @@ import {
 	PersonalAccountTagFragment,
 	TagDataType,
 } from '../../../core/graphql';
+import { DateServiceUtil } from '../../../core/utils';
 import { ChartType, GenericChartSeries, GenericChartSeriesData, GenericChartSeriesPie } from '../../../shared/models';
-import { DateServiceUtil } from '../../../shared/utils';
 import { AccountState, TagColors } from '../models';
 
 @Injectable({

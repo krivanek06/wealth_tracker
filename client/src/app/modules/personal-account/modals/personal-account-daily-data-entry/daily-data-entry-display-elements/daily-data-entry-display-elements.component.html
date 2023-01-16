@@ -3,8 +3,8 @@
 	<div class="c-item-wrapper">
 		<div
 			[ngClass]="{
-      'g-color-danger':  tagType === TagDataType.Expense,
-      'g-color-success':  tagType === TagDataType.Income
+      'text-wt-danger-medium':  tagType === TagDataType.Expense,
+      'text-wt-success-medium':  tagType === TagDataType.Income
     }"
 		>
 			{{ tagType === TagDataType.Expense ? 'Expense' : 'Income' }}:

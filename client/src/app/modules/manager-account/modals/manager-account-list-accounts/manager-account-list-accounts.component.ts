@@ -10,13 +10,12 @@ import {
 } from '../../../../core/graphql';
 import { requiredValidator } from '../../../../shared/models';
 import { GeneralAccountTypeInputSource } from '../../models';
-import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.util';
+import { DialogServiceUtil } from './../../../../shared/dialogs';
 
 @Component({
 	selector: 'app-manager-account-list-accounts',
 	templateUrl: './manager-account-list-accounts.component.html',
 	styleUrls: ['./manager-account-list-accounts.component.scss'],
-	//changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManagerAccountListAccountsComponent implements OnInit {
 	personalAccounts$!: Observable<PersonalAccountOverviewFragment[]>;

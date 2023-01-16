@@ -3,7 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { InvestmentAccountHoldingHistoryType, InvestmentAccountTransactionOutput } from '../../../../../core/graphql';
-import { GeneralFunctionUtil } from '../../../../../shared/utils';
+import { GeneralFunctionUtil } from '../../../../../core/utils';
 
 @Component({
 	selector: 'app-investment-account-transaction-table',

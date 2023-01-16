@@ -15,16 +15,8 @@ export const PeriodChangeDate = [
 		name: 'Weekly',
 	},
 	{
-		value: 14,
-		name: '2 Weeks',
-	},
-	{
 		value: 31,
 		name: '1 Month',
-	},
-	{
-		value: 62,
-		name: '2 Months',
 	},
 	{
 		value: 93,

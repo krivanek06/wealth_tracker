@@ -10,6 +10,7 @@ import {
 	PersonalAccountTagFragment,
 	TagDataType,
 } from '../../../core/graphql';
+import { DateServiceUtil } from '../../../core/utils';
 import {
 	ChartType,
 	GenericChartSeries,
@@ -17,7 +18,6 @@ import {
 	InputSourceWrapper,
 	ValuePresentItem,
 } from '../../../shared/models';
-import { DateServiceUtil } from '../../../shared/utils';
 import { PersonalAccountDailyDataEntryComponent } from '../modals';
 import { AccountState, PersonalAccountTagAggregation } from '../models';
 import { PersonalAccountChartService, PersonalAccountDataService } from '../services';

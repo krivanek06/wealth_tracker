@@ -5,8 +5,8 @@ import {
 	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
 } from '../../../core/graphql';
+import { DateServiceUtil } from '../../../core/utils';
 import { ValuePresentItem } from '../../../shared/models';
-import { DateServiceUtil } from '../../../shared/utils';
 import {
 	CashAllocation,
 	DailyInvestmentChange,

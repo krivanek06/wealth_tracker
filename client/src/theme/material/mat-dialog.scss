@@ -1,7 +1,7 @@
 mat-dialog-container {
 	width: 100vw !important;
-	background: var(--color-main-dialog) !important;
-	color: var(--color-gray-200) !important;
+	background: var(--background-dark) !important;
+	color: var(--gray-light) !important;
 	padding: 24px !important;
 
 	@screen md {

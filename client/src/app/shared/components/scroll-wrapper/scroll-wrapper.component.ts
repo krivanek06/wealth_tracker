@@ -20,7 +20,7 @@ export class ScrollWrapperComponent implements OnInit, AfterViewInit {
 	@Input() isFlexRow = true;
 	@Input() flexColHeightPx: number = 300;
 
-	buttonHeightPx = 40;
+	buttonHeightPx = 70;
 
 	isLeftScrollDisabled = true;
 	isRightScrollDisabled = false;
@@ -30,7 +30,6 @@ export class ScrollWrapperComponent implements OnInit, AfterViewInit {
 	ngOnInit(): void {}
 
 	ngAfterViewInit(): void {
-		this.buttonHeightPx = this.element.nativeElement.offsetHeight - 20;
 		this.cd.detectChanges();
 	}
 

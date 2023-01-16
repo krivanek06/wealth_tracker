@@ -27,6 +27,7 @@ export class ListAccountsComponent implements OnInit, ControlValueAccessor {
 	constructor() {}
 
 	ngOnInit(): void {
+		// notify parent about the selected account
 		this.selectedAccountControl.valueChanges.subscribe((accounts) => this.onChange(accounts[0]));
 	}
 

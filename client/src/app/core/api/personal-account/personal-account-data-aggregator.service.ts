@@ -6,7 +6,7 @@ import {
 	PersonalAccountWeeklyAggregationOutput,
 	TagDataType,
 } from '../../graphql';
-import { DateServiceUtil } from './../../../shared/utils/date-service.util';
+import { DateServiceUtil } from '../../utils/date-service.util';
 import { PersonalAccountCacheService } from './personal-account-cache.service';
 
 @Injectable({

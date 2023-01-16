@@ -8,8 +8,11 @@
 		mat-stroked-button
 		[disabled]="isLeftScrollDisabled"
 		(click)="onScollChange('decement')"
-		[style.height.px]="buttonHeightPx"
-		[ngClass]="{'w-full': !isFlexRow}"
+		[style.height.px]="isFlexRow ? buttonHeightPx : buttonHeightPx - 30"
+		[ngClass]="{
+        'w-full': !isFlexRow,
+        'min-w-0 w-[75px]': isFlexRow
+    }"
 	>
 		<mat-icon *ngIf="isFlexRow">arrow_back_ios</mat-icon>
 		<mat-icon *ngIf="!isFlexRow">keyboard_arrow_up</mat-icon>
@@ -25,8 +28,11 @@
 		[disabled]="isRightScrollDisabled"
 		mat-stroked-button
 		(click)="onScollChange('increment')"
-		[style.height.px]="buttonHeightPx"
-		[ngClass]="{'w-full': !isFlexRow}"
+		[style.height.px]="isFlexRow ? buttonHeightPx : buttonHeightPx - 30"
+		[ngClass]="{
+        'w-full': !isFlexRow,
+        'min-w-0 w-[75px]': isFlexRow
+    }"
 	>
 		<mat-icon *ngIf="isFlexRow">arrow_forward_ios</mat-icon>
 		<mat-icon *ngIf="!isFlexRow">keyboard_arrow_down</mat-icon>

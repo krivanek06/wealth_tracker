@@ -16,7 +16,7 @@ import {
 	PersonalAccountTagFragment,
 	TagDataType,
 } from '../../graphql';
-import { DateServiceUtil } from './../../../shared/utils/date-service.util';
+import { DateServiceUtil } from '../../utils/date-service.util';
 import { PersonalAccountApiService } from './personal-account-api.service';
 import { PersonalAccountCacheService } from './personal-account-cache.service';
 import { PersonalAccountDataAggregatorService } from './personal-account-data-aggregator.service';
@@ -71,9 +71,6 @@ export class PersonalAccountFacadeService {
 
 				// update cache
 				this.personalAccountCacheService.updatePersonalAccountsOverview([...updatedAccounts]);
-
-				// remove from cache - TODO: gives error
-				// this.personalAccountCacheService.removePersonalAccountFromCache(accountId);
 			})
 		);
 	}
@@ -148,7 +145,6 @@ export class PersonalAccountFacadeService {
 					});
 				}
 
-				// TODO - fix this, this is no longer valid
 				// check if year and month is possible to select
 				// not present if creating data into the future/past where this is the first daily data
 				const monthlyDataExistence = personalAccount.monthlyData.find((d) => d.year === year && d.month === month);

@@ -4,8 +4,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { map, Observable } from 'rxjs';
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import { InvestmentAccountTransactionOutput } from '../../../../core/graphql';
+import { GeneralFunctionUtil } from '../../../../core/utils';
 import { InputSource } from '../../../../shared/models';
-import { GeneralFunctionUtil } from '../../../../shared/utils';
 import { TransactionOrderInputSource } from '../../models';
 
 // TODO - virtual scrolling if many transactions

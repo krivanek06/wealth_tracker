@@ -1,5 +1,5 @@
 import { Directive, Input, OnInit, Renderer2, ViewContainerRef } from '@angular/core';
-import { GeneralFunctionUtil } from '../utils';
+import { GeneralFunctionUtil } from '../../core/utils';
 
 /**
  * Use this if you already have the prct diff & diff

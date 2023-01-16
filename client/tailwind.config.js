@@ -39,6 +39,9 @@ module.exports = {
 				/* table */
 				'wt-table-hover': 'var(--table-hover)',
 				'wt-table-border': 'var(--table-border)',
+
+				/* pulse */
+				'wt-pulse': 'var(--gray-medium)',
 			},
 		},
 		screens: {

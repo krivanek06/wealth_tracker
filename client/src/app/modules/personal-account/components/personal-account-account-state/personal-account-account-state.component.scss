@@ -1,0 +1,11 @@
+:host {
+	@apply flex justify-between gap-4 lg:gap-8;
+
+	.c-text {
+		@apply text-xl text-center text-white mt-2;
+	}
+
+	app-value-presentation-card {
+		@apply flex-1;
+	}
+}

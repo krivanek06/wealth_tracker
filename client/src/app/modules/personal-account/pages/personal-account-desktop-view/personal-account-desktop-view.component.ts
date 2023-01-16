@@ -11,6 +11,7 @@ import {
 } from '../../../../shared/components';
 import { PersonalAccountParent } from '../../classes';
 import {
+	PersonalAccountAccountStateComponent,
 	PersonalAccountDailyEntriesFilterComponent,
 	PersonalAccountDailyEntriesTableModule,
 	PersonalAccountOverviewChartModule,
@@ -33,6 +34,7 @@ import { PersonalAccountDailyDataEntryModule } from '../../modals';
 		PersonalAccountDailyDataEntryModule,
 		FormMatInputWrapperModule,
 		PersonalAccountDailyEntriesFilterComponent,
+		PersonalAccountAccountStateComponent,
 	],
 	templateUrl: './personal-account-desktop-view.component.html',
 	styleUrls: ['./personal-account-desktop-view.component.scss'],

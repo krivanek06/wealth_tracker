@@ -4,6 +4,9 @@ export interface AccountState {
 	total: number;
 	incomeTotal: number;
 	expenseTotal: number;
+	entriesTotal: number;
+	recurringValueTotal: number;
+	recurringEntriesTotal: number;
 }
 
 /**

@@ -21,6 +21,7 @@ export class PersonalAccountChartService {
 	 * @returns accumulated expenses, incomes and their difference
 	 */
 	getAccountState(data: PersonalAccountDetailsFragment): AccountState {
+		const entriesTotal = data.yearlyAggregaton.reduce((acc, curr) => acc + curr.entries, 0);
 		const expenseTotal = data.yearlyAggregaton
 			.filter((d) => d.tag.type === TagDataType.Expense)
 			.reduce((a, b) => a + b.value, 0);
@@ -33,6 +34,9 @@ export class PersonalAccountChartService {
 			expenseTotal,
 			incomeTotal,
 			total,
+			entriesTotal,
+			recurringValueTotal: 0, // todo
+			recurringEntriesTotal: 0, // todo
 		};
 
 		return result;

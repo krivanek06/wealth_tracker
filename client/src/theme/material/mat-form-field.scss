@@ -27,7 +27,7 @@
 	.mat-form-field-prefix {
 		mat-icon {
 			font-size: 18px;
-			color: var(--color-gray-300) !important;
+			color: var(--gray-light) !important;
 		}
 	}
 }
@@ -62,39 +62,39 @@ mat-form-field.mat-form-field-should-float label {
 	}
 
 	label {
-		color: var(--color-gray-300) !important;
+		color: var(--gray-light) !important;
 	}
 }
 
 .mat-form-field-appearance-outline .mat-form-field-outline {
 	font-size: 14px !important;
-	color: var(--color-gray-300) !important;
+	color: var(--gray-light) !important;
 }
 
 mat-form-field span.mat-form-field-label-wrapper label {
 	font-size: 14px !important;
-	color: var(--color-gray-300) !important;
+	color: var(--gray-light) !important;
 }
 
 mat-form-field.mat-focused span.mat-form-field-label-wrapper label {
-	color: var(--color-primary-500) !important;
+	color: var(--primary-dark) !important;
 }
 
 // on Error
 .mat-form-field-appearance-outline.mat-form-field-invalid.mat-form-field-invalid .mat-form-field-outline-thick {
-	color: var(--color-primary-900) !important;
+	color: var(--primary-dark) !important;
 }
 
 .mat-form-field.mat-form-field-invalid .mat-form-field-label {
-	color: var(--color-primary-900) !important;
+	color: var(--primary-dark) !important;
 }
 
 mat-hint {
-	color: var(--color-gray-200) !important;
+	color: var(--gray-light) !important;
 }
 
 mat-divider {
-	background-color: var(--color-gray-400) !important;
+	background-color: var(--gray-medium) !important;
 }
 
 .mat-error {

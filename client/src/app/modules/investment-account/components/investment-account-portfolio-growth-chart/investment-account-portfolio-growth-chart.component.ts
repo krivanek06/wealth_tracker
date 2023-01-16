@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
 import * as Highcharts from 'highcharts';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 import { InvestmentAccountGrowth } from '../../../../core/graphql';
-import { GeneralFunctionUtil } from '../../../../shared/utils';
+import { GeneralFunctionUtil } from '../../../../core/utils';
 
 NoDataToDisplay(Highcharts);
 

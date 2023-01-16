@@ -12,8 +12,33 @@ module.exports = {
 		},
 		extend: {
 			colors: {
-				'wt-color-background-dark': 'var(--color-background-dark)',
-				'wt-color-background-medium': 'var(--color-background-medium)',
+				'wt-background-dark': 'var(--background-dark)',
+				'wt-background-medium': 'var(--background-medium)',
+				'wt-background-light': 'var(--background-light)',
+
+				/* primary */
+				'wt-primary-dark': 'var(--primary-dark)',
+
+				/* secondary */
+				'wt-secondary-dark': 'var(--secondary-dark)',
+				'wt-secondary-medium': 'var(--secondary-medium)',
+
+				/* success */
+				'wt-success-dark': 'var(--success-dark)',
+				'wt-success-medium': 'var(--success-medium)',
+
+				/* danger */
+				'wt-danger-dark': 'var(--danger-dark)',
+				'wt-danger-medium': 'var(--danger-medium)',
+
+				/* gray */
+				'wt-gray-dark': 'var(--gray-dark)',
+				'wt-gray-medium': 'var(--gray-medium)',
+				'wt-gray-light': 'var(--gray-light)',
+
+				/* table */
+				'wt-table-hover': 'var(--table-hover)',
+				'wt-table-border': 'var(--table-border)',
 			},
 		},
 		screens: {

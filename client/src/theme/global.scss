@@ -1,12 +1,18 @@
 @import './custom/custom-paginator.scss';
 
 body {
-	background-color: var(--color-main-background);
-	color: var(--color-main-text);
+	background: linear-gradient(
+		168.19deg,
+		#0e1247 1.34%,
+		rgb(22 29 93 / 95%) 16.59%,
+		#182167 26.25%,
+		#171b54 65.39%,
+		#080f44 91.31%
+	);
+	color: var(--gray-light);
 	padding: 24px;
-	// overflow-x: hidden;
 	height: 100%;
-	margin: 9;
+	background-attachment: fixed;
 }
 
 .g-custom-snack-bar {
@@ -25,9 +31,9 @@ body {
 
 	&.mat-tooltip-panel {
 		.mat-tooltip {
-			color: var(--color-gray-200);
-			background-color: var(--color-gray-800);
-			border: 1px solid var(--color-gray-900);
+			color: var(--gray-light);
+			background-color: var(--gray-dark);
+			border: 1px solid var(--gray-dark);
 			border-radius: 8px;
 			font-size: 14px;
 			padding: 14px;
@@ -37,55 +43,14 @@ body {
 }
 
 .g-bottom-border {
-	border-bottom: 1px solid #494e8b;
-}
-
-/* primary */
-.g-color-primary {
-	color: var(--color-primary-500) !important;
-}
-
-.g-background-primary {
-	background-color: var(--color-primary-500) !important;
-}
-
-/* success */
-.g-color-success {
-	color: var(--color-success-500) !important;
-}
-
-.g-background-color-success {
-	background-color: var(--color-success-500) !important;
-}
-
-/* danger */
-.g-color-danger {
-	color: var(--color-danger-500) !important;
-}
-
-.g-background-color-danger {
-	background-color: var(--color-danger-500) !important;
-}
-
-/* secondary */
-.g-color-secondary {
-	color: var(--color-gray-400) !important;
-}
-
-.g-background-color-secondary {
-	background-color: var(--color-gray-400) !important;
-}
-
-/* white */
-.g-color-text-normal {
-	@apply text-gray-200;
+	border-bottom: 1px solid var(--gray-dark);
 }
 
 .g-section-title {
-	color: var(--color-primary-500) !important;
+	color: var(--primary-dark) !important;
 	@apply text-2xl;
 }
 
 .g-background-card-color {
-	@apply bg-gradient-to-r from-wt-color-background-dark to-wt-color-background-medium;
+	@apply bg-gradient-to-r from-wt-background-dark to-wt-background-medium;
 }

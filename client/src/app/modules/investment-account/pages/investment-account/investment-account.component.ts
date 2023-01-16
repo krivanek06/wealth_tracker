@@ -92,10 +92,10 @@ export class InvestmentAccountComponent implements OnInit {
 			)
 		);
 		this.sectorAllocation$ = this.investmentAccount$.pipe(
-			map((acount) => this.investmentAccountCalculatorService.getSectorAllocation(acount))
+			map((account) => this.investmentAccountCalculatorService.getSectorAllocation(account))
 		);
 		this.totalInvestedAmount$ = this.investmentAccount$.pipe(
-			map((acount) => this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(acount))
+			map((account) => this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(account))
 		);
 		this.currentInvestedAmout$ = this.investmentAccount$.pipe(
 			map((account) => this.investmentAccountCalculatorService.getInvestmentAccountByIdCurrentInvestedAmout(account))

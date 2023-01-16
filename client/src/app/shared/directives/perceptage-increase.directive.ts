@@ -1,5 +1,5 @@
 import { Directive, Input, OnInit, Renderer2, ViewContainerRef } from '@angular/core';
-import { GeneralFunctionUtil } from '../utils';
+import { GeneralFunctionUtil } from '../../core/utils';
 
 /**
  * Use this if you already have the prct diff & diff
@@ -73,7 +73,9 @@ export class PerceptageIncreaseDirective implements OnInit {
 
 		// color to use
 		const color =
-			(!!change && change > 0) || (!!changesPercentage && changesPercentage > 0) ? 'g-color-success' : 'g-color-danger';
+			(!!change && change > 0) || (!!changesPercentage && changesPercentage > 0)
+				? 'text-wt-success-medium'
+				: 'text-wt-danger-medium';
 
 		// create elements
 		const wrapper = this.vr.element.nativeElement;

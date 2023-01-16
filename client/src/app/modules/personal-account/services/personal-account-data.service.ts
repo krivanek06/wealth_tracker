@@ -5,8 +5,8 @@ import {
 	PersonalAccountTagFragment,
 	PersonalAccountWeeklyAggregationFragment,
 } from '../../../core/graphql';
+import { DateServiceUtil } from '../../../core/utils';
 import { InputSource, InputSourceWrapper, ValuePresentItem } from '../../../shared/models';
-import { DateServiceUtil } from '../../../shared/utils';
 import { PersonalAccountTagAggregation } from '../models';
 
 @Injectable({

@@ -1,12 +1,12 @@
 .mat-menu-panel {
-	background-color: var(--color-gray-700) !important;
+	background-color: var(--gray-dark) !important;
 
 	.mat-menu-content {
 		button {
-			color: var(--color-gray-200) !important;
+			color: var(--gray-light) !important;
 
 			mat-icon {
-				color: var(--color-gray-200) !important;
+				color: var(--gray-light) !important;
 			}
 		}
 	}

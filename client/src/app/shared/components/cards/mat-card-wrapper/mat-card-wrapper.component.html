@@ -1,13 +1,10 @@
-<mat-card
-	*ngIf="showDataInCard"
-	[class]="'mat-elevation-z3 bg-gradient-to-r from-wt-color-background-dark to-wt-color-background-medium ' + additionalClasses"
->
+<mat-card *ngIf="showDataInCard" [class]="'mat-elevation-z3 g-background-card-color ' + additionalClasses">
 	<!-- title -->
 	<ng-container *ngIf="title">
 		<mat-card-header>
 			<mat-card-title>
 				<img *ngIf="titleImgUrl" appDefaultImg [src]="titleImgUrl" />
-				<h2 class="mb-0 text-base g-color-primary">{{ title }}</h2>
+				<h2 class="mb-0 text-base text-wt-primary-dark">{{ title }}</h2>
 			</mat-card-title>
 		</mat-card-header>
 		<mat-divider *ngIf="showDivider"></mat-divider>
@@ -24,7 +21,7 @@
 	<!-- content -->
 	<mat-card-content>
 		<!-- default content -->
-		<div class="default g-color-secondary">No data has been found</div>
+		<div class="default text-wt-gray-medium">No data has been found</div>
 
 		<ng-content></ng-content>
 	</mat-card-content>

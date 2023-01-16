@@ -17,13 +17,13 @@
 					<div class="flex flex-col">
 						<!-- asset symbol + type -->
 						<div class="flex flex-row gap-x-2">
-							<span class="g-color-text-normal flex gap-1 items-center"> {{ row.assetId }} </span>
+							<span class="text-wt-gray-light flex gap-1 items-center"> {{ row.assetId }} </span>
 							<span class="text-gray-500 table-cell lg:hidden">|</span>
 							<span
 								class="table-cell lg:hidden"
 								[ngClass]="{
-                  'g-color-danger': row.type === InvestmentAccountHoldingHistoryType.Sell,
-                  'g-color-success': row.type === InvestmentAccountHoldingHistoryType.Buy
+                  'text-wt-danger-medium': row.type === InvestmentAccountHoldingHistoryType.Sell,
+                  'text-wt-success-medium': row.type === InvestmentAccountHoldingHistoryType.Buy
                 }"
 								>{{ row.type }}</span
 							>
@@ -42,8 +42,8 @@
 			<td mat-cell *matCellDef="let row" class="hidden lg:table-cell text-base">
 				<span
 					[ngClass]="{
-            'g-color-danger': row.type === InvestmentAccountHoldingHistoryType.Sell,
-            'g-color-success': row.type === InvestmentAccountHoldingHistoryType.Buy
+            'text-wt-danger-medium': row.type === InvestmentAccountHoldingHistoryType.Sell,
+            'text-wt-success-medium': row.type === InvestmentAccountHoldingHistoryType.Buy
           }"
 					>{{ row.type }}</span
 				>
@@ -80,7 +80,7 @@
 			<th mat-header-cell mat-sort-header *matHeaderCellDef class="hidden md:table-cell">Total</th>
 			<td mat-cell *matCellDef="let row" class="table-cell">
 				<div class="flex flex-col md:flex-row items-end md:items-center gap-x-2">
-					<span class="g-color-text-normal text-base">{{ row.units * row.unitValue | currency}}</span>
+					<span class="text-wt-gray-light text-base">{{ row.units * row.unitValue | currency}}</span>
 					<!-- show this on md lower screen -->
 					<div class="table-cell lg:hidden">
 						<!-- SELL operation -->

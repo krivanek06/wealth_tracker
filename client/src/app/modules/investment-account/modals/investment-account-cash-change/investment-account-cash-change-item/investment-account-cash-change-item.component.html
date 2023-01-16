@@ -13,8 +13,8 @@
 		<div
 			class="text-lg"
 			[ngClass]="{
-            'g-color-success': cashChange.cashValue  > 0,
-            'g-color-danger': cashChange.cashValue < 0
+            'text-wt-success-medium': cashChange.cashValue  > 0,
+            'text-wt-danger-medium': cashChange.cashValue < 0
         }"
 		>
 			{{ cashChange.cashValue | currency }}

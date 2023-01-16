@@ -1,4 +1,6 @@
-<div class="text-lg mb-6 text-center">Account: <span class="g-color-primary">{{ data.personalAccountName }}</span></div>
+<div class="text-lg mb-6 text-center">
+	Account: <span class="text-wt-primary-dark">{{ data.personalAccountName }}</span>
+</div>
 
 <form (ngSubmit)="onSave()" [formGroup]="formGroup">
 	<mat-dialog-content class="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">

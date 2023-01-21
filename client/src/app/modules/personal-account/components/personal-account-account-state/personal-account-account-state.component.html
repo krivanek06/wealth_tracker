@@ -1,0 +1,31 @@
+<!-- balance -->
+<app-value-presentation-card title="Balance" [showDataInCard]="true">
+	<div *ngIf="accountState; else showPulse" class="c-text">{{ accountState.total | currency }}</div>
+</app-value-presentation-card>
+
+<!-- income -->
+<app-value-presentation-card title="Income" [showDataInCard]="true">
+	<div *ngIf="accountState; else showPulse" class="c-text">{{ accountState.incomeTotal | currency }}</div>
+</app-value-presentation-card>
+
+<!-- expenses -->
+<app-value-presentation-card title="Expenses" [showDataInCard]="true">
+	<div *ngIf="accountState; else showPulse" class="c-text">{{ accountState.expenseTotal | currency }}</div>
+</app-value-presentation-card>
+
+<!-- recurring -->
+<app-value-presentation-card title="Recurring" [showDataInCard]="true">
+	<div *ngIf="accountState; else showPulse" class="space-x-2 c-text">
+		{{ accountState.recurringEntriesTotal | currency }} ({{ accountState.recurringEntriesTotal }})
+	</div>
+</app-value-presentation-card>
+
+<!-- entries -->
+<app-value-presentation-card title="Entries" [showDataInCard]="true">
+	<div *ngIf="accountState; else showPulse" class="c-text">{{ accountState.entriesTotal }}</div>
+</app-value-presentation-card>
+
+<!-- loading pulse skeleton -->
+<ng-template #showPulse>
+	<div class="h-4 mt-3 rounded-full animate-pulse bg-wt-pulse"></div>
+</ng-template>

@@ -2,17 +2,15 @@ import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/cor
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { catchError, EMPTY, first, iif, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
-import { InputSource } from '../../../../shared/models';
-import { getTagImageLocation } from '../../models';
-import { PersonalAccountFacadeService } from './../../../../core/api';
+import { PersonalAccountFacadeService } from '../../../../core/api';
 import {
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountTagFragment,
 	TagDataType,
-} from './../../../../core/graphql';
-import { DialogServiceUtil } from './../../../../shared/dialogs';
-import { positiveNumberValidator, requiredValidator } from './../../../../shared/models';
+} from '../../../../core/graphql';
+import { DialogServiceUtil } from '../../../../shared/dialogs';
+import { InputSource, positiveNumberValidator, requiredValidator } from '../../../../shared/models';
 
 @Component({
 	selector: 'app-personal-account-daily-data-entry',
@@ -208,7 +206,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 								caption: d.name,
 								value: d.id,
 								additionalData: d,
-								image: getTagImageLocation(d.name),
+								image: d.imageUrl,
 							} as InputSource;
 						})
 					)

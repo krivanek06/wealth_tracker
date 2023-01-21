@@ -1,17 +1,6 @@
-<!-- present yearly expenses -->
-<div
-	*ngIf="accountState$ | async as accountState"
-	class="flex flex-col justify-between px-4 mb-4 md:flex-row md:justify-around"
->
-	<div class="flex justify-between gap-2 text-2xl text-wt-primary-dark md:justify-start">
-		<span>● Balance:</span> <span>{{ accountState.total | currency }}</span>
-	</div>
-	<div class="flex justify-between gap-2 text-2xl text-wt-success-dark md:justify-start">
-		<span>● Income:</span> <span class="text-gray-200">{{ accountState.incomeTotal | currency }}</span>
-	</div>
-	<div class="flex justify-between gap-2 text-2xl text-wt-danger-dark md:justify-start">
-		<span>● Expense:</span> <span class="text-gray-200">{{accountState.expenseTotal | currency}}</span>
-	</div>
+<!-- account total state -->
+<div class="mb-6">
+	<app-personal-account-account-state [accountState]="accountState$ | async"></app-personal-account-account-state>
 </div>
 
 <!-- tag expense legend -->

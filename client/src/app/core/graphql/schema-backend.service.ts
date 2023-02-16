@@ -18,8 +18,8 @@ export type Scalars = {
 };
 
 export enum AccountType {
-  InvestmentAccount = 'INVESTMENT_ACCOUNT',
-  PersonalAccount = 'PERSONAL_ACCOUNT'
+  Investment = 'INVESTMENT',
+  Personal = 'PERSONAL'
 }
 
 export type AssetGeneral = {

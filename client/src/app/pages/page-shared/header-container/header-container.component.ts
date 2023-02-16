@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../core/auth';
-import { UserFragment } from '../../../core/graphql';
+import { AccountIdentification, UserFragment } from '../../../core/graphql';
 import { ManagerAccountListAccountsComponent } from '../../../modules/manager-account/modals';
 import { LoginModalComponent, UserProfileModalComponent } from '../../../modules/user-settings';
 
@@ -13,6 +13,8 @@ import { LoginModalComponent, UserProfileModalComponent } from '../../../modules
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderContainerComponent implements OnInit {
+	@Input() availableAccounts!: AccountIdentification[];
+
 	authenticatedUser$!: Observable<UserFragment | null>;
 
 	constructor(private authenticationFacadeService: AuthenticationFacadeService, private dialog: MatDialog) {}

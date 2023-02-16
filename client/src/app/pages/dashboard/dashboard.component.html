@@ -1,25 +1,12 @@
-<!-- header -->
-<app-header-container></app-header-container>
+<ng-container *ngIf="availableAccounts$ | async as accounts">
+	<!-- header -->
+	<app-header-container [availableAccounts]="accounts"> </app-header-container>
 
-<!-- dashboard navigation -->
-<app-dashboard-navigation
-	*ngIf="availableAccounts$ | async as accounts"
-	[availableAccounts]="accounts"
-	[formControl]="accountFormControl"
-></app-dashboard-navigation>
+	<!-- dashboard navigation -->
+	<app-dashboard-navigation [availableAccounts]="accounts"></app-dashboard-navigation>
+</ng-container>
 
 <mat-divider class="sm:hidden"></mat-divider>
 
-<ng-container *ngIf="accountFormControl.value">
-	<!-- personal account -->
-	<app-personal-account
-		*ngIf="accountFormControl.value.accountType === AccountType.PersonalAccount"
-		[personalAccountBasic]="accountFormControl.value"
-	></app-personal-account>
-
-	<!-- investment account -->
-	<app-investment-account
-		*ngIf="accountFormControl.value.accountType === AccountType.InvestmentAccount"
-		[investmentAccountsOverview]="accountFormControl.value"
-	></app-investment-account>
-</ng-container>
+<!-- routing -->
+<router-outlet></router-outlet>

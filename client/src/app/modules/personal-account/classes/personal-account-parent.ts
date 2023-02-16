@@ -24,7 +24,10 @@ import { PersonalAccountChartService, PersonalAccountDataService } from '../serv
 
 @Directive()
 export abstract class PersonalAccountParent {
-	@Input() set accountIdentification(data: AccountIdentification) {
+	@Input() set accountIdentification(data: AccountIdentification | undefined | null) {
+		if (!data) {
+			return;
+		}
 		this.personalAccountBasic = data;
 		this.initData(data);
 	}

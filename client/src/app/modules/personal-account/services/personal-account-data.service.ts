@@ -7,7 +7,7 @@ import {
 } from '../../../core/graphql';
 import { DateServiceUtil } from '../../../core/utils';
 import { InputSource, InputSourceWrapper, ValuePresentItem } from '../../../shared/models';
-import { PersonalAccountTagAggregation } from '../models';
+import { NO_DATE_SELECTED, PersonalAccountTagAggregation } from '../models';
 
 @Injectable({
 	providedIn: 'root',
@@ -21,12 +21,24 @@ export class PersonalAccountDataService {
 	 * it is used for filtering account data based on month/week
 	 *
 	 * Values for a month: [year-month-week] [2022-1, 2022-1-1, 2022-1-2, 2022-1-3, 2022-1-4]
+	 * Adding value -1 to display total aggregation
 	 *
 	 * @param weeklyData
 	 * @returns
 	 */
 	getMonthlyInputSource(weeklyData: PersonalAccountWeeklyAggregationFragment[]): InputSourceWrapper[] {
-		return weeklyData
+		// ability to filter everything
+		const allData: InputSourceWrapper = {
+			name: 'All data',
+			items: [
+				{
+					caption: 'Select total aggregation',
+					value: NO_DATE_SELECTED,
+				},
+			],
+		};
+
+		const monthlyInputSources = weeklyData
 			.reduce((acc, curr) => {
 				// format to 'January, 2022'
 				const keyId = `${DateServiceUtil.formatDate(new Date(curr.year, curr.month, 1), 'LLLL')}, ${curr.year}`;
@@ -54,6 +66,8 @@ export class PersonalAccountDataService {
 				return [...acc, { name: keyId, items: [monthlyItem, weeklyItem] }] as InputSourceWrapper[];
 			}, [] as InputSourceWrapper[])
 			.reverse();
+
+		return [allData, ...monthlyInputSources];
 	}
 
 	/**
@@ -81,7 +95,50 @@ export class PersonalAccountDataService {
 		});
 	}
 
-	getPersonalAccountTagAggregation(
+	getPersonalAccountTagAggregationByAggregationData(
+		data: PersonalAccountAggregationDataOutput[]
+	): PersonalAccountTagAggregation[] {
+		console.log('eeeee', data);
+		const result = data.reduce((acc, curr) => {
+			const key = curr.tag.id;
+			const selectedTag: PersonalAccountTagAggregation = acc[key];
+
+			// already in accumulator
+			if (selectedTag) {
+				return {
+					...acc,
+					...{
+						[key]: {
+							...acc[key],
+							// increase total entry
+							totalEntries: selectedTag.totalEntries + curr.entries,
+							// add total value
+							totalValue: selectedTag.totalValue + curr.value,
+						},
+					},
+				};
+			}
+
+			const newData: PersonalAccountTagAggregation = {
+				id: curr.tag.id,
+				name: curr.tag.name,
+				color: curr.tag.color,
+				imageUrl: curr.tag.imageUrl,
+				type: curr.tag.type,
+				totalEntries: curr.entries,
+				totalValue: curr.value,
+				lastDataEntryDate: null,
+				isWeeklyView: false,
+				budgetToTimePeriod: null,
+				budgetToTimePeriodFilledPrct: null,
+			};
+			return { ...acc, [key]: newData };
+		}, {} as { [key: string]: PersonalAccountTagAggregation });
+
+		return Object.values(result);
+	}
+
+	getPersonalAccountTagAggregationByDailyData(
 		dailyData: PersonalAccountDailyDataOutputFragment[],
 		isWeeklyView = false
 	): PersonalAccountTagAggregation[] {
@@ -101,10 +158,13 @@ export class PersonalAccountDataService {
 							// add total value
 							totalValue: selectedTag.totalValue + curr.value,
 							// save last entry time period
-							lastDataEntryDate: curr.date > selectedTag.lastDataEntryDate ? curr.date : selectedTag.lastDataEntryDate,
+							lastDataEntryDate:
+								selectedTag.lastDataEntryDate && curr.date > selectedTag.lastDataEntryDate
+									? curr.date
+									: selectedTag.lastDataEntryDate,
 							// increase budgetToTimePeriodFilled
 							budgetToTimePeriodFilledPrct:
-								selectedTag.budgetToTimePeriodFilledPrct +
+								(selectedTag.budgetToTimePeriodFilledPrct ?? 0) +
 								(selectedTag.budgetToTimePeriod ? curr.value / selectedTag.budgetToTimePeriod : 0),
 						},
 					},

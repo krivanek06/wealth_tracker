@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import {
+	PersonalAccountAggregationDataOutput,
 	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountDetailsFragment,
 	PersonalAccountTagFragment,
+	PersonalAccountWeeklyAggregationOutput,
 	TagDataType,
 } from '../../../core/graphql';
 import { DateServiceUtil } from '../../../core/utils';
@@ -20,13 +22,48 @@ export class PersonalAccountChartService {
 	 * @param data
 	 * @returns accumulated expenses, incomes and their difference
 	 */
-	getAccountState(data: PersonalAccountDetailsFragment): AccountState {
-		const entriesTotal = data.yearlyAggregaton.reduce((acc, curr) => acc + curr.entries, 0);
-		const expenseTotal = data.yearlyAggregaton
-			.filter((d) => d.tag.type === TagDataType.Expense)
+	getAccountState(data: PersonalAccountAggregationDataOutput[]): AccountState {
+		const entriesTotal = data.reduce((acc, curr) => acc + curr.entries, 0);
+		const expenseTotal = data.filter((d) => d.tag.type === TagDataType.Expense).reduce((a, b) => a + b.value, 0);
+		const incomeTotal = data.filter((d) => d.tag.type === TagDataType.Income).reduce((a, b) => a + b.value, 0);
+		const total = incomeTotal - expenseTotal;
+
+		const result: AccountState = {
+			expenseTotal,
+			incomeTotal,
+			total,
+			entriesTotal,
+			recurringValueTotal: 0, // todo
+			recurringEntriesTotal: 0, // todo
+		};
+
+		return result;
+	}
+
+	getAccountStateByDate(data: PersonalAccountWeeklyAggregationOutput[], dateFormat: string): AccountState {
+		const [year, month, week] = DateServiceUtil.dateSplitter(dateFormat);
+
+		// filter out relevant data
+		const weeklyAggregationFiltered = data.filter(
+			(d) => d.year === year && d.month === month && (week ? d.week === week : 1)
+		);
+
+		// flatten array
+		const aggregationOutput = weeklyAggregationFiltered.reduce(
+			(acc, curr) => [...acc, ...curr.data],
+			[] as PersonalAccountAggregationDataOutput[]
+		);
+
+		return this.getAccountState(aggregationOutput);
+	}
+
+	getAccountStateByDailyData(data: PersonalAccountDailyDataOutputFragment[]): AccountState {
+		const entriesTotal = data.length;
+		const expenseTotal = data
+			.filter((d) => d.personalAccountTag.type === TagDataType.Expense)
 			.reduce((a, b) => a + b.value, 0);
-		const incomeTotal = data.yearlyAggregaton
-			.filter((d) => d.tag.type === TagDataType.Income)
+		const incomeTotal = data
+			.filter((d) => d.personalAccountTag.type === TagDataType.Income)
 			.reduce((a, b) => a + b.value, 0);
 		const total = incomeTotal - expenseTotal;
 

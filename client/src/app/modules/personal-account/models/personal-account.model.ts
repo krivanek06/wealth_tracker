@@ -25,7 +25,7 @@ export interface PersonalAccountTagAggregation {
 	type: TagDataType;
 
 	/* date when was the last entry added */
-	lastDataEntryDate: string;
+	lastDataEntryDate?: string | null;
 
 	/* true or false if weekly or monthly data aggregation */
 	isWeeklyView: boolean;
@@ -46,5 +46,5 @@ export interface PersonalAccountTagAggregation {
 	 * basically how much % is totalValue from budgetToTimePeriod,
 	 * so if we under the budget it will be under 100%, or can be over
 	 */
-	budgetToTimePeriodFilledPrct: number;
+	budgetToTimePeriodFilledPrct?: number | null;
 }

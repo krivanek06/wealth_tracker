@@ -2,7 +2,7 @@
 	<!-- expense -->
 	<div class="absolute top-[0] left-[-5%]">
 		<app-value-presentation-card title="Expense" [showDataInCard]="false">
-			<div class="text-xl text-center text-white">{{ accountState?.incomeTotal| currency }}</div>
+			<div class="text-xl text-center text-white">{{ accountState?.expenseTotal| currency }}</div>
 		</app-value-presentation-card>
 	</div>
 
@@ -35,7 +35,7 @@
 	<!-- entries -->
 	<div class="absolute bottom-[4%] left-[-2%]">
 		<app-value-presentation-card title="Entries" [showDataInCard]="false">
-			<div class="text-xl text-center text-white">TODO</div>
+			<div class="text-xl text-center text-white">{{accountState?.entriesTotal}}</div>
 		</app-value-presentation-card>
 	</div>
 

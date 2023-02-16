@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../core/auth';
 import { AccountIdentification, UserFragment } from '../../../core/graphql';
@@ -17,7 +18,11 @@ export class HeaderContainerComponent implements OnInit {
 
 	authenticatedUser$!: Observable<UserFragment | null>;
 
-	constructor(private authenticationFacadeService: AuthenticationFacadeService, private dialog: MatDialog) {}
+	constructor(
+		private authenticationFacadeService: AuthenticationFacadeService,
+		private dialog: MatDialog,
+		private router: Router
+	) {}
 
 	ngOnInit(): void {
 		this.authenticatedUser$ = this.authenticationFacadeService.getAuthenticatedUser();
@@ -27,6 +32,10 @@ export class HeaderContainerComponent implements OnInit {
 
 	onUserLogout(): void {
 		this.authenticationFacadeService.logoutUser();
+	}
+
+	onAccountButtonClick(account: AccountIdentification) {
+		this.router.navigate(['dashboard', account.accountType, account.id]);
 	}
 
 	onLoginClick(): void {

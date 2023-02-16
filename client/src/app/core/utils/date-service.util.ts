@@ -68,4 +68,9 @@ export class DateServiceUtil {
 	static getWeeksInMonth(inputDate: DateInput): number {
 		return getWeeksInMonth(new Date(inputDate));
 	}
+
+	static dateSplitter(dateFormat: string): [number, number, number | undefined] {
+		const [year, month, week] = dateFormat.split('-').map((d) => Number(d));
+		return [year, month, week] as [number, number, number | undefined];
+	}
 }

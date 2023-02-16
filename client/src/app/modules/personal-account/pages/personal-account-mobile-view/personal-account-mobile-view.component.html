@@ -1,7 +1,7 @@
 <!-- account state with chart -->
 <app-personal-account-overview-chart-mobile
 	[chartData]="personalAccountDailyExpensePieChart$ | async"
-	[accountState]="accountState$ | async"
+	[accountState]="accountDisplayedState$ | async"
 ></app-personal-account-overview-chart-mobile>
 
 <mat-divider></mat-divider>

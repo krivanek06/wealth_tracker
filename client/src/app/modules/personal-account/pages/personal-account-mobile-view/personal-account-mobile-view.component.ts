@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { combineLatest, map, Observable } from 'rxjs';
 import { FormMatInputWrapperModule } from '../../../../shared/components';
 import { PersonalAccountParent } from '../../classes';
 import {
@@ -12,6 +13,7 @@ import {
 	PersonalAccountExpensesByTagComponent,
 	PersonalAccountOverviewChartMobileComponent,
 } from '../../components';
+import { AccountState, NO_DATE_SELECTED } from '../../models';
 import { GetTagByIdPipe } from '../../pipes';
 @Component({
 	selector: 'app-personal-account-mobile-view',
@@ -34,6 +36,10 @@ import { GetTagByIdPipe } from '../../pipes';
 	],
 })
 export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {
+	/**
+	 * Current state based on whether the user wants to see total aggregated info or filtered by month/week
+	 */
+	accountDisplayedState$!: Observable<AccountState>;
 	showHistoryFormControl = new FormControl<boolean>(false, { nonNullable: true });
 
 	constructor() {
@@ -41,6 +47,16 @@ export class PersonalAccountMobileViewComponent extends PersonalAccountParent im
 	}
 
 	ngOnInit(): void {
+		this.accountDisplayedState$ = combineLatest([
+			this.dateSource$,
+			this.accountTotalState$,
+			this.accountFilteredState$,
+		]).pipe(
+			map(([dateFilter, accountTotal, accountFiltered]) =>
+				dateFilter === NO_DATE_SELECTED ? accountTotal : accountFiltered
+			)
+		);
+
 		// check show history when selecting a tagId
 		this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.subscribe((value) => {
 			if (value.length !== 0) {

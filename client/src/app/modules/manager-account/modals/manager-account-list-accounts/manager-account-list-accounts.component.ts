@@ -77,13 +77,13 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 		this.showLoader = true;
 
 		// create new personal account
-		if (!isEditing && accountType === AccountType.PersonalAccount) {
+		if (!isEditing && accountType === AccountType.Personal) {
 			await firstValueFrom(this.personalAccountFacadeService.createPersonalAccount(accountName));
 			DialogServiceUtil.showNotificationBar(`Personal account ${accountName} has been created`, 'success');
 		}
 
 		// edit personal account
-		else if (isEditing && accountType === AccountType.PersonalAccount) {
+		else if (isEditing && accountType === AccountType.Personal) {
 			console.log('personal account edit');
 			await firstValueFrom(
 				this.personalAccountFacadeService.editPersonalAccount({
@@ -95,13 +95,13 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 		}
 
 		// create new investment account
-		else if (!isEditing && accountType === AccountType.InvestmentAccount) {
+		else if (!isEditing && accountType === AccountType.Investment) {
 			await firstValueFrom(this.investmentAccountFacadeApiService.createInvestmentAccount(accountName));
 			DialogServiceUtil.showNotificationBar(`Investment account ${accountName} has been created`, 'success');
 		}
 
 		// edit investment account
-		else if (isEditing && accountType === AccountType.InvestmentAccount) {
+		else if (isEditing && accountType === AccountType.Investment) {
 			await firstValueFrom(
 				this.investmentAccountFacadeApiService.editInvestmentAccount({
 					name: accountName,
@@ -120,9 +120,9 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 	}
 
 	async onDeleteAccountClick(account: AccountIdentification): Promise<void> {
-		if (account.accountType === AccountType.PersonalAccount) {
+		if (account.accountType === AccountType.Personal) {
 			await firstValueFrom(this.personalAccountFacadeService.deletePersonalAccount(account.id));
-		} else if (account.accountType === AccountType.InvestmentAccount) {
+		} else if (account.accountType === AccountType.Investment) {
 			await firstValueFrom(this.investmentAccountFacadeApiService.deleteInvestmentAccount(account.id));
 		}
 

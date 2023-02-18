@@ -51,10 +51,11 @@
 </div>
 
 <!-- tag aggregation -->
-<ng-container *ngIf="!showHistoryFormControl.value">
+<ng-container *ngIf="accountTagAggregationForTimePeriod$ | async as aggregations">
 	<app-personal-account-expenses-by-tag
+		*ngIf="!showHistoryFormControl.value"
 		[formControl]="filterDailyDataGroup.controls.selectedTagIds"
-		[aggregations]="accountTagAggregationForTimePeriod$ | async"
+		[aggregations]="aggregations"
 		[multiple]="false"
 	></app-personal-account-expenses-by-tag>
 </ng-container>

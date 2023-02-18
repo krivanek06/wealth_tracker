@@ -99,7 +99,13 @@ export abstract class PersonalAccountParent {
 
 	get dateSource$() {
 		return this.filterDailyDataGroup.controls.dateFilter.valueChanges.pipe(
-			startWith(this.filterDailyDataGroup.controls.dateFilter.getRawValue())
+			startWith(this.filterDailyDataGroup.controls.dateFilter.value)
+		);
+	}
+
+	get selectedTagIds$() {
+		return this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.pipe(
+			startWith(this.filterDailyDataGroup.controls.selectedTagIds.value)
 		);
 	}
 
@@ -132,9 +138,7 @@ export abstract class PersonalAccountParent {
 		// construct expense chart by the selected expenses tags
 		this.totalExpenseTagsChartData$ = combineLatest([
 			// selected expenses
-			this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.pipe(
-				startWith(this.filterDailyDataGroup.controls.selectedTagIds.value)
-			),
+			this.selectedTagIds$,
 			// account
 			this.personalAccountDetails$,
 			// passing all available expense tags to create chart
@@ -148,9 +152,7 @@ export abstract class PersonalAccountParent {
 		// construct account overview vy the selected expense tags
 		this.accountOverviewChartData$ = combineLatest([
 			// selected expenses
-			this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.pipe(
-				startWith(this.filterDailyDataGroup.controls.selectedTagIds.value)
-			),
+			this.selectedTagIds$,
 			// account
 			this.personalAccountDetails$,
 		]).pipe(
@@ -176,10 +178,7 @@ export abstract class PersonalAccountParent {
 		);
 
 		// daily data displayed on UI - filtered by selected tag ids
-		this.filteredDailyData$ = combineLatest([
-			totalDailyDataForTimePeriod$,
-			this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.pipe(startWith([] as string[])),
-		]).pipe(
+		this.filteredDailyData$ = combineLatest([totalDailyDataForTimePeriod$, this.selectedTagIds$]).pipe(
 			map(([totalDailyData, selectedTagIds]) => {
 				// no tag id is selected
 				if (selectedTagIds.length === 0) {

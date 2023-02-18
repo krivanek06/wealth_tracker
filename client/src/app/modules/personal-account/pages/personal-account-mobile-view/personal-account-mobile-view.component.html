@@ -1,8 +1,20 @@
-<!-- account state with chart -->
-<app-personal-account-overview-chart-mobile
-	[chartData]="personalAccountDailyExpensePieChart$ | async"
-	[accountState]="accountDisplayedState$ | async"
-></app-personal-account-overview-chart-mobile>
+<!-- account info -->
+<div class="mb-6">
+	<app-personal-account-account-state
+		[accountState]="accountDisplayedState$ | async"
+	></app-personal-account-account-state>
+</div>
+
+<!-- expense chart -->
+<ng-container *ngIf="accountDisplayedState$ | async as accountState">
+	<div class="my-8">
+		<app-personal-account-tag-allocation-chart
+			[series]="personalAccountDailyExpensePieChart$ | async"
+			[heightPx]="225"
+			[accountBalance]="accountState.total"
+		></app-personal-account-tag-allocation-chart>
+	</div>
+</ng-container>
 
 <mat-divider></mat-divider>
 

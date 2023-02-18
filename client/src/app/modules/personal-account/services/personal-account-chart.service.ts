@@ -236,7 +236,15 @@ export class PersonalAccountChartService {
 			const dataIndex = acc.findIndex((d) => d.name === curr.personalAccountTag.name);
 			if (dataIndex === -1) {
 				// new tag
-				acc = [...acc, { name: curr.personalAccountTag.name, y: curr.value, color: curr.personalAccountTag.color }];
+				acc = [
+					...acc,
+					{
+						name: curr.personalAccountTag.name,
+						y: curr.value,
+						color: curr.personalAccountTag.color,
+						custom: curr.personalAccountTag.imageUrl,
+					},
+				];
 			} else {
 				// increase value for tag
 				acc[dataIndex].y += curr.value;
@@ -245,6 +253,6 @@ export class PersonalAccountChartService {
 			return acc;
 		}, [] as GenericChartSeriesData[]);
 
-		return { data: seriesData, colorByPoint: true, name: 'Expenses', innerSize: '70%', type: 'pie' };
+		return { data: seriesData, colorByPoint: true, name: 'Expenses', innerSize: '80%', type: 'pie' };
 	}
 }

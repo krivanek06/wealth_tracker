@@ -1,5 +1,5 @@
 <!-- balance -->
-<app-value-presentation-card title="Balance" [showDataInCard]="true">
+<app-value-presentation-card title="Balance" [showDataInCard]="true" class="hidden md:block">
 	<div *ngIf="accountState; else showPulse" class="c-text">{{ accountState.total | currency }}</div>
 </app-value-presentation-card>
 

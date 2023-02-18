@@ -4,3 +4,4 @@ export * from './personal-account-daily-entries-table/personal-account-daily-ent
 export * from './personal-account-expenses-by-tag/personal-account-expenses-by-tag.component';
 export * from './personal-account-overview-chart-mobile/personal-account-overview-chart-mobile.component';
 export * from './personal-account-overview-chart/personal-account-overview-chart.module';
+export * from './personal-account-tag-allocation-chart/personal-account-tag-allocation-chart.component';

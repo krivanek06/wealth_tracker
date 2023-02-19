@@ -2,7 +2,7 @@
 	<ng-container [ngSwitch]="inputType">
 		<mat-form-field
 			*ngIf="!['CHECKBOX', 'RADIO', 'SLIDE_TOGGLE', 'SLIDER' ,'BUTTON'].includes(inputType); else fieldWhichCannotBeInFormField"
-			appearance="outline"
+			appearance="fill"
 			[ngClass]="{ 'errors-showed': usedFormControl.touched  && usedFormControl.invalid }"
 		>
 			<!-- label -->

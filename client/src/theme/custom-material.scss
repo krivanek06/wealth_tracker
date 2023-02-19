@@ -13,6 +13,7 @@
 @import './material/mat-list.scss';
 @import './material/mat-tab.scss';
 @import './material/mat-menu.scss';
+@import './material/mat-chip.scss';
 // COLOR PALETTE GENERATOR - http://mcg.mbitson.com/
 
 $custom-success: (
@@ -138,5 +139,5 @@ $custom-typography: mat.define-typography-level(
 	$letter-spacing: normal,
 );
 
-@include mat.core($custom-typography);
+@include mat.core();
 @include mat.all-component-themes($mat-theming-light);

@@ -1,7 +1,7 @@
-.mat-menu-panel {
+.mat-mdc-menu-panel {
 	background-color: var(--gray-dark) !important;
 
-	.mat-menu-content {
+	.mat-mdc-menu-content {
 		button {
 			color: var(--gray-light) !important;
 
@@ -10,4 +10,8 @@
 			}
 		}
 	}
+}
+
+.mdc-list-item__primary-text {
+	color: var(--gray-light) !important;
 }

@@ -1,29 +1,43 @@
-.mat-radio-group {
-	.mat-radio-button {
+.mat-mdc-radio-group {
+	.mat-mdc-radio-button {
 		border: 1px solid #838181;
 		border-radius: 8px;
 		padding: 6px 16px;
-
+		/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
+		/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
+		/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
 		.mat-radio-label {
+			/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
+			/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
 			.mat-radio-container {
+				/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
 				.mat-radio-inner-circle {
 					//background-color: red;
 				}
-
+				/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
 				.mat-radio-outer-circle {
 					border-color: rgba(176, 176, 176, 0.4);
 				}
 			}
-
+			/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
 			.mat-radio-label-content {
 				font-weight: normal;
 				letter-spacing: 0.3px;
 			}
 		}
-
+		/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
+		/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
+		/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
+		/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
 		&.mat-radio-checked {
+			/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
+			/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
+			/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
 			.mat-radio-label {
+				/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
+				/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
 				.mat-radio-container {
+					/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
 					.mat-radio-outer-circle {
 						//border-color: blue;
 					}
@@ -34,11 +48,13 @@
 }
 
 // disabled state
-.mat-radio-button.mat-radio-disabled .mat-radio-label-content {
+/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
+.mat-mdc-radio-button.mat-radio-disabled .mat-radio-label-content {
 	color: var(--gray-dark) !important;
 }
 
 fieldset:disabled {
+	/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
 	mat-radio-button {
 		background-color: var(--gray-dark) !important;
 	}

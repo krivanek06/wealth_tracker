@@ -1,7 +1,9 @@
 // turning default arrow to chevron
-.mat-select-arrow {
+/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version.*/
+.mat-mdc-select-arrow {
 	font-family: 'Material Icons';
 	border: 0 !important;
+	color: var(--gray-light) !important;
 
 	&:before {
 		font-size: 16px;
@@ -20,16 +22,49 @@
 	}
 }
 
+.mat-mdc-select-arrow svg {
+	display: none !important;
+}
+
 // custom arrow is reaching into trigger space
 mat-select-trigger {
 	margin-right: 8px;
 	overflow: clip;
 }
 
-.mat-select-value {
+.mat-mdc-select-value {
 	color: var(--gray-light) !important;
 }
 
-.mat-select-min-line {
+.mat-mdc-select-min-line {
 	font-size: 14px !important;
+}
+
+.mdc-menu-surface.mat-mdc-select-panel {
+	background: var(--background-dark) !important;
+}
+
+.select-input {
+	background: transparent !important;
+	color: white;
+}
+
+.mat-mdc-optgroup-label {
+	span {
+		color: var(--gray-medium) !important;
+		font-size: 14px !important;
+	}
+}
+
+/* hover */
+.mat-mdc-option:hover:not(.mdc-list-item--disabled),
+.mat-mdc-option:focus:not(.mdc-list-item--disabled),
+.mat-mdc-option.mat-mdc-option-active,
+.mat-mdc-option.mdc-list-item--selected:not(.mat-mdc-option-multiple):not(.mdc-list-item--disabled) {
+	background: #293072 !important;
+}
+
+/* distance between content and scroll bar */
+.cdk-overlay-pane:not(.mat-mdc-select-panel-above) .mdc-menu-surface.mat-mdc-select-panel {
+	padding-right: 12px !important;
 }

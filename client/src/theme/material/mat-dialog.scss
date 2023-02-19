@@ -1,18 +1,27 @@
-
 /* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version.*/
-mat-dialog-container {
-	width: 100vw !important;
+// mat-dialog-container {
+// 	width: 100vw !important;
+// 	background: var(--background-dark) !important;
+// 	color: var(--gray-light) !important;
+// 	padding: 24px !important;
+
+// 	@screen md {
+// 		width: auto !important;
+// 	}
+
+// 	// @screen xl {
+// 	// 	width: 60vw !important;
+// 	// }
+// }
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
 	background: var(--background-dark) !important;
 	color: var(--gray-light) !important;
 	padding: 24px !important;
+}
 
-	@screen md {
-		width: auto !important;
-	}
-
-	// @screen xl {
-	// 	width: 60vw !important;
-	// }
+.mat-mdc-dialog-container .mdc-dialog__content {
+	color: var(--gray-light) !important;
 }
 
 /* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version.*/
@@ -116,9 +125,9 @@ mat-dialog-container {
 	margin-left: 0 !important;
 }
 
-.mat-mdc-dialog-container {
-	padding: 30px !important;
-}
+// .mat-mdc-dialog-container {
+// 	padding: 30px !important;
+// }
 
 .g-dialog-button-wrapper {
 	@apply flex flex-col-reverse lg:flex-row items-center gap-2 w-full;

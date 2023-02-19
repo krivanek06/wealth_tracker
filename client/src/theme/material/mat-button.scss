@@ -1,32 +1,21 @@
-button[mat-stroked-button] {
-	border: 1px solid !important;
-}
-
 button {
 	border-radius: 12px !important;
 	min-width: 160px !important;
 	height: 42px !important;
 }
 
-.mat-mdc-button.mat-primary.mat-button-disabled,
-.mat-button.mat-accent.mat-button-disabled,
-.mat-button.mat-warn.mat-button-disabled,
-.mat-button.mat-button-disabled.mat-button-disabled,
-.mat-mdc-icon-button.mat-primary.mat-button-disabled,
-.mat-icon-button.mat-accent.mat-button-disabled,
-.mat-icon-button.mat-warn.mat-button-disabled,
-.mat-icon-button.mat-button-disabled.mat-button-disabled,
-.mat-mdc-outlined-button.mat-primary.mat-button-disabled,
-.mat-stroked-button.mat-accent.mat-button-disabled,
-.mat-stroked-button.mat-warn.mat-button-disabled,
-.mat-stroked-button.mat-button-disabled.mat-button-disabled {
-	background-color: #404474;
-	color: unset !important;
-	opacity: 0.7;
-}
+button[mat-stroked-button] {
+	border: 1px solid !important;
 
-.mat-divider {
-	background-color: #494c7c !important;
+	&.mat-mdc-outlined-button.mat-unthemed {
+		background-color: #4044741c;
+		color: unset !important;
+		opacity: 0.7;
+
+		&:hover {
+			background-color: #40447472;
+		}
+	}
 }
 
 .mdc-button__label {

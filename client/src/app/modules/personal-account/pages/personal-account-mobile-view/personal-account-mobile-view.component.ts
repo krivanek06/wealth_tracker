@@ -11,11 +11,13 @@ import { PersonalAccountParent } from '../../classes';
 import {
 	PersonalAccountAccountStateComponent,
 	PersonalAccountDailyEntriesTableModule,
+	PersonalAccountDisplayToggleComponent,
 	PersonalAccountExpensesByTagComponent,
 	PersonalAccountOverviewChartMobileComponent,
 	PersonalAccountTagAllocationChartComponent,
 } from '../../components';
-import { AccountState, NO_DATE_SELECTED } from '../../models';
+import { PersonalAccountDailyEntriesTableMobileComponent } from '../../components/mobile/personal-account-daily-entries-table-mobile/personal-account-daily-entries-table-mobile.component';
+import { AccountState, NO_DATE_SELECTED, PersonalAccountDailyDataAggregation } from '../../models';
 import { GetTagByIdPipe } from '../../pipes';
 @Component({
 	selector: 'app-personal-account-mobile-view',
@@ -38,6 +40,8 @@ import { GetTagByIdPipe } from '../../pipes';
 		PersonalAccountTagAllocationChartComponent,
 		ValuePresentationCardComponent,
 		PersonalAccountAccountStateComponent,
+		PersonalAccountDisplayToggleComponent,
+		PersonalAccountDailyEntriesTableMobileComponent,
 	],
 })
 export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {
@@ -45,6 +49,12 @@ export class PersonalAccountMobileViewComponent extends PersonalAccountParent im
 	 * Current state based on whether the user wants to see total aggregated info or filtered by month/week
 	 */
 	accountDisplayedState$!: Observable<AccountState>;
+
+	/**
+	 * daily data divided by dates
+	 */
+	dailyDataAggregation$!: Observable<PersonalAccountDailyDataAggregation[]>;
+
 	showHistoryFormControl = new FormControl<boolean>(false, { nonNullable: true });
 
 	constructor() {
@@ -60,6 +70,10 @@ export class PersonalAccountMobileViewComponent extends PersonalAccountParent im
 			map(([dateFilter, accountTotal, accountFiltered]) =>
 				dateFilter === NO_DATE_SELECTED ? accountTotal : accountFiltered
 			)
+		);
+
+		this.dailyDataAggregation$ = this.filteredDailyData$.pipe(
+			map((res) => this.personalAccountDataService.aggregateDailyDataOutputByDays(res))
 		);
 
 		// check show history when selecting a tagId

@@ -27,6 +27,11 @@ table[mat-table] {
 		transition: All 0.3s ease-out;
 		cursor: pointer;
 		border-radius: 8px;
+		height: 60px;
+
+		@screen md {
+			height: 48px;
+		}
 
 		&:hover {
 			background-color: var(--table-hover);

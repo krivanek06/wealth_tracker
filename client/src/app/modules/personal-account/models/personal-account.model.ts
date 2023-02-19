@@ -1,4 +1,4 @@
-import { TagDataType } from '../../../core/graphql';
+import { PersonalAccountDailyDataOutputFragment, TagDataType } from '../../../core/graphql';
 
 export interface AccountState {
 	total: number;
@@ -47,4 +47,9 @@ export interface PersonalAccountTagAggregation {
 	 * so if we under the budget it will be under 100%, or can be over
 	 */
 	budgetToTimePeriodFilledPrct?: number | null;
+}
+
+export interface PersonalAccountDailyDataAggregation {
+	date: string;
+	data: PersonalAccountDailyDataOutputFragment[];
 }

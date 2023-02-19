@@ -20,7 +20,6 @@ export class PersonalAccountTagAllocationChartComponent {
 			this.initChart(data);
 		}
 	}
-	@Input() heightPx = 400;
 
 	Highcharts: typeof Highcharts = Highcharts;
 	chart: any;

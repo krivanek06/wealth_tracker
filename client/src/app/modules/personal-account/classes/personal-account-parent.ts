@@ -1,7 +1,7 @@
 import { Directive, inject, Input } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { combineLatest, map, merge, Observable, of, reduce, startWith, switchMap, tap, withLatestFrom } from 'rxjs';
+import { combineLatest, map, merge, Observable, of, reduce, startWith, switchMap, tap } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../core/api';
 import {
 	AccountIdentification,
@@ -195,9 +195,11 @@ export abstract class PersonalAccountParent {
 			map((result) => (!!result ? this.personalAccountChartService.getExpenseAllocationChartData(result) : null))
 		);
 
-		// aggregate daily data by tag
-		this.accountTagAggregationForTimePeriod$ = totalDailyDataForTimePeriod$.pipe(
-			withLatestFrom(this.dateSource$, this.personalAccountDetails$),
+		this.accountTagAggregationForTimePeriod$ = combineLatest([
+			totalDailyDataForTimePeriod$,
+			this.dateSource$,
+			this.personalAccountDetails$,
+		]).pipe(
 			tap(console.log),
 			map(
 				([result, dateFilter, details]: [

@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../core/auth';
-import { UserFragment } from '../../../core/graphql';
+import { AccountIdentification, UserFragment } from '../../../core/graphql';
 import { ManagerAccountListAccountsComponent } from '../../../modules/manager-account/modals';
 import { LoginModalComponent, UserProfileModalComponent } from '../../../modules/user-settings';
 
@@ -13,9 +14,15 @@ import { LoginModalComponent, UserProfileModalComponent } from '../../../modules
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderContainerComponent implements OnInit {
+	@Input() availableAccounts!: AccountIdentification[];
+
 	authenticatedUser$!: Observable<UserFragment | null>;
 
-	constructor(private authenticationFacadeService: AuthenticationFacadeService, private dialog: MatDialog) {}
+	constructor(
+		private authenticationFacadeService: AuthenticationFacadeService,
+		private dialog: MatDialog,
+		private router: Router
+	) {}
 
 	ngOnInit(): void {
 		this.authenticatedUser$ = this.authenticationFacadeService.getAuthenticatedUser();
@@ -25,6 +32,10 @@ export class HeaderContainerComponent implements OnInit {
 
 	onUserLogout(): void {
 		this.authenticationFacadeService.logoutUser();
+	}
+
+	onAccountButtonClick(account: AccountIdentification) {
+		this.router.navigate(['dashboard', account.accountType, account.id]);
 	}
 
 	onLoginClick(): void {

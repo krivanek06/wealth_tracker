@@ -31,4 +31,5 @@ export interface GenericChartSeriesData {
 	name?: string;
 	y: number;
 	color?: string;
+	custom?: any;
 }

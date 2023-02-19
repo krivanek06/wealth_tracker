@@ -1,0 +1,16 @@
+<div class="flex items-center justify-between mb-4">
+	<div class="text-base">
+		<ng-container *ngIf="!showHistoryFormControl">Tag aggregation</ng-container>
+		<ng-container *ngIf="showHistoryFormControl">
+			<ng-container *ngIf="selectedTag" class="space-x-1">
+				Tag:
+				<span style="color: {{selectedTag.color}}"> {{ selectedTag.name}} </span>
+			</ng-container>
+			<ng-container *ngIf="!selectedTag"> Show History </ng-container>
+		</ng-container>
+	</div>
+
+	<button mat-stroked-button [color]="showHistoryFormControl ? 'warn' : 'primary' " (click)="onDisplayClick()">
+		{{ showHistoryFormControl ? 'Displayed History' : 'Displayed Aggregation' }}
+	</button>
+</div>

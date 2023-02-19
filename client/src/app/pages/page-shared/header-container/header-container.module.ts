@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { ManagerAccountListAccountsModule } from '../../../modules/manager-account';
@@ -22,6 +23,7 @@ import { HeaderContainerComponent } from './header-container.component';
 		DefaultImgDirective,
 		MatMenuModule,
 		UserProfileModalModule,
+		MatDividerModule,
 	],
 	exports: [HeaderContainerComponent],
 })

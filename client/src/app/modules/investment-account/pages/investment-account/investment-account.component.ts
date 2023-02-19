@@ -1,13 +1,15 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { combineLatest, map, Observable, startWith } from 'rxjs';
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
-	AccountIdentification,
+	ACCOUNT_KEY,
 	InvestmentAccountActiveHoldingOutputFragment,
 	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
+	InvestmentAccountOverviewFragment,
 } from '../../../../core/graphql';
 import { ValuePresentItem } from '../../../../shared/models';
 import {
@@ -25,7 +27,7 @@ import { InvestmentAccountCalculatorService } from '../../services';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvestmentAccountComponent implements OnInit {
-	@Input() investmentAccountsOverview!: AccountIdentification;
+	investmentAccountsOverview!: InvestmentAccountOverviewFragment;
 
 	investmentAccount$!: Observable<InvestmentAccountFragment>;
 
@@ -72,10 +74,12 @@ export class InvestmentAccountComponent implements OnInit {
 	constructor(
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
 		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
-		private dialog: MatDialog
+		private dialog: MatDialog,
+		private route: ActivatedRoute
 	) {}
 
 	ngOnInit(): void {
+		this.investmentAccountsOverview = this.route.snapshot.data?.[ACCOUNT_KEY] as InvestmentAccountOverviewFragment;
 		this.investmentId = this.investmentAccountsOverview.id;
 		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.investmentId);
 		this.investmentAccountGrowth$ = this.investmentAccountFacadeApiService.getInvestmentAccountGrowth(

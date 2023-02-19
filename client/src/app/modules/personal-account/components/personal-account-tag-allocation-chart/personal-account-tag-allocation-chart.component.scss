@@ -1,0 +1,27 @@
+highcharts-chart::ng-deep {
+	overflow: visible !important;
+
+	> * {
+		overflow: visible !important;
+	}
+
+	.highcharts-container,
+	.highcharts-container svg {
+		width: 100% !important;
+		height: 100% !important;
+		display: inline-block !important;
+	}
+
+	.highcharts-stocktools-wrapper,
+	.highcharts-bindings-wrapper {
+		display: none;
+	}
+
+	tspan {
+		font-size: inherit;
+	}
+}
+
+:host {
+	display: block;
+}

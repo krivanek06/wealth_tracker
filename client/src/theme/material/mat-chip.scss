@@ -1,0 +1,12 @@
+
+/* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version. */
+mat-chip {
+	*,
+	::before,
+	::after {
+		border-color: transparent;
+	}
+}
+.mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) .mdc-evolution-chip__text-label {
+	color: var(--primary-dark) !important;
+}

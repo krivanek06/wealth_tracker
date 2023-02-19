@@ -1,3 +1,5 @@
+
+/* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version.*/
 mat-dialog-container {
 	width: 100vw !important;
 	background: var(--background-dark) !important;
@@ -13,8 +15,10 @@ mat-dialog-container {
 	// }
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version.*/
 .g-mat-dialog-big {
-	.mat-dialog-content {
+	.mat-mdc-dialog-content {
 		max-height: none;
 
 		@screen sm {
@@ -22,7 +26,7 @@ mat-dialog-container {
 		}
 	}
 
-	.mat-dialog-container {
+	.mat-mdc-dialog-container {
 		height: 98vh !important;
 
 		@screen sm {
@@ -43,8 +47,10 @@ mat-dialog-container {
 	}
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version.*/
 .g-mat-dialog-medium {
-	.mat-dialog-content {
+	.mat-mdc-dialog-content {
 		max-height: none;
 
 		@screen sm {
@@ -52,7 +58,7 @@ mat-dialog-container {
 		}
 	}
 
-	.mat-dialog-container {
+	.mat-mdc-dialog-container {
 		height: 98vh !important;
 
 		@screen sm {
@@ -73,8 +79,10 @@ mat-dialog-container {
 	}
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version.*/
 .g-mat-dialog-small {
-	.mat-dialog-content {
+	.mat-mdc-dialog-content {
 		max-height: none;
 
 		@screen sm {
@@ -82,7 +90,7 @@ mat-dialog-container {
 		}
 	}
 
-	.mat-dialog-container {
+	.mat-mdc-dialog-container {
 		height: 98vh !important;
 
 		@screen sm {
@@ -103,12 +111,12 @@ mat-dialog-container {
 	}
 }
 
-.mat-dialog-actions .mat-button-base + .mat-button-base,
+.mat-dialog-actions .mat-mdc-button-base + .mat-button-base,
 .mat-dialog-actions .mat-mdc-button-base + .mat-mdc-button-base {
 	margin-left: 0 !important;
 }
 
-.mat-dialog-container {
+.mat-mdc-dialog-container {
 	padding: 30px !important;
 }
 

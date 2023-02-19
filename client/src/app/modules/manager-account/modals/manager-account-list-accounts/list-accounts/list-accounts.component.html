@@ -2,9 +2,9 @@
 <mat-selection-list [formControl]="selectedAccountControl" [multiple]="false">
 	<div mat-subheader>Personal accounts</div>
 	<mat-list-option *ngFor="let account of personalAccounts" [value]="account">
-		<mat-icon mat-list-icon>folder</mat-icon>
-		<div mat-line>{{account.name}}</div>
-		<div mat-line>{{account.createdAt| date}}</div>
+		<mat-icon matListItemIcon>folder</mat-icon>
+		<div matListItemTitle>{{account.name}}</div>
+		<div matListItemLine>{{account.createdAt| date}}</div>
 	</mat-list-option>
 
 	<mat-divider></mat-divider>
@@ -12,8 +12,8 @@
 	<!-- investment accounts -->
 	<div mat-subheader>Investment accounts</div>
 	<mat-list-option *ngFor="let account of investmentAccounts" [value]="account">
-		<mat-icon mat-list-icon>folder</mat-icon>
-		<div mat-line>{{account.name}}</div>
-		<div mat-line>{{account.createdAt| date}}</div>
+		<mat-icon matListItemIcon>folder</mat-icon>
+		<div matListItemTitle>{{account.name}}</div>
+		<div matListItemLine>{{account.createdAt| date}}</div>
 	</mat-list-option>
 </mat-selection-list>

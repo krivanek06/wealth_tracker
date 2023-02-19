@@ -1,10 +1,8 @@
 import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ControlContainer, FormControl } from '@angular/forms';
 import { DateFilterFn } from '@angular/material/datepicker';
-import { map, Observable } from 'rxjs';
-import { startWith } from 'rxjs/operators';
+import { map, Observable, startWith } from 'rxjs';
 import { InputSource, InputSourceWrapper, InputType, InputTypeDateTimePickerConfig, InputTypeEnum } from '../../models';
-
 @Component({
 	selector: 'app-form-mat-input-wrapper',
 	templateUrl: './form-mat-input-wrapper.component.html',

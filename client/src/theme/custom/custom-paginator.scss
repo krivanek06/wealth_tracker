@@ -32,10 +32,11 @@
 	}
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of paginator that may no longer apply for the MDC version. */
 mat-paginator {
 	background: transparent !important;
 }
 
-.mat-paginator-range-actions {
+.mat-mdc-paginator-range-actions {
 	margin-right: 12px !important;
 }

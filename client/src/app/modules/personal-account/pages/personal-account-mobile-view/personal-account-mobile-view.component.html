@@ -60,14 +60,6 @@
 	<app-personal-account-daily-entries-table-mobile
 		*ngIf="showHistoryFormControl.value"
 		[personalAccountDailyData]="dailyDataAggregation"
+		(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
 	></app-personal-account-daily-entries-table-mobile>
 </ng-container>
-
-<!-- <ng-container *ngIf="filteredDailyData$ | async as filteredDailyData">
-	<app-personal-account-daily-entries-table
-		*ngIf="showHistoryFormControl.value"
-		(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
-		(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
-		[personalAccountDailyData]="filteredDailyData"
-	></app-personal-account-daily-entries-table>
-</ng-container> -->

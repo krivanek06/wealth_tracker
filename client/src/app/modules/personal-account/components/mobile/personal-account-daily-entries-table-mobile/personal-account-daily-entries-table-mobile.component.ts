@@ -1,10 +1,10 @@
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { PersonalAccountDailyDataAggregation } from '../../../models';
-import { TagDataType } from './../../../../../core/graphql';
+import { PersonalAccountDailyDataOutputFragment, TagDataType } from './../../../../../core/graphql';
 import { DefaultImgDirective } from './../../../../../shared/directives';
 
 @Component({
@@ -16,7 +16,12 @@ import { DefaultImgDirective } from './../../../../../shared/directives';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountDailyEntriesTableMobileComponent {
+	@Output() editDailyEntryClickEmitter = new EventEmitter<PersonalAccountDailyDataOutputFragment>();
 	@Input() personalAccountDailyData?: PersonalAccountDailyDataAggregation[] | null;
 
 	TagDataType = TagDataType;
+
+	onEditDailyEntryClick(data: PersonalAccountDailyDataOutputFragment): void {
+		this.editDailyEntryClickEmitter.emit(data);
+	}
 }

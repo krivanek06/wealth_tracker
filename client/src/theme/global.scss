@@ -24,10 +24,11 @@ body {
 /* mat tooltip */
 .cdk-overlay-pane {
 	max-width: 100vw !important;
-	width: auto !important;
+	width: 100% !important;
 
 	@screen sm {
 		max-width: 90vw !important;
+		width: auto !important;
 	}
 
 	&.mat-mdc-tooltip-panel {

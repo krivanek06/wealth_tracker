@@ -1,5 +1,5 @@
 :host {
-	@apply flex flex-wrap justify-between gap-4 lg:gap-8;
+	@apply grid grid-cols-2 md:grid-cols-5 gap-1 md:gap-4 lg:gap-8;
 
 	.c-text {
 		@apply text-xl text-center text-white mt-2;

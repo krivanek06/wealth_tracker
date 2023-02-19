@@ -61,7 +61,7 @@ mat-select-trigger {
 .mat-mdc-option:focus:not(.mdc-list-item--disabled),
 .mat-mdc-option.mat-mdc-option-active,
 .mat-mdc-option.mdc-list-item--selected:not(.mat-mdc-option-multiple):not(.mdc-list-item--disabled) {
-	background: #293072 !important;
+	background: var(--background-medium) !important;
 }
 
 /* distance between content and scroll bar */

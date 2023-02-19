@@ -31,7 +31,7 @@ export class PersonalAccountService {
 		const personalAccount = await this.personalAccountRepositoryService.createPersonalAccount(
 			name,
 			userId,
-			AccountType.PERSONAL_ACCOUNT
+			AccountType.PERSONAL
 		);
 
 		// TODO: remove this - on dailyData create will be fire to create monthly data

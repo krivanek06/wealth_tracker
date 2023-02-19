@@ -1,7 +1,7 @@
 import { Directive, inject, Input } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { combineLatest, map, merge, Observable, reduce, startWith, switchMap } from 'rxjs';
+import { combineLatest, map, merge, Observable, of, reduce, startWith, switchMap, tap } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../core/api';
 import {
 	AccountIdentification,
@@ -19,12 +19,15 @@ import {
 	ValuePresentItem,
 } from '../../../shared/models';
 import { PersonalAccountDailyDataEntryComponent } from '../modals';
-import { AccountState, PersonalAccountTagAggregation } from '../models';
+import { AccountState, NO_DATE_SELECTED, PersonalAccountTagAggregation } from '../models';
 import { PersonalAccountChartService, PersonalAccountDataService } from '../services';
 
 @Directive()
 export abstract class PersonalAccountParent {
-	@Input() set accountIdentification(data: AccountIdentification) {
+	@Input() set accountIdentification(data: AccountIdentification | undefined | null) {
+		if (!data) {
+			return;
+		}
 		this.personalAccountBasic = data;
 		this.initData(data);
 	}
@@ -36,7 +39,8 @@ export abstract class PersonalAccountParent {
 	/**
 	 * current account state totalIncome, totalExpense and difference
 	 */
-	accountState$!: Observable<AccountState>;
+	accountTotalState$!: Observable<AccountState>;
+	accountFilteredState$!: Observable<AccountState>;
 
 	/**
 	 * growth chart by selected expenses
@@ -93,6 +97,18 @@ export abstract class PersonalAccountParent {
 
 	ChartType = ChartType;
 
+	get dateSource$() {
+		return this.filterDailyDataGroup.controls.dateFilter.valueChanges.pipe(
+			startWith(this.filterDailyDataGroup.controls.dateFilter.value)
+		);
+	}
+
+	get selectedTagIds$() {
+		return this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.pipe(
+			startWith(this.filterDailyDataGroup.controls.selectedTagIds.value)
+		);
+	}
+
 	constructor() {}
 
 	private initData(account: AccountIdentification): void {
@@ -104,8 +120,8 @@ export abstract class PersonalAccountParent {
 		);
 
 		// calculate account state - balance, cash, invested
-		this.accountState$ = this.personalAccountDetails$.pipe(
-			map((account) => this.personalAccountChartService.getAccountState(account))
+		this.accountTotalState$ = this.personalAccountDetails$.pipe(
+			map((account) => this.personalAccountChartService.getAccountState(account.yearlyAggregaton))
 		);
 
 		// filter out expense tags to show them to the user
@@ -122,9 +138,7 @@ export abstract class PersonalAccountParent {
 		// construct expense chart by the selected expenses tags
 		this.totalExpenseTagsChartData$ = combineLatest([
 			// selected expenses
-			this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.pipe(
-				startWith(this.filterDailyDataGroup.controls.selectedTagIds.value)
-			),
+			this.selectedTagIds$,
 			// account
 			this.personalAccountDetails$,
 			// passing all available expense tags to create chart
@@ -138,9 +152,7 @@ export abstract class PersonalAccountParent {
 		// construct account overview vy the selected expense tags
 		this.accountOverviewChartData$ = combineLatest([
 			// selected expenses
-			this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.pipe(
-				startWith(this.filterDailyDataGroup.controls.selectedTagIds.value)
-			),
+			this.selectedTagIds$,
 			// account
 			this.personalAccountDetails$,
 		]).pipe(
@@ -153,18 +165,20 @@ export abstract class PersonalAccountParent {
 		);
 
 		// all daily data for a period
-		const totalDailyDataForTimePeriod$ = this.filterDailyDataGroup.controls.dateFilter.valueChanges.pipe(
-			startWith(this.filterDailyDataGroup.controls.dateFilter.getRawValue()),
+		const totalDailyDataForTimePeriod$ = this.dateSource$.pipe(
 			switchMap((dateFilter) =>
-				this.personalAccountFacadeService.getPersonalAccountDailyData(this.personalAccountBasic.id, dateFilter)
+				dateFilter === NO_DATE_SELECTED
+					? of([])
+					: this.personalAccountFacadeService.getPersonalAccountDailyData(this.personalAccountBasic.id, dateFilter)
 			)
 		);
 
+		this.accountFilteredState$ = totalDailyDataForTimePeriod$.pipe(
+			map((dailyData) => this.personalAccountChartService.getAccountStateByDailyData(dailyData))
+		);
+
 		// daily data displayed on UI - filtered by selected tag ids
-		this.filteredDailyData$ = combineLatest([
-			totalDailyDataForTimePeriod$,
-			this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.pipe(startWith([] as string[])),
-		]).pipe(
+		this.filteredDailyData$ = combineLatest([totalDailyDataForTimePeriod$, this.selectedTagIds$]).pipe(
 			map(([totalDailyData, selectedTagIds]) => {
 				// no tag id is selected
 				if (selectedTagIds.length === 0) {
@@ -181,10 +195,27 @@ export abstract class PersonalAccountParent {
 			map((result) => (!!result ? this.personalAccountChartService.getExpenseAllocationChartData(result) : null))
 		);
 
-		// aggregate daily data by tag
-		this.accountTagAggregationForTimePeriod$ = totalDailyDataForTimePeriod$.pipe(
-			map((result) => this.personalAccountDataService.getPersonalAccountTagAggregation(result))
+		this.accountTagAggregationForTimePeriod$ = combineLatest([
+			totalDailyDataForTimePeriod$,
+			this.dateSource$,
+			this.personalAccountDetails$,
+		]).pipe(
+			tap(console.log),
+			map(
+				([result, dateFilter, details]: [
+					PersonalAccountDailyDataOutputFragment[],
+					string,
+					PersonalAccountDetailsFragment
+				]) =>
+					dateFilter === NO_DATE_SELECTED
+						? this.personalAccountDataService.getPersonalAccountTagAggregationByAggregationData(
+								details.yearlyAggregaton
+						  )
+						: this.personalAccountDataService.getPersonalAccountTagAggregationByDailyData(result)
+			)
 		);
+
+		this.accountTagAggregationForTimePeriod$.subscribe((d) => console.log('watch me', d));
 	}
 
 	onDailyEntryClick(editingDailyData: PersonalAccountDailyDataOutputFragment | null): void {

@@ -15,6 +15,15 @@
 
 		<!-- menu when clicking on mat-chip -->
 		<mat-menu #menu="matMenu">
+			<!-- user's accounts -->
+			<button *ngFor="let account of availableAccounts" mat-menu-item (click)="onAccountButtonClick(account)">
+				<mat-icon>manage_accounts</mat-icon>
+				<span>{{account.name}}</span>
+			</button>
+
+			<mat-divider></mat-divider>
+
+			<!-- additional functionalities -->
 			<button mat-menu-item (click)="onUserProfile()">
 				<mat-icon>manage_accounts</mat-icon>
 				<span>User profile</span>

@@ -38,7 +38,7 @@ export class InvestmentAccountRepositoryService {
 			data: {
 				name,
 				userId,
-				accountType: AccountType.INVESTMENT_ACCOUNT,
+				accountType: AccountType.INVESTMENT,
 				holdings: [],
 				cashChange: [],
 			},

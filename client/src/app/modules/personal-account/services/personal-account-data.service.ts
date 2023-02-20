@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { map, Observable, zip } from 'rxjs';
 import {
 	PersonalAccountAggregationDataOutput,
 	PersonalAccountDailyDataOutputFragment,
@@ -8,12 +9,49 @@ import {
 import { DateServiceUtil } from '../../../core/utils';
 import { InputSource, InputSourceWrapper, ValuePresentItem } from '../../../shared/models';
 import { NO_DATE_SELECTED, PersonalAccountDailyDataAggregation, PersonalAccountTagAggregation } from '../models';
+import { PersonalAccountFacadeService } from './../../../core/api';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class PersonalAccountDataService {
-	constructor() {}
+	constructor(private personalAccountFacadeService: PersonalAccountFacadeService) {}
+
+	getAvailableTagInputSourceWrapper(personalAccountId: string): Observable<InputSourceWrapper[]> {
+		const expenseTags$ = this.personalAccountFacadeService.getPersonalAccountTagsExpense(personalAccountId).pipe(
+			map((res) => {
+				return {
+					name: res[0].type,
+					items: res.map((d) => {
+						return {
+							caption: d.name,
+							value: d.id,
+							additionalData: d,
+							image: d.imageUrl,
+						} as InputSource;
+					}),
+				};
+			})
+		);
+
+		const incomeTags$ = this.personalAccountFacadeService.getPersonalTagsIncome(personalAccountId).pipe(
+			map((res) => {
+				return {
+					name: res[0].type,
+					items: res.map((d) => {
+						return {
+							caption: d.name,
+							value: d.id,
+							additionalData: d,
+							image: d.imageUrl,
+						} as InputSource;
+					}),
+				};
+			})
+		);
+
+		return zip(expenseTags$, incomeTags$);
+	}
 
 	/**
 	 * from weekly data where we have [year, month], we create InputSourceWrapper based on each month

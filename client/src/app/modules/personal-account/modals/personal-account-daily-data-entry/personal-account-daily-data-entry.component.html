@@ -1,48 +1,27 @@
-<div class="text-lg mb-6 text-center">
+<div class="mb-6 text-lg text-center">
 	Account: <span class="text-wt-primary-dark">{{ data.personalAccountName }}</span>
 </div>
 
 <form (ngSubmit)="onSave()" [formGroup]="formGroup">
 	<mat-dialog-content class="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
 		<!-- form inputs -->
-		<div class="col-span-1 lg:col-span-2 flex flex-col">
-			<!-- tag types -->
-			<mat-radio-group
-				aria-label="Select tag type"
-				formControlName="tagType"
-				color="primary"
-				class="flex justify-around mb-2"
-			>
-				<mat-radio-button [value]="TagDataType.Expense">Expense</mat-radio-button>
-				<mat-radio-button [value]="TagDataType.Income">Income</mat-radio-button>
-			</mat-radio-group>
-
+		<div class="flex flex-col">
 			<!-- tag -->
 			<app-form-mat-input-wrapper
 				controlName="tagId"
 				inputCaption="Select tag"
-				inputType="SELECT"
+				inputType="SELECT_SOURCE_WRAPPER"
 				hintText="Select tag that will be associated with the value"
-				[inputSource]="displayTagsInputSource$ | async"
+				[inputSourceWrapper]="displayTagsInputSource$ | async"
 			></app-form-mat-input-wrapper>
 
-			<div class="flex flex-col sm:flex-row gap-x-4">
-				<!-- time -->
-				<app-form-mat-input-wrapper
-					class="w-full"
-					controlName="time"
-					inputCaption="Enter time"
-					inputType="TIMEPICKER"
-				></app-form-mat-input-wrapper>
-
-				<!-- date -->
-				<app-form-mat-input-wrapper
-					class="w-full"
-					controlName="date"
-					inputCaption="Enter date"
-					inputType="DATEPICKER"
-				></app-form-mat-input-wrapper>
-			</div>
+			<!-- date -->
+			<app-form-mat-input-wrapper
+				class="w-full"
+				controlName="date"
+				inputCaption="Enter date"
+				inputType="DATEPICKER"
+			></app-form-mat-input-wrapper>
 
 			<!-- value -->
 			<app-form-mat-input-wrapper
@@ -53,9 +32,13 @@
 			></app-form-mat-input-wrapper>
 		</div>
 
+		<div>
+			<app-number-keyboard-control formControlName="value"></app-number-keyboard-control>
+		</div>
+
 		<!-- display value form form -->
 		<div class="py-4 pt-2">
-			<app-daily-data-entry-display-elements
+			<!-- <app-daily-data-entry-display-elements
 				(removeEmitter)="onRemove()"
 				[isRemoving]="isRemoving"
 				[isEditing]="!!data.dailyData"
@@ -64,7 +47,7 @@
 				[value]="formGroup.controls.value.value"
 				[date]="formGroup.controls.date.value"
 				[time]="formGroup.controls.time.value"
-			></app-daily-data-entry-display-elements>
+			></app-daily-data-entry-display-elements> -->
 		</div>
 	</mat-dialog-content>
 

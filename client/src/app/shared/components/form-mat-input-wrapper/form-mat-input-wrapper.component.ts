@@ -1,7 +1,7 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ControlContainer, FormControl } from '@angular/forms';
+import { MatOptionSelectionChange } from '@angular/material/core';
 import { DateFilterFn } from '@angular/material/datepicker';
-import { map, Observable, startWith } from 'rxjs';
 import { InputSource, InputSourceWrapper, InputType, InputTypeDateTimePickerConfig, InputTypeEnum } from '../../models';
 @Component({
 	selector: 'app-form-mat-input-wrapper',
@@ -43,16 +43,11 @@ export class FormMatInputWrapperComponent implements OnInit, OnChanges {
 	// only used if InputTypeDateTimePickerConfig.dateFilter is not present
 	defaultDateFilter: DateFilterFn<any> = (d: Date) => true;
 
-	@ViewChild('matSearchSelectInput') matSearchSelectInput?: ElementRef<HTMLInputElement>;
-
-	selectedInputSource$?: Observable<InputSource | undefined>; // ONLY USED FOR inputType === SELECT
-
 	formInputControl!: FormControl;
 
 	InputType = InputTypeEnum;
 
-	private copyInputSource: InputSource[] = []; // storing original inputSource when filtering in inputType === MULTISELECT
-	private copyInputSourceWrapper: InputSourceWrapper[] = [];
+	selectedInputSource?: InputSource; // ONLY USED FOR inputType === SELECT
 
 	constructor(private controlContainer: ControlContainer) {}
 
@@ -75,12 +70,10 @@ export class FormMatInputWrapperComponent implements OnInit, OnChanges {
 			this.formInputControl = this.controlContainer.control?.get(this.controlName) as FormControl;
 		}
 
-		if (changes?.['inputSource']?.currentValue) {
-			this.copyInputSource = [...(changes?.['inputSource']?.currentValue as InputSource[])];
-		}
-
 		if (changes?.['inputSourceWrapper']?.currentValue) {
-			this.copyInputSourceWrapper = [...(changes?.['inputSourceWrapper']?.currentValue as InputSourceWrapper[])];
+			this.selectedInputSource = this.inputSourceWrapper
+				?.flatMap((d) => d.items)
+				.find((d) => d.value === this.formInputControl.value);
 		}
 
 		// when in editing we patch value into selectedInputSource m we want to find a value
@@ -90,41 +83,14 @@ export class FormMatInputWrapperComponent implements OnInit, OnChanges {
 			!!this.formInputControl &&
 			!!this.inputSource
 		) {
-			this.findSelectedInputSource();
+			this.selectedInputSource = this.inputSource.find((d) => d.value === this.formInputControl.value);
 		}
 	}
 
-	/*
-	 * used when inputType === MULTISELECT to filter data
-	 * */
-	multiSelectKeyPress(event: any): void {
-		const value = event.target?.value;
-		this.inputSource = this.copyInputSource.filter((inputSource) =>
-			inputSource.caption.toString().toLowerCase().startsWith(value.toLowerCase())
-		);
-	}
-
-	multiSelectKeyPressWrapper(event: any): void {
-		const value = event.target?.value;
-		this.inputSourceWrapper = this.copyInputSourceWrapper.filter((inputSource) =>
-			inputSource.name.toString().toLowerCase().startsWith(value.toLowerCase())
-		);
-	}
-
-	/*
-	 * clear input when multi select is closed
-	 **/
-	closedSearchSelect(): void {
-		this.inputSource = [...this.copyInputSource];
-		if (this.matSearchSelectInput) {
-			this.matSearchSelectInput.nativeElement.value = '';
+	onSelectChange(inputSource: InputSource, e: MatOptionSelectionChange) {
+		// prevent double execution
+		if (e.isUserInput) {
+			this.selectedInputSource = inputSource;
 		}
-	}
-
-	private findSelectedInputSource(): void {
-		this.selectedInputSource$ = this.formInputControl.valueChanges.pipe(
-			startWith(this.formInputControl.value),
-			map((value) => this.inputSource?.find((s) => s.value === value))
-		);
 	}
 }

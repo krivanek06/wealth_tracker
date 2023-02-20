@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { catchError, EMPTY, first, iif, map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, first, Observable, of, switchMap, tap } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../../core/api';
 import {
 	PersonalAccountDailyDataCreate,
@@ -10,7 +10,8 @@ import {
 	TagDataType,
 } from '../../../../core/graphql';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
-import { InputSource, positiveNumberValidator, requiredValidator } from '../../../../shared/models';
+import { InputSourceWrapper, positiveNumberValidator, requiredValidator } from '../../../../shared/models';
+import { PersonalAccountDataService } from '../../services';
 
 @Component({
 	selector: 'app-personal-account-daily-data-entry',
@@ -19,7 +20,7 @@ import { InputSource, positiveNumberValidator, requiredValidator } from '../../.
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountDailyDataEntryComponent implements OnInit {
-	displayTagsInputSource$!: Observable<InputSource[]>;
+	displayTagsInputSource$!: Observable<InputSourceWrapper[]>;
 	selectedTag$!: Observable<PersonalAccountTagFragment>;
 	TagDataType = TagDataType;
 
@@ -28,7 +29,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	isRemoving = false;
 
 	readonly formGroup = new FormGroup({
-		tagType: new FormControl<TagDataType>(TagDataType.Expense, { validators: [requiredValidator] }),
 		tagId: new FormControl<string | null>(null, { validators: [requiredValidator] }),
 		value: new FormControl<number | null>(null, { validators: [requiredValidator, positiveNumberValidator] }),
 		time: new FormControl<Date>(new Date(), { validators: [requiredValidator] }),
@@ -37,6 +37,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 
 	constructor(
 		private personalAccountFacadeService: PersonalAccountFacadeService,
+		private personalAccountDataService: PersonalAccountDataService,
 		private dialogRef: MatDialogRef<PersonalAccountDailyDataEntryComponent>,
 		@Inject(MAT_DIALOG_DATA)
 		public data: {
@@ -55,14 +56,17 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 				date: new Date(Number(dailyData.date)),
 				time: new Date(Number(dailyData.date)),
 				tagId: dailyData.tagId,
-				tagType: tag?.type ?? null,
 				value: dailyData.value,
 			});
 		}
 
-		this.displayTagsInputSource$ = this.initIncomeExpenseTags();
-		this.selectedTag$ = this.initSelectedTag();
-		this.clearTagOnTagTypeChange();
+		this.displayTagsInputSource$ = this.personalAccountDataService.getAvailableTagInputSourceWrapper(
+			this.data.personalAccountId
+		);
+		//this.selectedTag$ = this.initSelectedTag();
+		// this.clearTagOnTagTypeChange();
+
+		this.formGroup.valueChanges.subscribe(console.log);
 	}
 
 	onRemove(): void {
@@ -170,48 +174,48 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		return dailyEntry;
 	}
 
-	private initSelectedTag(): Observable<PersonalAccountTagFragment> {
-		return this.formGroup.controls.tagId.valueChanges.pipe(
-			startWith(this.formGroup.controls.tagId.value),
-			switchMap((value) =>
-				this.displayTagsInputSource$.pipe(
-					map((source) => source.find((d) => d.value === value)?.additionalData as PersonalAccountTagFragment)
-				)
-			)
-		);
-	}
+	// private initSelectedTag(): Observable<PersonalAccountTagFragment> {
+	// 	return this.formGroup.controls.tagId.valueChanges.pipe(
+	// 		startWith(this.formGroup.controls.tagId.value),
+	// 		switchMap((value) =>
+	// 			this.displayTagsInputSource$.pipe(
+	// 				map((source) => source.find((d) => d.value === value)?.additionalData as PersonalAccountTagFragment)
+	// 			)
+	// 		)
+	// 	);
+	// }
 
-	private clearTagOnTagTypeChange(): void {
-		this.formGroup.controls.tagType.valueChanges
-			.pipe(
-				// reset selected tag
-				tap(() => this.formGroup.controls.tagId.patchValue(null, { emitEvent: false }))
-			)
-			.subscribe();
-	}
+	// private clearTagOnTagTypeChange(): void {
+	// 	this.formGroup.controls.tagType.valueChanges
+	// 		.pipe(
+	// 			// reset selected tag
+	// 			tap(() => this.formGroup.controls.tagId.patchValue(null, { emitEvent: false }))
+	// 		)
+	// 		.subscribe();
+	// }
 
-	private initIncomeExpenseTags(): Observable<InputSource[]> {
-		const expenseTags$ = this.personalAccountFacadeService.getPersonalAccountTagsExpense(this.data.personalAccountId);
-		const incomeTags$ = this.personalAccountFacadeService.getPersonalTagsIncome(this.data.personalAccountId);
+	// private initIncomeExpenseTags(): Observable<InputSource[]> {
+	// 	const expenseTags$ = this.personalAccountFacadeService.getPersonalAccountTagsExpense(this.data.personalAccountId);
+	// 	const incomeTags$ = this.personalAccountFacadeService.getPersonalTagsIncome(this.data.personalAccountId);
 
-		// based on tagType switch which one to display
-		return this.formGroup.controls.tagType.valueChanges.pipe(
-			startWith(this.formGroup.controls.tagType.value),
-			// decide which tag types to display
-			switchMap((tagType) =>
-				iif(() => tagType === TagDataType.Expense, expenseTags$, incomeTags$).pipe(
-					map((tags) =>
-						tags.map((d) => {
-							return {
-								caption: d.name,
-								value: d.id,
-								additionalData: d,
-								image: d.imageUrl,
-							} as InputSource;
-						})
-					)
-				)
-			)
-		);
-	}
+	// 	// based on tagType switch which one to display
+	// 	return this.formGroup.controls.tagType.valueChanges.pipe(
+	// 		startWith(this.formGroup.controls.tagType.value),
+	// 		// decide which tag types to display
+	// 		switchMap((tagType) =>
+	// 			iif(() => tagType === TagDataType.Expense, expenseTags$, incomeTags$).pipe(
+	// 				map((tags) =>
+	// 					tags.map((d) => {
+	// 						return {
+	// 							caption: d.name,
+	// 							value: d.id,
+	// 							additionalData: d,
+	// 							image: d.imageUrl,
+	// 						} as InputSource;
+	// 					})
+	// 				)
+	// 			)
+	// 		)
+	// 	);
+	// }
 }

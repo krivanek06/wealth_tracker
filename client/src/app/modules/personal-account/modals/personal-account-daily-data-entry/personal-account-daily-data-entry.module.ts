@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTimepickerModule } from 'mat-timepicker';
-import { FormMatInputWrapperModule } from './../../../../shared/components';
+import { FormMatInputWrapperModule, NumberKeyboardComponent } from './../../../../shared/components';
 import { DefaultImgDirective } from './../../../../shared/directives';
 import { DailyDataEntryDisplayElementsComponent } from './daily-data-entry-display-elements/daily-data-entry-display-elements.component';
 import { PersonalAccountDailyDataEntryComponent } from './personal-account-daily-data-entry.component';
@@ -30,6 +30,7 @@ import { PersonalAccountDailyDataEntryComponent } from './personal-account-daily
 		MatDatepickerModule,
 		DefaultImgDirective,
 		MatRadioModule,
+		NumberKeyboardComponent,
 		FormMatInputWrapperModule,
 	],
 })

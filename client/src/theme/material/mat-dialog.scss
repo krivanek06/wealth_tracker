@@ -84,7 +84,8 @@
 	}
 
 	.mat-mdc-dialog-container {
-		height: 98vh !important;
+		height: 100vh !important;
+		width: 100vw !important;
 
 		@screen sm {
 			height: auto !important;

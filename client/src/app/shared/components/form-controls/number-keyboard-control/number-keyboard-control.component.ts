@@ -21,7 +21,7 @@ import { KeyboardComponent, KeyboardComponentType } from '../../../models';
 })
 export class NumberKeyboardComponent {
 	// outputting number with maximum 2 decimal -> i.e: 122.33
-	onChange: (data: number) => void = () => {};
+	onChange: (data: string) => void = () => {};
 	onTouched = () => {};
 
 	value: string = '';
@@ -32,7 +32,7 @@ export class NumberKeyboardComponent {
 		// remove last char
 		if (keyboard.value === 'back') {
 			this.value = this.value.slice(0, this.value.length - 1);
-			this.onChange(Number(this.value));
+			this.onChange(this.value);
 			return;
 		}
 
@@ -48,11 +48,11 @@ export class NumberKeyboardComponent {
 
 		// append chart
 		this.value = this.value + keyboard.value;
-		this.onChange(Number(this.value));
+		this.onChange(this.value);
 	}
 
-	writeValue(value: number): void {
-		this.value = String(value);
+	writeValue(value: string): void {
+		this.value = value;
 	}
 
 	/**

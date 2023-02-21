@@ -10,7 +10,12 @@ import {
 	TagDataType,
 } from '../../../../core/graphql';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
-import { InputSourceWrapper, positiveNumberValidator, requiredValidator } from '../../../../shared/models';
+import {
+	InputSourceWrapper,
+	maxLengthValidator,
+	positiveNumberValidator,
+	requiredValidator,
+} from '../../../../shared/models';
 import { PersonalAccountDataService } from '../../services';
 
 @Component({
@@ -30,9 +35,10 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 
 	readonly formGroup = new FormGroup({
 		tagId: new FormControl<string | null>(null, { validators: [requiredValidator] }),
-		value: new FormControl<number | null>(null, { validators: [requiredValidator, positiveNumberValidator] }),
+		value: new FormControl<string | null>(null, { validators: [requiredValidator, positiveNumberValidator] }),
 		time: new FormControl<Date>(new Date(), { validators: [requiredValidator] }),
 		date: new FormControl<Date>(new Date(), { validators: [requiredValidator] }),
+		description: new FormControl<string | null>(null, { validators: [maxLengthValidator(250)] }),
 	});
 
 	constructor(
@@ -48,6 +54,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
+		// editing
 		if (this.data.dailyData) {
 			const dailyData = this.data.dailyData;
 			const tag = this.personalAccountFacadeService.getPersonalAccountTagFromCache(dailyData.tagId);
@@ -56,17 +63,14 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 				date: new Date(Number(dailyData.date)),
 				time: new Date(Number(dailyData.date)),
 				tagId: dailyData.tagId,
-				value: dailyData.value,
+				value: String(dailyData.value),
+				description: '',
 			});
 		}
 
 		this.displayTagsInputSource$ = this.personalAccountDataService.getAvailableTagInputSourceWrapper(
 			this.data.personalAccountId
 		);
-		//this.selectedTag$ = this.initSelectedTag();
-		// this.clearTagOnTagTypeChange();
-
-		this.formGroup.valueChanges.subscribe(console.log);
 	}
 
 	onRemove(): void {
@@ -166,56 +170,11 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		// create server obj
 		const dailyEntry: PersonalAccountDailyDataCreate = {
 			date: combinedDate.toString(),
-			value: valueValue,
+			value: Number(valueValue),
 			tagId: tagValue,
 			personalAccountId: this.data.personalAccountId,
 		};
 
 		return dailyEntry;
 	}
-
-	// private initSelectedTag(): Observable<PersonalAccountTagFragment> {
-	// 	return this.formGroup.controls.tagId.valueChanges.pipe(
-	// 		startWith(this.formGroup.controls.tagId.value),
-	// 		switchMap((value) =>
-	// 			this.displayTagsInputSource$.pipe(
-	// 				map((source) => source.find((d) => d.value === value)?.additionalData as PersonalAccountTagFragment)
-	// 			)
-	// 		)
-	// 	);
-	// }
-
-	// private clearTagOnTagTypeChange(): void {
-	// 	this.formGroup.controls.tagType.valueChanges
-	// 		.pipe(
-	// 			// reset selected tag
-	// 			tap(() => this.formGroup.controls.tagId.patchValue(null, { emitEvent: false }))
-	// 		)
-	// 		.subscribe();
-	// }
-
-	// private initIncomeExpenseTags(): Observable<InputSource[]> {
-	// 	const expenseTags$ = this.personalAccountFacadeService.getPersonalAccountTagsExpense(this.data.personalAccountId);
-	// 	const incomeTags$ = this.personalAccountFacadeService.getPersonalTagsIncome(this.data.personalAccountId);
-
-	// 	// based on tagType switch which one to display
-	// 	return this.formGroup.controls.tagType.valueChanges.pipe(
-	// 		startWith(this.formGroup.controls.tagType.value),
-	// 		// decide which tag types to display
-	// 		switchMap((tagType) =>
-	// 			iif(() => tagType === TagDataType.Expense, expenseTags$, incomeTags$).pipe(
-	// 				map((tags) =>
-	// 					tags.map((d) => {
-	// 						return {
-	// 							caption: d.name,
-	// 							value: d.id,
-	// 							additionalData: d,
-	// 							image: d.imageUrl,
-	// 						} as InputSource;
-	// 					})
-	// 				)
-	// 			)
-	// 		)
-	// 	);
-	// }
 }

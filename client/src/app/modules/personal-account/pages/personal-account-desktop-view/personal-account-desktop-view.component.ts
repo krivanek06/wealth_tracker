@@ -15,6 +15,7 @@ import {
 	PersonalAccountDailyEntriesFilterComponent,
 	PersonalAccountDailyEntriesTableModule,
 	PersonalAccountOverviewChartModule,
+	PersonalAccountTagAllocationChartComponent,
 } from '../../components';
 import { PersonalAccountDailyDataEntryModule } from '../../modals';
 
@@ -35,6 +36,7 @@ import { PersonalAccountDailyDataEntryModule } from '../../modals';
 		FormMatInputWrapperModule,
 		PersonalAccountDailyEntriesFilterComponent,
 		PersonalAccountAccountStateComponent,
+		PersonalAccountTagAllocationChartComponent,
 	],
 	templateUrl: './personal-account-desktop-view.component.html',
 	styleUrls: ['./personal-account-desktop-view.component.scss'],
@@ -45,5 +47,7 @@ export class PersonalAccountDesktopViewComponent extends PersonalAccountParent i
 		super();
 	}
 
-	ngOnInit(): void {}
+	ngOnInit(): void {
+		this.personalAccountYearlyTagExpensePieChart$.subscribe(console.log);
+	}
 }

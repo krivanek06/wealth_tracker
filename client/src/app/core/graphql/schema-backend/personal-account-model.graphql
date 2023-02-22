@@ -17,7 +17,7 @@ fragment PersonalAccountDailyDataOutput on PersonalAccountDailyDataOutput {
 	personalAccountId
 	week
 	tagId
-	personalAccountTag {
+	tag {
 		...PersonalAccountTag
 	}
 }

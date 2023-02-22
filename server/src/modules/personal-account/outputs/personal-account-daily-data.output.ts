@@ -6,5 +6,5 @@ export class PersonalAccountDailyDataOutput extends PersonalAccountDailyData {
 	@Field(() => PersonalAccountTag, {
 		description: 'Reference by PersonalAccountDailyData.tagId',
 	})
-	personalAccountTag: PersonalAccountTag;
+	tag: PersonalAccountTag;
 }

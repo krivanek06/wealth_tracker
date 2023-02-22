@@ -36,7 +36,7 @@ export class PersonalAccountDailyService {
 		// create correct returning object
 		const transformedDailyData: PersonalAccountDailyDataOutput[] = monthlyData.dailyData.map((d) => {
 			const personalAccountTag = personalAccount.personalAccountTag.find((tag) => tag.id === d.tagId);
-			return { ...d, personalAccountTag };
+			return { ...d, tag: personalAccountTag };
 		});
 
 		return transformedDailyData;
@@ -182,6 +182,6 @@ export class PersonalAccountDailyService {
 	private async transformDailyDataToOutput(data: PersonalAccountDailyData): Promise<PersonalAccountDailyDataOutput> {
 		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(data.personalAccountId);
 		const personalAccountTag = personalAccount.personalAccountTag.find((d) => d.id === data.tagId);
-		return { ...data, personalAccountTag };
+		return { ...data, tag: personalAccountTag };
 	}
 }

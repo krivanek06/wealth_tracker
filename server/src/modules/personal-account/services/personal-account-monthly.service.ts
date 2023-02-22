@@ -15,25 +15,6 @@ export class PersonalAccountMonthlyService {
 		return this.personalAccountMonthlyDataRepository.getMonthlyDataByAccountId(id);
 	}
 
-	// async getMonthlyDataById(monthlyDataId: string, userId: string): Promise<PersonalAccountMonthlyData> {
-	// 	try {
-	// 		const data = await this.personalAccountMonthlyDataRepository.getMonthlyDataById(monthlyDataId, userId);
-	// 		return data;
-	// 	} catch (e) {
-	// 		console.log(e);
-	// 		throw new HttpException(PERSONAL_ACCOUNT_ERROR_MONTHLY_DATA.NOT_FOUND, HttpStatus.NOT_FOUND);
-	// 	}
-	// }
-
-	// createMonthlyData(
-	// 	personalAccount: PersonalAccount,
-	// 	userId: string,
-	// 	year: number,
-	// 	month: number
-	// ): Promise<PersonalAccountMonthlyData> {
-	// 	return this.personalAccountMonthlyDataRepository.createMonthlyData(personalAccount.id, userId, year, month);
-	// }
-
 	/**
 	 *
 	 * @param personalAccountMonthlyData
@@ -55,7 +36,7 @@ export class PersonalAccountMonthlyService {
 			.filter((d) => personalAccountTagIds.includes(d.tagId))
 			.map((d) => {
 				const personalAccountTag = personalAccountTags.find((tag) => tag.id === d.tagId);
-				return { ...d, personalAccountTag } as PersonalAccountDailyDataOutput;
+				return { ...d, tag: personalAccountTag } as PersonalAccountDailyDataOutput;
 			});
 
 		return dailyData;

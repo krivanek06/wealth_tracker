@@ -30,9 +30,7 @@ export class PersonalAccountDataAggregatorService {
 		const dateDetails = DateServiceUtil.getDetailsInformationFromDate(Number(dailyData.date));
 		const multiplier = operation === 'increase' ? 1 : -1; // add or remove data from aggregation
 
-		const isTagInYearlyAggregation = personalAccount.yearlyAggregaton.findIndex(
-			(d) => d.tag.id === dailyData.personalAccountTag.id
-		);
+		const isTagInYearlyAggregation = personalAccount.yearlyAggregaton.findIndex((d) => d.tag.id === dailyData.tag.id);
 
 		// update yearlyAggregation that match tagId or add new yearly data if not found
 		const yearlyAggregation: PersonalAccountAggregationDataOutput[] =
@@ -52,7 +50,7 @@ export class PersonalAccountDataAggregatorService {
 						{
 							__typename: 'PersonalAccountAggregationDataOutput',
 							entries: 1,
-							tag: dailyData.personalAccountTag,
+							tag: dailyData.tag,
 							value: dailyData.value,
 						},
 				  ];
@@ -67,7 +65,7 @@ export class PersonalAccountDataAggregatorService {
 
 		// if -1 means there is not weekly aggregation for specific TAG
 		const weeklyAggregatonDataIndex = personalAccount.weeklyAggregaton[weeklyAggregatonIndex]?.data?.findIndex(
-			(d) => d.tag.id === dailyData.personalAccountTag.id
+			(d) => d.tag.id === dailyData.tag.id
 		);
 
 		// only used when monthly data not exists
@@ -81,7 +79,7 @@ export class PersonalAccountDataAggregatorService {
 				{
 					__typename: 'PersonalAccountAggregationDataOutput',
 					entries: 1,
-					tag: dailyData.personalAccountTag,
+					tag: dailyData.tag,
 					value: dailyData.value,
 				},
 			],
@@ -110,7 +108,7 @@ export class PersonalAccountDataAggregatorService {
 										{
 											__typename: 'PersonalAccountAggregationDataOutput',
 											entries: 1,
-											tag: dailyData.personalAccountTag,
+											tag: dailyData.tag,
 											value: dailyData.value,
 										},
 									],
@@ -124,7 +122,7 @@ export class PersonalAccountDataAggregatorService {
 									...d,
 									data: d.data.map((dDaily) =>
 										// found tag we want to mutate
-										dDaily.tag.id === dailyData.personalAccountTag.id
+										dDaily.tag.id === dailyData.tag.id
 											? {
 													...dDaily,
 													entries: dDaily.entries + 1 * multiplier,
@@ -137,10 +135,8 @@ export class PersonalAccountDataAggregatorService {
 				  );
 
 		// update monthly data entries + income/expense
-		const newMonthlyIncome =
-			(dailyData.personalAccountTag.type === TagDataType.Income ? dailyData.value : 0) * multiplier;
-		const newMonthlyExpense =
-			(dailyData.personalAccountTag.type === TagDataType.Expense ? dailyData.value : 0) * multiplier;
+		const newMonthlyIncome = (dailyData.tag.type === TagDataType.Income ? dailyData.value : 0) * multiplier;
+		const newMonthlyExpense = (dailyData.tag.type === TagDataType.Expense ? dailyData.value : 0) * multiplier;
 		const dailyDataDate = DateServiceUtil.getDetailsInformationFromDate(dailyData.date);
 		const monthlyData = personalAccount.monthlyData.map((d) => {
 			if (d.year === dailyDataDate.year && d.month === dailyDataDate.month) {

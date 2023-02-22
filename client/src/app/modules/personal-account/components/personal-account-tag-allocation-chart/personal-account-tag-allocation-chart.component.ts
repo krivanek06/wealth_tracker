@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { ChartType, GenericChartSeriesPie } from './../../../../shared/models';
@@ -13,13 +13,17 @@ import { ChartType, GenericChartSeriesPie } from './../../../../shared/models';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountTagAllocationChartComponent {
+	@Input() dataLabelsAlignTo: 'plotEdges' | 'connectors' = 'plotEdges';
 	@Input() accountBalance!: number;
+	@Input() heightPx?: number;
 
 	@Input() set series(data: GenericChartSeriesPie | undefined | null) {
 		if (data) {
 			this.initChart(data);
 		}
 	}
+
+	@ViewChild('chartRef') chartRef!: any;
 
 	Highcharts: typeof Highcharts = Highcharts;
 	chart: any;
@@ -32,9 +36,10 @@ export class PersonalAccountTagAllocationChartComponent {
 
 		this.chartCallback = (chart: any) => {
 			console.log('chartCallback', chart);
-			self.chart = chart; // new Highcharts.Chart(this.chartOptions); //chart;
+			self.chart = chart;
 		};
 	}
+	ngAfterViewInit(): void {}
 
 	initChart(data: GenericChartSeriesPie) {
 		this.chartOptions = {
@@ -42,6 +47,7 @@ export class PersonalAccountTagAllocationChartComponent {
 				plotShadow: false,
 				type: ChartType.pie,
 				backgroundColor: 'transparent',
+				height: this.heightPx ?? undefined,
 			},
 			title: {
 				align: 'center',
@@ -110,9 +116,9 @@ export class PersonalAccountTagAllocationChartComponent {
 					dataLabels: {
 						padding: 2,
 						connectorPadding: 2,
-						shape: 'callout',
-						alignTo: 'plotEdges',
-						connectorShape: 'crookedLine',
+						// shape: 'callout',
+						// alignTo: this.dataLabelsAlignTo,
+						// connectorShape: 'crookedLine',
 						distance: 40,
 						// crookDistance: 90,
 						overflow: 'allow',

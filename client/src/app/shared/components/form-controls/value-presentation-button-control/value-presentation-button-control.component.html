@@ -7,6 +7,7 @@
 		[style.--valueItemColorActive]="item.color + '44'"
 		[style]="(activeItems| inArray: item.item : itemKey ) ? 'background-color: ' +  item.color + '44': ''"
 		(click)="onClick(item.item)"
+		class="h-16"
 	>
 		<div class="flex flex-col">
 			<div class="flex flex-row gap-2">

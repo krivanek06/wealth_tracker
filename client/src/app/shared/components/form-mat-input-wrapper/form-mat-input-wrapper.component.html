@@ -2,7 +2,7 @@
 	<ng-container [ngSwitch]="inputType">
 		<mat-form-field
 			*ngIf="!['CHECKBOX', 'RADIO', 'SLIDE_TOGGLE', 'SLIDER' ,'BUTTON'].includes(inputType); else fieldWhichCannotBeInFormField"
-			appearance="outline"
+			appearance="fill"
 			[ngClass]="{ 'errors-showed': usedFormControl.touched  && usedFormControl.invalid }"
 		>
 			<!-- label -->
@@ -28,15 +28,16 @@
 					placeholder="Select value"
 					[ngClass]="{'disabled-element': disabled}"
 				>
-					<input
-						#matSearchSelectInput
-						(keyup)="multiSelectKeyPressWrapper($event)"
-						class="select-input"
-						placeholder="Search"
-						tabindex="0"
-					/>
+					<mat-select-trigger *ngIf="selectedInputSource" class="flex items-center gap-2">
+						<img *ngIf="selectedInputSource?.image" [src]="selectedInputSource.image" alt="" />
+						{{ selectedInputSource.caption }}
+					</mat-select-trigger>
 					<mat-optgroup *ngFor="let source of inputSourceWrapper" [label]="source.name">
-						<mat-option *ngFor="let optionData of source.items" [value]="optionData.value">
+						<mat-option
+							*ngFor="let optionData of source.items"
+							[value]="optionData.value"
+							(onSelectionChange)="onSelectChange(optionData, $event)"
+						>
 							<div class="flex items-center gap-2">
 								<img *ngIf="optionData?.image" [src]="optionData.image" alt="" />
 								{{ optionData.caption }}
@@ -65,17 +66,12 @@
 					[ngClass]="{'disabled-element': disabled}"
 					[multiple]="inputType === InputType.MULTISELECT"
 				>
-					<mat-select-trigger
-						*ngIf="selectedInputSource$ | async as selectedInputSource"
-						class="flex items-center gap-2"
-					>
+					<mat-select-trigger *ngIf="selectedInputSource" class="flex items-center gap-2">
 						<img *ngIf="selectedInputSource?.image" [src]="selectedInputSource.image" alt="" />
 						{{ selectedInputSource.caption }}
 					</mat-select-trigger>
 					<input
 						*ngIf="inputType === InputType.SELECTSEARCH || inputType === InputType.MULTISELECT"
-						#matSearchSelectInput
-						(keyup)="multiSelectKeyPress($event)"
 						class="select-input"
 						placeholder="Search"
 						tabindex="0"

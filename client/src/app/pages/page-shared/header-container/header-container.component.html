@@ -3,15 +3,15 @@
 
 	<!-- right section -->
 	<div *ngIf="authenticatedUser$ | async as user; else noUser" class="flex items-center gap-4">
-		<mat-chip-list aria-label="Authenticated user">
+		<mat-chip-listbox aria-label="Authenticated user">
 			<mat-chip
 				[matMenuTriggerFor]="menu"
-				class="p-5 bg-transparent border-2 border-solid cursor-pointer text-wt-primary-dark"
+				class="p-5 bg-transparent border-2 border-solid cursor-pointer text-wt-primary-dark border-wt-primary-dark"
 			>
 				<img appDefaultImg matChipAvatar [src]="user.imageUrl" alt="Authenticated user photo" />
 				{{user.username}}
 			</mat-chip>
-		</mat-chip-list>
+		</mat-chip-listbox>
 
 		<!-- menu when clicking on mat-chip -->
 		<mat-menu #menu="matMenu">

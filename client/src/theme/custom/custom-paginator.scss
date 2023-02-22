@@ -1,18 +1,18 @@
 .g-bubble {
-	background-color: var(--secondary-dark);
+	background-color: var(--gray-dark);
 	border-radius: 50%;
 	width: 34px;
 	height: 34px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: var(--gray-medium);
+	color: white !important;
 	font-size: 14px;
 	cursor: pointer;
 	transition: 0.3s;
 
 	&:hover {
-		background-color: var(--primary-dark);
+		background-color: var(--gray-medium);
 		color: white;
 	}
 
@@ -32,10 +32,11 @@
 	}
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of paginator that may no longer apply for the MDC version. */
 mat-paginator {
 	background: transparent !important;
 }
 
-.mat-paginator-range-actions {
+.mat-mdc-paginator-range-actions {
 	margin-right: 12px !important;
 }

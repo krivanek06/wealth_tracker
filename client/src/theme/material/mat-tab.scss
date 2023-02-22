@@ -1,13 +1,16 @@
-.mat-tab-label,
-.mat-tab-link {
+.mat-mdc-tab-link .mdc-tab__text-label {
 	color: var(--gray-light) !important;
 	// flex: 1 !important;
 }
 
-.mat-tab-list {
+.mdc-tab--active .mdc-tab__text-label {
+	color: var(--secondary-dark) !important;
+}
+
+.mat-mdc-tab-list {
 	margin-bottom: 16px !important;
 }
 
-.mat-tab-body {
+.mat-mdc-tab-body {
 	padding: 8px !important;
 }

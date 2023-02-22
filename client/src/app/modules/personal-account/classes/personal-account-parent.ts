@@ -225,7 +225,7 @@ export abstract class PersonalAccountParent {
 				personalAccountId: this.personalAccountBasic.id,
 				personalAccountName: this.personalAccountBasic.name,
 			},
-			panelClass: ['g-mat-dialog-big'],
+			panelClass: ['g-mat-dialog-small'],
 		});
 	}
 }

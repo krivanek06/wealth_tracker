@@ -1,4 +1,5 @@
 @import './custom/custom-paginator.scss';
+@import './custom/custom-tooltip.scss';
 
 body {
 	background: linear-gradient(
@@ -19,31 +20,6 @@ body {
 	background-color: #232439 !important;
 	color: #f6f6f7 !important;
 	border-radius: 10px !important;
-}
-
-/* mat tooltip */
-.cdk-overlay-pane {
-	max-width: 100vw !important;
-
-	@screen sm {
-		max-width: 90vw !important;
-	}
-
-	&.mat-tooltip-panel {
-		.mat-tooltip {
-			color: var(--gray-light);
-			background-color: var(--gray-dark);
-			border: 1px solid var(--gray-dark);
-			border-radius: 8px;
-			font-size: 14px;
-			padding: 14px;
-			white-space: pre-line;
-		}
-	}
-}
-
-.g-bottom-border {
-	border-bottom: 1px solid var(--gray-dark);
 }
 
 .g-section-title {

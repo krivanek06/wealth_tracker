@@ -1,0 +1,7 @@
+:host {
+	display: block;
+}
+
+::ng-deep mat-datepicker-content {
+	margin-top: 45px !important;
+}

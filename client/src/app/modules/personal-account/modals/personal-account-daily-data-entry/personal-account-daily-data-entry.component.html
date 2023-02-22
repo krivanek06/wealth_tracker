@@ -1,81 +1,52 @@
-<div class="text-lg mb-6 text-center">
-	Account: <span class="text-wt-primary-dark">{{ data.personalAccountName }}</span>
-</div>
+<div class="text-lg text-center">Account: <span class="text-wt-primary-dark">{{ data.personalAccountName }}</span></div>
 
 <form (ngSubmit)="onSave()" [formGroup]="formGroup">
-	<mat-dialog-content class="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
-		<!-- form inputs -->
-		<div class="col-span-1 lg:col-span-2 flex flex-col">
-			<!-- tag types -->
-			<mat-radio-group
-				aria-label="Select tag type"
-				formControlName="tagType"
-				color="primary"
-				class="flex justify-around mb-2"
-			>
-				<mat-radio-button [value]="TagDataType.Expense">Expense</mat-radio-button>
-				<mat-radio-button [value]="TagDataType.Income">Income</mat-radio-button>
-			</mat-radio-group>
+	<mat-dialog-content class="flex flex-col gap-x-4">
+		<!-- date picker -->
+		<app-date-picker formControlName="date"></app-date-picker>
 
-			<!-- tag -->
-			<app-form-mat-input-wrapper
-				controlName="tagId"
-				inputCaption="Select tag"
-				inputType="SELECT"
-				hintText="Select tag that will be associated with the value"
-				[inputSource]="displayTagsInputSource$ | async"
-			></app-form-mat-input-wrapper>
+		<!-- tag -->
+		<app-form-mat-input-wrapper
+			controlName="tagId"
+			inputCaption="Select tag"
+			inputType="SELECT_SOURCE_WRAPPER"
+			[inputSourceWrapper]="displayTagsInputSource$ | async"
+		></app-form-mat-input-wrapper>
 
-			<div class="flex flex-col sm:flex-row gap-x-4">
-				<!-- time -->
-				<app-form-mat-input-wrapper
-					class="w-full"
-					controlName="time"
-					inputCaption="Enter time"
-					inputType="TIMEPICKER"
-				></app-form-mat-input-wrapper>
+		<!-- display value -->
+		<div class="flex items-center justify-between w-full pl-4 mb-5 text-xl">
+			<span class="text-wt-gray-light">$</span>
 
-				<!-- date -->
-				<app-form-mat-input-wrapper
-					class="w-full"
-					controlName="date"
-					inputCaption="Enter date"
-					inputType="DATEPICKER"
-				></app-form-mat-input-wrapper>
+			<div class="flex items-center gap-4">
+				<span class="text-white">{{formGroup.controls.value.value ?? 0}}</span>
+				<div *ngIf="data.dailyData" appTooltip="Remove Item">
+					<button type="button" mat-icon-button color="warn" (click)="onRemove()" class="">
+						<mat-icon>delete</mat-icon>
+					</button>
+				</div>
 			</div>
-
-			<!-- value -->
-			<app-form-mat-input-wrapper
-				controlName="value"
-				inputCaption="Enter value"
-				inputType="NUMBER"
-				hintText="Add USD to the selected tag, greater than 0$"
-			></app-form-mat-input-wrapper>
 		</div>
 
-		<!-- display value form form -->
-		<div class="py-4 pt-2">
-			<app-daily-data-entry-display-elements
-				(removeEmitter)="onRemove()"
-				[isRemoving]="isRemoving"
-				[isEditing]="!!data.dailyData"
-				[tagType]="formGroup.controls.tagType.value"
-				[tag]="selectedTag$ | async"
-				[value]="formGroup.controls.value.value"
-				[date]="formGroup.controls.date.value"
-				[time]="formGroup.controls.time.value"
-			></app-daily-data-entry-display-elements>
+		<!-- description -->
+		<app-form-mat-input-wrapper
+			controlName="description"
+			inputCaption="Add description"
+			inputType="TEXTAREA"
+		></app-form-mat-input-wrapper>
+
+		<div>
+			<app-number-keyboard-control formControlName="value"></app-number-keyboard-control>
 		</div>
 	</mat-dialog-content>
 
-	<div class="mt-4">
+	<div class="my-4">
 		<mat-divider></mat-divider>
 	</div>
 
 	<!-- action buttons -->
 	<mat-dialog-actions>
 		<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
-		<button mat-stroked-button color="primary" type="submit">
+		<button mat-stroked-button color="primary" type="submit" [disabled]="!formGroup.controls.value.value">
 			<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
 			Save
 		</button>

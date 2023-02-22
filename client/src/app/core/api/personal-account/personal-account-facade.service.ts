@@ -152,8 +152,8 @@ export class PersonalAccountFacadeService {
 					const newMonthlyData: PersonalAccountMonthlyDataOverviewFragment = {
 						__typename: 'PersonalAccountMonthlyData',
 						dailyEntries: 1,
-						monthlyIncome: entry.personalAccountTag.type === TagDataType.Income ? entry.value : 0,
-						monthlyExpense: entry.personalAccountTag.type === TagDataType.Expense ? entry.value : 0,
+						monthlyIncome: entry.tag.type === TagDataType.Income ? entry.value : 0,
+						monthlyExpense: entry.tag.type === TagDataType.Expense ? entry.value : 0,
 						year,
 						month,
 					};
@@ -183,14 +183,14 @@ export class PersonalAccountFacadeService {
 				const removedDailyData = entry.originalDailyData as PersonalAccountDailyDataOutputFragment;
 				const addedDailyData = entry.modifiedDailyData as PersonalAccountDailyDataOutputFragment;
 
-				// subtract old data
+				// subtract old data from aggregations
 				this.personalAccountDataAggregatorService.updateAggregations(
 					input.dailyDataDelete.personalAccountId,
 					removedDailyData,
 					'decrease'
 				);
 
-				// add new data
+				// add new data to aggregations
 				this.personalAccountDataAggregatorService.updateAggregations(
 					input.dailyDataDelete.personalAccountId,
 					addedDailyData,
@@ -199,6 +199,8 @@ export class PersonalAccountFacadeService {
 
 				// remove from cache
 				this.personalAccountCacheService.removePersonalAccountDailyDataFromCache(removedDailyData.id);
+
+				// add new data into displayed array
 			})
 		);
 	}

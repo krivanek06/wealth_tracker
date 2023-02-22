@@ -211,15 +211,15 @@ export class PersonalAccountDataService {
 
 			// data not yet present
 			const weeksInMonth = DateServiceUtil.getWeeksInMonth(Number(curr.date));
-			const budgetMonthly = curr.personalAccountTag.budgetMonthly;
+			const budgetMonthly = curr.tag.budgetMonthly;
 			const budgetToTimePeriod = isWeeklyView && budgetMonthly ? budgetMonthly / weeksInMonth : budgetMonthly;
 
 			const newData: PersonalAccountTagAggregation = {
 				id: curr.tagId,
-				name: curr.personalAccountTag.name,
-				color: curr.personalAccountTag.color,
-				imageUrl: curr.personalAccountTag.imageUrl,
-				type: curr.personalAccountTag.type,
+				name: curr.tag.name,
+				color: curr.tag.color,
+				imageUrl: curr.tag.imageUrl,
+				type: curr.tag.type,
 				totalEntries: 1,
 				totalValue: curr.value,
 				lastDataEntryDate: curr.date,

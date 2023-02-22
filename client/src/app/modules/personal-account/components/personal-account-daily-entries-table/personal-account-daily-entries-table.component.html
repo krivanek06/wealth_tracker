@@ -5,11 +5,11 @@
 		<td mat-cell *matCellDef="let row">
 			<div class="flex items-center gap-3">
 				<!-- tag svg -->
-				<img appDefaultImg imageType="url" [src]="row.personalAccountTag.imageUrl" class="h-7" />
+				<img appDefaultImg imageType="url" [src]="row.tag.imageUrl" class="h-7" />
 
 				<!-- tag data -->
 				<div class="flex flex-col">
-					<span class="text-gray-200">{{ row.personalAccountTag.name }}</span>
+					<span class="text-gray-200">{{ row.tag.name }}</span>
 					<span class="table-cell sm:hidden">{{ row.date | date: 'EEEE h:mm a, MMM d.' }}</span>
 				</div>
 			</div>
@@ -23,8 +23,8 @@
 			mat-cell
 			*matCellDef="let row"
 			[ngClass]="{
-        'text-wt-danger-medium': row.personalAccountTag.type === TagDataType.Expense,
-        'text-wt-success-medium': row.personalAccountTag.type === TagDataType.Income
+        'text-wt-danger-medium': row.tag.type === TagDataType.Expense,
+        'text-wt-success-medium': row.tag.type === TagDataType.Income
       }"
 		>
 			{{ row.value | currency }}

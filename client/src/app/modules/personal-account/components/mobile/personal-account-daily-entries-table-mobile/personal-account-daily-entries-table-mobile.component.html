@@ -7,16 +7,16 @@
 					<div class="flex items-center gap-x-5">
 						<!-- tag svg -->
 						<!--
-              		style="border-color: {{data.personalAccountTag.color}}"
+              		style="border-color: {{data.tag.color}}"
 							  class="px-2 rounded-md border-x-4 h-7"
              -->
-						<img class="h-7" appDefaultImg imageType="url" [src]="data.personalAccountTag.imageUrl" />
+						<img class="h-7" appDefaultImg imageType="url" [src]="data.tag.imageUrl" />
 
 						<!-- tag data -->
 						<div class="flex flex-col">
 							<span class="text-wt-gray-light">
-								<!-- <span style="color: {{data.personalAccountTag.color}}">●</span> -->
-								{{ data.personalAccountTag.name }}
+								<!-- <span style="color: {{data.tag.color}}">●</span> -->
+								{{ data.tag.name }}
 							</span>
 							<span class="text-wt-gray-medium">{{ data.date | date: 'h:mm a' }}</span>
 						</div>
@@ -24,8 +24,8 @@
 
 					<div
 						[ngClass]="{
-              'text-wt-danger-medium': data.personalAccountTag.type === TagDataType.Expense,
-              'text-wt-success-medium': data.personalAccountTag.type === TagDataType.Income
+              'text-wt-danger-medium': data.tag.type === TagDataType.Expense,
+              'text-wt-success-medium': data.tag.type === TagDataType.Income
             }"
 					>
 						{{ data.value | currency }}

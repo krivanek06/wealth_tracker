@@ -70,6 +70,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		}
 		this.isRemoving = true;
 		DialogServiceUtil.showNotificationBar(`Operation sent to the server side`, 'notification');
+
 		this.personalAccountFacadeService
 			.deletePersonalAccountDailyEntry({
 				dailyDataId: this.data.dailyData.id,

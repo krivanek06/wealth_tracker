@@ -17,17 +17,9 @@ fragment PersonalAccountDailyDataOutput on PersonalAccountDailyDataOutput {
 	personalAccountId
 	week
 	tagId
-	personalAccountTag {
+	tag {
 		...PersonalAccountTag
 	}
-}
-
-fragment PersonalAccountMonthlyDataOverview on PersonalAccountMonthlyData {
-	month
-	year
-	dailyEntries
-	monthlyIncome
-	monthlyExpense
 }
 
 fragment PersonalAccountOverview on PersonalAccount {
@@ -51,10 +43,6 @@ fragment PersonalAccountDetails on PersonalAccount {
 
 	weeklyAggregaton {
 		...PersonalAccountWeeklyAggregation
-	}
-
-	monthlyData {
-		...PersonalAccountMonthlyDataOverview
 	}
 }
 

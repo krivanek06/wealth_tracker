@@ -6,6 +6,7 @@ import { DateFilterFn, MatDatepickerModule } from '@angular/material/datepicker'
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { filter } from 'rxjs';
 import { InputTypeDateTimePickerConfig } from 'src/app/shared/models';
 
 @Component({
@@ -45,11 +46,12 @@ export class DatePickerComponent implements OnInit {
 	selectedDate = new FormControl<Date | null>(null);
 
 	ngOnInit(): void {
-		this.selectedDate.valueChanges.subscribe(console.log);
+		this.selectedDate.valueChanges
+			.pipe(filter((value): value is Date => !!value))
+			.subscribe((res) => this.onChange(res));
 	}
 
 	writeValue(value: number | string | Date): void {
-		console.log('date picker', value, new Date(value));
 		const formattedDate = new Date(value);
 		this.selectedDate.patchValue(formattedDate, { emitEvent: false });
 	}

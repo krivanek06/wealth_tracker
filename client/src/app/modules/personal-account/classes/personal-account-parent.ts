@@ -71,6 +71,10 @@ export abstract class PersonalAccountParent {
 	 * Daily data transformed into expense allocation chart
 	 */
 	personalAccountDailyExpensePieChart$!: Observable<GenericChartSeriesPie | null>;
+	/**
+	 * yearly data transformed into expense allocation chart
+	 */
+	personalAccountYearlyTagExpensePieChart$!: Observable<GenericChartSeriesPie | null>;
 
 	/**
 	 * Aggregating daily data by distinct tag for a time period (month/week)
@@ -193,6 +197,9 @@ export abstract class PersonalAccountParent {
 		// calculate expense chart for filtered data
 		this.personalAccountDailyExpensePieChart$ = totalDailyDataForTimePeriod$.pipe(
 			map((result) => (!!result ? this.personalAccountChartService.getExpenseAllocationChartData(result) : null))
+		);
+		this.personalAccountYearlyTagExpensePieChart$ = this.personalAccountDetails$.pipe(
+			map((result) => this.personalAccountChartService.getExpenseAllocationChartData(result.yearlyAggregaton))
 		);
 
 		this.accountTagAggregationForTimePeriod$ = combineLatest([

@@ -10,7 +10,6 @@ import {
 	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountDetailsFragment,
 	PersonalAccountEditInput,
-	PersonalAccountMonthlyDataOverviewFragment,
 	PersonalAccountOverviewFragment,
 	PersonalAccountTag,
 	PersonalAccountTagFragment,
@@ -145,32 +144,6 @@ export class PersonalAccountFacadeService {
 					});
 				}
 
-				// check if year and month is possible to select
-				// not present if creating data into the future/past where this is the first daily data
-				const monthlyDataExistence = personalAccount.monthlyData.find((d) => d.year === year && d.month === month);
-				if (!monthlyDataExistence) {
-					const newMonthlyData: PersonalAccountMonthlyDataOverviewFragment = {
-						__typename: 'PersonalAccountMonthlyData',
-						dailyEntries: 1,
-						monthlyIncome: entry.tag.type === TagDataType.Income ? entry.value : 0,
-						monthlyExpense: entry.tag.type === TagDataType.Expense ? entry.value : 0,
-						year,
-						month,
-					};
-
-					// merge and sort monthly data by date
-					// TODO - small bug with sorting, Dec 2022 if after Jan. 2023 if I create a new month
-					const mergedMonthlyData = [...(personalAccount.monthlyData ?? []), newMonthlyData]
-						.slice()
-						.sort((a, b) => new Date(a.year, a.month, 1).getTime() - new Date(b.year, b.month, 1).getTime());
-
-					// update cache
-					this.personalAccountCacheService.updatePersonalAccountDetails(personalAccountId, {
-						...personalAccount,
-						monthlyData: mergedMonthlyData,
-					});
-				}
-
 				// update yearly, monthly, weekly aggregation
 				this.personalAccountDataAggregatorService.updateAggregations(input.personalAccountId, entry, 'increase');
 			})
@@ -201,6 +174,7 @@ export class PersonalAccountFacadeService {
 				this.personalAccountCacheService.removePersonalAccountDailyDataFromCache(removedDailyData.id);
 
 				// add new data into displayed array
+				// TODO
 			})
 		);
 	}

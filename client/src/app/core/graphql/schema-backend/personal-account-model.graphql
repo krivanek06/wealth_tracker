@@ -22,14 +22,6 @@ fragment PersonalAccountDailyDataOutput on PersonalAccountDailyDataOutput {
 	}
 }
 
-fragment PersonalAccountMonthlyDataOverview on PersonalAccountMonthlyData {
-	month
-	year
-	dailyEntries
-	monthlyIncome
-	monthlyExpense
-}
-
 fragment PersonalAccountOverview on PersonalAccount {
 	id
 	name
@@ -51,10 +43,6 @@ fragment PersonalAccountDetails on PersonalAccount {
 
 	weeklyAggregaton {
 		...PersonalAccountWeeklyAggregation
-	}
-
-	monthlyData {
-		...PersonalAccountMonthlyDataOverview
 	}
 }
 

@@ -57,7 +57,7 @@ export class PersonalAccountTagAllocationChartComponent {
 				text: `
 				  <div class="flex flex-col gap-1 items-center">
 				    <span class="text-wt-primary-dark text-sm">Balance</span>
-				    <span class="text-white text-base">$${this.accountBalance ?? 0}</span>
+				    <span class="text-white text-base">$${this.accountBalance ? Math.round(this.accountBalance * 100) / 100 : 0}</span>
 				  </div>
 				`,
 

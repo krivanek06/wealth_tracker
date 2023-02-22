@@ -4,7 +4,6 @@ import {
 	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountWeeklyAggregationFragment,
 	PersonalAccountWeeklyAggregationOutput,
-	TagDataType,
 } from '../../graphql';
 import { DateServiceUtil } from '../../utils/date-service.util';
 import { PersonalAccountCacheService } from './personal-account-cache.service';
@@ -134,28 +133,11 @@ export class PersonalAccountDataAggregatorService {
 							: { ...d }
 				  );
 
-		// update monthly data entries + income/expense
-		const newMonthlyIncome = (dailyData.tag.type === TagDataType.Income ? dailyData.value : 0) * multiplier;
-		const newMonthlyExpense = (dailyData.tag.type === TagDataType.Expense ? dailyData.value : 0) * multiplier;
-		const dailyDataDate = DateServiceUtil.getDetailsInformationFromDate(dailyData.date);
-		const monthlyData = personalAccount.monthlyData.map((d) => {
-			if (d.year === dailyDataDate.year && d.month === dailyDataDate.month) {
-				return {
-					...d,
-					dailyEntries: d.dailyEntries + 1 * multiplier,
-					monthlyIncome: d.monthlyIncome + newMonthlyIncome,
-					monthlyExpense: d.monthlyExpense + newMonthlyExpense,
-				};
-			}
-			return d;
-		});
-
 		// update cache
 		this.personalAccountCacheService.updatePersonalAccountDetails(personalAccountId, {
 			...personalAccount,
 			yearlyAggregaton: yearlyAggregation,
 			weeklyAggregaton,
-			monthlyData,
 		});
 	}
 }

@@ -1,11 +1,11 @@
-.mat-input-element:disabled,
-.mat-form-field-type-mat-native-select.mat-form-field-disabled .mat-form-field-infix::after {
+.mat-mdc-input-element:disabled,
+.mat-mdc-form-field-type-mat-native-select.mat-mdc-form-field-disabled .mat-mdc-form-field-infix::after {
 	color: var(--gray-dark) !important;
 }
 
 fieldset:disabled {
 	mat-form-field {
-		.mat-form-field-outline {
+		.mat-mdc-form-field {
 			background-color: var(--gray-dark) !important;
 		}
 	}

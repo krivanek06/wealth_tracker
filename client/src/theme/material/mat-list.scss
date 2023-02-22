@@ -3,7 +3,7 @@ mat-list-item {
 	color: var(--gray-light) !important;
 }
 
-mat-selection-list > .mat-subheader,
-mat-list > .mat-subheader {
+mat-selection-list > .mdc-list-group__subheader,
+mat-list > .mdc-list-group__subheader {
 	color: var(--gray-medium) !important;
 }

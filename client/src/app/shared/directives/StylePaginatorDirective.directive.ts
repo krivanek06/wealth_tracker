@@ -67,19 +67,19 @@ export class StylePaginatorDirective implements OnInit, OnChanges, AfterViewInit
   */
 	private buildPageNumbers() {
 		// remove 'items per page'
-		const itemsPerPage = this.vr.element.nativeElement.querySelector('.mat-paginator-page-size');
+		const itemsPerPage = this.vr.element.nativeElement.querySelector('.mat-mdc-paginator-page-size');
 		if (itemsPerPage) {
 			this.ren.setStyle(itemsPerPage, 'display', 'none');
 		}
 
 		// remove text '1 of N'
-		const howManyDisplayedEl = this.vr.element.nativeElement.querySelector('.mat-paginator-range-label');
+		const howManyDisplayedEl = this.vr.element.nativeElement.querySelector('.mat-mdc-paginator-range-label');
 		if (howManyDisplayedEl) {
 			this.ren.setStyle(howManyDisplayedEl, 'display', 'none');
 		}
 
 		// remove those arrows from html
-		const navigationButtons = (this.vr.element.nativeElement.querySelectorAll('.mat-focus-indicator') ??
+		const navigationButtons = (this.vr.element.nativeElement.querySelectorAll('.mat-mdc-focus-indicator') ??
 			[]) as HTMLElement[];
 		navigationButtons.forEach((el) => {
 			this.ren.setStyle(el, 'display', 'none');
@@ -91,8 +91,8 @@ export class StylePaginatorDirective implements OnInit, OnChanges, AfterViewInit
 			this.appCustomLength = 0;
 			// throw new Error('StylePaginatorDirective: this.appCustomLength is undefined');
 		}
-		const actionContainer = this.vr.element.nativeElement.querySelector('div.mat-paginator-range-actions');
-		const nextPageNode = this.vr.element.nativeElement.querySelector('button.mat-paginator-navigation-next');
+		const actionContainer = this.vr.element.nativeElement.querySelector('div.mat-mdc-paginator-range-actions');
+		const nextPageNode = this.vr.element.nativeElement.querySelector('button.mat-mdc-paginator-navigation-next');
 
 		// remove buttons before creating new ones
 		this.removeButtons();
@@ -120,7 +120,7 @@ export class StylePaginatorDirective implements OnInit, OnChanges, AfterViewInit
 	}
 
 	private removeButtons(): void {
-		const actionContainer = this.vr.element.nativeElement.querySelector('div.mat-paginator-range-actions');
+		const actionContainer = this.vr.element.nativeElement.querySelector('div.mat-mdc-paginator-range-actions');
 
 		if (this._buttons.length > 0) {
 			this._buttons.forEach((button) => {
@@ -137,8 +137,7 @@ export class StylePaginatorDirective implements OnInit, OnChanges, AfterViewInit
 
 		// add class & text
 		this.ren.addClass(bubbleButton, 'g-bubble');
-		this.ren.addClass(bubbleButton, 'mr-1');
-		this.ren.addClass(bubbleButton, 'ml-1');
+		this.ren.addClass(bubbleButton, 'mr-2');
 		this.ren.appendChild(bubbleButton, text);
 
 		// active button

@@ -59,12 +59,8 @@ export class PersonalAccountChartService {
 
 	getAccountStateByDailyData(data: PersonalAccountDailyDataOutputFragment[]): AccountState {
 		const entriesTotal = data.length;
-		const expenseTotal = data
-			.filter((d) => d.personalAccountTag.type === TagDataType.Expense)
-			.reduce((a, b) => a + b.value, 0);
-		const incomeTotal = data
-			.filter((d) => d.personalAccountTag.type === TagDataType.Income)
-			.reduce((a, b) => a + b.value, 0);
+		const expenseTotal = data.filter((d) => d.tag.type === TagDataType.Expense).reduce((a, b) => a + b.value, 0);
+		const incomeTotal = data.filter((d) => d.tag.type === TagDataType.Income).reduce((a, b) => a + b.value, 0);
 		const total = incomeTotal - expenseTotal;
 
 		const result: AccountState = {
@@ -225,24 +221,26 @@ export class PersonalAccountChartService {
 		return series;
 	}
 
-	getExpenseAllocationChartData(data: PersonalAccountDailyDataOutputFragment[]): GenericChartSeriesPie {
+	getExpenseAllocationChartData<
+		T extends PersonalAccountDailyDataOutputFragment | PersonalAccountAggregationDataOutput
+	>(data: T[]): GenericChartSeriesPie {
 		const seriesData = data.reduce((acc, curr) => {
 			// ignore income
-			if (curr.personalAccountTag.type === TagDataType.Income) {
+			if (curr.tag.type === TagDataType.Income) {
 				return acc;
 			}
 
 			// find index of saved tag
-			const dataIndex = acc.findIndex((d) => d.name === curr.personalAccountTag.name);
+			const dataIndex = acc.findIndex((d) => d.name === curr.tag.name);
 			if (dataIndex === -1) {
 				// new tag
 				acc = [
 					...acc,
 					{
-						name: curr.personalAccountTag.name,
+						name: curr.tag.name,
 						y: curr.value,
-						color: curr.personalAccountTag.color,
-						custom: curr.personalAccountTag.imageUrl,
+						color: curr.tag.color,
+						custom: curr.tag.imageUrl,
 					},
 				];
 			} else {

@@ -15,7 +15,7 @@ import {
 	FormMatInputWrapperModule,
 	NumberKeyboardComponent,
 } from './../../../../shared/components';
-import { DefaultImgDirective } from './../../../../shared/directives';
+import { DefaultImgDirective, TooltipDirective } from './../../../../shared/directives';
 import { DailyDataEntryDisplayElementsComponent } from './daily-data-entry-display-elements/daily-data-entry-display-elements.component';
 import { PersonalAccountDailyDataEntryComponent } from './personal-account-daily-data-entry.component';
 
@@ -37,6 +37,7 @@ import { PersonalAccountDailyDataEntryComponent } from './personal-account-daily
 		NumberKeyboardComponent,
 		FormMatInputWrapperModule,
 		DatePickerComponent,
+		TooltipDirective,
 	],
 })
 export class PersonalAccountDailyDataEntryModule {}

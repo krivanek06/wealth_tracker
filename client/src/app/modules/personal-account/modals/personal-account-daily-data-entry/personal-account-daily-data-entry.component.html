@@ -14,13 +14,13 @@
 		></app-form-mat-input-wrapper>
 
 		<!-- display value -->
-		<div class="flex items-center justify-between w-full pl-4 mb-5">
+		<div class="flex items-center justify-between w-full pl-4 mb-5 text-xl">
 			<span class="text-wt-gray-light">$</span>
 
 			<div class="flex items-center gap-4">
-				<span class="text-lg text-white">{{formGroup.controls.value.value ?? 0}}</span>
-				<div *ngIf="data.dailyData">
-					<button type="button" mat-icon-button color="warn" (click)="onRemove()">
+				<span class="text-white">{{formGroup.controls.value.value ?? 0}}</span>
+				<div *ngIf="data.dailyData" appTooltip="Remove Item">
+					<button type="button" mat-icon-button color="warn" (click)="onRemove()" class="">
 						<mat-icon>delete</mat-icon>
 					</button>
 				</div>

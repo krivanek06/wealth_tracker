@@ -51,8 +51,8 @@ export class NumberKeyboardComponent {
 		this.onChange(this.value);
 	}
 
-	writeValue(value: string): void {
-		this.value = value;
+	writeValue(value?: string): void {
+		this.value = value || '';
 	}
 
 	/**

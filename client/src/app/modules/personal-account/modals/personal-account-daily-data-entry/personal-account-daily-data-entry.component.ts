@@ -56,16 +56,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	ngOnInit(): void {
 		// editing
 		if (this.data.dailyData) {
-			const dailyData = this.data.dailyData;
-			const tag = this.personalAccountFacadeService.getPersonalAccountTagFromCache(dailyData.tagId);
-
-			this.formGroup.setValue({
-				date: new Date(Number(dailyData.date)),
-				time: new Date(Number(dailyData.date)),
-				tagId: dailyData.tagId,
-				value: String(dailyData.value),
-				description: '',
-			});
+			this.initEditing(this.data.dailyData);
 		}
 
 		this.displayTagsInputSource$ = this.personalAccountDataService.getAvailableTagInputSourceWrapper(
@@ -143,6 +134,16 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 				first()
 			)
 			.subscribe();
+	}
+
+	private initEditing(dailyData: PersonalAccountDailyDataOutputFragment): void {
+		this.formGroup.setValue({
+			date: new Date(Number(dailyData.date)),
+			time: new Date(Number(dailyData.date)),
+			tagId: dailyData.tagId,
+			value: String(dailyData.value),
+			description: '',
+		});
 	}
 
 	private getDailyDatafromForm(): PersonalAccountDailyDataCreate | null {

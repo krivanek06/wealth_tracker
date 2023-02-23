@@ -11,11 +11,12 @@ import {
 } from '../../../../shared/components';
 import { PersonalAccountParent } from '../../classes';
 import {
+	PersonalAccountAccountGrowthChartComponent,
 	PersonalAccountAccountStateComponent,
 	PersonalAccountDailyEntriesFilterComponent,
 	PersonalAccountDailyEntriesTableModule,
-	PersonalAccountOverviewChartModule,
 	PersonalAccountTagAllocationChartComponent,
+	PersonalAccountTagSpendingChartComponent,
 } from '../../components';
 import { PersonalAccountDailyDataEntryModule } from '../../modals';
 
@@ -27,7 +28,7 @@ import { PersonalAccountDailyDataEntryModule } from '../../modals';
 		GenericChartModule,
 		ValuePresentationButtonControlComponent,
 		ScrollWrapperModule,
-		PersonalAccountOverviewChartModule,
+		PersonalAccountTagSpendingChartComponent,
 		ReactiveFormsModule,
 		PersonalAccountDailyEntriesTableModule,
 		MatButtonModule,
@@ -37,6 +38,7 @@ import { PersonalAccountDailyDataEntryModule } from '../../modals';
 		PersonalAccountDailyEntriesFilterComponent,
 		PersonalAccountAccountStateComponent,
 		PersonalAccountTagAllocationChartComponent,
+		PersonalAccountAccountGrowthChartComponent,
 	],
 	templateUrl: './personal-account-desktop-view.component.html',
 	styleUrls: ['./personal-account-desktop-view.component.scss'],
@@ -48,6 +50,6 @@ export class PersonalAccountDesktopViewComponent extends PersonalAccountParent i
 	}
 
 	ngOnInit(): void {
-		this.personalAccountYearlyTagExpensePieChart$.subscribe(console.log);
+		this.accountOverviewChartData$.subscribe((x) => console.log('ttt', x));
 	}
 }

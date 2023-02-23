@@ -1,24 +1,30 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { HighchartsChartModule } from 'highcharts-angular';
 import * as Highcharts from 'highcharts/highstock';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
-import { GenericChartSeries } from './../../../../shared/models';
+import { GenericChartSeries } from '../../../../../shared/models';
 
 NoDataToDisplay(Highcharts);
 
 @Component({
-	selector: 'app-personal-account-overview-chart',
-	templateUrl: './personal-account-overview-chart.component.html',
-	styleUrls: ['./personal-account-overview-chart.component.scss'],
+	selector: 'app-personal-account-tag-spending-chart',
+	templateUrl: './personal-account-tag-spending-chart.component.html',
+	styleUrls: ['./personal-account-tag-spending-chart.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
+	imports: [CommonModule, HighchartsChartModule],
 })
-export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges {
-	@Input() categories!: string[];
+export class PersonalAccountTagSpendingChartComponent implements OnInit, OnChanges {
+	@Input() categories!: string[] | null;
 
 	// contains [total growth, total income, total expense]
-	@Input() accountOverviewChartData: GenericChartSeries[] = [];
+	@Input() accountOverviewChartData: GenericChartSeries[] | null = [];
 
 	// contains expense by tags
-	@Input() expenseTagsChartData: GenericChartSeries[] = [];
+	@Input() expenseTagsChartData: GenericChartSeries[] | null = [];
+
+	@Input() heightPx!: number;
 
 	Highcharts: typeof Highcharts = Highcharts;
 	chart: any;
@@ -43,28 +49,30 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 	}
 
 	private initSeries(): void {
-		if (this.accountOverviewChartData.length === 0) {
+		if (!this.accountOverviewChartData || !this.expenseTagsChartData) {
 			this.chartOptions.series = [];
 			return;
 		}
 
-		this.chartOptions.series = [...this.accountOverviewChartData, ...this.expenseTagsChartData].map((d, index) => {
-			return {
-				name: d.name,
-				type: d.type,
-				color: d.color,
-				data: d.data,
-				zIndex: index === 0 ? 100 : -1, // bring line chart into the front
-				opacity: index === 0 || index === 2 ? 1.5 : 0.65,
-				lineWidth: index === 0 || index === 2 ? 4 : 2,
-				visible: true, // d.name !== 'Income'
-				dataLabels: {
-					enabled: d.name === 'Total' || d.name === 'Expense',
-				},
-				stack: index === 0 ? '' : index == 1 ? 'Income' : index == 2 ? 'Expense' : 'ExpenseByTag',
-				yAxis: index === 0 ? 1 : index === 1 ? 2 : undefined,
-			} as Highcharts.SeriesOptionsType;
-		});
+		this.chartOptions.series = [...this.accountOverviewChartData, ...this.expenseTagsChartData]
+			.filter((d) => d.name !== 'Total' && d.name !== 'Income')
+			.map((d, index) => {
+				return {
+					name: d.name,
+					type: d.type,
+					color: d.color,
+					data: d.data,
+					//zIndex: index === 0 ? 100 : -1, // bring line chart into the front
+					opacity: index === 0 ? 1 : 0.7,
+					lineWidth: index === 0 || index === 2 ? 4 : 1,
+					visible: true, // d.name !== 'Income'
+					dataLabels: {
+						enabled: d.name === 'Total' || d.name === 'Expense',
+					},
+					stack: index === 0 ? 'Expense' : 'ExpenseByTag',
+					yAxis: index === 0 ? 0 : undefined,
+				} as Highcharts.SeriesOptionsType;
+			});
 	}
 
 	ngOnInit(): void {}
@@ -94,20 +102,6 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 					tickPixelInterval: 40,
 					minorGridLineWidth: 0,
 					visible: true,
-				},
-				{
-					title: {
-						text: '',
-					},
-					startOnTick: false,
-					endOnTick: false,
-					gridLineColor: '#66666655',
-					opposite: true,
-					gridLineWidth: 1,
-					minorTickInterval: 'auto',
-					tickPixelInterval: 40,
-					minorGridLineWidth: 0,
-					visible: false,
 				},
 				{
 					title: {
@@ -191,11 +185,12 @@ export class PersonalAccountOverviewChartComponent implements OnInit, OnChanges 
 					// add divider for better formatting
 					const addDivider = that.series.name === 'Expense' || that.series.name === 'Total';
 					const valueColor = '#b2b2b2'; // that.series.name === 'Expense' || that.series.name === 'Income' ? that.series.color :
+					const valueRounded = Math.round(value * 100) / 100;
 
 					const line = `
             <tr>
               <td style="color: ${that.series.color}; line-height: 26px">● ${that.series.name} </td>
-              <td style="text-align: right"><b style="color: ${valueColor}">$${that.y}</b> USD</td>
+              <td style="text-align: right"><b style="color: ${valueColor}">$${valueRounded}</b> USD</td>
             </tr>
           `;
 					const lineDivider = addDivider ? `<td colspan="2"><hr/></td>` : '';

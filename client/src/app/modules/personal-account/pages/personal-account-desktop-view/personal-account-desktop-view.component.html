@@ -1,6 +1,13 @@
 <!-- account total state -->
-<div class="mb-6">
-	<app-personal-account-account-state [accountState]="accountTotalState$ | async"></app-personal-account-account-state>
+<div class="flex flex-col justify-between gap-x-8 gap-y-8 md:flex-row">
+	<app-personal-account-account-state
+		class="md:basis-3/4"
+		[accountState]="accountTotalState$ | async"
+	></app-personal-account-account-state>
+
+	<app-personal-account-action-buttons
+		(buttonClickEmitter)="onActionButtonClick($event)"
+	></app-personal-account-action-buttons>
 </div>
 
 <!-- tag expense legend -->
@@ -14,7 +21,7 @@
 </app-scroll-wrapper>
 
 <div
-	class="grid lg:grid-cols-2 gap-4"
+	class="grid gap-4 lg:grid-cols-2"
 	*ngIf="{
   categories: categories$ | async,
   expenseTagsChartData : totalExpenseTagsChartData$ | async ,
@@ -31,16 +38,6 @@
 	></app-personal-account-tag-spending-chart>
 
 	<!-- expense chart -->
-	<!-- <ng-container *ngIf="accountTotalState$ | async as accountState">
-		<div class="hidden xl:-mt-20 lg:block">
-			<app-personal-account-tag-allocation-chart
-				[series]="personalAccountYearlyTagExpensePieChart$ | async"
-				[accountBalance]="accountState.total"
-				[heightPx]="600"
-				dataLabelsAlignTo="connectors"
-			></app-personal-account-tag-allocation-chart>
-		</div>
-	</ng-container> -->
 	<app-personal-account-account-growth-chart
 		[accountOverviewChartData]="obs.accountOverviewChartData"
 		[categories]="obs.categories"

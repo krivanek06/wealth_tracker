@@ -125,7 +125,7 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 				},
 			},
 			title: {
-				text: '',
+				text: 'Account Growth Chart',
 				align: 'left',
 				style: {
 					color: '#bababa',

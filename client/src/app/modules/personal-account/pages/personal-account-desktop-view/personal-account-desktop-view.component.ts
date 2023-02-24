@@ -13,12 +13,14 @@ import { PersonalAccountParent } from '../../classes';
 import {
 	PersonalAccountAccountGrowthChartComponent,
 	PersonalAccountAccountStateComponent,
+	PersonalAccountActionButtonsComponent,
 	PersonalAccountDailyEntriesFilterComponent,
 	PersonalAccountDailyEntriesTableModule,
 	PersonalAccountTagAllocationChartComponent,
 	PersonalAccountTagSpendingChartComponent,
 } from '../../components';
 import { PersonalAccountDailyDataEntryModule } from '../../modals';
+import { PersonalAccountActionButtonType } from '../../models';
 
 @Component({
 	selector: 'app-personal-account-desktop-view',
@@ -39,6 +41,7 @@ import { PersonalAccountDailyDataEntryModule } from '../../modals';
 		PersonalAccountAccountStateComponent,
 		PersonalAccountTagAllocationChartComponent,
 		PersonalAccountAccountGrowthChartComponent,
+		PersonalAccountActionButtonsComponent,
 	],
 	templateUrl: './personal-account-desktop-view.component.html',
 	styleUrls: ['./personal-account-desktop-view.component.scss'],
@@ -52,4 +55,6 @@ export class PersonalAccountDesktopViewComponent extends PersonalAccountParent i
 	ngOnInit(): void {
 		this.accountOverviewChartData$.subscribe((x) => console.log('ttt', x));
 	}
+
+	onActionButtonClick(type: PersonalAccountActionButtonType): void {}
 }

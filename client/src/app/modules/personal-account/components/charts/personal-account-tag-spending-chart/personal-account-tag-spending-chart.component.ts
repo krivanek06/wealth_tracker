@@ -131,7 +131,7 @@ export class PersonalAccountTagSpendingChartComponent implements OnInit, OnChang
 				},
 			},
 			title: {
-				text: '',
+				text: 'Expense chart',
 				align: 'left',
 				style: {
 					color: '#bababa',

@@ -13,3 +13,5 @@ export enum BUDGET_VALUE_FILL_COLORS_KEYS {
 }
 
 export const NO_DATE_SELECTED = 'NO_DATE_SELECTED';
+
+export type PersonalAccountActionButtonType = 'tagManagement';

@@ -3,8 +3,15 @@
 	<app-color-picker formControlName="color"></app-color-picker>
 
 	<!-- icon -->
-	<button type="button">
-		<img appDefaultImg [src]="icon" imageType="url" class="w-8 h-8" />
+	<button type="button" (click)="onTagImageChange()">
+		<img
+			appDefaultImg
+			[src]="tagItemGroup.controls.icon.value"
+			imageType="url"
+			class="w-8 h-8"
+			appTooltip="Change image"
+			alt="Icon image"
+		/>
 	</button>
 
 	<!-- name -->

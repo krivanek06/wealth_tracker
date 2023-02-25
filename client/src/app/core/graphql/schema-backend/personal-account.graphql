@@ -5,6 +5,10 @@ query getPersonalAccounts {
 	}
 }
 
+query getPersonalAccountAvailableTagImages {
+	getAllAvailableTagImages
+}
+
 query getPersonalAccountById($input: String!) {
 	getPersonalAccountById(input: $input) {
 		...PersonalAccountDetails

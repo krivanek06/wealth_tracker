@@ -1,4 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { GOOGLE_BUCKET_TAG_IMAGES } from '../../../environments/keys';
+import { StorageFilesService } from '../../../providers';
 import { SharedServiceUtil } from '../../../utils';
 import { PERSONAL_ACCOUNT_TAG_ERROR } from '../dto';
 import { PersonalAccountTag } from '../entities';
@@ -7,7 +9,15 @@ import { PersonalAccountRepositoryService } from '../repository';
 
 @Injectable()
 export class PersonalAccountTagService {
-	constructor(private readonly personalAccountRepositoryService: PersonalAccountRepositoryService) {}
+	constructor(
+		private readonly personalAccountRepositoryService: PersonalAccountRepositoryService,
+		private storageFilesService: StorageFilesService
+	) {}
+
+	async getAllAvailableTagImages(): Promise<string[]> {
+		const data = await this.storageFilesService.getFilesFromFolder(GOOGLE_BUCKET_TAG_IMAGES);
+		return data;
+	}
 
 	async getTagsForPersonalAccount(personalAccountId: string): Promise<PersonalAccountTag[]> {
 		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(personalAccountId);

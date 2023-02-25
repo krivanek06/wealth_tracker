@@ -9,16 +9,18 @@ import { PersonalAccountDailyService } from './../modules/personal-account/servi
 import { PersonalAccountMonthlyService } from './../modules/personal-account/services/personal-account-monthly.service';
 import { PersonalAccountTagService } from './../modules/personal-account/services/personal-account-tag.service';
 import { PersonalAccountService } from './../modules/personal-account/services/personal-account.service';
+import { StorageFilesService } from './../providers/storage-files/storage-files.service';
 
 import { PrismaService } from './prisma.service';
 
 const prisma = new PrismaService();
 const pubsub = new PubSub();
+const storageFilesService = new StorageFilesService();
 
 const personalAccountRepo = new PersonalAccountRepositoryService(prisma);
 const personalAccountMonthlyRepo = new PersonalAccountMonthlyDataRepositoryService(prisma);
 
-const personalAccountTagService = new PersonalAccountTagService(personalAccountRepo);
+const personalAccountTagService = new PersonalAccountTagService(personalAccountRepo, storageFilesService);
 const personalAccountDailyService = new PersonalAccountDailyService(personalAccountRepo, personalAccountMonthlyRepo);
 const personalAccountMonthlyService = new PersonalAccountMonthlyService(
 	personalAccountMonthlyRepo,

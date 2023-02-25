@@ -1,0 +1,7 @@
+:host {
+	display: block;
+
+	button {
+		@apply min-w-[240px];
+	}
+}

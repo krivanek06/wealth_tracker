@@ -1,0 +1,22 @@
+<h2 class="text-lg text-center">Account: <span class="text-wt-primary-dark">{{ data.personalAccountName }}</span></h2>
+
+<mat-dialog-content>
+	<!-- main info -->
+	<div class="mb-8">
+		<app-main-info [formControl]="enabledBudgetingControl"></app-main-info>
+	</div>
+
+	<!-- displayed items in form -->
+	<div class="p-4">
+		<app-tag-item></app-tag-item>
+	</div>
+</mat-dialog-content>
+
+<div class="mt-4 mb-2">
+	<mat-divider></mat-divider>
+</div>
+
+<!-- action buttons -->
+<mat-dialog-actions class="justify-end">
+	<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
+</mat-dialog-actions>

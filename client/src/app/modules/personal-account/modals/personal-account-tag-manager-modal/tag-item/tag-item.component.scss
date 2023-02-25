@@ -1,0 +1,7 @@
+:host {
+	display: block;
+
+	form {
+		@apply flex items-center gap-x-8;
+	}
+}

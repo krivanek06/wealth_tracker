@@ -20,7 +20,9 @@ import {
 	PersonalAccountTagSpendingChartComponent,
 } from '../../components';
 import { PersonalAccountDailyDataEntryModule } from '../../modals';
+import { PersonalAccountTagManagerModalComponent } from '../../modals/personal-account-tag-manager-modal/personal-account-tag-manager-modal.component';
 import { PersonalAccountActionButtonType } from '../../models';
+import { PersonalAccountTagManagerModalModule } from './../../modals/personal-account-tag-manager-modal/personal-account-tag-manager-modal.module';
 
 @Component({
 	selector: 'app-personal-account-desktop-view',
@@ -42,6 +44,7 @@ import { PersonalAccountActionButtonType } from '../../models';
 		PersonalAccountTagAllocationChartComponent,
 		PersonalAccountAccountGrowthChartComponent,
 		PersonalAccountActionButtonsComponent,
+		PersonalAccountTagManagerModalModule,
 	],
 	templateUrl: './personal-account-desktop-view.component.html',
 	styleUrls: ['./personal-account-desktop-view.component.scss'],
@@ -56,5 +59,13 @@ export class PersonalAccountDesktopViewComponent extends PersonalAccountParent i
 		this.accountOverviewChartData$.subscribe((x) => console.log('ttt', x));
 	}
 
-	onActionButtonClick(type: PersonalAccountActionButtonType): void {}
+	onActionButtonClick(type: PersonalAccountActionButtonType): void {
+		this.dialog.open(PersonalAccountTagManagerModalComponent, {
+			data: {
+				personalAccountId: this.personalAccountBasic.id,
+				personalAccountName: this.personalAccountBasic.name,
+			},
+			panelClass: ['g-mat-dialog-big'],
+		});
+	}
 }

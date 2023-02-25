@@ -1,0 +1,14 @@
+mat-checkbox {
+	.mdc-form-field {
+		label {
+			color: var(--gray-light) !important;
+		}
+	}
+}
+
+.mat-mdc-checkbox
+	.mdc-checkbox
+	.mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate):not([data-indeterminate='true'])
+	~ .mdc-checkbox__background {
+	border-color: var(--gray-light) !important;
+}

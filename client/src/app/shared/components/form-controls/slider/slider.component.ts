@@ -28,7 +28,11 @@ export class SliderComponent implements OnInit, ControlValueAccessor {
 	onChange: (data: number) => void = () => {};
 	onTouched = () => {};
 
-	ngOnInit(): void {}
+	ngOnInit(): void {
+		this.selectedValue.valueChanges.subscribe((value) => {
+			this.onChange(value);
+		});
+	}
 
 	formatLabel(value: number): string {
 		if (this.config?.valueFormatter) {

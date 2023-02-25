@@ -8,7 +8,7 @@
 
 	<!-- displayed items in form -->
 	<div class="p-4">
-		<app-tag-item></app-tag-item>
+		<app-tag-item *ngFor="let tag of personalAccountTags$ | async" [tag]="tag"></app-tag-item>
 	</div>
 </mat-dialog-content>
 

@@ -34,6 +34,10 @@ export class PersonalAccountFacadeService {
 		return this.personalAccountApiService.getPersonalAccounts();
 	}
 
+	getPersonalAccountAvailableTagImages(): Observable<string[]> {
+		return this.personalAccountApiService.getPersonalAccountAvailableTagImages();
+	}
+
 	getPersonalAccountDetailsById(input: string): Observable<PersonalAccountDetailsFragment> {
 		return this.personalAccountApiService.getPersonalAccountDetailsById(input);
 	}

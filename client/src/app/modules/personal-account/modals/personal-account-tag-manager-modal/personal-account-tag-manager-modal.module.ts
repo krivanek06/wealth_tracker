@@ -12,9 +12,10 @@ import { DefaultImgDirective, TooltipDirective } from '../../../../shared/direct
 import { MainInfoComponent } from './main-info/main-info.component';
 import { PersonalAccountTagManagerModalComponent } from './personal-account-tag-manager-modal.component';
 import { TagItemComponent } from './tag-item/tag-item.component';
+import { TagSelectorComponent } from './tag-selector/tag-selector.component';
 
 @NgModule({
-	declarations: [PersonalAccountTagManagerModalComponent, TagItemComponent, MainInfoComponent],
+	declarations: [PersonalAccountTagManagerModalComponent, TagItemComponent, MainInfoComponent, TagSelectorComponent],
 	imports: [
 		CommonModule,
 		MatDialogModule,

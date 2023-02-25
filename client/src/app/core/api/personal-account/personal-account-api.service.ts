@@ -9,6 +9,7 @@ import {
 	EditPersonalAccountDailyEntryGQL,
 	EditPersonalAccountGQL,
 	EditPersonalAccountMutation,
+	GetPersonalAccountAvailableTagImagesGQL,
 	GetPersonalAccountByIdGQL,
 	GetPersonalAccountDailyDataGQL,
 	GetPersonalAccountsGQL,
@@ -36,11 +37,16 @@ export class PersonalAccountApiService {
 		private createPersonalAccountDailyEntryGQL: CreatePersonalAccountDailyEntryGQL,
 		private editPersonalAccountDailyEntryGQL: EditPersonalAccountDailyEntryGQL,
 		private deletePersonalAccountDailyEntryGQL: DeletePersonalAccountDailyEntryGQL,
-		private getPersonalAccountDailyDataGQL: GetPersonalAccountDailyDataGQL
+		private getPersonalAccountDailyDataGQL: GetPersonalAccountDailyDataGQL,
+		private getPersonalAccountAvailableTagImagesGQL: GetPersonalAccountAvailableTagImagesGQL
 	) {}
 
 	getPersonalAccounts(): Observable<PersonalAccountOverviewFragment[]> {
 		return this.getPersonalAccountsGQL.watch().valueChanges.pipe(map((res) => res.data.getPersonalAccounts));
+	}
+
+	getPersonalAccountAvailableTagImages(): Observable<string[]> {
+		return this.getPersonalAccountAvailableTagImagesGQL.fetch().pipe(map((res) => res.data.getAllAvailableTagImages));
 	}
 
 	getPersonalAccountDetailsById(input: string): Observable<PersonalAccountDetailsFragment> {

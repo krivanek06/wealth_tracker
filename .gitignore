@@ -115,3 +115,5 @@ yarn.lock
 tmp/
 dist/
 package-lock.json
+
+server/src/environments

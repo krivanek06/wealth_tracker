@@ -695,6 +695,8 @@ export type PersonalAccountWeeklyAggregationOutput = {
 
 export type Query = {
   __typename?: 'Query';
+  /** Returns all available tag images */
+  getAllAvailableTagImages: Array<Scalars['String']>;
   getAssetGeneralForSymbol?: Maybe<AssetGeneral>;
   getAssetGeneralForSymbols: Array<AssetGeneral>;
   /** Historical price for an Asset */
@@ -1001,6 +1003,11 @@ export type GetPersonalAccountsQueryVariables = Exact<{ [key: string]: never; }>
 
 
 export type GetPersonalAccountsQuery = { __typename?: 'Query', getPersonalAccounts: Array<{ __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType }> };
+
+export type GetPersonalAccountAvailableTagImagesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPersonalAccountAvailableTagImagesQuery = { __typename?: 'Query', getAllAvailableTagImages: Array<string> };
 
 export type GetPersonalAccountByIdQueryVariables = Exact<{
   input: Scalars['String'];
@@ -1740,6 +1747,22 @@ export const GetPersonalAccountsDocument = gql`
   })
   export class GetPersonalAccountsGQL extends Apollo.Query<GetPersonalAccountsQuery, GetPersonalAccountsQueryVariables> {
     override document = GetPersonalAccountsDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetPersonalAccountAvailableTagImagesDocument = gql`
+    query getPersonalAccountAvailableTagImages {
+  getAllAvailableTagImages
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetPersonalAccountAvailableTagImagesGQL extends Apollo.Query<GetPersonalAccountAvailableTagImagesQuery, GetPersonalAccountAvailableTagImagesQueryVariables> {
+    override document = GetPersonalAccountAvailableTagImagesDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

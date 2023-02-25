@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { filter, map } from 'rxjs';
-import { PersonalAccountTagFragment } from '../../../../../core/graphql';
+import { filter, first, map, tap } from 'rxjs';
+import { PersonalAccountFacadeService } from '../../../../../core/api';
+import { PersonalAccountTagFragment, TagDataType } from '../../../../../core/graphql';
 import { Confirmable } from '../../../../../shared/decorators';
 import {
 	InputTypeSlider,
@@ -11,6 +12,7 @@ import {
 	requiredValidator,
 } from '../../../../../shared/models';
 import { TagSelectorComponent } from '../tag-selector/tag-selector.component';
+import { DialogServiceUtil } from './../../../../../shared/dialogs/dialog-service.util';
 
 @Component({
 	selector: 'app-tag-item',
@@ -19,7 +21,15 @@ import { TagSelectorComponent } from '../tag-selector/tag-selector.component';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagItemComponent implements OnInit {
+	@Input() personalAccountId!: string;
+
+	/**
+	 * created as input, because when creating new tag - parent has buttons to choose a type
+	 */
+	@Input() tagType!: TagDataType;
+
 	@Input() set tag(data: PersonalAccountTagFragment) {
+		this.tagItemGroup.controls.tagId.patchValue(data.id);
 		this.tagItemGroup.controls.tagName.patchValue(data.name);
 		this.tagItemGroup.controls.color.patchValue(data.color);
 		this.tagItemGroup.controls.icon.patchValue(data.imageUrl);
@@ -27,10 +37,11 @@ export class TagItemComponent implements OnInit {
 	}
 
 	tagItemGroup = new FormGroup({
+		tagId: new FormControl<string | null>(null),
 		color: new FormControl<string>('#9c1c1c', { validators: [requiredValidator], nonNullable: true }),
 		icon: new FormControl<string>('', { validators: [requiredValidator], nonNullable: true }),
 		tagName: new FormControl<string>('', {
-			validators: [requiredValidator, minLengthValidator(4), maxLengthValidator(15)],
+			validators: [requiredValidator, minLengthValidator(3), maxLengthValidator(20)],
 			nonNullable: true,
 		}),
 		budget: new FormControl<number>(0, { nonNullable: true }),
@@ -42,19 +53,60 @@ export class TagItemComponent implements OnInit {
 		step: 1,
 	};
 
-	constructor(private dialog: MatDialog) {}
+	TagDataType = TagDataType;
+
+	constructor(private personalAccountFacadeService: PersonalAccountFacadeService, private dialog: MatDialog) {}
 
 	ngOnInit(): void {
 		this.tagItemGroup.valueChanges.subscribe(console.log);
 	}
 
 	onSubmit(): void {
-		console.log('submit');
+		this.tagItemGroup.markAllAsTouched();
+
+		if (this.tagItemGroup.invalid) {
+			return;
+		}
+
+		const controls = this.tagItemGroup.controls;
+		this.personalAccountFacadeService.createPersonalAccountTag({
+			name: controls.tagName.value,
+			color: controls.color.value,
+			imageUrl: controls.icon.value,
+			budgetMonthly: controls.budget.value,
+			personalAccountId: this.personalAccountId,
+			type: this.tagType,
+		});
 	}
 
 	@Confirmable('Please confirm remove the selected tag')
 	onRemove(): void {
-		console.log('remove');
+		const removingTagId = this.tagItemGroup.controls.tagId.value;
+		const removingTagName = this.tagItemGroup.controls.tagName.value;
+
+		if (!removingTagId || !removingTagName) {
+			DialogServiceUtil.showNotificationBar('Unable to perform removing operation on tag', 'error');
+			return;
+		}
+
+		DialogServiceUtil.showNotificationBar(`Removing tag ${removingTagName}`, 'notification');
+
+		this.personalAccountFacadeService
+			.deletePersonalAccountTag({
+				id: removingTagId,
+				personalAccountId: this.personalAccountId,
+			})
+			.pipe(
+				tap((result) => {
+					if (!result) {
+						DialogServiceUtil.showNotificationBar('Unable to perform removing operation on tag', 'error');
+						return;
+					}
+					DialogServiceUtil.showNotificationBar(`Tag ${removingTagName} has been removed`, 'notification');
+				}),
+				first()
+			)
+			.subscribe();
 	}
 
 	onTagImageChange(): void {

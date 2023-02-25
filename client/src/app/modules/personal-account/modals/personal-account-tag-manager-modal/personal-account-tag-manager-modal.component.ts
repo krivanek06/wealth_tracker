@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { map, Observable } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../../core/api';
-import { PersonalAccountTagFragment } from '../../../../core/graphql';
+import { PersonalAccountTagFragment, TagDataType } from '../../../../core/graphql';
 
 @Component({
 	selector: 'app-personal-account-tag-manager-modal',
@@ -12,8 +11,10 @@ import { PersonalAccountTagFragment } from '../../../../core/graphql';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountTagManagerModalComponent implements OnInit {
-	personalAccountTags$!: Observable<PersonalAccountTagFragment[]>;
-	enabledBudgetingControl = new FormControl<boolean>(false, { nonNullable: true });
+	personalAccountIncomeTags$!: Observable<PersonalAccountTagFragment[]>;
+	personalAccountExpenseTags$!: Observable<PersonalAccountTagFragment[]>;
+
+	TagDataType = TagDataType;
 
 	constructor(
 		private personalAccountFacadeService: PersonalAccountFacadeService,
@@ -25,10 +26,17 @@ export class PersonalAccountTagManagerModalComponent implements OnInit {
 		}
 	) {}
 	ngOnInit(): void {
-		this.personalAccountTags$ = this.personalAccountFacadeService
+		const personalAccountTags$ = this.personalAccountFacadeService
 			.getPersonalAccountDetailsById(this.data.personalAccountId)
 			.pipe(map((res) => res.personalAccountTag));
 
-		this.enabledBudgetingControl.valueChanges.subscribe(console.log);
+		this.personalAccountIncomeTags$ = personalAccountTags$.pipe(
+			map((tags) => tags.filter((tag) => tag.type === TagDataType.Income))
+		);
+		this.personalAccountExpenseTags$ = personalAccountTags$.pipe(
+			map((tags) => tags.filter((tag) => tag.type === TagDataType.Expense))
+		);
 	}
+
+	onCreateButton(type: TagDataType): void {}
 }

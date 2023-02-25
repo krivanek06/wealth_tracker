@@ -20,7 +20,7 @@
 	</div>
 
 	<!-- budget -->
-	<div class="flex-1">
+	<div *ngIf="tagType === TagDataType.Expense" class="flex-1">
 		<app-slider formControlName="budget" [config]="sliderConfig"></app-slider>
 	</div>
 

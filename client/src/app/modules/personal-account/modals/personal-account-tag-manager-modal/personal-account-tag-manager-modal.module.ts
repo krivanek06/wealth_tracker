@@ -9,13 +9,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ColorPickerComponent, FormMatInputWrapperModule, SliderComponent } from '../../../../shared/components';
 import { DefaultImgDirective, TooltipDirective } from '../../../../shared/directives';
-import { MainInfoComponent } from './main-info/main-info.component';
 import { PersonalAccountTagManagerModalComponent } from './personal-account-tag-manager-modal.component';
 import { TagItemComponent } from './tag-item/tag-item.component';
 import { TagSelectorComponent } from './tag-selector/tag-selector.component';
 
 @NgModule({
-	declarations: [PersonalAccountTagManagerModalComponent, TagItemComponent, MainInfoComponent, TagSelectorComponent],
+	declarations: [PersonalAccountTagManagerModalComponent, TagItemComponent, TagSelectorComponent],
 	imports: [
 		CommonModule,
 		MatDialogModule,

@@ -14,3 +14,7 @@ fieldset:disabled {
 .mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {
 	color: var(--gray-light) !important;
 }
+
+input {
+	font-size: 16px !important;
+}

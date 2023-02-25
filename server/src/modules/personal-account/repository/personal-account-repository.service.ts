@@ -56,6 +56,7 @@ export class PersonalAccountRepositoryService {
 				userId,
 				personalAccountTag: defaultTags,
 				accountType,
+				enabledBudgeting: true,
 			},
 		});
 	}

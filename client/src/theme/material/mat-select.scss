@@ -68,3 +68,7 @@ mat-select-trigger {
 .cdk-overlay-pane:not(.mat-mdc-select-panel-above) .mdc-menu-surface.mat-mdc-select-panel {
 	padding-right: 12px !important;
 }
+
+.cdk-overlay-pane {
+	max-width: 99vw !important;
+}

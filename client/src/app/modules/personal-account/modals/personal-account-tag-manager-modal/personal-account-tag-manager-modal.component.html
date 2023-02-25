@@ -1,14 +1,46 @@
 <h2 class="text-lg text-center">Account: <span class="text-wt-primary-dark">{{ data.personalAccountName }}</span></h2>
 
-<mat-dialog-content>
-	<!-- main info -->
-	<div class="mb-8">
-		<app-main-info [formControl]="enabledBudgetingControl"></app-main-info>
+<mat-dialog-content class="p-4">
+	<!-- create buttons -->
+	<div class="flex justify-end gap-4">
+		<button mat-stroked-button color="accent" type="button" (click)="onCreateButton(TagDataType.Income)">
+			<mat-icon>add</mat-icon>
+			Add Income
+		</button>
+
+		<button mat-stroked-button color="warn" type="button" (click)="onCreateButton(TagDataType.Expense)">
+			<mat-icon>add</mat-icon>
+			Add Expense
+		</button>
 	</div>
 
 	<!-- displayed items in form -->
-	<div class="p-4">
-		<app-tag-item *ngFor="let tag of personalAccountTags$ | async" [tag]="tag"></app-tag-item>
+	<div *ngIf="personalAccountIncomeTags$ | async as personalAccountIncomeTags">
+		<h2 class="px-2">Income Tags: {{ personalAccountIncomeTags.length }}</h2>
+		<app-tag-item
+			*ngFor="let tag of personalAccountIncomeTags"
+			[tag]="tag"
+			[tagType]="TagDataType.Income"
+			[personalAccountId]="data.personalAccountId"
+		></app-tag-item>
+	</div>
+
+	<div class="my-4">
+		<mat-divider></mat-divider>
+	</div>
+
+	<!-- displayed items in form -->
+	<div *ngIf="personalAccountExpenseTags$ | async as personalAccountExpenseTags">
+		<h2 class="flex items-center justify-between px-2">
+			<span>Expense Tags: {{ personalAccountExpenseTags.length }}</span>
+			<span>Budgeting: $1 221</span>
+		</h2>
+		<app-tag-item
+			*ngFor="let tag of personalAccountExpenseTags"
+			[tag]="tag"
+			[tagType]="TagDataType.Expense"
+			[personalAccountId]="data.personalAccountId"
+		></app-tag-item>
 	</div>
 </mat-dialog-content>
 

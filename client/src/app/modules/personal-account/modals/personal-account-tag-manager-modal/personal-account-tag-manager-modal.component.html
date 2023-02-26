@@ -17,7 +17,7 @@
 			color="accent"
 			type="button"
 			(click)="onCreateButton(TagDataType.Income)"
-			appTooltip="Create an Income tag"
+			matTooltip="Create an Income tag"
 		>
 			<mat-icon>add</mat-icon>
 			Add Income
@@ -29,7 +29,7 @@
 			color="warn"
 			type="button"
 			(click)="onCreateButton(TagDataType.Expense)"
-			appTooltip="Create an Expense tag"
+			matTooltip="Create an Expense tag"
 		>
 			<mat-icon>add</mat-icon>
 			Add Expense
@@ -51,7 +51,7 @@
 		</div>
 	</div>
 
-	<!-- displayed items in form -->
+	<!-- Income -->
 	<div *ngIf="personalAccountIncomeTags$ | async as personalAccountIncomeTags">
 		<h2 class="px-2">
 			<span [appTagTypeName]="TagDataType.Income"></span> Tags: {{ personalAccountIncomeTags.length }}
@@ -69,12 +69,19 @@
 		<mat-divider></mat-divider>
 	</div>
 
-	<!-- displayed items in form -->
+	<!-- Expense -->
 	<div *ngIf="personalAccountExpenseTags$ | async as personalAccountExpenseTags">
 		<h2 class="flex flex-col gap-2 px-2 sm:items-center sm:justify-between sm:flex-row">
 			<span><span [appTagTypeName]="TagDataType.Expense"></span> Tags: {{ personalAccountExpenseTags.length }}</span>
 			<span><span class="text-wt-primary-dark">Budgeting:</span> $1 221</span>
 		</h2>
+
+		<p class="p-4 text-sm text-wt-gray-medium">
+			Use budgeting to setup a monthly plan of spending your money for individual tags. Using budgeting you will see a
+			progress bar filled based on a percentage of spent money compared to maximum allowance. If you don't want to use
+			budgeting for some tags, keep it on 0.
+		</p>
+
 		<app-tag-item
 			class="max-lg:mb-10"
 			*ngFor="let tag of personalAccountExpenseTags"

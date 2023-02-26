@@ -8,7 +8,7 @@
 			appDefaultImg
 			[src]="tagItemGroup.controls.icon.value"
 			class="w-8 h-8"
-			appTooltip="Change image"
+			matTooltip="Change image"
 			alt="Icon image"
 		/>
 	</button>
@@ -29,7 +29,7 @@
 
 	<!-- action buttons -->
 	<div *ngIf="editing" class="flex items-center gap-x-5">
-		<button mat-icon-button color="accent" type="submit" appTooltip="Save Tag Changes" class="border border-solid">
+		<button mat-icon-button color="accent" type="submit" matTooltip="Save Tag Changes" class="border border-solid">
 			<mat-icon>done</mat-icon>
 		</button>
 		<button
@@ -38,7 +38,7 @@
 			color="warn"
 			type="button"
 			(click)="onRemove()"
-			appTooltip="Remove Tag"
+			matTooltip="Remove Tag"
 			class="border border-solid"
 		>
 			<mat-icon>delete</mat-icon>

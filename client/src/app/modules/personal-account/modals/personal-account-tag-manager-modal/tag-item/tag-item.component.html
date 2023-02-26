@@ -7,7 +7,6 @@
 		<img
 			appDefaultImg
 			[src]="tagItemGroup.controls.icon.value"
-			imageType="url"
 			class="w-8 h-8"
 			appTooltip="Change image"
 			alt="Icon image"
@@ -30,6 +29,7 @@
 			<mat-icon>done</mat-icon>
 		</button>
 		<button
+			*ngIf="tagItemGroup.controls.tagId.value"
 			mat-icon-button
 			color="warn"
 			type="button"
@@ -41,3 +41,8 @@
 		</button>
 	</div>
 </form>
+
+<!-- error for image -->
+<div *ngIf="tagItemGroup.controls.icon.touched && tagItemGroup.controls.icon.invalid" class="g-error-banner">
+	Please select an image for your tag
+</div>

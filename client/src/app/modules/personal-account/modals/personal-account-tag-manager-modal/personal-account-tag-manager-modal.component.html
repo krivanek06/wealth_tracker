@@ -41,6 +41,7 @@
 		<h2 class="px-2 space-x-2">New Tag: <span [appTagTypeName]="creatingNewTagType"></span></h2>
 		<app-tag-item
 			(removeNewTag)="onNewTagRemove()"
+			[editing]="true"
 			[tagType]="creatingNewTagType"
 			[personalAccountId]="data.personalAccountId"
 		></app-tag-item>

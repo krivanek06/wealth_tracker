@@ -5,7 +5,7 @@
 
 fieldset:disabled {
 	mat-form-field {
-		.mat-mdc-form-field {
+		.mat-mdc-text-field-wrapper {
 			background-color: var(--gray-dark) !important;
 		}
 	}

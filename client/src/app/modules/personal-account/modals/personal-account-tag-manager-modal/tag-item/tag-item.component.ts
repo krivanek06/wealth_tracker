@@ -23,6 +23,7 @@ export class TagItemComponent implements OnInit {
 	@Output() removeNewTag = new EventEmitter<void>();
 
 	@Input() personalAccountId!: string;
+	@Input() editing = false;
 
 	/**
 	 * created as input, because when creating new tag - parent has buttons to choose a type
@@ -60,6 +61,10 @@ export class TagItemComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.tagItemGroup.valueChanges.subscribe(console.log);
+	}
+
+	onEdit(): void {
+		this.editing = !this.editing;
 	}
 
 	onSubmit(): void {
@@ -157,6 +162,7 @@ export class TagItemComponent implements OnInit {
 			return;
 		}
 
+		this.editing = false;
 		DialogServiceUtil.showNotificationBar(`Editing tag ${controls.tagName.value}`, 'notification');
 
 		this.personalAccountFacadeService

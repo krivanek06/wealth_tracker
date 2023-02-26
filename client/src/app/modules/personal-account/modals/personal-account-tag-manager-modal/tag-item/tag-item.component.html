@@ -1,9 +1,9 @@
 <form [formGroup]="tagItemGroup" (ngSubmit)="onSubmit()">
 	<!-- color -->
-	<app-color-picker formControlName="color"></app-color-picker>
+	<app-color-picker formControlName="color" [disabled]="!editing"></app-color-picker>
 
 	<!-- icon -->
-	<button type="button" (click)="onTagImageChange()">
+	<button type="button" (click)="onTagImageChange()" [disabled]="!editing">
 		<img
 			appDefaultImg
 			[src]="tagItemGroup.controls.icon.value"
@@ -15,16 +15,20 @@
 
 	<!-- name -->
 	<div>
-		<app-form-mat-input-wrapper controlName="tagName" inputCaption="Enter name for a tag"></app-form-mat-input-wrapper>
+		<app-form-mat-input-wrapper
+			[disabled]="!editing"
+			controlName="tagName"
+			inputCaption="Enter name for a tag"
+		></app-form-mat-input-wrapper>
 	</div>
 
 	<!-- budget -->
 	<div *ngIf="tagType === TagDataType.Expense" class="flex-1 col-span-2 sm:col-span-6">
-		<app-slider formControlName="budget" [config]="sliderConfig"></app-slider>
+		<app-slider [disabled]="!editing" formControlName="budget" [config]="sliderConfig"></app-slider>
 	</div>
 
 	<!-- action buttons -->
-	<div class="flex items-center gap-x-5">
+	<div *ngIf="editing" class="flex items-center gap-x-5">
 		<button mat-icon-button color="accent" type="submit" appTooltip="Save Tag Changes" class="border border-solid">
 			<mat-icon>done</mat-icon>
 		</button>
@@ -38,6 +42,13 @@
 			class="border border-solid"
 		>
 			<mat-icon>delete</mat-icon>
+		</button>
+	</div>
+
+	<div *ngIf="!editing">
+		<button mat-stroked-button color="primary" type="button" (click)="onEdit()" class="w-full min-w-[120px]">
+			<mat-icon>edit</mat-icon>
+			Edit
 		</button>
 	</div>
 </form>

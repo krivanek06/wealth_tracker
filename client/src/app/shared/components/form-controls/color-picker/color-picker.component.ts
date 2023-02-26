@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef, Input } from '@angular/core';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
@@ -19,6 +19,8 @@ import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 })
 export class ColorPickerComponent {
 	selectedColor = '#9c1c1c';
+
+	@Input() disabled = false;
 
 	onChange: (value: string) => void = () => {};
 	onTouched = () => {};

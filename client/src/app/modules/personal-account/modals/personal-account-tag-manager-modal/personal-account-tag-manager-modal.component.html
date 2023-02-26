@@ -2,21 +2,49 @@
 
 <mat-dialog-content class="p-4">
 	<!-- create buttons -->
-	<div class="flex justify-end gap-4">
-		<button mat-stroked-button color="accent" type="button" (click)="onCreateButton(TagDataType.Income)">
+	<div class="flex justify-end gap-4 mb-8">
+		<button
+			mat-stroked-button
+			color="accent"
+			type="button"
+			(click)="onCreateButton(TagDataType.Income)"
+			appTooltip="Create an Income tag"
+		>
 			<mat-icon>add</mat-icon>
 			Add Income
 		</button>
 
-		<button mat-stroked-button color="warn" type="button" (click)="onCreateButton(TagDataType.Expense)">
+		<button
+			mat-stroked-button
+			color="warn"
+			type="button"
+			(click)="onCreateButton(TagDataType.Expense)"
+			appTooltip="Create an Expense tag"
+		>
 			<mat-icon>add</mat-icon>
 			Add Expense
 		</button>
 	</div>
 
+	<!-- new tag -->
+	<div *ngIf="creatingNewTagType">
+		<h2 class="px-2 space-x-2">New Tag: <span [appTagTypeName]="creatingNewTagType"></span></h2>
+		<app-tag-item
+			(removeNewTag)="onNewTagRemove()"
+			[tagType]="creatingNewTagType"
+			[personalAccountId]="data.personalAccountId"
+		></app-tag-item>
+
+		<div class="my-4">
+			<mat-divider></mat-divider>
+		</div>
+	</div>
+
 	<!-- displayed items in form -->
 	<div *ngIf="personalAccountIncomeTags$ | async as personalAccountIncomeTags">
-		<h2 class="px-2">Income Tags: {{ personalAccountIncomeTags.length }}</h2>
+		<h2 class="px-2">
+			<span [appTagTypeName]="TagDataType.Income"></span> Tags: {{ personalAccountIncomeTags.length }}
+		</h2>
 		<app-tag-item
 			*ngFor="let tag of personalAccountIncomeTags"
 			[tag]="tag"
@@ -32,7 +60,7 @@
 	<!-- displayed items in form -->
 	<div *ngIf="personalAccountExpenseTags$ | async as personalAccountExpenseTags">
 		<h2 class="flex items-center justify-between px-2">
-			<span>Expense Tags: {{ personalAccountExpenseTags.length }}</span>
+			<span><span [appTagTypeName]="TagDataType.Expense"></span> Tags: {{ personalAccountExpenseTags.length }}</span>
 			<span>Budgeting: $1 221</span>
 		</h2>
 		<app-tag-item

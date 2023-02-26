@@ -184,13 +184,16 @@ export class PersonalAccountTagSpendingChartComponent implements OnInit, OnChang
 
 					// add divider for better formatting
 					const addDivider = that.series.name === 'Expense' || that.series.name === 'Total';
-					const valueColor = '#b2b2b2'; // that.series.name === 'Expense' || that.series.name === 'Income' ? that.series.color :
+					const valueColor = 'var(--gray-light)';
 					const valueRounded = Math.round(value * 100) / 100;
 
 					const line = `
             <tr>
               <td style="color: ${that.series.color}; line-height: 26px">● ${that.series.name} </td>
-              <td style="text-align: right"><b style="color: ${valueColor}">$${valueRounded}</b> USD</td>
+              <td style="text-align: right">
+                <span style="color: ${valueColor}">$${valueRounded}</span>
+                <span style="color: var(--gray-medium); ">USD</span>
+              </td>
             </tr>
           `;
 					const lineDivider = addDivider ? `<td colspan="2"><hr/></td>` : '';

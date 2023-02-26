@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { map, Observable } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../../core/api';
@@ -8,13 +8,15 @@ import { PersonalAccountTagFragment, TagDataType } from '../../../../core/graphq
 	selector: 'app-personal-account-tag-manager-modal',
 	templateUrl: './personal-account-tag-manager-modal.component.html',
 	styleUrls: ['./personal-account-tag-manager-modal.component.scss'],
-	changeDetection: ChangeDetectionStrategy.OnPush,
+	//changeDetection: ChangeDetectionStrategy.OnPush, // <- uncommented because tag images were not changing
 })
 export class PersonalAccountTagManagerModalComponent implements OnInit {
 	personalAccountIncomeTags$!: Observable<PersonalAccountTagFragment[]>;
 	personalAccountExpenseTags$!: Observable<PersonalAccountTagFragment[]>;
 
 	TagDataType = TagDataType;
+
+	creatingNewTagType: TagDataType | null = null;
 
 	constructor(
 		private personalAccountFacadeService: PersonalAccountFacadeService,
@@ -38,5 +40,11 @@ export class PersonalAccountTagManagerModalComponent implements OnInit {
 		);
 	}
 
-	onCreateButton(type: TagDataType): void {}
+	onCreateButton(type: TagDataType): void {
+		this.creatingNewTagType = type;
+	}
+
+	onNewTagRemove(): void {
+		this.creatingNewTagType = null;
+	}
 }

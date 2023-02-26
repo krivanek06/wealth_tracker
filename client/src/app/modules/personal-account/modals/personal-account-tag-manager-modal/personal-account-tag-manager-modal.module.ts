@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ColorPickerComponent, FormMatInputWrapperModule, SliderComponent } from '../../../../shared/components';
 import { DefaultImgDirective, TooltipDirective } from '../../../../shared/directives';
+import { TagTypeNameDirective } from '../../directives';
 import { PersonalAccountTagManagerModalComponent } from './personal-account-tag-manager-modal.component';
 import { TagItemComponent } from './tag-item/tag-item.component';
 import { TagSelectorComponent } from './tag-selector/tag-selector.component';
@@ -29,6 +30,7 @@ import { TagSelectorComponent } from './tag-selector/tag-selector.component';
 		ColorPickerComponent,
 		DefaultImgDirective,
 		SliderComponent,
+		TagTypeNameDirective,
 	],
 })
 export class PersonalAccountTagManagerModalModule {}

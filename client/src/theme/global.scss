@@ -31,3 +31,7 @@ body {
 .g-background-card-color {
 	@apply bg-gradient-to-r from-wt-background-dark to-wt-background-medium;
 }
+
+.g-error-banner {
+	@apply text-lg text-center text-white bg-red-500 p-2 rounded-lg;
+}

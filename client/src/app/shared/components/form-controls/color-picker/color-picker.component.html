@@ -1,13 +1,7 @@
-<!-- <mat-form-field class="h-0 scale-0">
-	<div class="hidden">
-		<input matInput [ngxMatColorPicker]="picker" [formControl]="selectedColor" />
-		<ngx-mat-color-toggle matSuffix [for]="picker"></ngx-mat-color-toggle>
-		<ngx-mat-color-picker #picker color="primary" [touchUi]="true"></ngx-mat-color-picker>
-	</div>
-</mat-form-field>
-
-<div class="mb-5">
-	<button (click)="picker.open()" type="button" mat-flat-button class="w-full">Pick Color</button>
-</div> -->
-
-<input type="color" name="color picker" [value]="selectedColor" (change)="onColorChange($event)" />
+<input
+	[disabled]="disabled"
+	type="color"
+	name="color picker"
+	[value]="selectedColor"
+	(change)="onColorChange($event)"
+/>

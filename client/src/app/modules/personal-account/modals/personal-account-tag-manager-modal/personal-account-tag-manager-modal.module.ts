@@ -7,8 +7,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ColorPickerComponent, FormMatInputWrapperModule, SliderComponent } from '../../../../shared/components';
-import { DefaultImgDirective, TooltipDirective } from '../../../../shared/directives';
+import { DefaultImgDirective } from '../../../../shared/directives';
 import { TagTypeNameDirective } from '../../directives';
 import { PersonalAccountTagManagerModalComponent } from './personal-account-tag-manager-modal.component';
 import { TagItemComponent } from './tag-item/tag-item.component';
@@ -25,12 +26,12 @@ import { TagSelectorComponent } from './tag-selector/tag-selector.component';
 		MatIconModule,
 		MatDividerModule,
 		FormMatInputWrapperModule,
-		TooltipDirective,
 		MatCheckboxModule,
 		ColorPickerComponent,
 		DefaultImgDirective,
 		SliderComponent,
 		TagTypeNameDirective,
+		MatTooltipModule,
 	],
 })
 export class PersonalAccountTagManagerModalModule {}

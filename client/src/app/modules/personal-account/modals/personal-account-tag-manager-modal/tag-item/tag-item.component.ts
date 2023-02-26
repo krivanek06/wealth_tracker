@@ -51,7 +51,7 @@ export class TagItemComponent implements OnInit {
 
 	sliderConfig: InputTypeSlider = {
 		min: 0,
-		max: 1200,
+		max: 800,
 		step: 1,
 	};
 
@@ -59,9 +59,7 @@ export class TagItemComponent implements OnInit {
 
 	constructor(private personalAccountFacadeService: PersonalAccountFacadeService, private dialog: MatDialog) {}
 
-	ngOnInit(): void {
-		this.tagItemGroup.valueChanges.subscribe(console.log);
-	}
+	ngOnInit(): void {}
 
 	onEdit(): void {
 		this.editing = !this.editing;

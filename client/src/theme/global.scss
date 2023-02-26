@@ -39,3 +39,8 @@ body {
 .g-button-size-lg {
 	min-width: 220px !important;
 }
+
+.mdc-tooltip--shown .mdc-tooltip__surface-animation {
+	padding: 12px !important;
+	font-size: 14px !important;
+}

@@ -19,7 +19,7 @@
 
 			<div class="flex items-center gap-4">
 				<span class="text-white">{{formGroup.controls.value.value ?? 0}}</span>
-				<div *ngIf="data.dailyData" appTooltip="Remove Item">
+				<div *ngIf="data.dailyData" matTooltip="Remove Item">
 					<button type="button" mat-icon-button color="warn" (click)="onRemove()" class="">
 						<mat-icon>delete</mat-icon>
 					</button>

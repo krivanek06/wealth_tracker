@@ -12,7 +12,7 @@ import {
 	requiredValidator,
 } from '../../../../../shared/models';
 import { TagSelectorComponent } from '../tag-selector/tag-selector.component';
-import { DialogServiceUtil } from './../../../../../shared/dialogs/dialog-service.util';
+import { DialogServiceUtil } from './../../../../../shared/dialogs';
 
 @Component({
 	selector: 'app-tag-item',

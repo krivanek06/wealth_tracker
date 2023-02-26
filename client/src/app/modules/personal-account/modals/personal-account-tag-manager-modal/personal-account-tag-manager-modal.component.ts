@@ -13,6 +13,7 @@ import { PersonalAccountTagFragment, TagDataType } from '../../../../core/graphq
 export class PersonalAccountTagManagerModalComponent implements OnInit {
 	personalAccountIncomeTags$!: Observable<PersonalAccountTagFragment[]>;
 	personalAccountExpenseTags$!: Observable<PersonalAccountTagFragment[]>;
+	monthlyBudget$!: Observable<number>;
 
 	TagDataType = TagDataType;
 
@@ -37,6 +38,10 @@ export class PersonalAccountTagManagerModalComponent implements OnInit {
 		);
 		this.personalAccountExpenseTags$ = personalAccountTags$.pipe(
 			map((tags) => tags.filter((tag) => tag.type === TagDataType.Expense))
+		);
+
+		this.monthlyBudget$ = this.personalAccountExpenseTags$.pipe(
+			map((res) => res.reduce((acc, curr) => acc + (curr.budgetMonthly ?? 0), 0))
 		);
 	}
 

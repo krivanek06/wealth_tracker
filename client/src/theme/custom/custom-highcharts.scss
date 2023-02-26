@@ -14,14 +14,10 @@ highcharts-chart::ng-deep {
 
 	.highcharts-stocktools-wrapper,
 	.highcharts-bindings-wrapper {
-		display: none;
+		display: none !important;
 	}
 
 	tspan {
-		font-size: inherit;
+		font-size: inherit !important;
 	}
-}
-
-:host {
-	display: block;
 }

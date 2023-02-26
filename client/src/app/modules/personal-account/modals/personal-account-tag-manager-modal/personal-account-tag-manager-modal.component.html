@@ -1,0 +1,107 @@
+<div class="flex items-center justify-between md:px-10">
+	<h2 class="text-lg text-wt-primary-dark">{{ data.personalAccountName }}</h2>
+
+	<div>
+		<button mat-icon-button mat-dialog-close color="warn">
+			<mat-icon>close</mat-icon>
+		</button>
+	</div>
+</div>
+
+<mat-dialog-content class="px-4 py-4 sm:px-8">
+	<div class="flex flex-col gap-4 mb-8 sm:flex-row lg:justify-end">
+		<!-- create income button -->
+		<button
+			class="max-lg:flex-1 g-button-size-lg"
+			mat-stroked-button
+			color="accent"
+			type="button"
+			(click)="onCreateButton(TagDataType.Income)"
+			matTooltip="Create an Income tag"
+		>
+			<mat-icon>add</mat-icon>
+			Add Income
+		</button>
+
+		<!-- create expense button -->
+		<button
+			class="max-lg:flex-1 g-button-size-lg"
+			mat-stroked-button
+			color="warn"
+			type="button"
+			(click)="onCreateButton(TagDataType.Expense)"
+			matTooltip="Create an Expense tag"
+		>
+			<mat-icon>add</mat-icon>
+			Add Expense
+		</button>
+	</div>
+
+	<!-- new tag -->
+	<div *ngIf="creatingNewTagType">
+		<h2 class="px-2 space-x-2">New Tag: <span [appTagTypeName]="creatingNewTagType"></span></h2>
+		<app-tag-item
+			(removeNewTag)="onNewTagRemove()"
+			[editing]="true"
+			[tagType]="creatingNewTagType"
+			[personalAccountId]="data.personalAccountId"
+		></app-tag-item>
+
+		<div class="my-4">
+			<mat-divider></mat-divider>
+		</div>
+	</div>
+
+	<!-- Income -->
+	<div *ngIf="personalAccountIncomeTags$ | async as personalAccountIncomeTags">
+		<h2 class="px-2">
+			<span [appTagTypeName]="TagDataType.Income"></span> Tags: {{ personalAccountIncomeTags.length }}
+		</h2>
+		<app-tag-item
+			class="max-lg:my-10"
+			*ngFor="let tag of personalAccountIncomeTags"
+			[tag]="tag"
+			[tagType]="TagDataType.Income"
+			[personalAccountId]="data.personalAccountId"
+		></app-tag-item>
+	</div>
+
+	<div class="my-4">
+		<mat-divider></mat-divider>
+	</div>
+
+	<!-- Expense -->
+	<div *ngIf="personalAccountExpenseTags$ | async as personalAccountExpenseTags">
+		<h2 class="flex flex-col gap-2 px-2 sm:items-center sm:justify-between sm:flex-row">
+			<div><span [appTagTypeName]="TagDataType.Expense"></span> Tags: {{ personalAccountExpenseTags.length }}</div>
+			<div class="flex items-center gap-3">
+				<mat-icon
+					matTooltip="Use budgeting to setup a monthly plan of spending your money for individual tags. Using budgeting you will see a
+          progress bar filled based on a percentage of spent money compared to maximum allowance. If you don't want to use
+          budgeting for some tags, keep it on 0."
+				>
+					help
+				</mat-icon>
+				<span class="text-wt-primary-dark">Budgeting:</span>
+				<span>{{ monthlyBudget$ | async | currency }}</span>
+			</div>
+		</h2>
+
+		<app-tag-item
+			class="max-lg:mb-10"
+			*ngFor="let tag of personalAccountExpenseTags"
+			[tag]="tag"
+			[tagType]="TagDataType.Expense"
+			[personalAccountId]="data.personalAccountId"
+		></app-tag-item>
+	</div>
+</mat-dialog-content>
+
+<div class="mt-4 mb-2">
+	<mat-divider></mat-divider>
+</div>
+
+<!-- action buttons -->
+<mat-dialog-actions class="justify-end">
+	<button mat-stroked-button mat-dialog-close type="button" class="g-button-size-lg">Cancel</button>
+</mat-dialog-actions>

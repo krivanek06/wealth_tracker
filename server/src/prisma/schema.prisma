@@ -47,10 +47,11 @@ enum AuthenticationType {
 // ---------------- Personal account ------------------
 
 model PersonalAccount {
-    id          String      @id @default(auto()) @map("_id") @db.ObjectId
-    name        String
-    createdAt   DateTime    @default(now())
-    accountType AccountType
+    id               String      @id @default(auto()) @map("_id") @db.ObjectId
+    name             String
+    createdAt        DateTime    @default(now())
+    accountType      AccountType
+    enabledBudgeting Boolean
 
     // 1 - N relationship with PersonalAccountTag
     personalAccountTag PersonalAccountTag[]

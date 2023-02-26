@@ -1,0 +1,10 @@
+<mat-slider
+	[max]="config.max"
+	[min]="config.min"
+	[step]="config.step"
+	[discrete]="true"
+	[showTickMarks]="false"
+	[displayWith]="formatLabel"
+>
+	<input matSliderThumb [formControl]="selectedValue" />
+</mat-slider>

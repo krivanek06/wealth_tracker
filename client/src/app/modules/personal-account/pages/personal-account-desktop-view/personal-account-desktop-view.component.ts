@@ -11,13 +11,18 @@ import {
 } from '../../../../shared/components';
 import { PersonalAccountParent } from '../../classes';
 import {
+	PersonalAccountAccountGrowthChartComponent,
 	PersonalAccountAccountStateComponent,
+	PersonalAccountActionButtonsComponent,
 	PersonalAccountDailyEntriesFilterComponent,
 	PersonalAccountDailyEntriesTableModule,
-	PersonalAccountOverviewChartModule,
 	PersonalAccountTagAllocationChartComponent,
+	PersonalAccountTagSpendingChartComponent,
 } from '../../components';
 import { PersonalAccountDailyDataEntryModule } from '../../modals';
+import { PersonalAccountTagManagerModalComponent } from '../../modals/personal-account-tag-manager-modal/personal-account-tag-manager-modal.component';
+import { PersonalAccountActionButtonType } from '../../models';
+import { PersonalAccountTagManagerModalModule } from './../../modals/personal-account-tag-manager-modal/personal-account-tag-manager-modal.module';
 
 @Component({
 	selector: 'app-personal-account-desktop-view',
@@ -27,7 +32,7 @@ import { PersonalAccountDailyDataEntryModule } from '../../modals';
 		GenericChartModule,
 		ValuePresentationButtonControlComponent,
 		ScrollWrapperModule,
-		PersonalAccountOverviewChartModule,
+		PersonalAccountTagSpendingChartComponent,
 		ReactiveFormsModule,
 		PersonalAccountDailyEntriesTableModule,
 		MatButtonModule,
@@ -37,6 +42,9 @@ import { PersonalAccountDailyDataEntryModule } from '../../modals';
 		PersonalAccountDailyEntriesFilterComponent,
 		PersonalAccountAccountStateComponent,
 		PersonalAccountTagAllocationChartComponent,
+		PersonalAccountAccountGrowthChartComponent,
+		PersonalAccountActionButtonsComponent,
+		PersonalAccountTagManagerModalModule,
 	],
 	templateUrl: './personal-account-desktop-view.component.html',
 	styleUrls: ['./personal-account-desktop-view.component.scss'],
@@ -48,6 +56,16 @@ export class PersonalAccountDesktopViewComponent extends PersonalAccountParent i
 	}
 
 	ngOnInit(): void {
-		this.personalAccountYearlyTagExpensePieChart$.subscribe(console.log);
+		this.accountOverviewChartData$.subscribe((x) => console.log('ttt', x));
+	}
+
+	onActionButtonClick(type: PersonalAccountActionButtonType): void {
+		this.dialog.open(PersonalAccountTagManagerModalComponent, {
+			data: {
+				personalAccountId: this.personalAccountBasic.id,
+				personalAccountName: this.personalAccountBasic.name,
+			},
+			panelClass: ['g-mat-dialog-big'],
+		});
 	}
 }

@@ -12,6 +12,9 @@ import {
 	PersonalAccountEditInput,
 	PersonalAccountOverviewFragment,
 	PersonalAccountTag,
+	PersonalAccountTagDataCreate,
+	PersonalAccountTagDataDelete,
+	PersonalAccountTagDataEdit,
 	PersonalAccountTagFragment,
 	TagDataType,
 } from '../../graphql';
@@ -32,6 +35,10 @@ export class PersonalAccountFacadeService {
 
 	getPersonalAccounts(): Observable<PersonalAccountOverviewFragment[]> {
 		return this.personalAccountApiService.getPersonalAccounts();
+	}
+
+	getPersonalAccountAvailableTagImages(): Observable<string[]> {
+		return this.personalAccountApiService.getPersonalAccountAvailableTagImages();
 	}
 
 	getPersonalAccountDetailsById(input: string): Observable<PersonalAccountDetailsFragment> {
@@ -116,6 +123,47 @@ export class PersonalAccountFacadeService {
 			);
 	}
 
+	createPersonalAccountTag(input: PersonalAccountTagDataCreate): Observable<PersonalAccountTagFragment | null> {
+		return this.personalAccountApiService.createPersonalAccountTag(input).pipe(
+			tap((result) => {
+				if (!result) {
+					return;
+				}
+
+				const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails(input.personalAccountId);
+
+				this.personalAccountCacheService.updatePersonalAccountDetails(input.personalAccountId, {
+					...personalAccount,
+					personalAccountTag: [...personalAccount.personalAccountTag, result],
+				});
+			})
+		);
+	}
+
+	editPersonalAccountTag(input: PersonalAccountTagDataEdit): Observable<PersonalAccountTagFragment | null> {
+		return this.personalAccountApiService.editPersonalAccountTag(input);
+	}
+
+	deletePersonalAccountTag(input: PersonalAccountTagDataDelete): Observable<PersonalAccountTagFragment | null> {
+		return this.personalAccountApiService.deletePersonalAccountTag(input).pipe(
+			tap((result) => {
+				if (!result) {
+					return;
+				}
+
+				const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails(input.personalAccountId);
+
+				// remove tag from array in personal account
+				this.personalAccountCacheService.updatePersonalAccountDetails(input.personalAccountId, {
+					...personalAccount,
+					personalAccountTag: personalAccount.personalAccountTag.filter((d) => d.id !== result.id),
+				});
+
+				// TODO: update charts - remove income/expenses on specific tag
+			})
+		);
+	}
+
 	createPersonalAccountDailyEntry(
 		input: PersonalAccountDailyDataCreate
 	): Observable<PersonalAccountDailyDataOutputFragment | undefined> {
@@ -128,7 +176,6 @@ export class PersonalAccountFacadeService {
 
 				// check if daily data for specific data is in cache, if so, add this one too
 				const { year, month } = DateServiceUtil.getDetailsInformationFromDate(input.date);
-				const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails(personalAccountId);
 				const dailyDataCache = this.personalAccountCacheService.getPersonalAccountDailyDataFromCache({
 					personalAccountId,
 					year,

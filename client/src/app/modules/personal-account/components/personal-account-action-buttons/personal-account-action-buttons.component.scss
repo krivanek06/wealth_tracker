@@ -1,0 +1,7 @@
+:host {
+	@apply flex flex-col max-md:justify-center gap-4;
+
+	button {
+		@apply w-full sm:w-10/12 max-md:m-auto min-w-[240px];
+	}
+}

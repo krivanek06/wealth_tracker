@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Mutation, Resolver } from '@nestjs/graphql';
+import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql/args';
 import { PersonalAccountTag } from '../entities/';
@@ -10,6 +10,14 @@ import { PersonalAccountTagService } from '../services';
 @Resolver(() => PersonalAccountTag)
 export class PersonalAccountTagResolver {
 	constructor(private readonly personalAccountTagService: PersonalAccountTagService) {}
+
+	@Query(() => [String], {
+		description: 'Returns all available tag images',
+		defaultValue: [],
+	})
+	getAllAvailableTagImages(): Promise<string[]> {
+		return this.personalAccountTagService.getAllAvailableTagImages();
+	}
 
 	@Mutation(() => PersonalAccountTag)
 	createPersonalAccountTag(

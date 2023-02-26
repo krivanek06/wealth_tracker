@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import {
 	CreatePersonalAccountDailyEntryGQL,
 	CreatePersonalAccountGQL,
@@ -9,6 +9,7 @@ import {
 	EditPersonalAccountDailyEntryGQL,
 	EditPersonalAccountGQL,
 	EditPersonalAccountMutation,
+	GetPersonalAccountAvailableTagImagesGQL,
 	GetPersonalAccountByIdGQL,
 	GetPersonalAccountDailyDataGQL,
 	GetPersonalAccountsGQL,
@@ -22,6 +23,15 @@ import {
 	PersonalAccountEditInput,
 	PersonalAccountOverviewFragment,
 } from '../../graphql';
+import {
+	CreatePersonalAccountTagGQL,
+	DeletePersonalAccountTagGQL,
+	EditPersonalAccountTagGQL,
+	PersonalAccountTagDataCreate,
+	PersonalAccountTagDataDelete,
+	PersonalAccountTagDataEdit,
+	PersonalAccountTagFragment,
+} from './../../graphql/schema-backend.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -36,7 +46,11 @@ export class PersonalAccountApiService {
 		private createPersonalAccountDailyEntryGQL: CreatePersonalAccountDailyEntryGQL,
 		private editPersonalAccountDailyEntryGQL: EditPersonalAccountDailyEntryGQL,
 		private deletePersonalAccountDailyEntryGQL: DeletePersonalAccountDailyEntryGQL,
-		private getPersonalAccountDailyDataGQL: GetPersonalAccountDailyDataGQL
+		private getPersonalAccountDailyDataGQL: GetPersonalAccountDailyDataGQL,
+		private getPersonalAccountAvailableTagImagesGQL: GetPersonalAccountAvailableTagImagesGQL,
+		private createPersonalAccountTagGQL: CreatePersonalAccountTagGQL,
+		private editPersonalAccountTagGQL: EditPersonalAccountTagGQL,
+		private deletePersonalAccountTagGQL: DeletePersonalAccountTagGQL
 	) {}
 
 	getPersonalAccounts(): Observable<PersonalAccountOverviewFragment[]> {
@@ -109,5 +123,44 @@ export class PersonalAccountApiService {
 				input,
 			})
 			.valueChanges.pipe(map((res) => res.data.getPersonalAccountDailyData));
+	}
+
+	getPersonalAccountAvailableTagImages(): Observable<string[]> {
+		return this.getPersonalAccountAvailableTagImagesGQL
+			.watch()
+			.valueChanges.pipe(map((res) => res.data.getAllAvailableTagImages));
+	}
+
+	createPersonalAccountTag(input: PersonalAccountTagDataCreate): Observable<PersonalAccountTagFragment | null> {
+		return this.createPersonalAccountTagGQL
+			.mutate({
+				input,
+			})
+			.pipe(
+				map((res) => res.data?.createPersonalAccountTag ?? null),
+				catchError(() => of(null))
+			);
+	}
+
+	editPersonalAccountTag(input: PersonalAccountTagDataEdit): Observable<PersonalAccountTagFragment | null> {
+		return this.editPersonalAccountTagGQL
+			.mutate({
+				input,
+			})
+			.pipe(
+				map((res) => res.data?.editPersonalAccountTag ?? null),
+				catchError(() => of(null))
+			);
+	}
+
+	deletePersonalAccountTag(input: PersonalAccountTagDataDelete): Observable<PersonalAccountTagFragment | null> {
+		return this.deletePersonalAccountTagGQL
+			.mutate({
+				input,
+			})
+			.pipe(
+				map((res) => res.data?.deletePersonalAccountTag ?? null),
+				catchError(() => of(null))
+			);
 	}
 }

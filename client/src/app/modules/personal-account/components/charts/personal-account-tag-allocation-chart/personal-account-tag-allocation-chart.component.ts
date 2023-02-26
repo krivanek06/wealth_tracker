@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
-import { ChartType, GenericChartSeriesPie } from './../../../../shared/models';
+import { ChartType, GenericChartSeriesPie } from '../../../../../shared/models';
 
 @Component({
 	selector: 'app-personal-account-tag-allocation-chart',

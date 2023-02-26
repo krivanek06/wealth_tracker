@@ -7,4 +7,7 @@ import { PersonalAccountTag } from './personal-account-tag.entity';
 export class PersonalAccount extends AccountIdentification implements PersonalAccountClient {
 	@Field(() => [PersonalAccountTag])
 	personalAccountTag: PersonalAccountTag[];
+
+	@Field(() => Boolean)
+	enabledBudgeting: boolean;
 }

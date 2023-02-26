@@ -1,0 +1,59 @@
+<form [formGroup]="tagItemGroup" (ngSubmit)="onSubmit()">
+	<!-- color -->
+	<app-color-picker formControlName="color" [disabled]="!editing"></app-color-picker>
+
+	<!-- icon -->
+	<button type="button" (click)="onTagImageChange()" [disabled]="!editing">
+		<img
+			appDefaultImg
+			[src]="tagItemGroup.controls.icon.value"
+			class="w-8 h-8"
+			[matTooltip]="editing ? 'Change image' : ''"
+			alt="Icon image"
+		/>
+	</button>
+
+	<!-- name -->
+	<div>
+		<app-form-mat-input-wrapper
+			[disabled]="!editing"
+			controlName="tagName"
+			inputCaption="Enter name for a tag"
+		></app-form-mat-input-wrapper>
+	</div>
+
+	<!-- budget -->
+	<div *ngIf="tagType === TagDataType.Expense" class="flex-1 col-span-2 sm:col-span-6">
+		<app-slider [disabled]="!editing" formControlName="budget" [config]="sliderConfig"></app-slider>
+	</div>
+
+	<!-- action buttons -->
+	<div *ngIf="editing" class="flex items-center gap-x-5">
+		<button mat-icon-button color="accent" type="submit" matTooltip="Save Tag Changes" class="border border-solid">
+			<mat-icon>done</mat-icon>
+		</button>
+		<button
+			*ngIf="tagItemGroup.controls.tagId.value"
+			mat-icon-button
+			color="warn"
+			type="button"
+			(click)="onRemove()"
+			matTooltip="Remove Tag"
+			class="border border-solid"
+		>
+			<mat-icon>delete</mat-icon>
+		</button>
+	</div>
+
+	<div *ngIf="!editing">
+		<button mat-stroked-button color="primary" type="button" (click)="onEdit()" class="w-full min-w-[120px]">
+			<mat-icon>edit</mat-icon>
+			Edit
+		</button>
+	</div>
+</form>
+
+<!-- error for image -->
+<div *ngIf="tagItemGroup.controls.icon.touched && tagItemGroup.controls.icon.invalid" class="g-error-banner">
+	Please select an image for your tag
+</div>

@@ -14,13 +14,7 @@
 			<!-- options -->
 			<mat-option *ngFor="let option of searchedResults$ | async" (onSelectionChange)="onSelect(option)">
 				<div class="flex gap-2 items-center">
-					<img
-						appDefaultImg
-						[src]="option?.symbolImageURL"
-						imageType="url"
-						alt="Asset image"
-						class="h-[30px] w-[30px]"
-					/>
+					<img appDefaultImg [src]="option?.symbolImageURL" alt="Asset image" class="h-[30px] w-[30px]" />
 					<div class="c-company-name">{{ option.name }}</div>
 				</div>
 			</mat-option>

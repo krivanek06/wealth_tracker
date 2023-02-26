@@ -5,8 +5,16 @@
 
 fieldset:disabled {
 	mat-form-field {
-		.mat-mdc-form-field {
+		.mat-mdc-text-field-wrapper {
 			background-color: var(--gray-dark) !important;
 		}
 	}
+}
+
+.mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {
+	color: var(--gray-light) !important;
+}
+
+input {
+	font-size: 16px !important;
 }

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLPubsubBackendModule } from '../../graphql';
 import { PrismaService } from '../../prisma';
+import { StorageFilesModule } from '../../providers';
 import { PersonalAccountMonthlyDataRepositoryService, PersonalAccountRepositoryService } from './repository';
 import {
 	PersonalAccountDailyResolver,
@@ -17,7 +18,7 @@ import {
 } from './services';
 
 @Module({
-	imports: [GraphQLPubsubBackendModule],
+	imports: [GraphQLPubsubBackendModule, StorageFilesModule],
 	providers: [
 		PersonalAccountService,
 		PersonalAccountResolver,

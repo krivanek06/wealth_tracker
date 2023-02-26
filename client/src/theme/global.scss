@@ -1,5 +1,6 @@
 @import './custom/custom-paginator.scss';
 @import './custom/custom-tooltip.scss';
+@import './custom/custom-highcharts.scss';
 
 body {
 	background: linear-gradient(
@@ -29,4 +30,17 @@ body {
 
 .g-background-card-color {
 	@apply bg-gradient-to-r from-wt-background-dark to-wt-background-medium;
+}
+
+.g-error-banner {
+	@apply text-lg text-center text-white bg-red-500 p-2 rounded-lg;
+}
+
+.g-button-size-lg {
+	min-width: 220px !important;
+}
+
+.mdc-tooltip--shown .mdc-tooltip__surface-animation {
+	padding: 12px !important;
+	font-size: 14px !important;
 }

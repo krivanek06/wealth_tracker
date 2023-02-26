@@ -33,6 +33,8 @@ fragment PersonalAccountOverview on PersonalAccount {
 fragment PersonalAccountDetails on PersonalAccount {
 	...PersonalAccountOverview
 
+	enabledBudgeting
+
 	personalAccountTag {
 		...PersonalAccountTag
 	}

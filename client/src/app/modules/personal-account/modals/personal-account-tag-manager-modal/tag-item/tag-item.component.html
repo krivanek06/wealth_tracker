@@ -14,12 +14,12 @@
 	</button>
 
 	<!-- name -->
-	<div class="flex-1 pt-2 lg:col-span-2">
+	<div>
 		<app-form-mat-input-wrapper controlName="tagName" inputCaption="Enter name for a tag"></app-form-mat-input-wrapper>
 	</div>
 
 	<!-- budget -->
-	<div *ngIf="tagType === TagDataType.Expense" class="flex-1">
+	<div *ngIf="tagType === TagDataType.Expense" class="flex-1 col-span-2 sm:col-span-6">
 		<app-slider formControlName="budget" [config]="sliderConfig"></app-slider>
 	</div>
 

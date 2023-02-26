@@ -35,3 +35,7 @@ body {
 .g-error-banner {
 	@apply text-lg text-center text-white bg-red-500 p-2 rounded-lg;
 }
+
+.g-button-size-lg {
+	min-width: 220px !important;
+}

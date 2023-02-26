@@ -1,9 +1,18 @@
-<h2 class="text-lg text-center">Account: <span class="text-wt-primary-dark">{{ data.personalAccountName }}</span></h2>
+<div class="flex items-center justify-between md:px-10">
+	<h2 class="text-lg text-wt-primary-dark">{{ data.personalAccountName }}</h2>
+
+	<div>
+		<button mat-icon-button mat-dialog-close color="warn">
+			<mat-icon>close</mat-icon>
+		</button>
+	</div>
+</div>
 
 <mat-dialog-content class="p-4">
 	<!-- create buttons -->
-	<div class="flex justify-end gap-4 mb-8">
+	<div class="flex flex-col gap-4 mb-8 sm:flex-row lg:justify-end">
 		<button
+			class="max-lg:flex-1 g-button-size-lg"
 			mat-stroked-button
 			color="accent"
 			type="button"
@@ -15,6 +24,7 @@
 		</button>
 
 		<button
+			class="max-lg:flex-1 g-button-size-lg"
 			mat-stroked-button
 			color="warn"
 			type="button"
@@ -78,5 +88,5 @@
 
 <!-- action buttons -->
 <mat-dialog-actions class="justify-end">
-	<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
+	<button mat-stroked-button mat-dialog-close type="button" class="g-button-size-lg">Cancel</button>
 </mat-dialog-actions>

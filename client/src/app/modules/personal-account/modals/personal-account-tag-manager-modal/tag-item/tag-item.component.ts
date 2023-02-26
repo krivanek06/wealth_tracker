@@ -103,7 +103,7 @@ export class TagItemComponent implements OnInit {
 						DialogServiceUtil.showNotificationBar('Unable to perform removing operation on tag', 'error');
 						return;
 					}
-					DialogServiceUtil.showNotificationBar(`Tag ${removingTagName} has been removed`, 'notification');
+					DialogServiceUtil.showNotificationBar(`Tag ${removingTagName} has been removed`, 'success');
 				})
 			)
 			.subscribe();
@@ -174,7 +174,7 @@ export class TagItemComponent implements OnInit {
 						DialogServiceUtil.showNotificationBar('Unable to change tag', 'error');
 						return;
 					}
-					DialogServiceUtil.showNotificationBar(`Tag has been changed`, 'notification');
+					DialogServiceUtil.showNotificationBar(`Tag has been changed`, 'success');
 				})
 			)
 			.subscribe();

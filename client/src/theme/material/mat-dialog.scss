@@ -14,7 +14,7 @@
 	.mat-mdc-dialog-content {
 		max-height: none;
 
-		@screen sm {
+		@screen md {
 			max-height: 65vh;
 		}
 	}
@@ -23,7 +23,7 @@
 		height: 99vh !important;
 		width: 100vw !important;
 
-		@screen sm {
+		@screen md {
 			height: auto !important;
 		}
 

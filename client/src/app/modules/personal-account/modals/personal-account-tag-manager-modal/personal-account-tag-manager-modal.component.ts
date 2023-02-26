@@ -41,6 +41,13 @@ export class PersonalAccountTagManagerModalComponent implements OnInit {
 	}
 
 	onCreateButton(type: TagDataType): void {
+		// remove from screen
+		if (this.creatingNewTagType === type) {
+			this.creatingNewTagType = null;
+			return;
+		}
+
+		// display
 		this.creatingNewTagType = type;
 	}
 

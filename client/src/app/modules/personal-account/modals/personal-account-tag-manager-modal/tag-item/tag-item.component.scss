@@ -2,6 +2,6 @@
 	display: block;
 
 	form {
-		@apply flex items-center gap-x-8;
+		@apply grid grid-cols-2 lg:flex items-center gap-x-8;
 	}
 }

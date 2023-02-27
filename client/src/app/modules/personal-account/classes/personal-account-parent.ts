@@ -223,7 +223,7 @@ export abstract class PersonalAccountParent {
 						? this.personalAccountDataService.getPersonalAccountTagAggregationByAggregationData(
 								details.yearlyAggregaton
 						  )
-						: this.personalAccountDataService.getPersonalAccountTagAggregationByDailyData(result)
+						: this.personalAccountDataService.getPersonalAccountTagAggregationByDailyData(result, dateFilter)
 			)
 		);
 

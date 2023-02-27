@@ -1,14 +1,1 @@
-<div>
-	<input
-		type="range"
-		[min]="!min ? 0 : min"
-		[max]="!max ? value : max"
-		[value]="!value ? 0 : value"
-		class="slider"
-		disabled
-	/>
-</div>
-<div class="flex items-center justify-between">
-	<span class="text-xs text-gray-500">{{ min | currency}} </span>
-	<span class="text-xs text-gray-500">{{ max | currency}} </span>
-</div>
+<progress [style.--progress-color]="variableColor" [value]="currentValue" [max]="totalThresholdValue"></progress>

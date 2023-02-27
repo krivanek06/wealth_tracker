@@ -15,6 +15,14 @@
 	</div>
 </ng-container>
 
+<!-- settings -->
+<div class="relative z-10 flex justify-start mb-4 -mt-10">
+	<app-personal-account-action-buttons
+		displayType="menu"
+		(buttonClickEmitter)="onActionButtonClick($event)"
+	></app-personal-account-action-buttons>
+</div>
+
 <mat-divider></mat-divider>
 
 <!-- action button to add new entry -->

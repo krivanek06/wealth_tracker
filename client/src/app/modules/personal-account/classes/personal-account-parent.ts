@@ -18,8 +18,13 @@ import {
 	InputSourceWrapper,
 	ValuePresentItem,
 } from '../../../shared/models';
-import { PersonalAccountDailyDataEntryComponent } from '../modals';
-import { AccountState, NO_DATE_SELECTED, PersonalAccountTagAggregation } from '../models';
+import { PersonalAccountDailyDataEntryComponent, PersonalAccountTagManagerModalComponent } from '../modals';
+import {
+	AccountState,
+	NO_DATE_SELECTED,
+	PersonalAccountActionButtonType,
+	PersonalAccountTagAggregation,
+} from '../models';
 import { PersonalAccountChartService, PersonalAccountDataService } from '../services';
 
 @Directive()
@@ -233,6 +238,16 @@ export abstract class PersonalAccountParent {
 				personalAccountName: this.personalAccountBasic.name,
 			},
 			panelClass: ['g-mat-dialog-small'],
+		});
+	}
+
+	onActionButtonClick(type: PersonalAccountActionButtonType): void {
+		this.dialog.open(PersonalAccountTagManagerModalComponent, {
+			data: {
+				personalAccountId: this.personalAccountBasic.id,
+				personalAccountName: this.personalAccountBasic.name,
+			},
+			panelClass: ['g-mat-dialog-big'],
 		});
 	}
 }

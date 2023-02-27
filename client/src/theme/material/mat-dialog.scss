@@ -1,7 +1,11 @@
 .mat-mdc-dialog-container .mdc-dialog__surface {
 	background: var(--background-dark) !important;
 	color: var(--gray-light) !important;
-	padding: 24px !important;
+	padding: 16px !important;
+
+	@screen sm {
+		padding: 24px !important;
+	}
 }
 
 .mat-mdc-dialog-container .mdc-dialog__content {

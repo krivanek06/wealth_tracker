@@ -107,7 +107,7 @@ export class PersonalAccountTagAllocationChartComponent {
 				pie: {
 					size: '50%',
 					showInLegend: false,
-					allowPointSelect: true,
+					allowPointSelect: false,
 					// depth: 35,
 					// minSize: 90,
 					// size: 200,

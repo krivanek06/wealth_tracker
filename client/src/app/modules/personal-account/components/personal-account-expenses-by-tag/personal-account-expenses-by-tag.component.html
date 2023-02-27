@@ -34,30 +34,24 @@
 					<div>
 						<span
 							class="text-white"
-							[ngClass]="{'text-base':  !!aggregation.lastDataEntryDate, 'text-lg':  !aggregation.lastDataEntryDate}"
+							[ngClass]="{
+                  'text-base':  aggregation.budgetToTimePeriod  && !aggregation.isWeeklyView,
+                  'text-xl':  !aggregation.budgetToTimePeriod ||  aggregation.isWeeklyView
+              }"
 						>
 							{{ aggregation.totalValue | currency }}
 						</span>
-						<ng-container *ngIf="aggregation.budgetToTimePeriod">
+						<ng-container *ngIf="aggregation.budgetToTimePeriod && !aggregation.isWeeklyView">
 							<span>/</span>
 							<span class="text-gray-400">{{ aggregation.budgetToTimePeriod | currency }}</span>
 						</ng-container>
 					</div>
 					<!-- progress bar -->
-					<div *ngIf="aggregation.budgetToTimePeriodFilledPrct">
-						<mat-progress-bar
-							mode="determinate"
-							class="h-2 rounded-lg"
-							[value]="aggregation.budgetToTimePeriodFilledPrct"
-							[ngClass]="{
-                'VERY_LOW_VALUE': aggregation.budgetToTimePeriodFilledPrct <= 15,
-                'LOW_VALUE': aggregation.budgetToTimePeriodFilledPrct > 15 && aggregation.budgetToTimePeriodFilledPrct <= 30,
-                'MEDIUM':  aggregation.budgetToTimePeriodFilledPrct > 30 && aggregation.budgetToTimePeriodFilledPrct <= 45,
-                'HIGH':  aggregation.budgetToTimePeriodFilledPrct > 45 && aggregation.budgetToTimePeriodFilledPrct <= 65,
-                'VERY_HIGH':  aggregation.budgetToTimePeriodFilledPrct > 65 && aggregation.budgetToTimePeriodFilledPrct <= 85,
-                'TOO_MUCH':  aggregation.budgetToTimePeriodFilledPrct > 80
-            }"
-						></mat-progress-bar>
+					<div *ngIf="aggregation.budgetToTimePeriod && !aggregation.isWeeklyView" class="mt-2">
+						<app-progress-item
+							[currentValue]="aggregation.totalValue"
+							[totalThresholdValue]="aggregation.budgetToTimePeriod"
+						></app-progress-item>
 					</div>
 				</div>
 			</div>

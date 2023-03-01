@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, forwardRef, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, forwardRef, Input, OnInit, Output } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { DateServiceUtil } from '../../../../core/utils';
 import { FormMatInputWrapperModule } from '../../../../shared/components';
 import { InputSourceWrapper } from '../../../../shared/models';
@@ -12,7 +13,7 @@ import { InputSourceWrapper } from '../../../../shared/models';
 	styleUrls: ['./personal-account-daily-entries-filter.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	standalone: true,
-	imports: [CommonModule, ReactiveFormsModule, FormMatInputWrapperModule, MatButtonModule],
+	imports: [CommonModule, ReactiveFormsModule, FormMatInputWrapperModule, MatButtonModule, MatIconModule],
 	providers: [
 		{
 			provide: NG_VALUE_ACCESSOR,
@@ -22,6 +23,7 @@ import { InputSourceWrapper } from '../../../../shared/models';
 	],
 })
 export class PersonalAccountDailyEntriesFilterComponent implements OnInit, ControlValueAccessor {
+	@Output() addDailyEntryClickEmitter = new EventEmitter<void>();
 	@Input() filterDateInputSourceWrapper: InputSourceWrapper[] | null = null;
 
 	readonly formGroup = new FormGroup({
@@ -38,6 +40,10 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 			// value in format year-month-week
 			this.onChange(value);
 		});
+	}
+
+	onAddDailyEntryClick(): void {
+		this.addDailyEntryClickEmitter.emit();
 	}
 
 	onCurrentMonthClick(): void {

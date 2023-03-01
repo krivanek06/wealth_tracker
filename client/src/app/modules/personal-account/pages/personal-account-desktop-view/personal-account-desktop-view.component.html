@@ -47,34 +47,22 @@
 
 <!-- date filter control -->
 <app-personal-account-daily-entries-filter
+	(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
 	[formControl]="filterDailyDataGroup.controls.dateFilter"
 	[filterDateInputSourceWrapper]="filterDateInputSourceWrapper$ | async"
 ></app-personal-account-daily-entries-filter>
 
-<!-- add button -->
-<button
-	(click)="onDailyEntryClick(null)"
-	mat-stroked-button
-	type="button"
-	color="primary"
-	class="block w-full mb-2 sm:hidden"
->
-	<mat-icon>add</mat-icon>
-	Add daily entry
-</button>
-
-<div class="grid grid-cols-1 xl:grid-cols-5 gap-4 min-h-[300px] items-center">
+<div class="grid items-center grid-cols-1 gap-4 lg:grid-cols-4">
 	<!-- table body -->
-	<div class="h-full col-span-1 xl:col-span-3">
+	<div class="h-full lg:col-span-2">
 		<app-personal-account-daily-entries-table
-			(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
 			(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
 			[personalAccountDailyData]="filteredDailyData$ | async"
 		></app-personal-account-daily-entries-table>
 	</div>
 
 	<!-- spending allocation by tags -->
-	<div *ngIf="accountFilteredState$ | async as accountState" class="hidden col-span-2 xl:block xl:-mt-20">
+	<div *ngIf="accountFilteredState$ | async as accountState" class="lg:col-span-2 md:-mt-20">
 		<app-personal-account-tag-allocation-chart
 			[series]="personalAccountDailyExpensePieChart$ | async"
 			[accountBalance]="accountState.total"
@@ -82,4 +70,14 @@
 			dataLabelsAlignTo="connectors"
 		></app-personal-account-tag-allocation-chart>
 	</div>
+</div>
+
+<!-- displayed expense by tag -->
+<div class="mt-6">
+	<h2>Date and Value</h2>
+	<app-personal-account-expenses-by-tag
+		[aggregations]="accountTagAggregationForTimePeriod$ | async"
+		[multiple]="false"
+		[disabled]="true"
+	></app-personal-account-expenses-by-tag>
 </div>

@@ -34,19 +34,11 @@
 	<!-- date -->
 	<ng-container matColumnDef="date">
 		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Date</th>
-		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">{{ row.date | date: 'EEEE h:mm a (MMM d)' }}</td>
-	</ng-container>
-
-	<!-- week -->
-	<ng-container matColumnDef="week">
-		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Week</th>
-		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">{{ row.week }}</td>
-	</ng-container>
-
-	<!-- month -->
-	<ng-container matColumnDef="month">
-		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Month</th>
-		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">{{ row.date | date: 'MMMM' }}</td>
+		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">
+			<span class="text-wt-gray-light">{{ row.date | date: 'MMMM d.' }}</span> |
+			<span> {{ row.date | date: 'EEEE' }}</span> |
+			<span>Week {{row.week}}.</span>
+		</td>
 	</ng-container>
 
 	<tr mat-header-row *matHeaderRowDef="displayedColumns" class="hidden sm:contents"></tr>
@@ -60,20 +52,8 @@
 	</tr>
 </table>
 
-<div class="flex items-center justify-end sm:justify-between">
-	<!-- add button -->
-	<button
-		mat-stroked-button
-		(click)="onAddDailyEntryClick()"
-		type="button"
-		color="primary"
-		class="hidden sm:block w-[220px]"
-	>
-		<mat-icon>add</mat-icon>
-		Add daily entry
-	</button>
-
-	<!-- pagination -->
+<!-- pagination -->
+<div class="flex items-center justify-end">
 	<mat-paginator
 		appStylePaginator
 		showFirstLastButtons

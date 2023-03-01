@@ -16,6 +16,7 @@ import {
 	PersonalAccountActionButtonsComponent,
 	PersonalAccountDailyEntriesFilterComponent,
 	PersonalAccountDailyEntriesTableModule,
+	PersonalAccountExpensesByTagComponent,
 	PersonalAccountTagAllocationChartComponent,
 	PersonalAccountTagSpendingChartComponent,
 } from '../../components';
@@ -43,6 +44,7 @@ import { PersonalAccountTagManagerModalModule } from './../../modals/personal-ac
 		PersonalAccountAccountGrowthChartComponent,
 		PersonalAccountActionButtonsComponent,
 		PersonalAccountTagManagerModalModule,
+		PersonalAccountExpensesByTagComponent,
 	],
 	templateUrl: './personal-account-desktop-view.component.html',
 	styleUrls: ['./personal-account-desktop-view.component.scss'],

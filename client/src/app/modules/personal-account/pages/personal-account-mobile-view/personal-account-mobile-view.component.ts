@@ -10,13 +10,14 @@ import { FormMatInputWrapperModule, ValuePresentationCardComponent } from '../..
 import { PersonalAccountParent } from '../../classes';
 import {
 	PersonalAccountAccountStateComponent,
+	PersonalAccountActionButtonsComponent,
 	PersonalAccountDailyEntriesTableModule,
 	PersonalAccountDisplayToggleComponent,
 	PersonalAccountExpensesByTagComponent,
 	PersonalAccountOverviewChartMobileComponent,
 	PersonalAccountTagAllocationChartComponent,
 } from '../../components';
-import { PersonalAccountDailyEntriesTableMobileComponent } from '../../components/mobile/personal-account-daily-entries-table-mobile/personal-account-daily-entries-table-mobile.component';
+import { PersonalAccountDailyEntriesTableMobileComponent } from '../../components/mobile';
 import { AccountState, NO_DATE_SELECTED, PersonalAccountDailyDataAggregation } from '../../models';
 import { GetTagByIdPipe } from '../../pipes';
 @Component({
@@ -42,6 +43,7 @@ import { GetTagByIdPipe } from '../../pipes';
 		PersonalAccountAccountStateComponent,
 		PersonalAccountDisplayToggleComponent,
 		PersonalAccountDailyEntriesTableMobileComponent,
+		PersonalAccountActionButtonsComponent,
 	],
 })
 export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {

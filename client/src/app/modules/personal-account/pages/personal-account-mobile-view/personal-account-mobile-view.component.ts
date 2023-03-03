@@ -11,6 +11,7 @@ import { PersonalAccountParent } from '../../classes';
 import {
 	PersonalAccountAccountStateComponent,
 	PersonalAccountActionButtonsComponent,
+	PersonalAccountDailyEntriesFilterComponent,
 	PersonalAccountDailyEntriesTableModule,
 	PersonalAccountDisplayToggleComponent,
 	PersonalAccountExpensesByTagComponent,
@@ -44,6 +45,7 @@ import { GetTagByIdPipe } from '../../pipes';
 		PersonalAccountDisplayToggleComponent,
 		PersonalAccountDailyEntriesTableMobileComponent,
 		PersonalAccountActionButtonsComponent,
+		PersonalAccountDailyEntriesFilterComponent,
 	],
 })
 export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {

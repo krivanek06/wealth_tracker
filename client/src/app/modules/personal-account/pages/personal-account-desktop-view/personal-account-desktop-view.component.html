@@ -49,7 +49,7 @@
 <app-personal-account-daily-entries-filter
 	(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
 	[formControl]="filterDailyDataGroup.controls.dateFilter"
-	[filterDateInputSourceWrapper]="filterDateInputSourceWrapper$ | async"
+	[personalAccountDetails]="personalAccountDetails$ | async"
 ></app-personal-account-daily-entries-filter>
 
 <div class="grid items-center grid-cols-1 gap-4 lg:grid-cols-4">
@@ -62,11 +62,11 @@
 	</div>
 
 	<!-- spending allocation by tags -->
-	<div *ngIf="accountFilteredState$ | async as accountState" class="lg:col-span-2 md:-mt-20">
+	<div *ngIf="accountFilteredState$ | async as accountState" class="lg:col-span-2 md:-mt-16">
 		<app-personal-account-tag-allocation-chart
+			class="scale-125"
 			[series]="personalAccountDailyExpensePieChart$ | async"
 			[accountBalance]="accountState.total"
-			[heightPx]="600"
 			dataLabelsAlignTo="connectors"
 		></app-personal-account-tag-allocation-chart>
 	</div>

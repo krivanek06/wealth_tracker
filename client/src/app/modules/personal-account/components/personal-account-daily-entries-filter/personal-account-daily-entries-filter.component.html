@@ -1,4 +1,4 @@
-<div class="flex flex-wrap gap-4">
+<div class="flex flex-wrap gap-4 max-sm:order-2">
 	<div [formGroup]="formGroup" class="w-full md:w-[350px]">
 		<app-form-mat-input-wrapper
 			inputCaption="Filter by date"
@@ -8,7 +8,7 @@
 		></app-form-mat-input-wrapper>
 	</div>
 
-	<div class="mt-1 h-11">
+	<div class="hidden mt-1 h-11 sm:block">
 		<button mat-stroked-button (click)="onCurrentMonthClick()" type="button" color="primary" class="w-full h-full">
 			Current month
 		</button>
@@ -22,9 +22,13 @@
 		(click)="onAddDailyEntryClick()"
 		type="button"
 		color="primary"
-		class="-mt-3 g-button-size-lg"
+		class="w-full sm:-mt-6 g-button-size-lg"
 	>
 		<mat-icon>add</mat-icon>
 		Add daily entry
 	</button>
+</div>
+
+<div class="block my-4 sm:hidden">
+	<mat-divider></mat-divider>
 </div>

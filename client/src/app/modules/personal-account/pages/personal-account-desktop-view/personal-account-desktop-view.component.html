@@ -74,7 +74,10 @@
 
 <!-- displayed expense by tag -->
 <div class="mt-6">
-	<h2>Date and Value</h2>
+	<h2 class="space-x-2">
+		<span>Date</span>
+		<span class="text-wt-gray-medium">{{ filterDailyDataGroup.controls.dateFilter.value }}</span>
+	</h2>
 	<app-personal-account-expenses-by-tag
 		[aggregations]="accountTagAggregationForTimePeriod$ | async"
 		[disabled]="true"

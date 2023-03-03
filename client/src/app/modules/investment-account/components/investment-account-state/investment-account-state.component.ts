@@ -8,7 +8,7 @@ import { DailyInvestmentChange } from '../../models';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvestmentAccountStateComponent implements OnInit {
-	@Output() cachChangeClickEmitter = new EventEmitter<void>();
+	@Output() cashChangeClickEmitter = new EventEmitter<void>();
 	/**
 	 * Total invested amount by the user
 	 */
@@ -27,6 +27,6 @@ export class InvestmentAccountStateComponent implements OnInit {
 	ngOnInit(): void {}
 
 	onCashChangeClick(): void {
-		this.cachChangeClickEmitter.emit();
+		this.cashChangeClickEmitter.emit();
 	}
 }

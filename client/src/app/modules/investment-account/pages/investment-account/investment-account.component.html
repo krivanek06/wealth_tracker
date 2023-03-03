@@ -4,7 +4,7 @@
 			<!-- account state -->
 			<div class="mb-2">
 				<app-investment-account-state
-					(cachChangeClickEmitter)="onChangeChangeClick()"
+					(cashChangeClickEmitter)="onChangeChangeClick()"
 					[currentInvestedAmout]="(currentInvestedAmout$ | async) ?? 0"
 					[totalInvestedAmount]="(totalInvestedAmount$ | async) ?? 0"
 					[dailyInvestmentChange]="dailyInvestmentChange$ | async"

@@ -97,7 +97,7 @@
 	<ng-container matColumnDef="invested">
 		<th mat-header-cell mat-sort-header *matHeaderCellDef class="hidden sm:table-cell">Invested +/-</th>
 		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">
-			<div class="text-base">{{ row.totalValue | currency }}</div>
+			<div class="text-base text-wt-gray-light">{{ row.totalValue | currency }}</div>
 			<div
 				appPerceptageIncrease
 				[useCurrencySign]="true"

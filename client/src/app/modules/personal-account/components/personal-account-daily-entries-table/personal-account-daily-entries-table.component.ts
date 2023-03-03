@@ -20,7 +20,6 @@ import { PersonalAccountDailyDataOutputFragment, TagDataType } from './../../../
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountDailyEntriesTableComponent implements OnInit, AfterViewInit {
-	@Output() addDailyEntryClickEmitter = new EventEmitter<void>();
 	@Output() editDailyEntryClickEmitter = new EventEmitter<PersonalAccountDailyDataOutputFragment>();
 
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -32,7 +31,7 @@ export class PersonalAccountDailyEntriesTableComponent implements OnInit, AfterV
 		this.dataSource.paginator = this.paginator;
 		this.dataSource.sort = this.sort;
 	}
-	displayedColumns: string[] = ['tag', 'value', 'date', 'week', 'month'];
+	displayedColumns: string[] = ['tag', 'value', 'date'];
 	dataSource!: MatTableDataSource<PersonalAccountDailyDataOutputFragment>;
 
 	TagDataType = TagDataType;
@@ -51,9 +50,5 @@ export class PersonalAccountDailyEntriesTableComponent implements OnInit, AfterV
 
 	onEditDailyEntryClick(data: PersonalAccountDailyDataOutputFragment): void {
 		this.editDailyEntryClickEmitter.emit(data);
-	}
-
-	onAddDailyEntryClick(): void {
-		this.addDailyEntryClickEmitter.emit();
 	}
 }

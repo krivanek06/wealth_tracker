@@ -22,12 +22,16 @@ import { InputTypeSlider } from '../../../models';
 export class SliderComponent implements OnInit, ControlValueAccessor {
 	@Input() config!: InputTypeSlider;
 	@Input() set disabled(disabled: boolean) {
+		this.isDisabled = disabled;
+
 		if (disabled) {
 			this.selectedValue.disable();
 		} else {
 			this.selectedValue.enable();
 		}
 	}
+
+	isDisabled = false;
 
 	selectedValue = new FormControl<number>(0, { nonNullable: true });
 

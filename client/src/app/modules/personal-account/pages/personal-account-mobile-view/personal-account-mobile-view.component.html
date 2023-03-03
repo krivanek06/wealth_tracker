@@ -15,10 +15,18 @@
 	</div>
 </ng-container>
 
+<!-- settings -->
+<div class="relative z-10 flex justify-start mb-4 -mt-10">
+	<app-personal-account-action-buttons
+		displayType="menu"
+		(buttonClickEmitter)="onActionButtonClick($event)"
+	></app-personal-account-action-buttons>
+</div>
+
 <mat-divider></mat-divider>
 
 <!-- action button to add new entry -->
-<div class="w-full h-12 mt-4 mb-1">
+<div class="w-full h-12 mt-5 mb-3">
 	<button (click)="onDailyEntryClick(null)" mat-stroked-button type="button" color="primary" class="w-full">
 		<mat-icon>add</mat-icon>
 		Add daily entry
@@ -40,10 +48,12 @@
 </div>
 
 <!-- title & show history checkbox -->
-<app-personal-account-display-toggle
-	[formControl]="showHistoryFormControl"
-	[selectedTag]="personalAccountBasic | getTagById: filterDailyDataGroup.controls.selectedTagIds.value[0] | async"
-></app-personal-account-display-toggle>
+<div class="mt-2 mb-6">
+	<app-personal-account-display-toggle
+		[formControl]="showHistoryFormControl"
+		[selectedTag]="personalAccountBasic | getTagById: filterDailyDataGroup.controls.selectedTagIds.value[0] | async"
+	></app-personal-account-display-toggle>
+</div>
 
 <!-- tag aggregation -->
 <ng-container *ngIf="accountTagAggregationForTimePeriod$ | async as aggregations">

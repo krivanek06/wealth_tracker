@@ -167,8 +167,7 @@ export class PersonalAccountDataService {
 				totalValue: curr.value,
 				lastDataEntryDate: null,
 				isWeeklyView: false,
-				budgetToTimePeriod: null,
-				budgetToTimePeriodFilledPrct: null,
+				budgetToTimePeriod: curr.tag.budgetMonthly,
 			};
 			return { ...acc, [key]: newData };
 		}, {} as { [key: string]: PersonalAccountTagAggregation });
@@ -178,8 +177,11 @@ export class PersonalAccountDataService {
 
 	getPersonalAccountTagAggregationByDailyData(
 		dailyData: PersonalAccountDailyDataOutputFragment[],
-		isWeeklyView = false
+		dateFilter?: string
 	): PersonalAccountTagAggregation[] {
+		const [, , week] = dateFilter ? DateServiceUtil.dateSplitter(dateFilter) : [null, null, null];
+		const isWeeklyView = !!week;
+
 		const data = dailyData.reduce((acc, curr) => {
 			const key = curr.tagId;
 			const selectedTag: PersonalAccountTagAggregation = acc[key];
@@ -200,10 +202,6 @@ export class PersonalAccountDataService {
 								selectedTag.lastDataEntryDate && curr.date > selectedTag.lastDataEntryDate
 									? curr.date
 									: selectedTag.lastDataEntryDate,
-							// increase budgetToTimePeriodFilled
-							budgetToTimePeriodFilledPrct:
-								(selectedTag.budgetToTimePeriodFilledPrct ?? 0) +
-								(selectedTag.budgetToTimePeriod ? curr.value / selectedTag.budgetToTimePeriod : 0),
 						},
 					},
 				};
@@ -225,7 +223,6 @@ export class PersonalAccountDataService {
 				lastDataEntryDate: curr.date,
 				isWeeklyView,
 				budgetToTimePeriod,
-				budgetToTimePeriodFilledPrct: budgetToTimePeriod ? curr.value / budgetToTimePeriod : 0,
 			};
 			return { ...acc, [key]: newData };
 		}, {} as { [key: string]: PersonalAccountTagAggregation });

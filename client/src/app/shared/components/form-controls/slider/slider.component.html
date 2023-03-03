@@ -1,3 +1,13 @@
+<div
+	class="-mb-3 text-sm text-center"
+	[ngClass]="{
+      'text-wt-gray-medium': isDisabled,
+      'text-wt-gray-light': !isDisabled
+  }"
+>
+	{{ selectedValue.value | currency }}
+</div>
+
 <mat-slider
 	[max]="config.max"
 	[min]="config.min"
@@ -8,3 +18,14 @@
 >
 	<input matSliderThumb [formControl]="selectedValue" />
 </mat-slider>
+
+<div
+	class="flex items-center justify-between -mt-5 text-sm"
+	[ngClass]="{
+    'text-wt-gray-dark': isDisabled,
+    'text-wt-gray-medium': !isDisabled
+  }"
+>
+	<span>{{config.min | currency}}</span>
+	<span class="-mr-3">{{config.max | currency}}</span>
+</div>

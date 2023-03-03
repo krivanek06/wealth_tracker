@@ -1,5 +1,5 @@
 <!-- flex max-xs:flex-col items-center justify-between -->
-<div class="grid gap-x-4 gap-y-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:justify-between lg:items-center">
+<div class="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:justify-between lg:items-center">
 	<!-- current account state -->
 	<div class="c-wrapper">
 		<div class="c-title">Account state</div>
@@ -64,8 +64,8 @@
 	</div>
 
 	<!-- cash -->
-	<button mat-stroked-button (click)="onCashChangeClick()">
-		<div class="c-wrapper min-w-[130px] min-h-[40px]">
+	<button mat-stroked-button (click)="onCashChangeClick()" class="h-14">
+		<div class="c-wrapper min-w-[130px]">
 			<div class="c-title">Cash</div>
 			<div class="c-body">
 				<div class="c-body-value">{{ (cashAmount ) | currency }}</div>

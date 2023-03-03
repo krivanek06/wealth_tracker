@@ -1,12 +1,15 @@
-<nav mat-tab-nav-bar dynamicHeight class="hidden sm:block">
-	<a
-		mat-tab-link
-		*ngFor="let account of availableAccounts"
-		[routerLink]="[account.accountType, account.id]"
-		routerLinkActive
-		#rla="routerLinkActive"
-		[active]="rla.isActive"
-	>
-		{{account.name}}
-	</a>
-</nav>
+<div class="justify-end hidden my-4 sm:flex">
+	<nav mat-tab-nav-bar dynamicHeight class="">
+		<a
+			mat-tab-link
+			*ngFor="let account of availableAccounts"
+			[routerLink]="[account.accountType, account.id]"
+			routerLinkActive
+			#rla="routerLinkActive"
+			[active]="rla.isActive"
+			class="mr-3"
+		>
+			{{account.name}}
+		</a>
+	</nav>
+</div>

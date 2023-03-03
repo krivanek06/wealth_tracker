@@ -64,6 +64,10 @@ mat-select-trigger {
 	background: var(--background-medium) !important;
 }
 
+.mdc-menu-surface.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible {
+	background: var(--background-dark) !important;
+}
+
 /* distance between content and scroll bar */
 .cdk-overlay-pane:not(.mat-mdc-select-panel-above) .mdc-menu-surface.mat-mdc-select-panel {
 	padding-right: 12px !important;
@@ -71,4 +75,8 @@ mat-select-trigger {
 
 .cdk-overlay-pane {
 	max-width: 99vw !important;
+}
+
+.mat-pseudo-checkbox-full {
+	border-color: var(--gray-dark) !important;
 }

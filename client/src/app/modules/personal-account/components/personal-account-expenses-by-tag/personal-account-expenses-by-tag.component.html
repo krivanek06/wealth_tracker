@@ -3,8 +3,12 @@
 		*ngFor="let aggregation of aggregations"
 		mat-button
 		(click)="onClick(aggregation)"
-		[ngClass]="{'pointer-events-none': disabled}"
-		class="w-full max-sm:p-0 shadow-lg md:py-4 g-background-card-color h-[95px] md:h-[110px] overflow-hidden bg-wt-background-dark"
+		[ngClass]="{
+      'pointer-events-none': disabled,
+      'c-selected-button': selectedAggregationIds | inArray: aggregation.id,
+      'bg-wt-background-dark': !(selectedAggregationIds | inArray: aggregation.id)
+    }"
+		class="w-full max-sm:p-0 shadow-lg md:py-4 h-[95px] md:h-[110px] overflow-hidden"
 	>
 		<div class="flex items-center gap-2 -ml-1">
 			<!-- tag image -->
@@ -21,10 +25,10 @@
 				</ng-container>
 
 				<!-- progress bar -->
-				<div *ngIf="aggregation.budgetToTimePeriod && !aggregation.isWeeklyView" class="-mt-1">
+				<div *ngIf="!aggregation.isWeeklyView" class="-mt-1">
 					<app-progress-item
-						[currentValue]="aggregation.totalValue"
-						[totalThresholdValue]="aggregation.budgetToTimePeriod"
+						[currentValue]="aggregation.budgetToTimePeriod ? aggregation.totalValue : 0"
+						[totalThresholdValue]="aggregation.budgetToTimePeriod ?? 0"
 					></app-progress-item>
 				</div>
 			</div>

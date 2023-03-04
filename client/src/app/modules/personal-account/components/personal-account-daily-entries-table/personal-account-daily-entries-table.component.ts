@@ -1,13 +1,4 @@
-import {
-	AfterViewInit,
-	ChangeDetectionStrategy,
-	Component,
-	EventEmitter,
-	Input,
-	OnInit,
-	Output,
-	ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -19,7 +10,7 @@ import { PersonalAccountDailyDataOutputFragment, TagDataType } from './../../../
 	styleUrls: ['./personal-account-daily-entries-table.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PersonalAccountDailyEntriesTableComponent implements OnInit, AfterViewInit {
+export class PersonalAccountDailyEntriesTableComponent implements OnInit {
 	@Output() editDailyEntryClickEmitter = new EventEmitter<PersonalAccountDailyDataOutputFragment>();
 
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -37,10 +28,10 @@ export class PersonalAccountDailyEntriesTableComponent implements OnInit, AfterV
 	TagDataType = TagDataType;
 
 	constructor() {}
-	ngAfterViewInit(): void {
-		this.dataSource.paginator = this.paginator;
-		this.dataSource.sort = this.sort;
-	}
+	// ngAfterViewInit(): void {
+	// 	this.dataSource.paginator = this.paginator;
+	// 	this.dataSource.sort = this.sort;
+	// }
 
 	ngOnInit(): void {}
 

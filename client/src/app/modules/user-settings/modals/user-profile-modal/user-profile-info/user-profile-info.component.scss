@@ -4,11 +4,11 @@
 	mat-list-item {
 		height: 60px !important;
 
-		:first-child {
-			@apply text-sm text-gray-500;
+		matListItemTitle {
+			@apply text-lg;
 		}
 
-		:last-child {
+		matListItemLine {
 			@apply text-base;
 		}
 	}

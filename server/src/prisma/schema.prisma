@@ -137,6 +137,7 @@ model PersonalAccountMonthlyData {
 type PersonalAccountDailyData {
     id                String // random UUID 
     tagId             String // ID of TagData -> Can be modified, resolved on the FE!
+    description       String?
     userId            String // user who created the daily entry
     monthlyDataId     String // PersonalAccountMonthlyData.id
     personalAccountId String // PersonalAccount.id

@@ -1,5 +1,5 @@
 <fieldset [disabled]="isDisabled">
-	<mat-form-field appearance="outline" class="w-full">
+	<mat-form-field appearance="fill" class="w-full">
 		<mat-label>Search by symbol</mat-label>
 		<input matInput [formControl]="formControl" [matAutocomplete]="auto" />
 		<mat-hint>Ex: 'Apple, Microsoft, BTC, ETH'</mat-hint>
@@ -7,13 +7,13 @@
 		<!-- display options -->
 		<mat-autocomplete #auto="matAutocomplete">
 			<!-- spinner -->
-			<mat-option *ngIf="searching">
+			<mat-option *ngIf="searching" class="p-4 ml-5">
 				<mat-spinner diameter="40"></mat-spinner>
 			</mat-option>
 
 			<!-- options -->
 			<mat-option *ngFor="let option of searchedResults$ | async" (onSelectionChange)="onSelect(option)">
-				<div class="flex gap-2 items-center">
+				<div class="flex items-center gap-2">
 					<img appDefaultImg [src]="option?.symbolImageURL" alt="Asset image" class="h-[30px] w-[30px]" />
 					<div class="c-company-name">{{ option.name }}</div>
 				</div>

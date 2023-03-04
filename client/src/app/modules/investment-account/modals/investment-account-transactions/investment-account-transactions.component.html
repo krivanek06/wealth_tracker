@@ -1,4 +1,4 @@
-<div class="text-lg mb-6 flex justify-between items-center">
+<div class="flex items-center justify-between mb-6 text-lg">
 	<span class="text-wt-primary-dark"> Account history </span>
 	<button mat-button mat-dialog-close type="button" class="text-wt-danger-dark">
 		<mat-icon>close</mat-icon>
@@ -9,6 +9,7 @@
 <form [formGroup]="formGroup">
 	<!-- symbols -->
 	<app-form-mat-input-wrapper
+		class="min-w-[320px]"
 		controlName="symbols"
 		inputCaption="Select symbols"
 		inputType="MULTISELECT"

@@ -2,15 +2,19 @@
 	<ng-container *ngFor="let item of personalAccountDailyData">
 		<div mat-subheader>{{item.date | date: 'EEEE, MMM d.'}}</div>
 		<mat-selection-list [multiple]="false" [hideSingleSelectionIndicator]="true">
-			<mat-list-option *ngFor="let data of item.data" class="mb-2" (selectedChange)="onEditDailyEntryClick(data)">
-				<div class="flex items-center justify-between">
-					<div class="flex items-center gap-x-5">
+			<mat-list-option
+				*ngFor="let data of item.data"
+				class="min-h-[45px] h-auto mb-2"
+				(selectedChange)="onEditDailyEntryClick(data)"
+			>
+				<div class="flex items-start justify-between">
+					<div class="flex items-start gap-x-5">
 						<!-- tag svg -->
 						<!--
               		style="border-color: {{data.tag.color}}"
 							  class="px-2 rounded-md border-x-4 h-7"
              -->
-						<img class="h-7" appDefaultImg [src]="data.tag.imageUrl" />
+						<img class="-mt-1 h-7" appDefaultImg [src]="data.tag.imageUrl" />
 
 						<!-- tag data -->
 						<div class="flex flex-col">
@@ -18,7 +22,6 @@
 								<!-- <span style="color: {{data.tag.color}}">●</span> -->
 								{{ data.tag.name }}
 							</span>
-							<span class="text-wt-gray-medium">{{ data.date | date: 'h:mm a' }}</span>
 						</div>
 					</div>
 
@@ -31,8 +34,14 @@
 						{{ data.value | currency }}
 					</div>
 				</div>
+
+				<!-- description -->
+				<div class="mt-2 whitespace-pre-wrap text-wt-gray-medium" [innerText]="data.description "></div>
 			</mat-list-option>
 		</mat-selection-list>
-		<mat-divider></mat-divider>
+
+		<div class="my-3">
+			<mat-divider></mat-divider>
+		</div>
 	</ng-container>
 </mat-list>

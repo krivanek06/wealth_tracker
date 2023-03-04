@@ -20,27 +20,19 @@
 	></app-value-presentation-button-control>
 </app-scroll-wrapper>
 
-<div
-	class="grid gap-4 lg:grid-cols-2"
-	*ngIf="{
-  categories: categories$ | async,
-  expenseTagsChartData : totalExpenseTagsChartData$ | async ,
-  accountOverviewChartData: accountOverviewChartData$ | async
-} as obs"
->
+<div class="grid gap-4 lg:grid-cols-2">
 	<!-- account overview chart -->
 	<app-personal-account-tag-spending-chart
-		*ngIf="obs.accountOverviewChartData && obs.categories && obs.expenseTagsChartData"
-		[accountOverviewChartData]="obs.accountOverviewChartData"
-		[expenseTagsChartData]="obs.expenseTagsChartData"
-		[categories]="obs.categories"
+		[accountOverviewChartData]="accountOverviewChartData$ | async"
+		[expenseTagsChartData]="totalExpenseTagsChartData$ | async"
+		[categories]="categories$ | async"
 		[heightPx]="475"
 	></app-personal-account-tag-spending-chart>
 
 	<!-- expense chart -->
 	<app-personal-account-account-growth-chart
-		[accountOverviewChartData]="obs.accountOverviewChartData"
-		[categories]="obs.categories"
+		[accountOverviewChartData]="accountOverviewChartData$ | async"
+		[categories]="categories$ | async"
 		[heightPx]="475"
 	></app-personal-account-account-growth-chart>
 </div>
@@ -49,7 +41,7 @@
 <app-personal-account-daily-entries-filter
 	(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
 	[formControl]="filterDailyDataGroup.controls.dateFilter"
-	[filterDateInputSourceWrapper]="filterDateInputSourceWrapper$ | async"
+	[personalAccountDetails]="personalAccountDetails$ | async"
 ></app-personal-account-daily-entries-filter>
 
 <div class="grid items-center grid-cols-1 gap-4 lg:grid-cols-4">
@@ -62,19 +54,21 @@
 	</div>
 
 	<!-- spending allocation by tags -->
-	<div *ngIf="accountFilteredState$ | async as accountState" class="lg:col-span-2 md:-mt-20">
+	<div class="lg:col-span-2 md:-mt-16">
 		<app-personal-account-tag-allocation-chart
+			class="scale-125"
 			[series]="personalAccountDailyExpensePieChart$ | async"
-			[accountBalance]="accountState.total"
-			[heightPx]="600"
-			dataLabelsAlignTo="connectors"
+			[accountBalance]="accountFilteredState$ | async"
 		></app-personal-account-tag-allocation-chart>
 	</div>
 </div>
 
 <!-- displayed expense by tag -->
 <div class="mt-6">
-	<h2>Date and Value</h2>
+	<h2 class="space-x-2">
+		<span>Date:</span>
+		<span class="text-wt-gray-medium">{{ filterDailyDataGroup.controls.dateFilter.value | dateFormatter }}</span>
+	</h2>
 	<app-personal-account-expenses-by-tag
 		[aggregations]="accountTagAggregationForTimePeriod$ | async"
 		[disabled]="true"

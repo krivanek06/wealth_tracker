@@ -38,7 +38,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		value: new FormControl<string | null>(null, { validators: [requiredValidator, positiveNumberValidator] }),
 		time: new FormControl<Date>(new Date(), { validators: [requiredValidator] }),
 		date: new FormControl<Date>(new Date(), { validators: [requiredValidator] }),
-		description: new FormControl<string | null>(null, { validators: [maxLengthValidator(250)] }),
+		description: new FormControl<string | null>(null, { validators: [maxLengthValidator(80)] }),
 	});
 
 	constructor(
@@ -143,7 +143,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			time: new Date(Number(dailyData.date)),
 			tagId: dailyData.tagId,
 			value: String(dailyData.value),
-			description: '',
+			description: dailyData.description,
 		});
 	}
 
@@ -152,6 +152,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		const dateValue = this.formGroup.controls.date.value;
 		const timeValue = this.formGroup.controls.time.value;
 		const tagValue = this.formGroup.controls.tagId.value;
+		const description = this.formGroup.controls.description.value;
 		const valueValue = this.formGroup.controls.value.value;
 
 		// TS checking, should not happen
@@ -175,6 +176,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			value: Number(valueValue),
 			tagId: tagValue,
 			personalAccountId: this.data.personalAccountId,
+			description: description,
 		};
 
 		return dailyEntry;

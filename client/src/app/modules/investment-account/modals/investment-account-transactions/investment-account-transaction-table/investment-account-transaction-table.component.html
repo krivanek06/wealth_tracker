@@ -13,12 +13,12 @@
 			<td mat-cell *matCellDef="let row">
 				<!-- logo + symbol -->
 				<div class="flex items-center gap-2">
-					<img [src]="row.assetId" imageType="assetId" appDefaultImg class="h-8 w-8" />
+					<img [src]="row.assetId" imageType="assetId" appDefaultImg class="w-8 h-8" />
 					<div class="flex flex-col">
 						<!-- asset symbol + type -->
 						<div class="flex flex-row gap-x-2">
-							<span class="text-wt-gray-light flex gap-1 items-center"> {{ row.assetId }} </span>
-							<span class="text-gray-500 table-cell lg:hidden">|</span>
+							<span class="flex items-center gap-1 text-wt-gray-light"> {{ row.assetId }} </span>
+							<span class="table-cell text-gray-500 lg:hidden">|</span>
 							<span
 								class="table-cell lg:hidden"
 								[ngClass]="{
@@ -30,7 +30,7 @@
 						</div>
 
 						<!-- date  -->
-						<div class="text-sm text-gray-500 block md:hidden">{{ row.date | date: 'dd.MM.yyyy' }}</div>
+						<div class="block text-sm text-gray-500 md:hidden">{{ row.date | date: 'dd.MM.yyyy' }}</div>
 					</div>
 				</div>
 			</td>
@@ -39,7 +39,7 @@
 		<!-- BUY / SELL order -->
 		<ng-container matColumnDef="order">
 			<th mat-header-cell mat-sort-header *matHeaderCellDef class="hidden lg:table-cell">Type</th>
-			<td mat-cell *matCellDef="let row" class="hidden lg:table-cell text-base">
+			<td mat-cell *matCellDef="let row" class="hidden text-base lg:table-cell">
 				<span
 					[ngClass]="{
             'text-wt-danger-medium': row.type === InvestmentAccountHoldingHistoryType.Sell,
@@ -53,7 +53,7 @@
 		<!-- return -->
 		<ng-container matColumnDef="return">
 			<th mat-header-cell mat-sort-header *matHeaderCellDef class="hidden lg:table-cell">Return</th>
-			<td mat-cell *matCellDef="let row" class="hidden lg:table-cell text-base">
+			<td mat-cell *matCellDef="let row" class="hidden text-base lg:table-cell">
 				<div
 					*ngIf="row.return"
 					appPerceptageIncrease
@@ -70,7 +70,7 @@
 		<!-- value -->
 		<ng-container matColumnDef="value">
 			<th mat-header-cell *matHeaderCellDef class="hidden lg:table-cell">Value</th>
-			<td mat-cell *matCellDef="let row" class="hidden lg:table-cell text-base">
+			<td mat-cell *matCellDef="let row" class="hidden text-base lg:table-cell">
 				<span>{{ row.units }} * {{ row.unitValue | currency }}</span>
 			</td>
 		</ng-container>
@@ -79,8 +79,8 @@
 		<ng-container matColumnDef="total">
 			<th mat-header-cell mat-sort-header *matHeaderCellDef class="hidden md:table-cell">Total</th>
 			<td mat-cell *matCellDef="let row" class="table-cell">
-				<div class="flex flex-col md:flex-row items-end md:items-center gap-x-2">
-					<span class="text-wt-gray-light text-base">{{ row.units * row.unitValue | currency}}</span>
+				<div class="flex flex-col items-end md:flex-row md:items-center gap-x-2">
+					<span class="text-base text-wt-gray-light">{{ row.units * row.unitValue | currency}}</span>
 					<!-- show this on md lower screen -->
 					<div class="table-cell lg:hidden">
 						<!-- SELL operation -->
@@ -102,7 +102,7 @@
 		<!-- date -->
 		<ng-container matColumnDef="date">
 			<th mat-header-cell mat-sort-header *matHeaderCellDef class="hidden md:table-cell">Date</th>
-			<td mat-cell *matCellDef="let row" class="hidden md:table-cell text-base text-gray-500">
+			<td mat-cell *matCellDef="let row" class="hidden text-base text-gray-500 md:table-cell">
 				<span>{{ row.date | date: 'dd.MM.yyyy' }}</span>
 			</td>
 		</ng-container>
@@ -113,14 +113,14 @@
 </div>
 
 <!-- pagination -->
-<div class="flex items-center justify-end md:justify-between">
-	<div class="hidden md:block text-gray-400 text-base pl-4">Results: {{dataSource.data?.length}}</div>
+<div *ngIf="dataSource.filteredData" class="flex items-center justify-end md:justify-between">
+	<div class="hidden pl-4 text-base text-gray-400 md:block">Results: {{dataSource.data.length}}</div>
 
 	<mat-paginator
 		appStylePaginator
 		showFirstLastButtons
-		[length]="dataSource.filteredData?.length"
-		[appCustomLength]="dataSource.filteredData?.length"
+		[length]="dataSource.filteredData.length"
+		[appCustomLength]="dataSource.filteredData.length"
 		[pageSize]="12"
 	></mat-paginator>
 </div>

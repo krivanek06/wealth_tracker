@@ -8,7 +8,6 @@ import { AccountType } from 'src/app/core/graphql';
 import { ResolveTokenGuard } from '../../core/guards';
 import { HeaderContainerModule } from '../page-shared';
 import { PersonalAccountMobileViewComponent } from './../../modules/personal-account/pages/personal-account-mobile-view/personal-account-mobile-view.component';
-import { DashboardNavigationComponent } from './dashboard-navigation/dashboard-navigation.component';
 import { DashboardComponent } from './dashboard.component';
 
 const routes: Routes = [
@@ -36,7 +35,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-	declarations: [DashboardComponent, DashboardNavigationComponent],
+	declarations: [DashboardComponent],
 	imports: [
 		CommonModule,
 		RouterModule.forChild(routes),

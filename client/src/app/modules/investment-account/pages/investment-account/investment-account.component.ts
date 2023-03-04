@@ -17,7 +17,7 @@ import {
 	InvestmentAccountHoldingComponent,
 	InvestmentAccountTransactionsComponent,
 } from '../../modals';
-import { DailyInvestmentChange, InvestmentAccountPeriodChange, SectorAllocation } from '../../models';
+import { InvestmentAccountPeriodChange, SectorAllocation } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
 @Component({
@@ -35,16 +35,6 @@ export class InvestmentAccountComponent implements OnInit {
 	 * Total invested amount by the user
 	 */
 	totalInvestedAmount$!: Observable<number>;
-
-	/**
-	 * Current state of investments -> holding.price * units
-	 */
-	currentInvestedAmout$!: Observable<number>;
-
-	/**
-	 * Daily sum and percentage change for investment account
-	 */
-	dailyInvestmentChange$!: Observable<DailyInvestmentChange>;
 
 	/**
 	 * Growth of the investment account + cash
@@ -101,12 +91,7 @@ export class InvestmentAccountComponent implements OnInit {
 		this.totalInvestedAmount$ = this.investmentAccount$.pipe(
 			map((account) => this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(account))
 		);
-		this.currentInvestedAmout$ = this.investmentAccount$.pipe(
-			map((account) => this.investmentAccountCalculatorService.getInvestmentAccountByIdCurrentInvestedAmout(account))
-		);
-		this.dailyInvestmentChange$ = this.investmentAccount$.pipe(
-			map((account) => this.investmentAccountCalculatorService.getDailyInvestmentChange(account))
-		);
+
 		this.accountPeriodChange$ = combineLatest([this.investmentAccount$, this.investmentAccountGrowth$]).pipe(
 			map(([account, growth]) =>
 				this.investmentAccountCalculatorService.getInvestmentAccountPeriodChange(account.activeHoldings, growth)

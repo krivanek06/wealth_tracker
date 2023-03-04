@@ -7,7 +7,7 @@ import {
 	InvestmentAccountActiveHoldingsTableModule,
 	InvestmentAccountPeriodChangeModule,
 	InvestmentAccountPortfolioGrowthChartModule,
-	InvestmentAccountStateModule,
+	InvestmentAccountStateComponent,
 } from '../../components';
 import { InvestmentAccountResolverGuard } from '../../guards';
 import {
@@ -30,7 +30,7 @@ const routes: Routes = [
 	imports: [
 		CommonModule,
 		InvestmentAccountActiveHoldingsTableModule,
-		InvestmentAccountStateModule,
+		InvestmentAccountStateComponent,
 		InvestmentAccountPortfolioGrowthChartModule,
 		ScrollWrapperModule,
 		ValuePresentationButtonControlComponent,

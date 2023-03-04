@@ -230,7 +230,9 @@
 
 	<!-- Row shown when there is no matching data. -->
 	<tr class="mat-row" *matNoDataRow>
-		<td class="text-center mat-cell" colspan="10">No holdings to be found</td>
+		<td class="text-center mat-cell" colspan="10">
+			<div *ngFor="let _ of [].constructor(10)" class="g-skeleton h-[50px] w-full mb-2"></div>
+		</td>
 	</tr>
 </table>
 

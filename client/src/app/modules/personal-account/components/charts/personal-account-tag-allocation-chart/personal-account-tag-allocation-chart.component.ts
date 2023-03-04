@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, ViewChild } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { ChartType, GenericChartSeriesPie } from '../../../../../shared/models';
+import { AccountState } from '../../../models';
 
 @Component({
 	selector: 'app-personal-account-tag-allocation-chart',
@@ -12,16 +13,11 @@ import { ChartType, GenericChartSeriesPie } from '../../../../../shared/models';
 	styleUrls: ['./personal-account-tag-allocation-chart.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PersonalAccountTagAllocationChartComponent {
-	@Input() dataLabelsAlignTo: 'plotEdges' | 'connectors' = 'plotEdges';
-	@Input() accountBalance!: number;
+export class PersonalAccountTagAllocationChartComponent implements OnChanges {
+	@Input() accountBalance?: AccountState | null;
 	@Input() heightPx?: number;
 
-	@Input() set series(data: GenericChartSeriesPie | undefined | null) {
-		if (data) {
-			this.initChart(data);
-		}
-	}
+	@Input() series?: GenericChartSeriesPie | null;
 
 	@ViewChild('chartRef') chartRef!: any;
 
@@ -39,7 +35,12 @@ export class PersonalAccountTagAllocationChartComponent {
 			self.chart = chart;
 		};
 	}
-	ngAfterViewInit(): void {}
+
+	ngOnChanges(): void {
+		if (this.series) {
+			this.initChart(this.series);
+		}
+	}
 
 	initChart(data: GenericChartSeriesPie) {
 		this.chartOptions = {
@@ -57,7 +58,9 @@ export class PersonalAccountTagAllocationChartComponent {
 				text: `
 				  <div class="flex flex-col gap-1 items-center">
 				    <span class="text-wt-primary-dark text-sm">Balance</span>
-				    <span class="text-white text-base">$${this.accountBalance ? Math.round(this.accountBalance * 100) / 100 : 0}</span>
+				    <span class="text-white text-base">$${
+							this.accountBalance ? Math.round(this.accountBalance.total * 100) / 100 : 0
+						}</span>
 				  </div>
 				`,
 

@@ -97,6 +97,10 @@
 		}
 
 		@screen md {
+			width: 60vw !important;
+		}
+
+		@screen lg {
 			width: 50vw !important;
 		}
 
@@ -119,5 +123,13 @@
 	@apply flex flex-col-reverse lg:flex-row items-center gap-2 w-full;
 	button {
 		@apply w-full min-w-[240px];
+	}
+}
+
+.mdc-dialog .mdc-dialog__content {
+	padding: 16px !important;
+
+	@screen sm {
+		padding: 20px 24px 20px 24px;
 	}
 }

@@ -62,12 +62,11 @@
 	</div>
 
 	<!-- spending allocation by tags -->
-	<div *ngIf="accountFilteredState$ | async as accountState" class="lg:col-span-2 md:-mt-16">
+	<div class="lg:col-span-2 md:-mt-16">
 		<app-personal-account-tag-allocation-chart
 			class="scale-125"
 			[series]="personalAccountDailyExpensePieChart$ | async"
-			[accountBalance]="accountState.total"
-			dataLabelsAlignTo="connectors"
+			[accountBalance]="accountFilteredState$ | async"
 		></app-personal-account-tag-allocation-chart>
 	</div>
 </div>

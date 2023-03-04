@@ -1,4 +1,4 @@
-<table mat-table [dataSource]="dataSource" matSort [trackBy]="identity">
+<table class="w-full" mat-table [dataSource]="dataSource" matSort [trackBy]="identity">
 	<!-- tags -->
 	<ng-container matColumnDef="tag">
 		<th mat-header-cell *matHeaderCellDef>Tag</th>
@@ -12,6 +12,17 @@
 					<span class="text-gray-200">{{ row.tag.name }}</span>
 					<span class="table-cell sm:hidden">{{ row.date | date: 'EEEE h:mm a, MMM d.' }}</span>
 				</div>
+
+				<!-- description -->
+				<button
+					*ngIf="row.description"
+					type="button"
+					mat-icon-button
+					[matTooltip]="row.description"
+					class="text-wt-gray-medium"
+				>
+					<mat-icon>description</mat-icon>
+				</button>
 			</div>
 		</td>
 	</ng-container>
@@ -46,19 +57,19 @@
 
 	<!-- Row shown when there is no matching data. -->
 	<tr class="mat-row" *matNoDataRow>
-		<td class="mat-cell" colspan="5">
-			<div class="min-h-[200px] text-wt-gray-medium grid place-content-center">No data has been found</div>
+		<td class="mat-cell" colspan="3">
+			<div *ngFor="let _ of [].constructor(10)" class="g-skeleton h-[40px] w-full mb-2"></div>
 		</td>
 	</tr>
 </table>
 
 <!-- pagination -->
-<div class="flex items-center justify-end">
+<div *ngIf="dataSource?.filteredData" class="flex items-center justify-end">
 	<mat-paginator
 		appStylePaginator
 		showFirstLastButtons
-		[length]="dataSource.filteredData?.length"
-		[appCustomLength]="dataSource.filteredData?.length"
+		[length]="dataSource.filteredData.length"
+		[appCustomLength]="dataSource.filteredData.length"
 		[pageSize]="12"
 	></mat-paginator>
 </div>

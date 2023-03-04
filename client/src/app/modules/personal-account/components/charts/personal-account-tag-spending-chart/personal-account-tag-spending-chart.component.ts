@@ -19,10 +19,10 @@ export class PersonalAccountTagSpendingChartComponent implements OnInit, OnChang
 	@Input() categories!: string[] | null;
 
 	// contains [total growth, total income, total expense]
-	@Input() accountOverviewChartData: GenericChartSeries[] | null = [];
+	@Input() accountOverviewChartData?: GenericChartSeries[] | null;
 
 	// contains expense by tags
-	@Input() expenseTagsChartData: GenericChartSeries[] | null = [];
+	@Input() expenseTagsChartData?: GenericChartSeries[] | null;
 
 	@Input() heightPx!: number;
 

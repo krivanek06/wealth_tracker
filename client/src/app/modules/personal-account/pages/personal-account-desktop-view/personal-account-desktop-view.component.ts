@@ -21,6 +21,7 @@ import {
 	PersonalAccountTagSpendingChartComponent,
 } from '../../components';
 import { PersonalAccountDailyDataEntryModule } from '../../modals';
+import { DateFormatterPipe } from '../../pipes';
 import { PersonalAccountTagManagerModalModule } from './../../modals/personal-account-tag-manager-modal/personal-account-tag-manager-modal.module';
 
 @Component({
@@ -45,6 +46,7 @@ import { PersonalAccountTagManagerModalModule } from './../../modals/personal-ac
 		PersonalAccountActionButtonsComponent,
 		PersonalAccountTagManagerModalModule,
 		PersonalAccountExpensesByTagComponent,
+		DateFormatterPipe,
 	],
 	templateUrl: './personal-account-desktop-view.component.html',
 	styleUrls: ['./personal-account-desktop-view.component.scss'],
@@ -55,7 +57,5 @@ export class PersonalAccountDesktopViewComponent extends PersonalAccountParent i
 		super();
 	}
 
-	ngOnInit(): void {
-		this.accountOverviewChartData$.subscribe((x) => console.log('ttt', x));
-	}
+	ngOnInit(): void {}
 }

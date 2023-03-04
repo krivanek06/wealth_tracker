@@ -19,6 +19,13 @@ export class PersonalAccountDailyData implements PersonalAccountDailyDataClient 
 	tagId: string;
 
 	@Field(() => String, {
+		description: 'Description to daily data',
+		defaultValue: '',
+		nullable: true,
+	})
+	description: string;
+
+	@Field(() => String, {
 		description: 'Reference to PersonalAccountMonthlyData.id',
 	})
 	monthlyDataId: string;

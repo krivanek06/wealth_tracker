@@ -6,64 +6,55 @@
 </div>
 
 <!-- expense chart -->
-<ng-container *ngIf="accountDisplayedState$ | async as accountState">
-	<div class="-mt-8">
-		<app-personal-account-tag-allocation-chart
-			[series]="personalAccountDailyExpensePieChart$ | async"
-			[accountBalance]="accountState.total"
-		></app-personal-account-tag-allocation-chart>
-	</div>
-</ng-container>
+<div class="-mt-8">
+	<app-personal-account-tag-allocation-chart
+		class="scale-110"
+		[series]="personalAccountDailyExpensePieChart$ | async"
+		[accountBalance]="accountDisplayedState$ | async"
+	></app-personal-account-tag-allocation-chart>
+</div>
 
 <!-- settings -->
-<div class="relative z-10 flex justify-start mb-4 -mt-10">
+<div class="relative z-10 flex justify-start mb-4 -mt-4">
 	<app-personal-account-action-buttons
+		*ngIf="personalAccountDetails$ | async; else showButtonSkeleton"
 		displayType="menu"
 		(buttonClickEmitter)="onActionButtonClick($event)"
 	></app-personal-account-action-buttons>
+
+	<!-- loading -->
+	<ng-template #showButtonSkeleton>
+		<div class="g-skeleton w-[120px] h-12"></div>
+	</ng-template>
 </div>
 
-<mat-divider></mat-divider>
-
-<!-- action button to add new entry -->
-<div class="w-full h-12 mt-5 mb-3">
-	<button (click)="onDailyEntryClick(null)" mat-stroked-button type="button" color="primary" class="w-full">
-		<mat-icon>add</mat-icon>
-		Add daily entry
-	</button>
+<div class="my-4">
+	<mat-divider></mat-divider>
 </div>
 
-<mat-divider></mat-divider>
-
-<!-- table filter -->
-<div class="mt-3">
-	<ng-container [formGroup]="filterDailyDataGroup">
-		<app-form-mat-input-wrapper
-			inputCaption="Filter by date"
-			controlName="dateFilter"
-			inputType="SELECT_SOURCE_WRAPPER"
-			[inputSourceWrapper]="filterDateInputSourceWrapper$ | async"
-		></app-form-mat-input-wrapper>
-	</ng-container>
-</div>
+<!-- date filter control -->
+<app-personal-account-daily-entries-filter
+	(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
+	[formControl]="filterDailyDataGroup.controls.dateFilter"
+	[personalAccountDetails]="personalAccountDetails$ | async"
+></app-personal-account-daily-entries-filter>
 
 <!-- title & show history checkbox -->
 <div class="mt-2 mb-6">
 	<app-personal-account-display-toggle
+		[isDataLoaded]="!!(personalAccountDetails$ | async)"
 		[formControl]="showHistoryFormControl"
 		[selectedTag]="personalAccountBasic | getTagById: filterDailyDataGroup.controls.selectedTagIds.value[0] | async"
 	></app-personal-account-display-toggle>
 </div>
 
 <!-- tag aggregation -->
-<ng-container *ngIf="accountTagAggregationForTimePeriod$ | async as aggregations">
-	<app-personal-account-expenses-by-tag
-		*ngIf="!showHistoryFormControl.value"
-		[formControl]="filterDailyDataGroup.controls.selectedTagIds"
-		[aggregations]="aggregations"
-		[multiple]="false"
-	></app-personal-account-expenses-by-tag>
-</ng-container>
+<app-personal-account-expenses-by-tag
+	*ngIf="!showHistoryFormControl.value"
+	[formControl]="filterDailyDataGroup.controls.selectedTagIds"
+	[aggregations]="accountTagAggregationForTimePeriod$ | async"
+	[multiple]="false"
+></app-personal-account-expenses-by-tag>
 
 <!-- historical data -->
 <ng-container *ngIf="dailyDataAggregation$ | async as dailyDataAggregation">

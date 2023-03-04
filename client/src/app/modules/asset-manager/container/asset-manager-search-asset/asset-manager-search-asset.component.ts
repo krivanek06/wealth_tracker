@@ -47,7 +47,7 @@ export class AssetManagerSearchAssetComponent implements OnInit, ControlValueAcc
 		this.searchedResults$ = this.formControl.valueChanges.pipe(
 			distinctUntilChanged(),
 			debounceTime(400),
-			tap((value) => (this.searching = !!value)),
+			tap((value) => (this.searching = true)),
 			switchMap((value) => (!value ? of([]) : this.getSearchEndpoint(value).pipe(tap(() => (this.searching = false)))))
 		);
 	}

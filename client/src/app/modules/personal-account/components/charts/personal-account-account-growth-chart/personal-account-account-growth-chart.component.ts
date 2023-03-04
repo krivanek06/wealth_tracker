@@ -14,10 +14,10 @@ import { GenericChartSeries } from '../../../../../shared/models';
 })
 export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor implements OnChanges {
 	// array of weeks
-	@Input() categories!: string[] | null;
+	@Input() categories?: string[] | null;
 
 	// contains [total growth, total income, total expense]
-	@Input() accountOverviewChartData: GenericChartSeries[] | null = [];
+	@Input() accountOverviewChartData?: GenericChartSeries[] | null;
 
 	@Input() heightPx!: number;
 
@@ -29,6 +29,9 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 		if (changes?.['accountOverviewChartData']?.currentValue) {
 			this.initChart();
 			this.initSeries();
+		}
+
+		if (this.chartOptions.xAxis) {
 			(this.chartOptions.xAxis as any).categories = this.categories;
 		}
 	}

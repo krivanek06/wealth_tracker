@@ -13,6 +13,7 @@ fragment PersonalAccountDailyDataOutput on PersonalAccountDailyDataOutput {
 	value
 	date
 	tagId
+	description
 	monthlyDataId
 	personalAccountId
 	week

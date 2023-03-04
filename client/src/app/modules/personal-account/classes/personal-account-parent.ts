@@ -11,13 +11,7 @@ import {
 	TagDataType,
 } from '../../../core/graphql';
 import { DateServiceUtil } from '../../../core/utils';
-import {
-	ChartType,
-	GenericChartSeries,
-	GenericChartSeriesPie,
-	InputSourceWrapper,
-	ValuePresentItem,
-} from '../../../shared/models';
+import { ChartType, GenericChartSeries, GenericChartSeriesPie, ValuePresentItem } from '../../../shared/models';
 import { PersonalAccountDailyDataEntryComponent, PersonalAccountTagManagerModalComponent } from '../modals';
 import {
 	AccountState,
@@ -61,11 +55,6 @@ export abstract class PersonalAccountParent {
 	 * chart categories for X-axis, example: Week 40. Sep
 	 */
 	categories$!: Observable<string[]>;
-
-	/**
-	 * values to filter daily data based on some date (year-month-week)
-	 */
-	filterDateInputSourceWrapper$!: Observable<InputSourceWrapper[]>;
 
 	/**
 	 * daily data based on select date interval and tags
@@ -122,11 +111,6 @@ export abstract class PersonalAccountParent {
 
 	private initData(account: AccountIdentification): void {
 		this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsById(account.id);
-
-		// get dates that we can filter by
-		this.filterDateInputSourceWrapper$ = this.personalAccountDetails$.pipe(
-			map((data) => this.personalAccountDataService.getMonthlyInputSource(data.weeklyAggregaton))
-		);
 
 		// calculate account state - balance, cash, invested
 		this.accountTotalState$ = this.personalAccountDetails$.pipe(

@@ -7,3 +7,11 @@ mat-selection-list > .mdc-list-group__subheader,
 mat-list > .mdc-list-group__subheader {
 	color: var(--gray-medium) !important;
 }
+
+.mdc-list-item__secondary-text {
+	color: var(--gray-medium) !important;
+}
+
+.mdc-list-item--with-leading-icon .mdc-list-item__start {
+	color: var(--gray-medium) !important;
+}

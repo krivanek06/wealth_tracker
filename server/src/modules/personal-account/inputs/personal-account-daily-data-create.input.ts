@@ -17,6 +17,13 @@ export class PersonalAccountDailyDataCreate {
 	value: number;
 
 	@Field(() => String, {
+		description: 'Description to daily data',
+		defaultValue: '',
+	})
+	@MaxLength(80)
+	description: string;
+
+	@Field(() => String, {
 		description: 'Id of personal account to which this entry will be added',
 	})
 	@MaxLength(50)

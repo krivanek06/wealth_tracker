@@ -83,6 +83,7 @@ export class PersonalAccountDailyService {
 			id: uuid,
 			userId: userId,
 			tagId: input.tagId,
+			description: input.description,
 			monthlyDataId: monthlyData.id,
 			personalAccountId: input.personalAccountId,
 			value: input.value,

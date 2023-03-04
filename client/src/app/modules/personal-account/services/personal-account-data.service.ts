@@ -239,24 +239,26 @@ export class PersonalAccountDataService {
 	aggregateDailyDataOutputByDays(
 		data: PersonalAccountDailyDataOutputFragment[]
 	): PersonalAccountDailyDataAggregation[] {
-		return data.reduce((acc, curr) => {
-			const lastItem = acc[acc.length - 1];
-			const lastDateSaved = lastItem?.date ?? curr.date;
+		return data
+			.reduce((acc, curr) => {
+				const lastItem = acc[acc.length - 1];
+				const lastDateSaved = lastItem?.date ?? curr.date;
 
-			// if same date, add to the last entry in array
-			if (!!lastItem && DateServiceUtil.isSameDay(lastDateSaved, curr.date)) {
-				lastItem.data = [...lastItem.data, curr];
-				return acc;
-			}
+				// if same date, add to the last entry in array
+				if (!!lastItem && DateServiceUtil.isSameDay(lastDateSaved, curr.date)) {
+					lastItem.data = [...lastItem.data, curr];
+					return acc;
+				}
 
-			// new unsaved date
-			return [
-				...acc,
-				{
-					date: curr.date,
-					data: [curr],
-				},
-			];
-		}, [] as PersonalAccountDailyDataAggregation[]);
+				// new unsaved date
+				return [
+					...acc,
+					{
+						date: curr.date,
+						data: [curr],
+					},
+				];
+			}, [] as PersonalAccountDailyDataAggregation[])
+			.sort((a, b) => Number(b.date) - Number(a.date));
 	}
 }

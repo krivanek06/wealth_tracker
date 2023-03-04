@@ -12,6 +12,17 @@
 					<span class="text-gray-200">{{ row.tag.name }}</span>
 					<span class="table-cell sm:hidden">{{ row.date | date: 'EEEE h:mm a, MMM d.' }}</span>
 				</div>
+
+				<!-- description -->
+				<button
+					*ngIf="row.description"
+					type="button"
+					mat-icon-button
+					[matTooltip]="row.description"
+					class="text-wt-gray-medium"
+				>
+					<mat-icon>description</mat-icon>
+				</button>
 			</div>
 		</td>
 	</ng-container>

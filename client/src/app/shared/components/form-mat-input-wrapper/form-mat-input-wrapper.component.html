@@ -13,8 +13,7 @@
 				#textAreaElement
 				*ngSwitchCase="'TEXTAREA'"
 				[formControl]="formInputControl"
-				cdkAutosizeMaxRows="7"
-				cdkAutosizeMinRows="3"
+				cdkAutosizeMinRows="4"
 				cdkTextareaAutosize
 				matInput
 			>
@@ -136,7 +135,7 @@
 			</mat-error>
 
 			<!-- hint -->
-			<mat-icon *ngIf="hintText" [matTooltip]="hintText" class="helper-text-tooltip-icon" matSuffix>
+			<mat-icon *ngIf="hintText" [matTooltip]="hintText" class="hidden sm:block text-wt-gray-medium" matSuffix>
 				help_outline
 			</mat-icon>
 

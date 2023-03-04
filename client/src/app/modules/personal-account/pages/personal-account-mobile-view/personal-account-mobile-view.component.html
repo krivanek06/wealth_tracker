@@ -6,17 +6,15 @@
 </div>
 
 <!-- expense chart -->
-<ng-container *ngIf="accountDisplayedState$ | async as accountState">
-	<div class="-mt-8">
-		<app-personal-account-tag-allocation-chart
-			[series]="personalAccountDailyExpensePieChart$ | async"
-			[accountBalance]="accountState.total"
-		></app-personal-account-tag-allocation-chart>
-	</div>
-</ng-container>
+<div class="-mt-8">
+	<app-personal-account-tag-allocation-chart
+		[series]="personalAccountDailyExpensePieChart$ | async"
+		[accountBalance]="accountDisplayedState$ | async"
+	></app-personal-account-tag-allocation-chart>
+</div>
 
 <!-- settings -->
-<div class="relative z-10 flex justify-start mb-4 -mt-8">
+<div class="relative z-10 flex justify-start mb-4 -mt-4">
 	<app-personal-account-action-buttons
 		displayType="menu"
 		(buttonClickEmitter)="onActionButtonClick($event)"

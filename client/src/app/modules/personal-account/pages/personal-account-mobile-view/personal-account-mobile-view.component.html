@@ -8,6 +8,7 @@
 <!-- expense chart -->
 <div class="-mt-8">
 	<app-personal-account-tag-allocation-chart
+		class="scale-110"
 		[series]="personalAccountDailyExpensePieChart$ | async"
 		[accountBalance]="accountDisplayedState$ | async"
 	></app-personal-account-tag-allocation-chart>
@@ -16,9 +17,15 @@
 <!-- settings -->
 <div class="relative z-10 flex justify-start mb-4 -mt-4">
 	<app-personal-account-action-buttons
+		*ngIf="personalAccountDetails$ | async; else showButtonSkeleton"
 		displayType="menu"
 		(buttonClickEmitter)="onActionButtonClick($event)"
 	></app-personal-account-action-buttons>
+
+	<!-- loading -->
+	<ng-template #showButtonSkeleton>
+		<div class="g-skeleton w-[120px] h-12"></div>
+	</ng-template>
 </div>
 
 <div class="my-4">
@@ -35,20 +42,19 @@
 <!-- title & show history checkbox -->
 <div class="mt-2 mb-6">
 	<app-personal-account-display-toggle
+		[isDataLoaded]="!!(personalAccountDetails$ | async)"
 		[formControl]="showHistoryFormControl"
 		[selectedTag]="personalAccountBasic | getTagById: filterDailyDataGroup.controls.selectedTagIds.value[0] | async"
 	></app-personal-account-display-toggle>
 </div>
 
 <!-- tag aggregation -->
-<ng-container *ngIf="accountTagAggregationForTimePeriod$ | async as aggregations">
-	<app-personal-account-expenses-by-tag
-		*ngIf="!showHistoryFormControl.value"
-		[formControl]="filterDailyDataGroup.controls.selectedTagIds"
-		[aggregations]="aggregations"
-		[multiple]="false"
-	></app-personal-account-expenses-by-tag>
-</ng-container>
+<app-personal-account-expenses-by-tag
+	*ngIf="!showHistoryFormControl.value"
+	[formControl]="filterDailyDataGroup.controls.selectedTagIds"
+	[aggregations]="accountTagAggregationForTimePeriod$ | async"
+	[multiple]="false"
+></app-personal-account-expenses-by-tag>
 
 <!-- historical data -->
 <ng-container *ngIf="dailyDataAggregation$ | async as dailyDataAggregation">

@@ -15,7 +15,6 @@ import { AccountState } from '../../../models';
 })
 export class PersonalAccountTagAllocationChartComponent implements OnChanges {
 	@Input() accountBalance?: AccountState | null;
-	@Input() heightPx?: number;
 
 	@Input() series?: GenericChartSeriesPie | null;
 
@@ -48,7 +47,6 @@ export class PersonalAccountTagAllocationChartComponent implements OnChanges {
 				plotShadow: false,
 				type: ChartType.pie,
 				backgroundColor: 'transparent',
-				height: this.heightPx ?? undefined,
 			},
 			title: {
 				align: 'center',

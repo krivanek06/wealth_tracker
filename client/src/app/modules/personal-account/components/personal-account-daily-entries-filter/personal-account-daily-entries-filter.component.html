@@ -1,12 +1,14 @@
 <div class="flex flex-wrap gap-4 max-sm:order-2">
-	<div [formGroup]="formGroup" class="w-full md:w-[350px]">
-		<app-form-mat-input-wrapper
-			inputCaption="Filter by date"
-			controlName="dateFilter"
-			inputType="SELECT_SOURCE_WRAPPER"
-			[inputSourceWrapper]="filterDateInputSourceWrapper"
-		></app-form-mat-input-wrapper>
-	</div>
+	<ng-container [formGroup]="formGroup">
+		<div *ngIf="personalAccountDetails; else skeletonLoading" class="w-full md:w-[350px]">
+			<app-form-mat-input-wrapper
+				inputCaption="Filter by date"
+				controlName="dateFilter"
+				inputType="SELECT_SOURCE_WRAPPER"
+				[inputSourceWrapper]="filterDateInputSourceWrapper"
+			></app-form-mat-input-wrapper>
+		</div>
+	</ng-container>
 
 	<div class="hidden mt-1 h-11 sm:block">
 		<button mat-stroked-button (click)="onCurrentMonthClick()" type="button" color="primary" class="w-full h-full">
@@ -16,7 +18,7 @@
 </div>
 
 <!-- add button -->
-<div>
+<div *ngIf="personalAccountDetails; else skeletonLoading">
 	<button
 		mat-stroked-button
 		(click)="onAddDailyEntryClick()"
@@ -32,3 +34,8 @@
 <div class="block my-4 sm:hidden">
 	<mat-divider></mat-divider>
 </div>
+
+<!-- skeleton -->
+<ng-template #skeletonLoading>
+	<div class="g-skeleton w-full md:w-[350px] h-14 mb-3"></div>
+</ng-template>

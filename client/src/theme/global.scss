@@ -44,3 +44,7 @@ body {
 	padding: 12px !important;
 	font-size: 14px !important;
 }
+
+.g-skeleton {
+	@apply rounded-lg bg-wt-gray-medium animate-pulse;
+}

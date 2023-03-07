@@ -4,14 +4,22 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ProgressItemComponent } from '../../../../shared/components';
-import { DefaultImgDirective } from '../../../../shared/directives';
+import { DefaultImgDirective, RangeDirective } from '../../../../shared/directives';
 import { InArrayPipe } from '../../../../shared/pipes';
 import { PersonalAccountTagAggregation } from '../../models';
 
 @Component({
 	selector: 'app-personal-account-expenses-by-tag',
 	standalone: true,
-	imports: [CommonModule, MatButtonModule, MatIconModule, DefaultImgDirective, ProgressItemComponent, InArrayPipe],
+	imports: [
+		CommonModule,
+		MatButtonModule,
+		MatIconModule,
+		DefaultImgDirective,
+		ProgressItemComponent,
+		InArrayPipe,
+		RangeDirective,
+	],
 	templateUrl: './personal-account-expenses-by-tag.component.html',
 	styleUrls: ['./personal-account-expenses-by-tag.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,

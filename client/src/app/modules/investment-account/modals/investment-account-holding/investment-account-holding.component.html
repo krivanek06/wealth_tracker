@@ -3,98 +3,83 @@
 	<span class="text-wt-primary-dark">{{ (investmentAccount$ | async)?.name }} </span>
 </div>
 
-<mat-dialog-content>
-	<form (ngSubmit)="onSave()" [formGroup]="formGroup" class="mb-2 lg:basis-3/5">
-		<!-- date picker -->
-		<app-date-picker formControlName="date" [inputTypeDateTimePickerConfig]="datePickerConfig"></app-date-picker>
+<form (ngSubmit)="onSave()" [formGroup]="formGroup">
+	<mat-dialog-content class="grid lg:grid-cols-2 gap-x-4 xl:gap-x-8">
+		<div>
+			<!-- date picker -->
+			<app-date-picker formControlName="date" [inputTypeDateTimePickerConfig]="datePickerConfig"></app-date-picker>
 
-		<!-- asset type -->
-		<app-form-mat-input-wrapper
-			[disabled]="!!data.selectedAsset"
-			[inputSource]="TransactionAssetTypeInputSource"
-			class="w-full"
-			controlName="assetType"
-			inputCaption="Select asset type"
-			inputType="SELECT"
-		></app-form-mat-input-wrapper>
+			<!-- transaction type -->
+			<div class="my-4">
+				<button
+					type="button"
+					mat-flat-button
+					[color]="formGroup.controls.isBuying.value ? 'accent' : 'warn'"
+					class="w-full"
+					(click)="onTransactionTypeChange()"
+				>
+					{{ formGroup.controls.isBuying.value ? 'Buy Asset' : 'Sell Asset' }}
+				</button>
+			</div>
 
-		<!-- search symbol -->
-		<app-asset-manager-search-asset
-			formControlName="symbol"
-			[isDisabled]="!!data.selectedAsset"
-			[searchableAsset]="formGroup.controls.assetType.value"
-		></app-asset-manager-search-asset>
-
-		<!-- transaction type -->
-		<div class="my-4">
-			<button
-				type="button"
-				mat-flat-button
-				[color]="formGroup.controls.isBuying.value ? 'accent' : 'warn'"
+			<!-- asset type -->
+			<app-form-mat-input-wrapper
+				[disabled]="!!data.selectedAsset"
+				[inputSource]="TransactionAssetTypeInputSource"
 				class="w-full"
-				(click)="onTransactionTypeChange()"
+				controlName="assetType"
+				inputCaption="Select asset type"
+				inputType="SELECT"
+			></app-form-mat-input-wrapper>
+
+			<!-- search symbol -->
+			<app-asset-manager-search-asset
+				formControlName="symbol"
+				[isDisabled]="!!data.selectedAsset"
+				[searchableAsset]="formGroup.controls.assetType.value"
+			></app-asset-manager-search-asset>
+
+			<!-- error if more than cash -->
+			<div
+				class="mt-2 mb-5 g-error-banner"
+				*ngIf="formGroup.controls.symbol.touched && formGroup.controls.symbol.errors?.['required']"
 			>
-				{{ formGroup.controls.isBuying.value ? 'Buy Asset' : 'Sell Asset' }}
-			</button>
-		</div>
-
-		<div class="my-4">
-			<mat-divider></mat-divider>
-		</div>
-
-		<!-- cash state -->
-		<div class="c-cash-wrapper">
-			<div>
-				<span class="text-gray-400">Cash: </span>
-				<span *ngIf="cashCategory$ | async as c">
-					{{ c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL | largeNumberFormatter }}
-				</span>
+				Symbol name is required
 			</div>
-			<div>
-				<span class="text-gray-400">Units: </span>
-				<span> {{ units.value ?? 'N/A' }} </span>
+			<div class="mt-2 mb-5 g-error-banner" *ngIf="cashError$ | async">Insufficient cash amount</div>
+		</div>
+
+		<div>
+			<!-- cash state -->
+			<div class="c-cash-wrapper">
+				<div>
+					<span class="text-gray-400">Cash: </span>
+					<span *ngIf="cashCategory$ | async as c">
+						{{ c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL | largeNumberFormatter }}
+					</span>
+				</div>
+				<div>
+					<span class="text-gray-400">Units: </span>
+					<span> {{ units.value ?? 'N/A' }} </span>
+				</div>
+				<div>
+					<span class="text-gray-400">Price: </span>
+					<span *ngIf="formSymbolPrice.value as value">~ {{ value | currency}} </span>
+					<span *ngIf="!formSymbolPrice.value">N/A</span>
+				</div>
+				<div>
+					<span class="text-gray-400">Total: </span>
+					<span *ngIf="totalValue"> {{totalValue | currency }} </span>
+					<span *ngIf="!totalValue">N/A</span>
+				</div>
 			</div>
-			<div>
-				<span class="text-gray-400">Price: </span>
-				<span *ngIf="formSymbolPrice.value as value">~ {{ value | currency}} </span>
-				<span *ngIf="!formSymbolPrice.value">N/A</span>
-			</div>
-			<div>
-				<span class="text-gray-400">Total: </span>
-				<span *ngIf="totalValue"> {{totalValue | currency }} </span>
-				<span *ngIf="!totalValue">N/A</span>
-			</div>
+
+			<!-- keyboard -->
+			<app-number-keyboard-control formControlName="units"></app-number-keyboard-control>
 		</div>
 
-		<!-- error if more than cash -->
-
-		<div
-			class="mt-2 mb-5 g-error-banner"
-			*ngIf="formGroup.controls.symbol.touched && formGroup.controls.symbol.errors?.['required']"
-		>
-			Symbol name is required
-		</div>
-		<div class="mt-2 mb-5 g-error-banner" *ngIf="cashError$ | async">Insufficient cash amount</div>
-
-		<!-- keyboard -->
-		<app-number-keyboard-control formControlName="units"></app-number-keyboard-control>
-
-		<div class="my-4">
-			<mat-divider></mat-divider>
-		</div>
-
-		<!-- action buttons -->
-		<div class="g-dialog-button-wrapper">
-			<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
-			<button mat-stroked-button color="primary" type="submit" [disabled]="cashError$ | async">
-				<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
-				Save
-			</button>
-		</div>
-	</form>
-
-	<!-- history of asset holding -->
-	<div class="min-h-[300px] sm:pl-4 md:pr-2 flex-1">
+		<!-- history of asset holding -->
+		<!-- <div class="min-h-[300px] sm:pl-4 md:pr-2 flex-1">
 		<div class="mb-2 text-base text-center text-wt-danger-medium">Historical data</div>
 		<div class="text-xs text-center text-gray-500">Hold to remove</div>
 		<div class="min-h-[200px] max-h-[420px] overflow-x-hidden pt-3">
@@ -112,5 +97,19 @@
 				</button>
 			</div>
 		</div>
+	</div> -->
+	</mat-dialog-content>
+
+	<div class="my-4">
+		<mat-divider></mat-divider>
 	</div>
-</mat-dialog-content>
+
+	<!-- action buttons -->
+	<mat-dialog-actions>
+		<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
+		<button mat-stroked-button color="primary" type="submit" [disabled]="cashError$ | async">
+			<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
+			Save
+		</button>
+	</mat-dialog-actions>
+</form>

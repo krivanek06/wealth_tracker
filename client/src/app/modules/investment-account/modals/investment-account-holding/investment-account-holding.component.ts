@@ -40,7 +40,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		}),
 		symbol: new FormControl<AssetGeneralFragment | null>(null, { validators: [Validators.required] }),
 		symbolPrice: new FormControl<number>(0, { validators: [Validators.required], nonNullable: true }),
-		units: new FormControl<number>(0, {
+		units: new FormControl<string>('', {
 			validators: [requiredValidator, positiveNumberValidator, minValueValidator(1)],
 			nonNullable: true,
 		}),
@@ -94,7 +94,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		if (!this.formGroup.controls.symbol.value) {
 			return 0;
 		}
-		return this.formSymbolPrice.value * this.formGroup.controls.units.value;
+		return this.formSymbolPrice.value * Number(this.formGroup.controls.units.value);
 	}
 
 	constructor(
@@ -192,7 +192,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 				: InvestmentAccountHoldingHistoryType.Sell,
 			holdingInputData: {
 				date: DateServiceUtil.formatDate(controls.date.value),
-				units: controls.units.value,
+				units: Number(controls.units.value),
 			},
 		};
 
@@ -217,7 +217,9 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 				// memory leak
 				first()
 			)
-			.subscribe();
+			.subscribe(() => {
+				this.dialogRef.close();
+			});
 	}
 
 	onDelete(history: InvestmentAccountTransactionOutput): void {

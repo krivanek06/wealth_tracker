@@ -127,6 +127,13 @@
 	}
 }
 
+mat-dialog-actions {
+	@apply flex flex-col-reverse sm:flex-row justify-end items-center gap-2;
+	button {
+		@apply min-w-[200px] w-full sm:w-auto flex-1;
+	}
+}
+
 .mdc-dialog .mdc-dialog__content {
 	padding: 16px !important;
 

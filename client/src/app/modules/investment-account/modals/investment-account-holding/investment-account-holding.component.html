@@ -3,6 +3,13 @@
 	<span class="text-wt-primary-dark">{{ (investmentAccount$ | async)?.name }} </span>
 </div>
 
+<div class="flex justify-end lg:mb-4">
+	<button mat-stroked-button type="button" (click)="onTransactionShow()" class="w-full lg:w-auto">
+		<mat-icon>visibility</mat-icon>
+		Show Previous transactions
+	</button>
+</div>
+
 <form (ngSubmit)="onSave()" [formGroup]="formGroup">
 	<mat-dialog-content class="grid lg:grid-cols-2 gap-x-4 xl:gap-x-8">
 		<div>
@@ -79,25 +86,27 @@
 		</div>
 
 		<!-- history of asset holding -->
-		<!-- <div class="min-h-[300px] sm:pl-4 md:pr-2 flex-1">
-		<div class="mb-2 text-base text-center text-wt-danger-medium">Historical data</div>
-		<div class="text-xs text-center text-gray-500">Hold to remove</div>
-		<div class="min-h-[200px] max-h-[420px] overflow-x-hidden pt-3">
-			<div *ngFor="let history of transactionHistory$ | async | sortByKey: 'date': 'desc'">
-				<button
-					mat-button
-					appNotificationProgress
-					[notificationProgressMessage]="'Removing entry from date: ' + (history.date | date: 'dd.MM.YYYY')"
-					[notificationMessage]="'Removing data'"
-					(notificationSuccessEmitter)="onDelete(history)"
-					type="button"
-					class="w-full mb-4 cursor-pointer"
-				>
-					<app-holding-history-item [history]="history"></app-holding-history-item>
-				</button>
+		<ng-container *ngIf="transactionHistory$ | async as transactionHistory">
+			<div *ngIf="showHistoricalTransactions" class="min-h-[300px] sm:pl-4 md:pr-2 lg:col-span-2 mt-4">
+				<div class="mb-2 text-base text-center text-wt-danger-medium">Historical data</div>
+				<div class="text-xs text-center text-gray-500">Hold to remove</div>
+				<div class="pt-3">
+					<div *ngFor="let history of transactionHistory | sortByKey: 'date': 'desc'">
+						<button
+							mat-button
+							appNotificationProgress
+							[notificationProgressMessage]="'Removing entry from date: ' + (history.date | date: 'dd.MM.YYYY')"
+							[notificationMessage]="'Removing data'"
+							(notificationSuccessEmitter)="onDelete(history)"
+							type="button"
+							class="w-full mb-4 cursor-pointer h-14 lg:h-12"
+						>
+							<app-holding-history-item [history]="history"></app-holding-history-item>
+						</button>
+					</div>
+				</div>
 			</div>
-		</div>
-	</div> -->
+		</ng-container>
 	</mat-dialog-content>
 
 	<div class="my-4">

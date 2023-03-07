@@ -61,6 +61,8 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 
 	SearchableAssetEnum = SearchableAssetEnum;
 
+	showHistoricalTransactions = false;
+
 	datePickerConfig: InputTypeDateTimePickerConfig = {
 		maxDate: new Date(),
 		dateFilter: DateServiceUtil.isNotWeekend,
@@ -171,6 +173,10 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	onTransactionTypeChange(): void {
 		const value = this.formGroup.controls.isBuying.value;
 		this.formGroup.controls.isBuying.patchValue(!value);
+	}
+
+	onTransactionShow(): void {
+		this.showHistoricalTransactions = !this.showHistoricalTransactions;
 	}
 
 	onSave(): void {

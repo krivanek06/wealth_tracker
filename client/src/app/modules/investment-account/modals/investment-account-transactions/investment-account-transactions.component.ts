@@ -6,7 +6,6 @@ import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import { InvestmentAccountTransactionOutput } from '../../../../core/graphql';
 import { GeneralFunctionUtil } from '../../../../core/utils';
 import { InputSource } from '../../../../shared/models';
-import { TransactionOrderInputSource } from '../../models';
 
 // TODO - virtual scrolling if many transactions
 // TODO - display number how many transaction has been in total executed
@@ -23,8 +22,6 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 	symbolInputSource$!: Observable<InputSource[]>;
 
 	transactionHistory$!: Observable<InvestmentAccountTransactionOutput[]>;
-
-	TransactionOrderInputSource = TransactionOrderInputSource;
 
 	formGroup = new FormGroup({
 		symbols: new FormControl<string[]>([], {

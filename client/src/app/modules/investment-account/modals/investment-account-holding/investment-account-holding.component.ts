@@ -19,7 +19,7 @@ import {
 	requiredValidator,
 } from '../../../../shared/models';
 import { SearchableAssetEnum } from '../../../asset-manager/models';
-import { CashAllocation } from '../../models';
+import { CashAllocation, TransactionAssetTypeInputSource } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
 @Component({
@@ -30,7 +30,7 @@ import { InvestmentAccountCalculatorService } from '../../services';
 })
 export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit {
 	formGroup = new FormGroup({
-		transactionType: new FormControl<InvestmentAccountHoldingHistoryType>(InvestmentAccountHoldingHistoryType.Buy, {
+		isBuying: new FormControl<boolean>(true, {
 			validators: [requiredValidator],
 			nonNullable: true,
 		}),
@@ -57,8 +57,9 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	// used to show loader
 	isSaving = false;
 
+	TransactionAssetTypeInputSource = TransactionAssetTypeInputSource;
+
 	SearchableAssetEnum = SearchableAssetEnum;
-	InvestmentAccountHoldingHistoryType = InvestmentAccountHoldingHistoryType;
 
 	datePickerConfig: InputTypeDateTimePickerConfig = {
 		maxDate: new Date(),
@@ -81,8 +82,12 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		return this.formGroup.controls.symbolPrice;
 	}
 
-	get formTransactionType(): FormControl {
-		return this.formGroup.controls.transactionType;
+	get isBuying(): FormControl {
+		return this.formGroup.controls.isBuying;
+	}
+
+	get units(): FormControl {
+		return this.formGroup.controls.units;
 	}
 
 	get totalValue(): number {
@@ -100,6 +105,8 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		@Inject(MAT_DIALOG_DATA) public data: { investmentId: string; selectedAsset?: AssetGeneralFragment }
 	) {}
 	ngAfterViewInit(): void {
+		this.formGroup.valueChanges.subscribe(console.log);
+
 		// load values for selected asset
 		setTimeout(() => {
 			if (this.data.selectedAsset) {
@@ -121,11 +128,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		this.cashError$ = this.formGroup.valueChanges.pipe(
 			switchMap(() =>
 				this.cashCategory$.pipe(
-					map(
-						(c) =>
-							c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL < this.totalValue &&
-							this.formTransactionType.value === InvestmentAccountHoldingHistoryType.Buy
-					)
+					map((c) => c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL < this.totalValue && this.isBuying.value)
 				)
 			)
 		);
@@ -165,6 +168,11 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 			});
 	}
 
+	onTransactionTypeChange(): void {
+		const value = this.formGroup.controls.isBuying.value;
+		this.formGroup.controls.isBuying.patchValue(!value);
+	}
+
 	onSave(): void {
 		const controls = this.formGroup.controls;
 		this.formGroup.markAllAsTouched();
@@ -179,7 +187,9 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 			investmentAccountId: this.data.investmentId,
 			isCrypto: controls.assetType.value === SearchableAssetEnum.Crypto,
 			symbol: controls.symbol.value.id,
-			type: controls.transactionType.value,
+			type: controls.isBuying.value
+				? InvestmentAccountHoldingHistoryType.Buy
+				: InvestmentAccountHoldingHistoryType.Sell,
 			holdingInputData: {
 				date: DateServiceUtil.formatDate(controls.date.value),
 				units: controls.units.value,

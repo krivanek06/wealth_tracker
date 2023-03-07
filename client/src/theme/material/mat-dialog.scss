@@ -134,3 +134,8 @@
 		padding: 20px 24px 20px 24px;
 	}
 }
+
+.cdk-overlay-transparent-backdrop.cdk-overlay-backdrop-showing {
+	opacity: 0.8 !important;
+	background: #00000040 !important;
+}

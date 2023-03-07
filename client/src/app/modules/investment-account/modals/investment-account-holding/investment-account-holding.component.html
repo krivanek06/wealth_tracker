@@ -5,6 +5,43 @@
 
 <mat-dialog-content>
 	<form (ngSubmit)="onSave()" [formGroup]="formGroup" class="mb-2 lg:basis-3/5">
+		<!-- date picker -->
+		<app-date-picker formControlName="date" [inputTypeDateTimePickerConfig]="datePickerConfig"></app-date-picker>
+
+		<!-- asset type -->
+		<app-form-mat-input-wrapper
+			[disabled]="!!data.selectedAsset"
+			[inputSource]="TransactionAssetTypeInputSource"
+			class="w-full"
+			controlName="assetType"
+			inputCaption="Select asset type"
+			inputType="SELECT"
+		></app-form-mat-input-wrapper>
+
+		<!-- search symbol -->
+		<app-asset-manager-search-asset
+			formControlName="symbol"
+			[isDisabled]="!!data.selectedAsset"
+			[searchableAsset]="formGroup.controls.assetType.value"
+		></app-asset-manager-search-asset>
+
+		<!-- transaction type -->
+		<div class="my-4">
+			<button
+				type="button"
+				mat-flat-button
+				[color]="formGroup.controls.isBuying.value ? 'accent' : 'warn'"
+				class="w-full"
+				(click)="onTransactionTypeChange()"
+			>
+				{{ formGroup.controls.isBuying.value ? 'Buy Asset' : 'Sell Asset' }}
+			</button>
+		</div>
+
+		<div class="my-4">
+			<mat-divider></mat-divider>
+		</div>
+
 		<!-- cash state -->
 		<div class="c-cash-wrapper">
 			<div>
@@ -12,6 +49,10 @@
 				<span *ngIf="cashCategory$ | async as c">
 					{{ c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL | largeNumberFormatter }}
 				</span>
+			</div>
+			<div>
+				<span class="text-gray-400">Units: </span>
+				<span> {{ units.value ?? 'N/A' }} </span>
 			</div>
 			<div>
 				<span class="text-gray-400">Price: </span>
@@ -25,102 +66,18 @@
 			</div>
 		</div>
 
-		<!-- asset type -->
-		<fieldset [disabled]="!!data.selectedAsset">
-			<mat-radio-group
-				formControlName="assetType"
-				aria-label="Select asset type"
-				class="flex flex-col justify-around gap-1 mb-3 xs:flex-row"
-			>
-				<mat-radio-button
-					color="primary"
-					[value]="SearchableAssetEnum.AseetByName"
-					matTooltip="Search any asset by its full name like: Microsfot, Tesla, etc."
-				>
-					Asset by name
-				</mat-radio-button>
-				<mat-radio-button
-					color="primary"
-					[value]="SearchableAssetEnum.AseetById"
-					matTooltip="Search any asset by its ticker symbol like: MSFT, TSLA, AAPL, etc."
-				>
-					Asset by id
-				</mat-radio-button>
-				<mat-radio-button
-					color="primary"
-					[value]="SearchableAssetEnum.Crypto"
-					matTooltip="Search crypto like: BTC, ETH, etc."
-				>
-					Crypto by id
-				</mat-radio-button>
-			</mat-radio-group>
-		</fieldset>
+		<!-- error if more than cash -->
 
-		<div class="my-2">
-			<mat-divider></mat-divider>
-		</div>
-
-		<!-- transaction type -->
-		<mat-radio-group
-			formControlName="transactionType"
-			aria-label="Select transaction type"
-			class="flex flex-row mb-3 gap-x-4 gap-y-2"
-		>
-			<mat-radio-button
-				color="accent"
-				[value]="InvestmentAccountHoldingHistoryType.Buy"
-				[ngClass]="{' border-green-500': formGroup.controls.transactionType.value === InvestmentAccountHoldingHistoryType.Buy}"
-				class="flex-1 text-green-500 border-2"
-			>
-				Buy
-			</mat-radio-button>
-			<mat-radio-button
-				color="warn"
-				[value]="InvestmentAccountHoldingHistoryType.Sell"
-				[ngClass]="{' border-red-500': formGroup.controls.transactionType.value === InvestmentAccountHoldingHistoryType.Sell}"
-				class="flex-1 text-red-500 border-2"
-			>
-				Sell
-			</mat-radio-button>
-		</mat-radio-group>
-
-		<!-- search symbol -->
-		<div class="mb-3">
-			<app-asset-manager-search-asset
-				formControlName="symbol"
-				[isDisabled]="!!data.selectedAsset"
-				[searchableAsset]="formGroup.controls.assetType.value"
-			></app-asset-manager-search-asset>
-		</div>
-
-		<!-- error selecting symbol -->
 		<div
+			class="mt-2 mb-5 g-error-banner"
 			*ngIf="formGroup.controls.symbol.touched && formGroup.controls.symbol.errors?.['required']"
-			class="p-3 mb-4 text-white bg-red-500 rounded-lg"
 		>
 			Symbol name is required
 		</div>
+		<div class="mt-2 mb-5 g-error-banner" *ngIf="cashError$ | async">Insufficient cash amount</div>
 
-		<!-- units -->
-		<app-form-mat-input-wrapper
-			class="w-full"
-			controlName="units"
-			inputCaption="Enter units"
-			inputType="NUMBER"
-		></app-form-mat-input-wrapper>
-
-		<!-- date -->
-		<app-form-mat-input-wrapper
-			class="w-full"
-			controlName="date"
-			inputCaption="Enter date of purchase"
-			inputType="DATEPICKER"
-			[disabled]="!formGroup.controls.symbol.value"
-			[inputTypeDateTimePickerConfig]="datePickerConfig"
-		></app-form-mat-input-wrapper>
-
-		<!-- error if more than cash -->
-		<div *ngIf="cashError$ | async" class="p-3 mb-4 text-white bg-red-500 rounded-lg">Insufficient cash amount</div>
+		<!-- keyboard -->
+		<app-number-keyboard-control formControlName="units"></app-number-keyboard-control>
 
 		<div class="my-4">
 			<mat-divider></mat-divider>

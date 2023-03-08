@@ -7,13 +7,13 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FormMatInputWrapperModule } from '../../../../shared/components';
+import { DatePickerComponent, FormMatInputWrapperModule, NumberKeyboardComponent } from '../../../../shared/components';
 import { NotificationBarModule } from '../../../../shared/dialogs';
 import { DefaultImgDirective, PerceptageIncreaseDirective } from '../../../../shared/directives';
 import { LargeNumberFormatterPipe, SortByKeyPipe } from '../../../../shared/pipes';
 import { AssetManagerSearchAssetModule } from '../../../asset-manager';
-import { InvestmentAccountHoldingComponent } from './investment-account-holding.component';
 import { HoldingHistoryItemComponent } from './holding-history-item/holding-history-item.component';
+import { InvestmentAccountHoldingComponent } from './investment-account-holding.component';
 
 @NgModule({
 	declarations: [InvestmentAccountHoldingComponent, HoldingHistoryItemComponent],
@@ -33,6 +33,8 @@ import { HoldingHistoryItemComponent } from './holding-history-item/holding-hist
 		AssetManagerSearchAssetModule,
 		MatTooltipModule,
 		PerceptageIncreaseDirective,
+		DatePickerComponent,
+		NumberKeyboardComponent,
 	],
 })
 export class InvestmentAccountHoldingModule {}

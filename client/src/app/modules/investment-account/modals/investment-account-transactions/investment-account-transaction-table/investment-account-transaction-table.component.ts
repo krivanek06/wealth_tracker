@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, TrackByFunction, ViewChild } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	EventEmitter,
+	Input,
+	OnInit,
+	Output,
+	TrackByFunction,
+	ViewChild,
+} from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,6 +21,8 @@ import { GeneralFunctionUtil } from '../../../../../core/utils';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvestmentAccountTransactionTableComponent implements OnInit {
+	@Output() removeDataEmitter = new EventEmitter<InvestmentAccountTransactionOutput>();
+
 	@Input() set symbolSelect(values: string[] | null) {
 		if (!values) {
 			return;
@@ -48,6 +59,10 @@ export class InvestmentAccountTransactionTableComponent implements OnInit {
 		index: number,
 		item: InvestmentAccountTransactionOutput
 	) => item.itemId;
+
+	onRemove(data: InvestmentAccountTransactionOutput): void {
+		this.removeDataEmitter.emit(data);
+	}
 
 	sortData(sort: Sort) {
 		const data = this.dataSource.data.slice();

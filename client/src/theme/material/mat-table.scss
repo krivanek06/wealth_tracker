@@ -44,3 +44,7 @@ table[mat-table] {
 		padding-right: 8px !important;
 	}
 }
+
+table[mat-table] tbody tr td {
+	color: var(--gray-medium);
+}

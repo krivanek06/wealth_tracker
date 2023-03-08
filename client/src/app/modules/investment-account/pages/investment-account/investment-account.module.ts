@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { ScrollWrapperModule, ValuePresentationButtonControlComponent } from '../../../../shared/components';
+import { RangeDirective } from '../../../../shared/directives';
 import {
 	InvestmentAccountActiveHoldingsTableModule,
 	InvestmentAccountPeriodChangeModule,
@@ -40,6 +41,7 @@ const routes: Routes = [
 		InvestmentAccountHoldingModule,
 		InvestmentAccountPeriodChangeModule,
 		RouterModule.forChild(routes),
+		RangeDirective,
 	],
 	exports: [InvestmentAccountComponent],
 })

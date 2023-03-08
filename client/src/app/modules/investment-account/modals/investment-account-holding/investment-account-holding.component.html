@@ -3,157 +3,124 @@
 	<span class="text-wt-primary-dark">{{ (investmentAccount$ | async)?.name }} </span>
 </div>
 
-<mat-dialog-content>
-	<form (ngSubmit)="onSave()" [formGroup]="formGroup" class="mb-2 lg:basis-3/5">
-		<!-- cash state -->
-		<div class="c-cash-wrapper">
-			<div>
-				<span class="text-gray-400">Cash: </span>
-				<span *ngIf="cashCategory$ | async as c">
-					{{ c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL | largeNumberFormatter }}
-				</span>
-			</div>
-			<div>
-				<span class="text-gray-400">Price: </span>
-				<span *ngIf="formSymbolPrice.value as value">~ {{ value | currency}} </span>
-				<span *ngIf="!formSymbolPrice.value">N/A</span>
-			</div>
-			<div>
-				<span class="text-gray-400">Total: </span>
-				<span *ngIf="totalValue"> {{totalValue | currency }} </span>
-				<span *ngIf="!totalValue">N/A</span>
-			</div>
-		</div>
+<div *ngIf="formGroup.controls.symbol.value" class="flex justify-end lg:mb-4">
+	<button mat-stroked-button type="button" (click)="onTransactionShow()" class="w-full lg:w-auto">
+		<mat-icon>visibility</mat-icon>
+		Show Previous Transactions
+	</button>
+</div>
 
-		<!-- asset type -->
-		<fieldset [disabled]="!!data.selectedAsset">
-			<mat-radio-group
-				formControlName="assetType"
-				aria-label="Select asset type"
-				class="flex flex-col justify-around gap-1 mb-3 xs:flex-row"
-			>
-				<mat-radio-button
-					color="primary"
-					[value]="SearchableAssetEnum.AseetByName"
-					matTooltip="Search any asset by its full name like: Microsfot, Tesla, etc."
+<form (ngSubmit)="onSave()" [formGroup]="formGroup">
+	<mat-dialog-content class="grid lg:grid-cols-2 gap-x-4 xl:gap-x-8">
+		<div>
+			<!-- date picker -->
+			<app-date-picker formControlName="date" [inputTypeDateTimePickerConfig]="datePickerConfig"></app-date-picker>
+
+			<!-- transaction type -->
+			<div class="my-4">
+				<button
+					type="button"
+					mat-flat-button
+					[color]="formGroup.controls.isBuying.value ? 'accent' : 'warn'"
+					class="w-full"
+					(click)="onTransactionTypeChange()"
 				>
-					Asset by name
-				</mat-radio-button>
-				<mat-radio-button
-					color="primary"
-					[value]="SearchableAssetEnum.AseetById"
-					matTooltip="Search any asset by its ticker symbol like: MSFT, TSLA, AAPL, etc."
-				>
-					Asset by id
-				</mat-radio-button>
-				<mat-radio-button
-					color="primary"
-					[value]="SearchableAssetEnum.Crypto"
-					matTooltip="Search crypto like: BTC, ETH, etc."
-				>
-					Crypto by id
-				</mat-radio-button>
-			</mat-radio-group>
-		</fieldset>
+					{{ formGroup.controls.isBuying.value ? 'Buy Asset' : 'Sell Asset' }}
+				</button>
+			</div>
 
-		<div class="my-2">
-			<mat-divider></mat-divider>
-		</div>
+			<!-- asset type -->
+			<app-form-mat-input-wrapper
+				[disabled]="!!data.selectedAsset"
+				[inputSource]="TransactionAssetTypeInputSource"
+				class="w-full"
+				controlName="assetType"
+				inputCaption="Select asset type"
+				inputType="SELECT"
+			></app-form-mat-input-wrapper>
 
-		<!-- transaction type -->
-		<mat-radio-group
-			formControlName="transactionType"
-			aria-label="Select transaction type"
-			class="flex flex-row mb-3 gap-x-4 gap-y-2"
-		>
-			<mat-radio-button
-				color="accent"
-				[value]="InvestmentAccountHoldingHistoryType.Buy"
-				[ngClass]="{' border-green-500': formGroup.controls.transactionType.value === InvestmentAccountHoldingHistoryType.Buy}"
-				class="flex-1 text-green-500 border-2"
-			>
-				Buy
-			</mat-radio-button>
-			<mat-radio-button
-				color="warn"
-				[value]="InvestmentAccountHoldingHistoryType.Sell"
-				[ngClass]="{' border-red-500': formGroup.controls.transactionType.value === InvestmentAccountHoldingHistoryType.Sell}"
-				class="flex-1 text-red-500 border-2"
-			>
-				Sell
-			</mat-radio-button>
-		</mat-radio-group>
-
-		<!-- search symbol -->
-		<div class="mb-3">
+			<!-- search symbol -->
 			<app-asset-manager-search-asset
 				formControlName="symbol"
 				[isDisabled]="!!data.selectedAsset"
 				[searchableAsset]="formGroup.controls.assetType.value"
 			></app-asset-manager-search-asset>
+
+			<!-- error if more than cash -->
+			<div
+				class="mt-2 mb-5 g-error-banner"
+				*ngIf="formGroup.controls.symbol.touched && formGroup.controls.symbol.errors?.['required']"
+			>
+				Symbol name is required
+			</div>
+			<div class="mt-2 mb-5 g-error-banner" *ngIf="cashError$ | async">Insufficient cash amount</div>
 		</div>
 
-		<!-- error selecting symbol -->
-		<div
-			*ngIf="formGroup.controls.symbol.touched && formGroup.controls.symbol.errors?.['required']"
-			class="p-3 mb-4 text-white bg-red-500 rounded-lg"
-		>
-			Symbol name is required
+		<div>
+			<!-- cash state -->
+			<div class="c-cash-wrapper">
+				<div>
+					<span class="text-gray-400">Cash: </span>
+					<span *ngIf="cashCategory$ | async as c">
+						{{ c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL | largeNumberFormatter }}
+					</span>
+				</div>
+				<div>
+					<span class="text-gray-400">Units: </span>
+					<span> {{ units.value ?? 'N/A' }} </span>
+				</div>
+				<div>
+					<span class="text-gray-400">Price: </span>
+					<span *ngIf="formSymbolPrice.value as value">~ {{ value | currency}} </span>
+					<span *ngIf="!formSymbolPrice.value">N/A</span>
+				</div>
+				<div>
+					<span class="text-gray-400">Total: </span>
+					<span *ngIf="totalValue"> {{totalValue | currency }} </span>
+					<span *ngIf="!totalValue">N/A</span>
+				</div>
+			</div>
+
+			<!-- keyboard -->
+			<app-number-keyboard-control formControlName="units"></app-number-keyboard-control>
 		</div>
 
-		<!-- units -->
-		<app-form-mat-input-wrapper
-			class="w-full"
-			controlName="units"
-			inputCaption="Enter units"
-			inputType="NUMBER"
-		></app-form-mat-input-wrapper>
+		<!-- history of asset holding -->
+		<ng-container *ngIf="transactionHistory$ | async as transactionHistory">
+			<div *ngIf="showHistoricalTransactions" class="min-h-[300px] sm:pl-4 md:pr-2 lg:col-span-2 mt-4">
+				<div class="mb-2 text-base text-center text-wt-danger-medium">Historical data</div>
+				<div class="text-xs text-center text-gray-500">Hold to remove</div>
+				<div class="pt-3">
+					<div *ngFor="let history of transactionHistory | sortByKey: 'date': 'desc'">
+						<button
+							mat-button
+							appNotificationProgress
+							[notificationProgressMessage]="'Removing entry from date: ' + (history.date | date: 'dd.MM.YYYY')"
+							[notificationMessage]="'Removing data'"
+							(notificationSuccessEmitter)="onDelete(history)"
+							type="button"
+							class="w-full mb-4 cursor-pointer h-14 lg:h-12"
+						>
+							<app-holding-history-item [history]="history"></app-holding-history-item>
+						</button>
+					</div>
+				</div>
+			</div>
+		</ng-container>
+	</mat-dialog-content>
 
-		<!-- date -->
-		<app-form-mat-input-wrapper
-			class="w-full"
-			controlName="date"
-			inputCaption="Enter date of purchase"
-			inputType="DATEPICKER"
-			[disabled]="!formGroup.controls.symbol.value"
-			[inputTypeDateTimePickerConfig]="datePickerConfig"
-		></app-form-mat-input-wrapper>
+	<div class="my-4">
+		<mat-divider></mat-divider>
+	</div>
 
-		<!-- error if more than cash -->
-		<div *ngIf="cashError$ | async" class="p-3 mb-4 text-white bg-red-500 rounded-lg">Insufficient cash amount</div>
-
-		<div class="my-4">
-			<mat-divider></mat-divider>
-		</div>
-
-		<!-- action buttons -->
-		<div class="g-dialog-button-wrapper">
+	<!-- action buttons -->
+	<mat-dialog-actions>
+		<div class="g-mat-dialog-actions-full">
 			<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
 			<button mat-stroked-button color="primary" type="submit" [disabled]="cashError$ | async">
 				<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
 				Save
 			</button>
 		</div>
-	</form>
-
-	<!-- history of asset holding -->
-	<div class="min-h-[300px] sm:pl-4 md:pr-2 flex-1">
-		<div class="mb-2 text-base text-center text-wt-danger-medium">Historical data</div>
-		<div class="text-xs text-center text-gray-500">Hold to remove</div>
-		<div class="min-h-[200px] max-h-[420px] overflow-x-hidden pt-3">
-			<div *ngFor="let history of transactionHistory$ | async | sortByKey: 'date': 'desc'">
-				<button
-					mat-button
-					appNotificationProgress
-					[notificationProgressMessage]="'Removing entry from date: ' + (history.date | date: 'dd.MM.YYYY')"
-					[notificationMessage]="'Removing data'"
-					(notificationSuccessEmitter)="onDelete(history)"
-					type="button"
-					class="w-full mb-4 cursor-pointer"
-				>
-					<app-holding-history-item [history]="history"></app-holding-history-item>
-				</button>
-			</div>
-		</div>
-	</div>
-</mat-dialog-content>
+	</mat-dialog-actions>
+</form>

@@ -24,7 +24,7 @@
 	}
 
 	.mat-mdc-dialog-container {
-		height: 99vh !important;
+		height: 100vh !important;
 		width: 100vw !important;
 
 		@screen md {
@@ -57,7 +57,8 @@
 	}
 
 	.mat-mdc-dialog-container {
-		height: 98vh !important;
+		height: 100vh !important;
+		width: 100vw !important;
 
 		@screen sm {
 			height: auto !important;
@@ -126,10 +127,29 @@
 	}
 }
 
+.g-mat-dialog-actions-full {
+	@apply flex flex-col-reverse sm:flex-row items-center gap-2 w-full;
+	button {
+		@apply w-full flex-1;
+	}
+}
+
+.g-mat-dialog-actions-end {
+	@apply flex flex-col-reverse sm:flex-row justify-end items-center gap-2 flex-1;
+	button {
+		@apply min-w-[200px] w-full sm:w-auto max-md:flex-1;
+	}
+}
+
 .mdc-dialog .mdc-dialog__content {
 	padding: 16px !important;
 
 	@screen sm {
 		padding: 20px 24px 20px 24px;
 	}
+}
+
+.cdk-overlay-transparent-backdrop.cdk-overlay-backdrop-showing {
+	opacity: 0.8 !important;
+	background: #00000040 !important;
 }

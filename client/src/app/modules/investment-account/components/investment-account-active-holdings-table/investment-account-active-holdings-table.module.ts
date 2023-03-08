@@ -10,6 +10,7 @@ import { ProgressCurrencyComponent } from '../../../../shared/components';
 import {
 	DefaultImgDirective,
 	PerceptageIncreaseDirective,
+	RangeDirective,
 	StylePaginatorDirective,
 } from '../../../../shared/directives';
 import { LargeNumberFormatterPipe } from '../../../../shared/pipes';
@@ -29,6 +30,7 @@ import { InvestmentAccountActiveHoldingsTableComponent } from './investment-acco
 		DefaultImgDirective,
 		LargeNumberFormatterPipe,
 		ProgressCurrencyComponent,
+		RangeDirective,
 		PerceptageIncreaseDirective,
 	],
 	exports: [InvestmentAccountActiveHoldingsTableComponent],

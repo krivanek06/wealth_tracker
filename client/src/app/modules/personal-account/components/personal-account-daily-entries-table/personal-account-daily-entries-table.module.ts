@@ -7,7 +7,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DefaultImgDirective, StylePaginatorDirective } from './../../../../shared/directives';
+import { DefaultImgDirective, RangeDirective, StylePaginatorDirective } from './../../../../shared/directives';
 import { PersonalAccountDailyEntriesTableComponent } from './personal-account-daily-entries-table.component';
 
 @NgModule({
@@ -23,6 +23,7 @@ import { PersonalAccountDailyEntriesTableComponent } from './personal-account-da
 		MatButtonModule,
 		DefaultImgDirective,
 		MatTooltipModule,
+		RangeDirective,
 	],
 	exports: [PersonalAccountDailyEntriesTableComponent],
 })

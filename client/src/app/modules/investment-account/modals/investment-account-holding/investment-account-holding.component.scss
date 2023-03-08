@@ -1,12 +1,12 @@
 :host {
 	display: block;
-	/* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version. */
+
 	mat-dialog-content {
 		@apply flex flex-col gap-2 xl:flex-row;
 	}
 
 	.c-cash-wrapper {
-		@apply flex flex-col sm:flex-row justify-between p-4 mb-2;
+		@apply grid grid-cols-2 gap-x-4 sm:gap-x-10 gap-y-2 p-4 mb-3;
 		& > div {
 			@apply text-base flex justify-between gap-2;
 		}

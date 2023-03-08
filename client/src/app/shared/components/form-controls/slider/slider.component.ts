@@ -21,7 +21,7 @@ import { InputTypeSlider } from '../../../models';
 })
 export class SliderComponent implements OnInit, ControlValueAccessor {
 	@Input() config!: InputTypeSlider;
-	@Input() set disabled(disabled: boolean) {
+	@Input() set componentDisabled(disabled: boolean) {
 		this.isDisabled = disabled;
 
 		if (disabled) {

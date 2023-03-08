@@ -203,6 +203,14 @@ export class PersonalAccountFacadeService {
 				const removedDailyData = entry.originalDailyData as PersonalAccountDailyDataOutputFragment;
 				const addedDailyData = entry.modifiedDailyData as PersonalAccountDailyDataOutputFragment;
 
+				// check if daily data for specific data is in cache, if so, add this one too
+				const { year, month } = DateServiceUtil.getDetailsInformationFromDate(Number(addedDailyData.date));
+				const dailyDataCache = this.personalAccountCacheService.getPersonalAccountDailyDataFromCache({
+					personalAccountId: addedDailyData.personalAccountId,
+					year,
+					month,
+				});
+
 				// subtract old data from aggregations
 				this.personalAccountDataAggregatorService.updateAggregations(
 					input.dailyDataDelete.personalAccountId,
@@ -220,8 +228,20 @@ export class PersonalAccountFacadeService {
 				// remove from cache
 				this.personalAccountCacheService.removePersonalAccountDailyDataFromCache(removedDailyData.id);
 
-				// add new data into displayed array
-				// TODO
+				// if daily data is loaded, add this on too sorted
+				if (dailyDataCache) {
+					// filter out removed data from array
+					const removedOldDailyData = dailyDataCache.filter((d) => d.id !== removedDailyData.id);
+					// update cash with new data
+					this.personalAccountCacheService.updatePersonalAccountDailyDataCache(
+						[...removedOldDailyData, addedDailyData],
+						{
+							personalAccountId: addedDailyData.personalAccountId,
+							year,
+							month,
+						}
+					);
+				}
 			})
 		);
 	}

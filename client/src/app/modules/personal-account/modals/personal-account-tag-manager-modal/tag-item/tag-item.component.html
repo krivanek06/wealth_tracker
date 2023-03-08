@@ -1,6 +1,6 @@
 <form [formGroup]="tagItemGroup" (ngSubmit)="onSubmit()">
 	<!-- color -->
-	<app-color-picker formControlName="color" [disabled]="!editing"></app-color-picker>
+	<app-color-picker formControlName="color" [componentDisabled]="!editing"></app-color-picker>
 
 	<!-- icon -->
 	<button type="button" (click)="onTagImageChange()" [disabled]="!editing">
@@ -24,7 +24,7 @@
 
 	<!-- budget -->
 	<div *ngIf="tagType === TagDataType.Expense" class="flex-1 col-span-2 sm:col-span-6">
-		<app-slider [disabled]="!editing" formControlName="budget" [config]="sliderConfig"></app-slider>
+		<app-slider [componentDisabled]="!editing" formControlName="budget" [config]="sliderConfig"></app-slider>
 	</div>
 
 	<!-- action buttons -->

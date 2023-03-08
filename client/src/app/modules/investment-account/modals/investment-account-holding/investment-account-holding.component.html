@@ -3,10 +3,10 @@
 	<span class="text-wt-primary-dark">{{ (investmentAccount$ | async)?.name }} </span>
 </div>
 
-<div class="flex justify-end lg:mb-4">
+<div *ngIf="formGroup.controls.symbol.value" class="flex justify-end lg:mb-4">
 	<button mat-stroked-button type="button" (click)="onTransactionShow()" class="w-full lg:w-auto">
 		<mat-icon>visibility</mat-icon>
-		Show Previous transactions
+		Show Previous Transactions
 	</button>
 </div>
 

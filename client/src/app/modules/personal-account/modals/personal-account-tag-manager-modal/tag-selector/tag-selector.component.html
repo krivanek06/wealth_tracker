@@ -1,6 +1,6 @@
 <h2 class="text-lg text-center">Select Tag Image</h2>
 
-<mat-dialog-content class="grid grid-cols-3 md:grid-cols-5 gap-x-6 gap-y-4">
+<mat-dialog-content class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-6 gap-y-4">
 	<!-- images -->
 	<ng-container *ngIf="availableTagImages$ | async as availableTagImages; else showLoader">
 		<button *ngFor="let data of availableTagImages" mat-stroked-button class="h-20" (click)="onImageClick(data)">
@@ -21,6 +21,8 @@
 </div>
 
 <!-- action buttons -->
-<mat-dialog-actions class="justify-end">
-	<button mat-stroked-button mat-dialog-close type="button" class="g-button-size-lg">Cancel</button>
+<mat-dialog-actions>
+	<div class="g-mat-dialog-actions-end">
+		<button mat-stroked-button mat-dialog-close type="button" class="g-button-size-lg">Cancel</button>
+	</div>
 </mat-dialog-actions>

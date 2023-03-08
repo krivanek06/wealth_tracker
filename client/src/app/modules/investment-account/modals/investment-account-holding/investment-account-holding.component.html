@@ -115,10 +115,12 @@
 
 	<!-- action buttons -->
 	<mat-dialog-actions>
-		<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
-		<button mat-stroked-button color="primary" type="submit" [disabled]="cashError$ | async">
-			<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
-			Save
-		</button>
+		<div class="g-mat-dialog-actions-full">
+			<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
+			<button mat-stroked-button color="primary" type="submit" [disabled]="cashError$ | async">
+				<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
+				Save
+			</button>
+		</div>
 	</mat-dialog-actions>
 </form>

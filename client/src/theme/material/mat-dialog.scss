@@ -127,10 +127,17 @@
 	}
 }
 
-mat-dialog-actions {
-	@apply flex flex-col-reverse sm:flex-row justify-end items-center gap-2;
+.g-mat-dialog-actions-full {
+	@apply flex flex-col-reverse sm:flex-row items-center gap-2 w-full;
 	button {
-		@apply min-w-[200px] w-full sm:w-auto flex-1;
+		@apply w-full flex-1;
+	}
+}
+
+.g-mat-dialog-actions-end {
+	@apply flex flex-col-reverse sm:flex-row justify-end items-center gap-2 flex-1;
+	button {
+		@apply min-w-[200px] w-full sm:w-auto max-md:flex-1;
 	}
 }
 

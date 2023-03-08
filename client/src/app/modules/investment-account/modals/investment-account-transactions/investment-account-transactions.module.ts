@@ -8,9 +8,11 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { FormMatInputWrapperModule } from '../../../../shared/components';
+import { NotificationBarModule } from '../../../../shared/dialogs';
 import {
 	DefaultImgDirective,
 	PerceptageIncreaseDirective,
+	RangeDirective,
 	StylePaginatorDirective,
 } from '../../../../shared/directives';
 import { InvestmentAccountTransactionTableComponent } from './investment-account-transaction-table/investment-account-transaction-table.component';
@@ -31,6 +33,8 @@ import { InvestmentAccountTransactionsComponent } from './investment-account-tra
 		MatPaginatorModule,
 		StylePaginatorDirective,
 		MatSortModule,
+		NotificationBarModule,
+		RangeDirective,
 	],
 	exports: [InvestmentAccountTransactionsComponent],
 })

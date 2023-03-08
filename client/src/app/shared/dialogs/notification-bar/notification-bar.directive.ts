@@ -20,7 +20,7 @@ export class NotificationProgressDirective {
 	@Input() notificationMessage!: string;
 
 	/*
-    How many saconds before reaching 100%
+    How many seconds before reaching 100%
   */
 	@Input() notificationProgressSeconds = 1.25;
 

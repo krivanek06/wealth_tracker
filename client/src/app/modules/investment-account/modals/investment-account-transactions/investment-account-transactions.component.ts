@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { map, Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import { InvestmentAccountTransactionOutput } from '../../../../core/graphql';
 import { GeneralFunctionUtil } from '../../../../core/utils';
 import { InputSource } from '../../../../shared/models';
+import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.util';
 
 // TODO - virtual scrolling if many transactions
-// TODO - display number how many transaction has been in total executed
 @Component({
 	selector: 'app-investment-account-transactions',
 	templateUrl: './investment-account-transactions.component.html',
@@ -47,5 +47,16 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 			);
 
 		this.transactionHistory$ = this.investmentAccountFacadeApiService.getTransactionHistory(this.data.investmentId);
+	}
+
+	onRemove(data: InvestmentAccountTransactionOutput): void {
+		this.investmentAccountFacadeApiService
+			.deleteInvestmentAccountHolding(this.data.investmentId, data)
+			.pipe(
+				tap(() => {
+					DialogServiceUtil.showNotificationBar(`Holding history has been removed`);
+				})
+			)
+			.subscribe();
 	}
 }

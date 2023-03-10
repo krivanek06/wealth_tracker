@@ -11,13 +11,13 @@ import {
 	InvestmentAccountGrowth,
 	InvestmentAccountOverviewFragment,
 } from '../../../../core/graphql';
-import { ValuePresentItem } from '../../../../shared/models';
+import { InputSource, NONE_INPUT_SOURCE, NONE_INPUT_SOURCE_VALUE } from '../../../../shared/models';
 import {
 	InvestmentAccountCashChangeComponent,
 	InvestmentAccountHoldingComponent,
 	InvestmentAccountTransactionsComponent,
 } from '../../modals';
-import { InvestmentAccountPeriodChange, SectorAllocation } from '../../models';
+import { InvestmentAccountPeriodChange } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
 @Component({
@@ -44,7 +44,7 @@ export class InvestmentAccountComponent implements OnInit {
 	/**
 	 * Symbols allocated by sectors
 	 */
-	sectorAllocation$!: Observable<ValuePresentItem<SectorAllocation>[]>;
+	sectorAllocationInputSource$!: Observable<InputSource[]>;
 
 	/**
 	 * Investment account change over period of times - 1week, 1month, etc.
@@ -52,7 +52,7 @@ export class InvestmentAccountComponent implements OnInit {
 	accountPeriodChange$!: Observable<InvestmentAccountPeriodChange[]>;
 
 	// keeps track of visible sectors, if empty -> all is visible
-	sectorFormControl = new FormControl<SectorAllocation[]>([], { nonNullable: true });
+	sectorFormControl = new FormControl<InputSource>(NONE_INPUT_SOURCE, { nonNullable: true });
 
 	/**
 	 * Active holdings that match sector if sectorFormControl not empty
@@ -79,15 +79,17 @@ export class InvestmentAccountComponent implements OnInit {
 			this.investmentAccount$,
 			this.sectorFormControl.valueChanges.pipe(startWith(this.sectorFormControl.value)),
 		]).pipe(
-			map(([account, sectors]) =>
+			map(([account, sectorInputSource]) =>
 				account.activeHoldings.filter(
-					(d) => sectors.length === 0 || sectors.map((x) => x.sectorName).includes(d.sector)
+					(d) => sectorInputSource.value === NONE_INPUT_SOURCE_VALUE || d.sector === sectorInputSource.value
 				)
 			)
 		);
-		this.sectorAllocation$ = this.investmentAccount$.pipe(
-			map((account) => this.investmentAccountCalculatorService.getSectorAllocation(account))
+
+		this.sectorAllocationInputSource$ = this.investmentAccount$.pipe(
+			map((account) => this.investmentAccountCalculatorService.getSectorAllocationInputSource(account))
 		);
+
 		this.totalInvestedAmount$ = this.investmentAccount$.pipe(
 			map((account) => this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(account))
 		);

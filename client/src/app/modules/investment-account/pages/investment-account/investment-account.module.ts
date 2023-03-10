@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { ScrollWrapperModule, ValuePresentationButtonControlComponent } from '../../../../shared/components';
 import { RangeDirective } from '../../../../shared/directives';
 import {
+	InvestmentAccountActionButtonsComponent,
 	InvestmentAccountActiveHoldingsTableModule,
 	InvestmentAccountPeriodChangeModule,
 	InvestmentAccountPortfolioGrowthChartModule,
@@ -33,8 +33,6 @@ const routes: Routes = [
 		InvestmentAccountActiveHoldingsTableModule,
 		InvestmentAccountStateComponent,
 		InvestmentAccountPortfolioGrowthChartModule,
-		ScrollWrapperModule,
-		ValuePresentationButtonControlComponent,
 		ReactiveFormsModule,
 		InvestmentAccountCashChangeModule,
 		InvestmentAccountTransactionsModule,
@@ -42,6 +40,7 @@ const routes: Routes = [
 		InvestmentAccountPeriodChangeModule,
 		RouterModule.forChild(routes),
 		RangeDirective,
+		InvestmentAccountActionButtonsComponent,
 	],
 	exports: [InvestmentAccountComponent],
 })

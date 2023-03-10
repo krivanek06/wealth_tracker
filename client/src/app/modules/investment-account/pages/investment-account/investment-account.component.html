@@ -23,31 +23,19 @@
 		<div
 			class="grid grid-cols-1 gap-4 p-4 mb-6 sm:grid-cols-2 md:grid-cols-3 xl:flex xl:justify-around sm:max-xl:pl-14"
 		>
-			<ng-container *ngIf="accountPeriodChange$ | async as accountPeriodChange; else skeletonPeriod">
-				<app-investment-account-period-change
-					*ngFor="let periodChange of accountPeriodChange"
-					[periodChange]="periodChange"
-				></app-investment-account-period-change>
-			</ng-container>
-
-			<ng-template #skeletonPeriod>
-				<div *ngRange="6" class="w-[220px] h-14 g-skeleton"></div>
-			</ng-template>
+			<app-investment-account-period-change
+				*ngFor="let periodChange of accountPeriodChange$ | async"
+				[periodChange]="periodChange"
+			></app-investment-account-period-change>
 		</div>
 
 		<!-- allocation charts -->
-		<div class="grid gap-4 md:grid-cols-2">
+		<div class="grid gap-4 md:grid-cols-2 overflow-x-clip">
 			<!-- sector allocation chart -->
-			<div>
-				<app-pie-chart
-					class="scale-125"
-					[series]="sectorAllocationChart$ | async"
-					[displayValue]="investmentAccount.currentBalance"
-				></app-pie-chart>
-			</div>
+			<app-pie-chart class="scale-125" [series]="sectorAllocationChart$ | async"></app-pie-chart>
 
 			<!-- asset allocation chart -->
-			<div>TODO percentage allocation in each asset - display only 8-10</div>
+			<app-pie-chart class="scale-125" [series]="assetAllocationChart$ | async"></app-pie-chart>
 		</div>
 
 		<!-- action buttons -->

@@ -6,7 +6,8 @@ import {
 	InvestmentAccountGrowth,
 } from '../../../core/graphql';
 import { DateServiceUtil } from '../../../core/utils';
-import { GenericChartSeriesData, GenericChartSeriesPie, ValuePresentItem } from '../../../shared/models';
+import { createGenericChartSeriesPie } from '../../../shared/functions';
+import { GenericChartSeriesPie, ValuePresentItem } from '../../../shared/models';
 import {
 	CashAllocation,
 	DailyInvestmentChange,
@@ -129,28 +130,21 @@ export class InvestmentAccountCalculatorService {
 		);
 	}
 
+	getAssetAllocationChart(account: InvestmentAccountFragment): GenericChartSeriesPie {
+		const seriesData = createGenericChartSeriesPie(account.activeHoldings, 'assetGeneral', 'id');
+
+		return { data: seriesData, colorByPoint: true, name: 'Holdings assets', innerSize: '40%', type: 'pie' };
+	}
+
+	/**
+	 *
+	 * @param account
+	 * @returns chart data based on investment account sector allocation
+	 */
 	getSectorAllocationChart(account: InvestmentAccountFragment): GenericChartSeriesPie {
-		const seriesData = account.activeHoldings.reduce((acc, curr) => {
-			const dataIndex = acc.findIndex((d) => d.name === curr.sector);
+		const seriesData = createGenericChartSeriesPie(account.activeHoldings, 'sector');
 
-			if (dataIndex === -1) {
-				// new tag
-				acc = [
-					...acc,
-					{
-						name: curr.sector,
-						y: curr.totalValue,
-					},
-				];
-			} else {
-				// increase value for tag
-				acc[dataIndex].y += curr.totalValue;
-			}
-
-			return acc;
-		}, [] as GenericChartSeriesData[]);
-
-		return { data: seriesData, colorByPoint: true, name: 'Holdings sector', innerSize: '80%', type: 'pie' };
+		return { data: seriesData, colorByPoint: true, name: 'Holdings sector', innerSize: '40%', type: 'pie' };
 	}
 
 	/**

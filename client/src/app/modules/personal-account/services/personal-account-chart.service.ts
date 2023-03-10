@@ -7,9 +7,9 @@ import {
 	PersonalAccountWeeklyAggregationOutput,
 	TagDataType,
 } from '../../../core/graphql';
-import { BUCKET_ASSETS } from '../../../core/models';
 import { DateServiceUtil } from '../../../core/utils';
-import { ChartType, GenericChartSeries, GenericChartSeriesData, GenericChartSeriesPie } from '../../../shared/models';
+import { createGenericChartSeriesPie } from '../../../shared/functions';
+import { ChartType, GenericChartSeries, GenericChartSeriesPie } from '../../../shared/models';
 import { AccountState, TagColors } from '../models';
 
 @Injectable({
@@ -222,54 +222,10 @@ export class PersonalAccountChartService {
 		return series;
 	}
 
-	getExpenseAllocationChartData<
-		T extends PersonalAccountDailyDataOutputFragment | PersonalAccountAggregationDataOutput
-	>(data: T[]): GenericChartSeriesPie {
-		const displayIndexes = 10;
-
-		const seriesData = data
-			.reduce((acc, curr) => {
-				// ignore income
-				if (curr.tag.type === TagDataType.Income) {
-					return acc;
-				}
-
-				// find index of saved tag
-				const dataIndex = acc.findIndex((d) => d.name === curr.tag.name);
-				if (dataIndex === -1) {
-					// new tag
-					acc = [
-						...acc,
-						{
-							name: curr.tag.name,
-							y: curr.value,
-							color: curr.tag.color,
-							custom: curr.tag.imageUrl,
-						},
-					];
-				} else {
-					// increase value for tag
-					acc[dataIndex].y += curr.value;
-				}
-
-				return acc;
-			}, [] as GenericChartSeriesData[])
-			// sort DESC
-			.sort((a, b) => b.y - a.y)
-			// display only first 8
-			.reduce((acc, curr, index) => {
-				if (index <= displayIndexes) {
-					return [...acc, curr];
-				}
-
-				// merge rest into 'Other' section
-				acc[acc.length - 1].name = 'Other';
-				acc[acc.length - 1].y += curr.y;
-				acc[acc.length - 1].color = '#9ca3af';
-				acc[acc.length - 1].custom = BUCKET_ASSETS.PAYMENT;
-
-				return acc;
-			}, [] as GenericChartSeriesData[]);
+	getExpenseAllocationChartData(
+		data: (PersonalAccountDailyDataOutputFragment | PersonalAccountAggregationDataOutput)[]
+	): GenericChartSeriesPie {
+		const seriesData = createGenericChartSeriesPie(data, 'tag', 'name', 'color', 'imageUrl');
 
 		return { data: seriesData, colorByPoint: true, name: 'Expenses', innerSize: '80%', type: 'pie' };
 	}

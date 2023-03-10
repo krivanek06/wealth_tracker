@@ -52,12 +52,14 @@ export class PieChartComponent implements OnChanges {
 				floating: true,
 				verticalAlign: 'middle',
 				useHTML: true,
-				text: `
+				text: this.displayValue
+					? `
 				  <div class="flex flex-col gap-1 items-center">
 				    <span class="text-wt-primary-dark text-sm">Balance</span>
 				    <span class="text-white text-base">$${this.displayValue ? Math.round(this.displayValue * 100) / 100 : 0}</span>
 				  </div>
-				`,
+				`
+					: '',
 
 				style: {
 					color: '#bababa',
@@ -124,16 +126,25 @@ export class PieChartComponent implements OnChanges {
 						verticalAlign: 'middle',
 
 						formatter: function () {
-							const url = (this.point as any)?.custom;
+							const point = this.point as any;
+
+							const url = point?.custom;
+							const name = point?.name;
 							const percentage = this.percentage;
 							const percentageRounded = Math.round(percentage * 100) / 100;
 							const color = this.color ?? 'white';
 
 							const imageSection = `<img src=${url} alt="Tag Image" class="h-6 w-6" />`;
+							const nameSection = `
+                <div>
+                  <span style="color: ${color}">●</span>
+                  <span class="text-wt-gray-light">${name}</span>
+                </div>
+                `;
 
 							const image = `
               <div class="flex flex-col items-center gap-1">
-                  ${url ? imageSection : ''}
+                  ${url ? imageSection : nameSection}
                   <span style="color: ${color}" class="text-xs">${percentageRounded}%</span>
               </div>`;
 							return image;

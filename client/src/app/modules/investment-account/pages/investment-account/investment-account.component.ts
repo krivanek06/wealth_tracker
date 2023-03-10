@@ -3,15 +3,21 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, map, Observable, startWith } from 'rxjs';
+import { InvestmentAccountFragmentExtended } from '../../../../core/models';
+
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	ACCOUNT_KEY,
 	InvestmentAccountActiveHoldingOutputFragment,
-	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
 	InvestmentAccountOverviewFragment,
 } from '../../../../core/graphql';
-import { InputSource, NONE_INPUT_SOURCE, NONE_INPUT_SOURCE_VALUE } from '../../../../shared/models';
+import {
+	GenericChartSeriesPie,
+	InputSource,
+	NONE_INPUT_SOURCE,
+	NONE_INPUT_SOURCE_VALUE,
+} from '../../../../shared/models';
 import {
 	InvestmentAccountCashChangeComponent,
 	InvestmentAccountHoldingComponent,
@@ -29,7 +35,7 @@ import { InvestmentAccountCalculatorService } from '../../services';
 export class InvestmentAccountComponent implements OnInit {
 	investmentAccountsOverview!: InvestmentAccountOverviewFragment;
 
-	investmentAccount$!: Observable<InvestmentAccountFragment>;
+	investmentAccount$!: Observable<InvestmentAccountFragmentExtended>;
 
 	/**
 	 * Total invested amount by the user
@@ -45,6 +51,7 @@ export class InvestmentAccountComponent implements OnInit {
 	 * Symbols allocated by sectors
 	 */
 	sectorAllocationInputSource$!: Observable<InputSource[]>;
+	sectorAllocationChart$!: Observable<GenericChartSeriesPie>;
 
 	/**
 	 * Investment account change over period of times - 1week, 1month, etc.
@@ -88,6 +95,9 @@ export class InvestmentAccountComponent implements OnInit {
 
 		this.sectorAllocationInputSource$ = this.investmentAccount$.pipe(
 			map((account) => this.investmentAccountCalculatorService.getSectorAllocationInputSource(account))
+		);
+		this.sectorAllocationChart$ = this.investmentAccount$.pipe(
+			map((account) => this.investmentAccountCalculatorService.getSectorAllocationChart(account))
 		);
 
 		this.totalInvestedAmount$ = this.investmentAccount$.pipe(

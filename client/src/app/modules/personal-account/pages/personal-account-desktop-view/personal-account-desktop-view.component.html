@@ -55,11 +55,11 @@
 
 	<!-- spending allocation by tags -->
 	<div class="lg:col-span-2 md:-mt-16">
-		<app-personal-account-tag-allocation-chart
+		<app-pie-chart
 			class="scale-125"
 			[series]="personalAccountDailyExpensePieChart$ | async"
-			[accountBalance]="accountFilteredState$ | async"
-		></app-personal-account-tag-allocation-chart>
+			[displayValue]="(accountFilteredState$ | async)?.total"
+		></app-pie-chart>
 	</div>
 </div>
 

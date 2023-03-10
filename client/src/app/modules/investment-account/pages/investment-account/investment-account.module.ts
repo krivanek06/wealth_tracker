@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import { PieChartComponent } from '../../../../shared/components';
 import { RangeDirective } from '../../../../shared/directives';
 import {
 	InvestmentAccountActionButtonsComponent,
@@ -41,6 +42,7 @@ const routes: Routes = [
 		RouterModule.forChild(routes),
 		RangeDirective,
 		InvestmentAccountActionButtonsComponent,
+		PieChartComponent,
 	],
 	exports: [InvestmentAccountComponent],
 })

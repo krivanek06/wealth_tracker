@@ -7,11 +7,11 @@
 
 <!-- expense chart -->
 <div class="-mt-8">
-	<app-personal-account-tag-allocation-chart
+	<app-pie-chart
 		class="scale-110"
 		[series]="personalAccountDailyExpensePieChart$ | async"
-		[accountBalance]="accountDisplayedState$ | async"
-	></app-personal-account-tag-allocation-chart>
+		[displayValue]="(accountDisplayedState$ | async)?.total"
+	></app-pie-chart>
 </div>
 
 <!-- settings -->

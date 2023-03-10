@@ -1,29 +1,20 @@
-<div class="grid grid-cols-1 gap-4 2xl:grid-cols-4">
-	<div class="col-span-1 2xl:col-span-3">
-		<!-- account state -->
-		<div class="mb-2">
-			<app-investment-account-state
-				(cashChangeClickEmitter)="onChangeChangeClick()"
-				[investmentAccount]="investmentAccount$ | async"
-			></app-investment-account-state>
-		</div>
+<!-- account state -->
+<div class="mx-auto mb-4 md:w-10/12">
+	<app-investment-account-state
+		(cashChangeClickEmitter)="onChangeChangeClick()"
+		[investmentAccount]="investmentAccount$ | async"
+	></app-investment-account-state>
+</div>
 
+<div class="grid grid-cols-1 gap-4 xl:grid-cols-2">
+	<div class="">
 		<!-- account growth -->
 		<app-investment-account-portfolio-growth-chart
 			[investmentAccountGrowth]="investmentAccountGrowth$ | async"
 		></app-investment-account-portfolio-growth-chart>
 	</div>
 
-	<!-- sector allocation -->
-	<!-- <app-scroll-wrapper [isFlexRow]="false" [flexColHeightPx]="540" class="items-center hidden 2xl:flex">
-		<app-value-presentation-button-control
-			[isFlexRow]="false"
-			[formControl]="sectorFormControl"
-			[items]="sectorAllocation$ | async"
-			[multiSelect]="false"
-			itemKey="sectorName"
-		></app-value-presentation-button-control>
-	</app-scroll-wrapper> -->
+	<div>TODO - display account balance growth</div>
 </div>
 
 <!-- period change -->
@@ -40,16 +31,20 @@
 	</ng-template>
 </div>
 
-<!-- sector allocation -->
-<!-- <app-scroll-wrapper [isFlexRow]="true" class="block 2xl:hidden">
-	<app-value-presentation-button-control
-		[isFlexRow]="true"
-		[formControl]="sectorFormControl"
-		[items]="sectorAllocation$ | async"
-		[multiSelect]="false"
-		itemKey="sectorName"
-	></app-value-presentation-button-control>
-</app-scroll-wrapper> -->
+<!-- allocation charts -->
+<div class="grid gap-4 md:grid-cols-2">
+	<!-- sector allocation chart -->
+	<div>
+		<app-pie-chart
+			class="scale-125"
+			[series]="sectorAllocationChart$ | async"
+			[displayValue]="(investmentAccount$ | async)?.currentBalance"
+		></app-pie-chart>
+	</div>
+
+	<!-- asset allocation chart -->
+	<div>TODO percentage allocation in each asset - display only 8-10</div>
+</div>
 
 <!-- action buttons -->
 <app-investment-account-action-buttons

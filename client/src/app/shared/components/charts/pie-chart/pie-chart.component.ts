@@ -2,19 +2,18 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnChanges, ViewChild } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
-import { ChartType, GenericChartSeriesPie } from '../../../../../shared/models';
-import { AccountState } from '../../../models';
+import { ChartType, GenericChartSeriesPie } from '../../../models';
 
 @Component({
-	selector: 'app-personal-account-tag-allocation-chart',
+	selector: 'app-pie-chart',
 	standalone: true,
 	imports: [CommonModule, HighchartsChartModule],
-	templateUrl: './personal-account-tag-allocation-chart.component.html',
-	styleUrls: ['./personal-account-tag-allocation-chart.component.scss'],
+	templateUrl: './pie-chart.component.html',
+	styleUrls: ['./pie-chart.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PersonalAccountTagAllocationChartComponent implements OnChanges {
-	@Input() accountBalance?: AccountState | null;
+export class PieChartComponent implements OnChanges {
+	@Input() displayValue?: number | null;
 
 	@Input() series?: GenericChartSeriesPie | null;
 
@@ -56,9 +55,7 @@ export class PersonalAccountTagAllocationChartComponent implements OnChanges {
 				text: `
 				  <div class="flex flex-col gap-1 items-center">
 				    <span class="text-wt-primary-dark text-sm">Balance</span>
-				    <span class="text-white text-base">$${
-							this.accountBalance ? Math.round(this.accountBalance.total * 100) / 100 : 0
-						}</span>
+				    <span class="text-white text-base">$${this.displayValue ? Math.round(this.displayValue * 100) / 100 : 0}</span>
 				  </div>
 				`,
 
@@ -132,9 +129,11 @@ export class PersonalAccountTagAllocationChartComponent implements OnChanges {
 							const percentageRounded = Math.round(percentage * 100) / 100;
 							const color = this.color ?? 'white';
 
+							const imageSection = `<img src=${url} alt="Tag Image" class="h-6 w-6" />`;
+
 							const image = `
               <div class="flex flex-col items-center gap-1">
-                  <img src=${url} alt="Tag Image" class="h-6 w-6" />
+                  ${url ? imageSection : ''}
                   <span style="color: ${color}" class="text-xs">${percentageRounded}%</span>
               </div>`;
 							return image;

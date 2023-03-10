@@ -18,6 +18,7 @@ import {
 	InvestmentAccountTransactionsModule,
 } from '../../modals';
 import { ACCOUNT_KEY } from './../../../../core/graphql/model';
+import { InvestmentAccountSkeletonComponent } from './investment-account-skeleton/investment-account-skeleton.component';
 import { InvestmentAccountComponent } from './investment-account.component';
 
 const routes: Routes = [
@@ -28,7 +29,7 @@ const routes: Routes = [
 	},
 ];
 @NgModule({
-	declarations: [InvestmentAccountComponent],
+	declarations: [InvestmentAccountComponent, InvestmentAccountSkeletonComponent],
 	imports: [
 		CommonModule,
 		InvestmentAccountActiveHoldingsTableModule,

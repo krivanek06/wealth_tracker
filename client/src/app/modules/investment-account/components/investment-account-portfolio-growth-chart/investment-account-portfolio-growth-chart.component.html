@@ -1,16 +1,10 @@
-<ng-container *ngIf="!showSkeleton; else skeleton">
-	<highcharts-chart
-		[Highcharts]="Highcharts"
-		[options]="chartOptions"
-		[constructorType]="''"
-		[callbackFunction]="chartCallback"
-		[(update)]="updateFromInput"
-		style="width: 100%; display: block"
-		[style.height.px]="500"
-	>
-	</highcharts-chart>
-</ng-container>
-
-<ng-template #skeleton>
-	<div class="g-skeleton h-[500px] w-full"></div>
-</ng-template>
+<highcharts-chart
+	[Highcharts]="Highcharts"
+	[options]="chartOptions"
+	[constructorType]="''"
+	[callbackFunction]="chartCallback"
+	[(update)]="updateFromInput"
+	style="width: 100%; display: block"
+	[style.height.px]="500"
+>
+</highcharts-chart>

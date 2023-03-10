@@ -1,0 +1,28 @@
+<!-- skeleton for account state -->
+<div class="mx-auto mb-4 md:w-10/12">
+	<div
+		class="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:justify-between lg:items-center"
+	>
+		<div *ngRange="6" class="w-[140px] h-14 g-skeleton m-auto"></div>
+	</div>
+</div>
+
+<!-- charts -->
+<div class="grid grid-cols-1 gap-4 xl:grid-cols-2">
+	<div class="h-[500px] g-skeleton"></div>
+	<div class="h-[500px] g-skeleton"></div>
+</div>
+
+<!-- period change -->
+<div class="grid grid-cols-1 gap-4 p-4 mb-6 sm:grid-cols-2 md:grid-cols-3 xl:flex xl:justify-around sm:max-xl:pl-14">
+	<div *ngRange="6" class="w-full max-w-[240px] h-14 g-skeleton m-auto"></div>
+</div>
+
+<!-- allocation charts -->
+<div class="grid gap-4 mb-8 md:grid-cols-2">
+	<div class="h-[260px] g-skeleton w-9/12 m-auto"></div>
+	<div class="h-[260px] g-skeleton w-9/12 m-auto"></div>
+</div>
+
+<!-- table -->
+<div *ngRange="10" class="g-skeleton h-[50px] w-full mb-2"></div>

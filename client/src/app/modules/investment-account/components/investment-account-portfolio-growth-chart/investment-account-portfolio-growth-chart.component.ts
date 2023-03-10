@@ -14,7 +14,6 @@ NoDataToDisplay(Highcharts);
 })
 export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 	@Input() set investmentAccountGrowth(data: InvestmentAccountGrowth[] | null) {
-		this.showSkeleton = !data;
 		this.initChart(data ?? []);
 	}
 

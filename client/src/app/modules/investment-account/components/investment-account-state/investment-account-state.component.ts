@@ -36,19 +36,19 @@ export class InvestmentAccountStateComponent implements OnInit {
 	/**
 	 * Total invested amount by the user
 	 */
-	totalInvestedAmount?: number;
+	totalInvestedAmount!: number;
 
 	/**
 	 * Current state of investments -> holding.price * units
 	 */
-	currentInvestedAmout?: number;
+	currentInvestedAmout!: number;
 
-	cashAmount?: number;
+	cashAmount!: number;
 
 	/**
 	 * Daily sum and percentage change for investment account
 	 */
-	dailyInvestmentChange?: DailyInvestmentChange | null;
+	dailyInvestmentChange!: DailyInvestmentChange;
 
 	constructor(private investmentAccountCalculatorService: InvestmentAccountCalculatorService) {}
 

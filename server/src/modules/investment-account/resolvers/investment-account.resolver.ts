@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Float, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql';
 import { InvestmentAccount } from '../entities';
@@ -86,5 +86,16 @@ export class InvestmentAccountResolver {
 	getActiveHoldings(@Parent() investmentAccount: InvestmentAccount): Promise<InvestmentAccountActiveHoldingOutput[]> {
 		const activeHoldings = this.investmentAccountHoldingService.filterOutActiveHoldings(investmentAccount);
 		return this.investmentAccountHoldingService.getActiveHoldingOutput(activeHoldings);
+	}
+
+	/* Resolvers */
+	@ResolveField('currentCash', () => Float, {
+		description: 'Returns current cash holding',
+		nullable: false,
+	})
+	getCurrentCash(@Parent() investmentAccount: InvestmentAccount): number {
+		return investmentAccount.cashChange.reduce((acc, curr) => {
+			return acc + curr.cashValue;
+		}, 0);
 	}
 }

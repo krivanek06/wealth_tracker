@@ -29,12 +29,12 @@
 							<span>{{ row.assetId }}</span>
 							<span class="hidden sm:table-cell">({{ row.units }})</span>
 						</span>
-						<span class="hidden text-gray-500 xs:max-sm:table-cell">|</span>
-						<span class="hidden text-gray-400 xs:table-cell">{{ row.sector }}</span>
+						<span class="hidden text-wt-gray-dark xs:max-sm:table-cell">|</span>
+						<span class="hidden text-wt-gray-medium xs:table-cell">{{ row.sector }}</span>
 					</div>
 
 					<!-- Price * units | BEP  -->
-					<div class="table-cell text-xs text-gray-500 sm:hidden">
+					<div class="table-cell text-xs text-wt-gray-dark sm:hidden">
 						{{ row.assetGeneral.assetQuote.price | currency }} * {{ row.units }} | {{ (row.beakEvenPrice) | currency }}
 					</div>
 				</div>
@@ -46,7 +46,7 @@
 	<ng-container matColumnDef="price">
 		<th mat-header-cell mat-sort-header *matHeaderCellDef class="hidden sm:table-cell">Price +/-</th>
 		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">
-			<div class="text-base">{{ row.assetGeneral.assetQuote.price | currency }}</div>
+			<div class="text-base text-wt-gray-light">{{ row.assetGeneral.assetQuote.price | currency }}</div>
 			<div
 				appPerceptageIncrease
 				[useCurrencySign]="true"
@@ -129,13 +129,13 @@
 		<td mat-cell *matCellDef="let row" class="hidden text-sm md:table-cell">
 			<!-- BEP -->
 			<div class="flex items-center gap-2">
-				<span class="text-gray-500">BEP:</span>
+				<span class="text-wt-gray-dark">BEP:</span>
 				<span> {{ (row.beakEvenPrice ) | currency }}</span>
 			</div>
 
 			<!-- Profolio % -->
 			<div class="flex items-center gap-2">
-				<span class="text-gray-500">Portfolio:</span>
+				<span class="text-wt-gray-dark">Portfolio:</span>
 				<span>
 					<ng-container *ngIf="totalInvestedAmount">
 						{{ row.totalValue / totalInvestedAmount | percent: '1.2-2'}}

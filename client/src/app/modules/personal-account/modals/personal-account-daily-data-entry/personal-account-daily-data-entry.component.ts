@@ -143,7 +143,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			time: new Date(Number(dailyData.date)),
 			tagId: dailyData.tagId,
 			value: String(dailyData.value),
-			description: dailyData.description,
+			description: dailyData.description || '',
 		});
 	}
 

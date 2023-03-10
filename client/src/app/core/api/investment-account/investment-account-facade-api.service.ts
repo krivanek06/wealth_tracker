@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import {
 	CreateInvestmentAccountCasheMutation,
 	CreateInvestmentAccountHoldingMutation,
@@ -14,11 +14,11 @@ import {
 	InvestmentAccountCashCreateInput,
 	InvestmentAccountCashDeleteInput,
 	InvestmentAccountEditInput,
-	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
 	InvestmentAccountOverviewFragment,
 	InvestmentAccountTransactionOutput,
 } from '../../graphql';
+import { InvestmentAccountFragmentExtended } from '../../models/investment-account.model';
 import { InvestmentAccountApiService } from './investment-account-api.service';
 import { InvestmentAccountCashApiService } from './investment-account-cash-api.service';
 import { InvestmentAccountHoldingService } from './investment-account-holding.service';
@@ -37,8 +37,16 @@ export class InvestmentAccountFacadeApiService {
 		return this.investmentAccountApiService.getInvestmentAccounts();
 	}
 
-	getInvestmentAccountById(accountId: string): Observable<InvestmentAccountFragment> {
-		return this.investmentAccountApiService.getInvestmentAccountById(accountId);
+	getInvestmentAccountById(accountId: string): Observable<InvestmentAccountFragmentExtended> {
+		return this.investmentAccountApiService.getInvestmentAccountById(accountId).pipe(
+			map((account) => {
+				const currentCash = account.cashChange.reduce((acc, curr) => acc + curr.cashValue, 0);
+				const currentInvested = account.activeHoldings.reduce((acc, curr) => acc + curr.totalValue, 0);
+				const currentBalance = currentInvested + currentCash;
+
+				return { ...account, currentCash, currentInvested, currentBalance } as InvestmentAccountFragmentExtended;
+			})
+		);
 	}
 
 	createInvestmentAccount(name: string): Observable<FetchResult<CreateInvestmentAccountMutation>> {

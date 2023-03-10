@@ -6,7 +6,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { combineLatest, map, Observable } from 'rxjs';
-import { FormMatInputWrapperModule, ValuePresentationCardComponent } from '../../../../shared/components';
+import {
+	FormMatInputWrapperModule,
+	PieChartComponent,
+	ValuePresentationCardComponent,
+} from '../../../../shared/components';
 import { PersonalAccountParent } from '../../classes';
 import {
 	PersonalAccountAccountStateComponent,
@@ -16,7 +20,6 @@ import {
 	PersonalAccountDisplayToggleComponent,
 	PersonalAccountExpensesByTagComponent,
 	PersonalAccountOverviewChartMobileComponent,
-	PersonalAccountTagAllocationChartComponent,
 } from '../../components';
 import { PersonalAccountDailyEntriesTableMobileComponent } from '../../components/mobile';
 import { AccountState, NO_DATE_SELECTED, PersonalAccountDailyDataAggregation } from '../../models';
@@ -39,7 +42,7 @@ import { GetTagByIdPipe } from '../../pipes';
 		MatButtonModule,
 		MatIconModule,
 		GetTagByIdPipe,
-		PersonalAccountTagAllocationChartComponent,
+		PieChartComponent,
 		ValuePresentationCardComponent,
 		PersonalAccountAccountStateComponent,
 		PersonalAccountDisplayToggleComponent,

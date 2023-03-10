@@ -52,6 +52,7 @@ export class InvestmentAccountComponent implements OnInit {
 	 */
 	sectorAllocationInputSource$!: Observable<InputSource[]>;
 	sectorAllocationChart$!: Observable<GenericChartSeriesPie>;
+	assetAllocationChart$!: Observable<GenericChartSeriesPie>;
 
 	/**
 	 * Investment account change over period of times - 1week, 1month, etc.
@@ -98,6 +99,9 @@ export class InvestmentAccountComponent implements OnInit {
 		);
 		this.sectorAllocationChart$ = this.investmentAccount$.pipe(
 			map((account) => this.investmentAccountCalculatorService.getSectorAllocationChart(account))
+		);
+		this.assetAllocationChart$ = this.investmentAccount$.pipe(
+			map((account) => this.investmentAccountCalculatorService.getAssetAllocationChart(account))
 		);
 
 		this.totalInvestedAmount$ = this.investmentAccount$.pipe(

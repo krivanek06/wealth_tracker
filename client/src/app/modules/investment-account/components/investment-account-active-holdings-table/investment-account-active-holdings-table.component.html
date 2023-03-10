@@ -1,46 +1,11 @@
-<div class="flex items-center justify-between p-2 mb-4">
+<div class="flex items-center justify-between p-2 mb-4 sm:hidden">
 	<div class="g-section-title">Holdings</div>
 
-	<!-- buttons big screen -->
-	<div class="items-center hidden gap-4 sm:flex">
-		<ng-container *ngTemplateOutlet="buttonContainer"></ng-container>
-	</div>
-
 	<!-- button on small screen -->
-	<button mat-button class="text-wt-primary-dark sm:hidden" (click)="toggleDailyChange()">
+	<button mat-button class="text-wt-primary-dark" (click)="toggleDailyChange()">
 		{{ showDailyChange ? 'Daily +/-' : 'Invested +/-'}}
 	</button>
 </div>
-
-<!-- buttons small screen -->
-<div class="block sm:hidden">
-	<ng-container *ngTemplateOutlet="buttonContainer"></ng-container>
-</div>
-
-<ng-template #buttonContainer>
-	<!-- add holding -->
-	<button
-		(click)="onAddClick()"
-		mat-stroked-button
-		type="button"
-		color="primary"
-		class="w-full mb-2 sm:w-auto sm:block"
-	>
-		<mat-icon>add</mat-icon>
-		Add holding
-	</button>
-
-	<!-- show transactions -->
-	<button
-		(click)="onShowHistoryClick()"
-		mat-stroked-button
-		type="button"
-		class="w-full mb-2 sm:w-auto sm:block text-wt-gray-medium"
-	>
-		<mat-icon>visibility</mat-icon>
-		Show transactions
-	</button>
-</ng-template>
 
 <table
 	mat-table

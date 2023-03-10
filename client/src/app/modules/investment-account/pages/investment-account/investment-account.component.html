@@ -15,7 +15,7 @@
 	</div>
 
 	<!-- sector allocation -->
-	<app-scroll-wrapper [isFlexRow]="false" [flexColHeightPx]="540" class="items-center hidden 2xl:flex">
+	<!-- <app-scroll-wrapper [isFlexRow]="false" [flexColHeightPx]="540" class="items-center hidden 2xl:flex">
 		<app-value-presentation-button-control
 			[isFlexRow]="false"
 			[formControl]="sectorFormControl"
@@ -23,11 +23,11 @@
 			[multiSelect]="false"
 			itemKey="sectorName"
 		></app-value-presentation-button-control>
-	</app-scroll-wrapper>
+	</app-scroll-wrapper> -->
 </div>
 
 <!-- period change -->
-<div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 xl:flex xl:justify-around sm:max-xl:pl-14">
+<div class="grid grid-cols-1 gap-4 p-4 mb-6 sm:grid-cols-2 md:grid-cols-3 xl:flex xl:justify-around sm:max-xl:pl-14">
 	<ng-container *ngIf="accountPeriodChange$ | async as accountPeriodChange; else skeletonPeriod">
 		<app-investment-account-period-change
 			*ngFor="let periodChange of accountPeriodChange"
@@ -41,7 +41,7 @@
 </div>
 
 <!-- sector allocation -->
-<app-scroll-wrapper [isFlexRow]="true" class="block 2xl:hidden">
+<!-- <app-scroll-wrapper [isFlexRow]="true" class="block 2xl:hidden">
 	<app-value-presentation-button-control
 		[isFlexRow]="true"
 		[formControl]="sectorFormControl"
@@ -49,13 +49,19 @@
 		[multiSelect]="false"
 		itemKey="sectorName"
 	></app-value-presentation-button-control>
-</app-scroll-wrapper>
+</app-scroll-wrapper> -->
+
+<!-- action buttons -->
+<app-investment-account-action-buttons
+	[sectorAllocationInputSource]="sectorAllocationInputSource$ | async"
+	[formControl]="sectorFormControl"
+	(addEmitter)="onAddHolding()"
+	(showHistoryEmitter)="onShowHisotry()"
+></app-investment-account-action-buttons>
 
 <!-- active investments table -->
 <app-investment-account-active-holdings-table
 	(holdingClickedEmitter)="onAddHolding($event)"
-	(addEmitter)="onAddHolding()"
-	(showHistoryEmitter)="onShowHisotry()"
 	[totalInvestedAmount]="totalInvestedAmount$ | async"
 	[activeHoldings]="filteredActiveHoldings$ | async"
 ></app-investment-account-active-holdings-table>

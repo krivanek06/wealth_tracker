@@ -14,6 +14,7 @@ import {
 	PeriodChangeDate,
 	SectorAllocation,
 } from '../models';
+import { InputSource, NONE_INPUT_SOURCE } from './../../../shared/models/forms.model';
 
 @Injectable({
 	providedIn: 'root',
@@ -100,6 +101,32 @@ export class InvestmentAccountCalculatorService {
 
 			return [...acc, valueItem];
 		}, [] as ValuePresentItem<SectorAllocation>[]);
+	}
+
+	/**
+	 *
+	 * @param account
+	 * @returns distinct sectors as Input source
+	 */
+	getSectorAllocationInputSource(account: InvestmentAccountFragment): InputSource[] {
+		return account.activeHoldings.reduce(
+			(acc, curr) => {
+				const allocationIndex = acc.findIndex((d) => d.value === curr.sector);
+				// already in array
+				if (allocationIndex !== -1) {
+					return acc;
+				}
+
+				// add new sector to array
+				const source: InputSource = {
+					caption: curr.sector,
+					value: curr.sector,
+				};
+
+				return [...acc, source];
+			},
+			[NONE_INPUT_SOURCE] as InputSource[]
+		);
 	}
 
 	/**

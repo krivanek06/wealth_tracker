@@ -1,10 +1,17 @@
-<div class="text-lg mb-6 text-center">
+<div class="mb-6 text-lg text-center">
 	<span class="text-wt-primary-dark">{{ (investmentAccount$ | async)?.name }}: </span
 	><span *ngIf="cashCategory$ | async as c">{{ c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL | currency}}</span>
 </div>
 
-<mat-dialog-content>
-	<form (ngSubmit)="onSave()" [formGroup]="formGroup" class="lg:basis-3/5 mb-2">
+<div class="lg:grid lg:place-content-center lg:mb-8">
+	<button mat-stroked-button type="button" (click)="onCashHistoryToggle()" class="w-full lg:w-auto min-w-[400px]">
+		<mat-icon>visibility</mat-icon>
+		Show Previous Transactions
+	</button>
+</div>
+
+<form (ngSubmit)="onSave()" [formGroup]="formGroup">
+	<mat-dialog-content>
 		<!-- cash state -->
 		<div *ngIf="cashCategory$ | async as cashCategory" class="c-cash-wrapper">
 			<div>
@@ -17,8 +24,14 @@
 					>{{ cashCategory.ASSET_OPERATION | largeNumberFormatter: false: true }}</span
 				>
 			</div>
-			<div>Withdrawal: <span>{{ cashCategory.WITHDRAWAL | largeNumberFormatter: false: true }}</span></div>
+			<div>
+				Withdrawal:
+				<span class="text-wt-gray-medium">{{ cashCategory.WITHDRAWAL | largeNumberFormatter: false: true }}</span>
+			</div>
 		</div>
+		<!-- date picker -->
+		<app-date-picker formControlName="date"></app-date-picker>
+
 		<!-- cash type -->
 		<app-form-mat-input-wrapper
 			class="w-full"
@@ -28,50 +41,52 @@
 			[inputSource]="cashTypeInputSource"
 		></app-form-mat-input-wrapper>
 
-		<!-- date -->
-		<app-form-mat-input-wrapper
-			class="w-full"
-			controlName="date"
-			inputCaption="Enter date"
-			inputType="DATEPICKER"
-		></app-form-mat-input-wrapper>
-
-		<!-- value -->
-		<app-form-mat-input-wrapper
-			class="w-full"
-			controlName="value"
-			inputCaption="Enter value"
-			inputType="NUMBER"
-		></app-form-mat-input-wrapper>
-
-		<div class="my-4">
-			<mat-divider></mat-divider>
+		<!-- display value -->
+		<div class="flex items-center justify-between w-full px-4 mb-8 text-xl md:px-8">
+			<span class="text-wt-gray-medium">Cash Value:</span>
+			<span class="text-white"> ${{formGroup.controls.value.value ?? 0}} </span>
 		</div>
 
-		<div class="g-dialog-button-wrapper">
+		<!-- keyboard -->
+		<app-number-keyboard-control formControlName="value"></app-number-keyboard-control>
+
+		<!-- history of changed cash -->
+		<div *ngIf="showCashHistory" class="pl-4 md:pr-2 min-h-[300px] lg:h-[320px]">
+			<div class="my-4">
+				<mat-divider></mat-divider>
+			</div>
+			<div class="mb-2 text-base text-center text-wt-danger-medium">Historical cash movements</div>
+			<div class="mb-4 text-base text-center text-wt-gray-dark">You can remove only withdrawals or deposits</div>
+			<div></div>
+			<button
+				*ngFor="let cash of (investmentAccount$ | async)?.cashChange | sortByKey: 'date': 'desc' "
+				mat-button
+				appNotificationProgress
+				[notificationProgressMessage]="'Removing cash $' + cash.cashValue + ' from date: ' + (cash.date | date: 'dd.MM.YYYY')"
+				[notificationMessage]="'Removing data'"
+				(notificationSuccessEmitter)="onDelete(cash)"
+				type="button"
+				class="w-full mb-1 h-[45px]"
+				[disabled]="cash.type === InvestmentAccountCashChangeType.AssetOperation"
+			>
+				<app-investment-account-cash-change-item [cashChange]="cash"></app-investment-account-cash-change-item>
+			</button>
+		</div>
+	</mat-dialog-content>
+
+	<!-- divider -->
+	<div class="my-4">
+		<mat-divider></mat-divider>
+	</div>
+
+	<!-- action buttons -->
+	<mat-dialog-actions>
+		<div class="g-mat-dialog-actions-full">
 			<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
 			<button mat-stroked-button color="primary" type="submit">
 				<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
 				Save
 			</button>
 		</div>
-	</form>
-
-	<!-- history of changed cash -->
-	<div class="pl-4 md:pr-2 min-h-[300px] lg:h-[320px] overflow-y-scroll overflow-x-hidden flex-1">
-		<div class="text-base text-center mb-2 text-wt-danger-dark">Hold to remove</div>
-		<button
-			*ngFor="let cash of (investmentAccount$ | async)?.cashChange | sortByKey: 'date': 'desc' "
-			mat-button
-			appNotificationProgress
-			[notificationProgressMessage]="'Removing cash $' + cash.cashValue + ' from date: ' + (cash.date | date: 'dd.MM.YYYY')"
-			[notificationMessage]="'Removing data'"
-			(notificationSuccessEmitter)="onDelete(cash)"
-			type="button"
-			class="w-full mb-1"
-			[disabled]="cash.type === InvestmentAccountCashChangeType.AssetOperation"
-		>
-			<app-investment-account-cash-change-item [cashChange]="cash"></app-investment-account-cash-change-item>
-		</button>
-	</div>
-</mat-dialog-content>
+	</mat-dialog-actions>
+</form>

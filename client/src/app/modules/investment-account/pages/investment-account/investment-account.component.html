@@ -3,7 +3,7 @@
 	<ng-container *ngIf="investmentAccountGrowth$ | async as investmentAccountGrowth; else pageSkeleton">
 		<div class="mx-auto mb-4 md:w-10/12">
 			<app-investment-account-state
-				(cashChangeClickEmitter)="onChangeChangeClick()"
+				(cashChangeClickEmitter)="onCashChangeClick()"
 				[investmentAccount]="investmentAccount"
 			></app-investment-account-state>
 		</div>

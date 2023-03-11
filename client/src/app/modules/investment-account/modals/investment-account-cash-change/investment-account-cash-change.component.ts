@@ -43,6 +43,7 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 
 	// used to show loader
 	isSaving = false;
+	showCashHistory = false;
 
 	InvestmentAccountCashChangeType = InvestmentAccountCashChangeType;
 
@@ -60,6 +61,10 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 		this.cashCategory$ = this.investmentAccount$.pipe(
 			map((account) => this.investmentAccountCalculatorService.getCashCategories(account))
 		);
+	}
+
+	onCashHistoryToggle(): void {
+		this.showCashHistory = !this.showCashHistory;
 	}
 
 	onSave(): void {

@@ -75,7 +75,11 @@
 						placeholder="Search"
 						tabindex="0"
 					/>
-					<mat-option *ngFor="let optionData of inputSource" [value]="optionData.value">
+					<mat-option
+						*ngFor="let optionData of inputSource"
+						[value]="optionData.value"
+						(onSelectionChange)="onSelectChange(optionData, $event)"
+					>
 						<div class="flex items-center gap-2">
 							<img *ngIf="optionData?.image" [src]="optionData.image" alt="" />
 							{{ optionData.caption }}

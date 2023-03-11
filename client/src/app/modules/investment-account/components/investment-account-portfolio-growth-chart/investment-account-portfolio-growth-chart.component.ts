@@ -1,42 +1,64 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	Input,
+	OnChanges,
+	OnInit,
+	SimpleChanges,
+} from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 import { InvestmentAccountGrowth } from '../../../../core/graphql';
-import { GeneralFunctionUtil } from '../../../../core/utils';
+import { ChartConstructor, GeneralFunctionUtil } from '../../../../core/utils';
+import { LAYOUT_SM } from '../../../../shared/models';
 
 NoDataToDisplay(Highcharts);
 
 @Component({
 	selector: 'app-investment-account-portfolio-growth-chart',
-	templateUrl: './investment-account-portfolio-growth-chart.component.html',
-	styleUrls: ['./investment-account-portfolio-growth-chart.component.scss'],
+	template: `
+		<highcharts-chart
+			[Highcharts]="Highcharts"
+			[options]="chartOptions"
+			[callbackFunction]="chartCallback"
+			style="width: 100%; display: block"
+			[style.height.px]="550"
+		>
+		</highcharts-chart>
+	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	standalone: true,
 	imports: [CommonModule, HighchartsChartModule],
 })
-export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
-	@Input() set investmentAccountGrowth(data: InvestmentAccountGrowth[] | null) {
-		this.initChart(data ?? []);
+export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstructor implements OnInit, OnChanges {
+	@Input() investmentAccountGrowth?: InvestmentAccountGrowth[] | null;
+
+	constructor(private breakpointObserver: BreakpointObserver, private cd: ChangeDetectorRef) {
+		super();
 	}
 
-	showSkeleton = true;
-
-	Highcharts: typeof Highcharts = Highcharts;
-	chart: any;
-	updateFromInput = true;
-	chartCallback: any;
-	chartOptions: Highcharts.Options = {};
-	constructor() {
-		const self = this;
-
-		this.chartCallback = (chart: any) => {
-			self.chart = chart;
-		};
+	ngOnChanges(changes: SimpleChanges): void {
+		if (changes?.['investmentAccountGrowth']?.currentValue) {
+			const isDesktop = this.breakpointObserver.isMatched(LAYOUT_SM);
+			this.initChart(this.investmentAccountGrowth ?? [], !isDesktop);
+		}
 	}
 
-	ngOnInit(): void {}
+	ngOnInit(): void {
+		this.breakpointObserver.observe(LAYOUT_SM).subscribe((match) => {
+			if (this.chart && this.investmentAccountGrowth) {
+				this.initChart(this.investmentAccountGrowth, !match.matches);
+				this.chart.redraw();
+
+				// use change detection otherwise does not redraw
+				this.cd.detectChanges();
+			}
+		});
+	}
 
 	private getChartData(data: InvestmentAccountGrowth[]): {
 		balance: number[][];
@@ -73,7 +95,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 		return { balance, cash, invested, ownedAssets };
 	}
 
-	private initChart(data: InvestmentAccountGrowth[]) {
+	private initChart(data: InvestmentAccountGrowth[], isMobileView: boolean) {
 		const { invested, cash, balance } = this.getChartData(data);
 
 		this.chartOptions = {
@@ -118,7 +140,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					minorTickInterval: 'auto',
 					tickPixelInterval: 40,
 					minorGridLineWidth: 0,
-					visible: true,
+					visible: !isMobileView,
 				},
 				{
 					title: {
@@ -134,20 +156,6 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					minorGridLineWidth: 0,
 					visible: false,
 				},
-				// {
-				// 	title: {
-				// 		text: '',
-				// 	},
-				// 	startOnTick: false,
-				// 	endOnTick: false,
-				// 	gridLineColor: '#66666655',
-				// 	opposite: false,
-				// 	gridLineWidth: 1,
-				// 	minorTickInterval: 'auto',
-				// 	tickPixelInterval: 40,
-				// 	minorGridLineWidth: 0,
-				// 	visible: false,
-				// },
 			],
 			xAxis: {
 				visible: true,
@@ -273,6 +281,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					yAxis: 1,
 					opacity: 1,
 					zIndex: 3,
+					visible: !isMobileView,
 					fillColor: {
 						linearGradient: {
 							x1: 1,
@@ -291,7 +300,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 				{
 					color: '#f24f18',
 					type: 'area',
-					visible: true,
+					visible: !isMobileView,
 					opacity: 0.6,
 					yAxis: 1,
 					zIndex: 2,

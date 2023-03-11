@@ -2,17 +2,14 @@ import * as Highcharts from 'highcharts';
 
 export abstract class ChartConstructor {
 	Highcharts: typeof Highcharts = Highcharts;
-	chart: any;
+	chart!: Highcharts.Chart;
 	updateFromInput = true;
-	chartCallback: any;
+
+	chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
+		this.chart = chart;
+	};
+
 	chartOptions: Highcharts.Options = {};
 
-	constructor() {
-		const self = this;
-
-		this.chartCallback = (chart: any) => {
-			console.log('chartCallback', chart);
-			self.chart = chart;
-		};
-	}
+	constructor() {}
 }

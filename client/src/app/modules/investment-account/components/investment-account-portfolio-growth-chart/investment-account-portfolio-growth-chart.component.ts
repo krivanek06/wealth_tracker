@@ -1,5 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
+import { HighchartsChartModule } from 'highcharts-angular';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 import { InvestmentAccountGrowth } from '../../../../core/graphql';
 import { GeneralFunctionUtil } from '../../../../core/utils';
@@ -11,6 +13,8 @@ NoDataToDisplay(Highcharts);
 	templateUrl: './investment-account-portfolio-growth-chart.component.html',
 	styleUrls: ['./investment-account-portfolio-growth-chart.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
+	imports: [CommonModule, HighchartsChartModule],
 })
 export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 	@Input() set investmentAccountGrowth(data: InvestmentAccountGrowth[] | null) {
@@ -35,39 +39,42 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 	ngOnInit(): void {}
 
 	private getChartData(data: InvestmentAccountGrowth[]): {
+		balance: number[][];
 		cash: number[][];
 		invested: number[][];
-		balance: number[][];
 		ownedAssets: number[][];
 	} {
 		const cash = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.cash]);
+		const invested = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.invested]);
 
 		const balance = data
 			.filter((d) => d.invested !== 0)
 			.map((point) => [Date.parse(point.date), point.cash + point.invested]);
-		const invested = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.invested]);
 
 		// create points where owned symbol changed
 		const ownedAssets = data
 			.reduce((acc, curr) => {
+				// first data in array
 				if (acc.length == 0) {
 					return [curr];
 				}
-				const previous = acc[acc.length - 1];
-				if (previous.ownedAssets === curr.ownedAssets) {
-					return acc;
-				}
+				// const previous = acc[acc.length - 1];
+				// if (previous.ownedAssets === curr.ownedAssets) {
+				// 	return acc;
+				// }
 
 				return [...acc, curr];
 			}, [] as InvestmentAccountGrowth[])
 			.filter((d) => d.ownedAssets !== 0)
 			.map((d) => [Date.parse(d.date), d.ownedAssets]);
 
-		return { cash, balance, invested, ownedAssets };
+		console.log({ cash, invested, ownedAssets });
+
+		return { balance, cash, invested, ownedAssets };
 	}
 
 	private initChart(data: InvestmentAccountGrowth[]) {
-		const { balance, invested, cash, ownedAssets } = this.getChartData(data);
+		const { invested, cash, balance } = this.getChartData(data);
 
 		this.chartOptions = {
 			chart: {
@@ -111,7 +118,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					minorTickInterval: 'auto',
 					tickPixelInterval: 40,
 					minorGridLineWidth: 0,
-					visible: false,
+					visible: true,
 				},
 				{
 					title: {
@@ -127,20 +134,20 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					minorGridLineWidth: 0,
 					visible: false,
 				},
-				{
-					title: {
-						text: '',
-					},
-					startOnTick: false,
-					endOnTick: false,
-					gridLineColor: '#66666655',
-					opposite: false,
-					gridLineWidth: 1,
-					minorTickInterval: 'auto',
-					tickPixelInterval: 40,
-					minorGridLineWidth: 0,
-					visible: false,
-				},
+				// {
+				// 	title: {
+				// 		text: '',
+				// 	},
+				// 	startOnTick: false,
+				// 	endOnTick: false,
+				// 	gridLineColor: '#66666655',
+				// 	opposite: false,
+				// 	gridLineWidth: 1,
+				// 	minorTickInterval: 'auto',
+				// 	tickPixelInterval: 40,
+				// 	minorGridLineWidth: 0,
+				// 	visible: false,
+				// },
 			],
 			xAxis: {
 				visible: true,
@@ -200,7 +207,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 				backgroundColor: '#232323',
 				xDateFormat: '%A, %b %e, %Y',
 				style: {
-					fontSize: '14px',
+					fontSize: '15px',
 					color: '#D9D8D8',
 				},
 				shared: true,
@@ -209,7 +216,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					const that = this as any;
 					const value = GeneralFunctionUtil.formatLargeNumber(that.y);
 					const name = that.series.name.toLowerCase();
-					const isCurrency = ['cash', 'balance', 'invested'].includes(name);
+					const isCurrency = ['cash', 'invested'].includes(name);
 
 					const displayTextName = isCurrency ? `Portfolio ${name}` : `${that.series.name}`;
 					const displayTextValue = isCurrency ? `$${value}` : value;
@@ -232,7 +239,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					threshold: null,
 				},
 				series: {
-					borderWidth: 0,
+					borderWidth: 2,
 					enableMouseTracking: true,
 					// events: {
 					// 	legendItemClick: function () {
@@ -243,27 +250,8 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 			},
 			series: [
 				{
-					color: '#ee22dd',
-					type: 'column',
-					visible: true,
-					opacity: 0.7,
-					yAxis: 3,
-					name: 'Owned assets',
-					data: ownedAssets,
-				},
-				{
-					color: '#f24f18',
-					type: 'line',
-					visible: true,
-					opacity: 0.7,
-					yAxis: 2,
-					name: 'Cash',
-					data: cash,
-				},
-				{
 					color: '#00c4dd',
 					type: 'area',
-					yAxis: 1,
 					fillColor: {
 						linearGradient: {
 							x1: 1,
@@ -282,7 +270,9 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 				{
 					color: '#6b00fa',
 					type: 'area',
-					yAxis: 0,
+					yAxis: 1,
+					opacity: 1,
+					zIndex: 3,
 					fillColor: {
 						linearGradient: {
 							x1: 1,
@@ -297,6 +287,28 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					},
 					name: 'Invested',
 					data: invested,
+				},
+				{
+					color: '#f24f18',
+					type: 'area',
+					visible: true,
+					opacity: 0.6,
+					yAxis: 1,
+					zIndex: 2,
+					name: 'Cash',
+					data: cash,
+					fillColor: {
+						linearGradient: {
+							x1: 1,
+							y1: 0,
+							x2: 0,
+							y2: 1,
+						},
+						stops: [
+							[0, '#f24f18'],
+							[1, 'transparent'],
+						],
+					},
 				},
 			],
 		};

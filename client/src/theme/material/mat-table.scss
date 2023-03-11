@@ -53,3 +53,12 @@ table[mat-table] tbody tr td {
 	opacity: 0.55 !important;
 	pointer-events: none !important;
 }
+
+.mdc-data-table__cell,
+.mdc-data-table__header-cell {
+	padding: 0 !important;
+
+	@screen sm {
+		padding: 0 16px 0 16px !important;
+	}
+}

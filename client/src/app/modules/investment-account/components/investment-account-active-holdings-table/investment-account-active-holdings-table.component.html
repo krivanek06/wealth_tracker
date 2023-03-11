@@ -21,10 +21,10 @@
 		<td mat-cell *matCellDef="let row">
 			<!-- logo + symbol -->
 			<div class="flex items-center gap-2">
-				<img [src]="row.assetGeneral.assetQuote.symbolImageURL" appDefaultImg class="w-8 h-8" />
+				<img [src]="row.assetGeneral.assetQuote.symbolImageURL" appDefaultImg class="w-10 h-10" />
 				<div class="flex flex-col">
 					<!-- asset symbol + sector -->
-					<div class="flex flex-row sm:flex-col gap-x-2">
+					<div class="flex flex-row text-base sm:text-sm sm:flex-col gap-x-2">
 						<span class="flex items-center gap-1 text-wt-gray-light">
 							<span>{{ row.assetId }}</span>
 							<span class="hidden sm:table-cell">({{ row.units }})</span>
@@ -34,7 +34,7 @@
 					</div>
 
 					<!-- Price * units | BEP  -->
-					<div class="table-cell text-xs text-wt-gray-dark sm:hidden">
+					<div class="table-cell text-sm text-wt-gray-medium sm:hidden">
 						{{ row.assetGeneral.assetQuote.price | currency }} * {{ row.units }} | {{ (row.beakEvenPrice) | currency }}
 					</div>
 				</div>
@@ -80,9 +80,9 @@
 		<td mat-cell *matCellDef="let row" class="table-cell sm:hidden">
 			<!-- show invested amount -->
 			<ng-container *ngIf="!showDailyChange">
-				<div class="text-end">{{ row.totalValue | currency }}</div>
+				<div class="text-base text-end text-wt-gray-light">{{ row.totalValue | currency }}</div>
 				<div
-					class="justify-end"
+					class="justify-end text-sm"
 					appPerceptageIncrease
 					[useCurrencySign]="true"
 					[currentValues]="{
@@ -95,9 +95,9 @@
 
 			<!-- show daily change -->
 			<ng-container *ngIf="showDailyChange">
-				<div class="text-end">{{ row.assetGeneral.assetQuote.price | currency }}</div>
+				<div class="text-base text-end text-wt-gray-light">{{ row.assetGeneral.assetQuote.price | currency }}</div>
 				<div
-					class="justify-end"
+					class="justify-end text-sm"
 					appPerceptageIncrease
 					[useCurrencySign]="true"
 					[changeValues]="{

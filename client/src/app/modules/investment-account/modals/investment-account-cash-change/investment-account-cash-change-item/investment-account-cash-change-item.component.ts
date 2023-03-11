@@ -53,6 +53,6 @@ export class InvestmentAccountCashChangeItemComponent implements OnInit {
 	}
 
 	onRemove(item: InvestmentAccountCashChangeFragment) {
-		console.log(item);
+		this.clickedEmitter.emit(item);
 	}
 }

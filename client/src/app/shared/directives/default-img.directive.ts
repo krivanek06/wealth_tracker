@@ -30,11 +30,6 @@ export class DefaultImgDirective implements OnChanges {
 			return 'assets/image-placeholder.jpg';
 		}
 
-		if (this.imageType === 'investment_cash') {
-			const formattedName = 'cash_' + location.toLowerCase();
-			return `assets/investment-account/${formattedName}.svg`;
-		}
-
 		if (this.imageType === 'assetId') {
 			return GeneralFunctionUtil.getAssetUrl(location);
 		}

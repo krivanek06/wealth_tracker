@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { catchError, combineLatest, EMPTY, first, map, Observable, startWith, tap } from 'rxjs';
+import { catchError, combineLatest, EMPTY, map, Observable, startWith, tap } from 'rxjs';
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	InvestmentAccountCashChangeFragment,
@@ -108,9 +108,7 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 				catchError(() => {
 					DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
 					return EMPTY;
-				}),
-				// memory leak
-				first()
+				})
 			)
 			.subscribe(() => {
 				this.isSaving = false;
@@ -134,9 +132,7 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 				catchError(() => {
 					DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
 					return EMPTY;
-				}),
-				// memory leak
-				first()
+				})
 			)
 			.subscribe();
 	}

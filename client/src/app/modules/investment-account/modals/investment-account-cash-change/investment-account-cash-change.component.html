@@ -4,7 +4,7 @@
 </div>
 
 <div class="lg:grid lg:place-content-center lg:mb-8">
-	<button mat-stroked-button type="button" (click)="onCashHistoryToggle()" class="w-full lg:w-auto min-w-[400px]">
+	<button mat-stroked-button type="button" (click)="onCashHistoryToggle()" class="w-full lg:w-auto lg:min-w-[400px]">
 		<mat-icon>visibility</mat-icon>
 		Show Previous Transactions
 	</button>
@@ -45,7 +45,7 @@
 		<!-- display value -->
 		<div class="flex items-center justify-between w-full px-4 mb-8 text-xl md:px-8">
 			<span class="text-wt-gray-medium">Cash Value:</span>
-			<span class="text-white"> ${{formGroup.controls.value.value ?? 0}} </span>
+			<span class="text-white">{{(formGroup.controls.value.value ?? 0) | currency}} </span>
 		</div>
 
 		<!-- keyboard -->
@@ -84,7 +84,7 @@
 	<mat-dialog-actions>
 		<div class="g-mat-dialog-actions-full">
 			<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
-			<button mat-stroked-button color="primary" type="submit">
+			<button mat-stroked-button color="primary" type="submit" [disabled]="!formGroup.controls.value.value">
 				<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
 				Save
 			</button>

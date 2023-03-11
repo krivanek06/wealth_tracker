@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { catchError, combineLatest, EMPTY, first, map, Observable, startWith, tap } from 'rxjs';
@@ -19,7 +19,7 @@ import { InvestmentAccountCalculatorService } from '../../services';
 	selector: 'app-investment-account-cash-change',
 	templateUrl: './investment-account-cash-change.component.html',
 	styleUrls: ['./investment-account-cash-change.component.scss'],
-	changeDetection: ChangeDetectionStrategy.OnPush,
+	//changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvestmentAccountCashChangeComponent implements OnInit {
 	formGroup = new FormGroup({
@@ -27,7 +27,7 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 			validators: [requiredValidator],
 			nonNullable: true,
 		}),
-		value: new FormControl<number | null>(null, { validators: [requiredValidator] }),
+		value: new FormControl<string | null>(null, { validators: [requiredValidator] }),
 		date: new FormControl<Date>(new Date(), { validators: [requiredValidator], nonNullable: true }),
 		filteredCashType: new FormControl<InvestmentAccountCashChangeType | null>(null),
 	});
@@ -93,7 +93,7 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 
 		const input: InvestmentAccountCashCreateInput = {
 			investmentAccountId: this.data.investmentId,
-			cashValue: this.formGroup.controls.value.value,
+			cashValue: Number(this.formGroup.controls.value.value),
 			date: DateServiceUtil.formatDate(this.formGroup.controls.date.value),
 			type: this.formGroup.controls.type.value,
 		};
@@ -102,19 +102,20 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 			.createInvestmentAccountCash(input)
 			.pipe(
 				tap(() => {
-					this.isSaving = false;
 					DialogServiceUtil.showNotificationBar(`Cash entry has been saved`);
 				}),
 				// client error message
 				catchError(() => {
-					this.isSaving = false;
 					DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
 					return EMPTY;
 				}),
 				// memory leak
 				first()
 			)
-			.subscribe();
+			.subscribe(() => {
+				this.isSaving = false;
+				this.formGroup.controls.value.patchValue(null);
+			});
 	}
 
 	onDelete(item: InvestmentAccountCashChangeFragment): void {

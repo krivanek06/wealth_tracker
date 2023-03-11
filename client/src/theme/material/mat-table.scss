@@ -48,3 +48,8 @@ table[mat-table] {
 table[mat-table] tbody tr td {
 	color: var(--gray-medium);
 }
+
+.g-table-disabled-row {
+	opacity: 0.55 !important;
+	pointer-events: none !important;
+}

@@ -29,6 +29,7 @@
 				<span class="text-wt-gray-medium">{{ cashCategory.WITHDRAWAL | largeNumberFormatter: false: true }}</span>
 			</div>
 		</div>
+
 		<!-- date picker -->
 		<app-date-picker formControlName="date"></app-date-picker>
 
@@ -51,26 +52,26 @@
 		<app-number-keyboard-control formControlName="value"></app-number-keyboard-control>
 
 		<!-- history of changed cash -->
-		<div *ngIf="showCashHistory" class="pl-4 md:pr-2 min-h-[300px] lg:h-[320px]">
+		<div *ngIf="showCashHistory" class="pl-4 mt-4 md:pr-2">
 			<div class="my-4">
 				<mat-divider></mat-divider>
 			</div>
 			<div class="mb-2 text-base text-center text-wt-danger-medium">Historical cash movements</div>
 			<div class="mb-4 text-base text-center text-wt-gray-dark">You can remove only withdrawals or deposits</div>
-			<div></div>
-			<button
-				*ngFor="let cash of (investmentAccount$ | async)?.cashChange | sortByKey: 'date': 'desc' "
-				mat-button
-				appNotificationProgress
-				[notificationProgressMessage]="'Removing cash $' + cash.cashValue + ' from date: ' + (cash.date | date: 'dd.MM.YYYY')"
-				[notificationMessage]="'Removing data'"
-				(notificationSuccessEmitter)="onDelete(cash)"
-				type="button"
-				class="w-full mb-1 h-[45px]"
-				[disabled]="cash.type === InvestmentAccountCashChangeType.AssetOperation"
-			>
-				<app-investment-account-cash-change-item [cashChange]="cash"></app-investment-account-cash-change-item>
-			</button>
+
+			<!-- cash type filter -->
+			<app-form-mat-input-wrapper
+				class="w-full"
+				controlName="filteredCashType"
+				inputCaption="Select cash type filtering"
+				inputType="SELECT"
+				[inputSource]="CashChangeTypesInputSource"
+			></app-form-mat-input-wrapper>
+
+			<!-- table -->
+			<app-investment-account-cash-change-item
+				[cashChange]="cashChange$ | async | sortByKey: 'date': 'desc'  "
+			></app-investment-account-cash-change-item>
 		</div>
 	</mat-dialog-content>
 

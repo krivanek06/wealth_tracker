@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { catchError, EMPTY, first, map, Observable, tap } from 'rxjs';
+import { catchError, combineLatest, EMPTY, first, map, Observable, startWith, tap } from 'rxjs';
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	InvestmentAccountCashChangeFragment,
@@ -11,8 +11,8 @@ import {
 } from '../../../../core/graphql';
 import { DateServiceUtil } from '../../../../core/utils';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
-import { InputSource, requiredValidator } from '../../../../shared/models';
-import { CashAllocation } from '../../models';
+import { InputSource, NONE_INPUT_SOURCE, requiredValidator } from '../../../../shared/models';
+import { CashAllocation, CashChangeTypesInputSource } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
 @Component({
@@ -29,6 +29,7 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 		}),
 		value: new FormControl<number | null>(null, { validators: [requiredValidator] }),
 		date: new FormControl<Date>(new Date(), { validators: [requiredValidator], nonNullable: true }),
+		filteredCashType: new FormControl<InvestmentAccountCashChangeType | null>(null),
 	});
 
 	cashTypeInputSource: InputSource[] = [
@@ -41,10 +42,13 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 	// display different categories and accumulated cash for them
 	cashCategory$!: Observable<CashAllocation>;
 
+	cashChange$!: Observable<InvestmentAccountCashChangeFragment[]>;
+
 	// used to show loader
 	isSaving = false;
 	showCashHistory = false;
 
+	CashChangeTypesInputSource = CashChangeTypesInputSource;
 	InvestmentAccountCashChangeType = InvestmentAccountCashChangeType;
 
 	constructor(
@@ -60,6 +64,18 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 		// build cash categories
 		this.cashCategory$ = this.investmentAccount$.pipe(
 			map((account) => this.investmentAccountCalculatorService.getCashCategories(account))
+		);
+
+		// displayed cash change in table
+		this.cashChange$ = combineLatest([
+			this.investmentAccount$,
+			this.formGroup.controls.filteredCashType.valueChanges.pipe(startWith(null)),
+		]).pipe(
+			map(([account, filteredType]) =>
+				!filteredType || filteredType === NONE_INPUT_SOURCE.value
+					? account.cashChange
+					: account.cashChange.filter((d) => d.type === filteredType)
+			)
 		);
 	}
 

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { FinancialModelingAPIService } from '../../../api';
 import { PrismaService } from '../../../prisma';
-import { AssetStock } from '../entities';
+import { ASSET_STOCK_SECTOR_TYPE_IMAGES } from '../dto';
+import { AssetStock, AssetStockProfile } from '../entities';
 import { AssetStockUtil } from '../utils';
 
 @Injectable()
@@ -14,6 +15,13 @@ export class AssetStockService {
 				id: symbol,
 			},
 		});
+	}
+
+	getSectorImageUrl(profile: AssetStockProfile): string | undefined {
+		// Consumer Defensive -> consumer_defensive
+		const formattedSectorName = profile.sector.toLowerCase().split(' ').join('_');
+		const url = ASSET_STOCK_SECTOR_TYPE_IMAGES[formattedSectorName];
+		return url;
 	}
 
 	/**

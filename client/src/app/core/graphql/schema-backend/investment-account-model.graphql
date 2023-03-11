@@ -22,6 +22,7 @@ fragment InvestmentAccountHolding on InvestmentAccountHolding {
 	investmentAccountId
 	type
 	sector
+	sectorImageUrl
 	holdingHistory {
 		...InvestmentAccountHoldingHistory
 	}
@@ -41,6 +42,7 @@ fragment InvestmentAccountActiveHoldingOutput on InvestmentAccountActiveHoldingO
 	investmentAccountId
 	type
 	sector
+	sectorImageUrl
 	units
 	totalValue
 	beakEvenPrice

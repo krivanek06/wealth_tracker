@@ -57,7 +57,7 @@ export class FinancialModelingAPIService {
 		const requestConfig: AxiosRequestConfig = {
 			params: {
 				query: modifiedPrefix,
-				limit: 10,
+				limit: 20,
 				apikey: this.apiKey,
 			},
 		};

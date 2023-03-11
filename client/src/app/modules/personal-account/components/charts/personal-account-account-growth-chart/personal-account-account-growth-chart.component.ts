@@ -6,10 +6,26 @@ import { GenericChartSeries } from '../../../../../shared/models';
 
 @Component({
 	selector: 'app-personal-account-account-growth-chart',
+	template: `
+		<highcharts-chart
+			*ngIf="accountOverviewChartData; else skeletonLoading"
+			[Highcharts]="Highcharts"
+			[options]="chartOptions"
+			[callbackFunction]="chartCallback"
+			[(update)]="updateFromInput"
+			[oneToOne]="true"
+			style="width: 100%; display: block"
+			[style.height.px]="heightPx"
+		>
+		</highcharts-chart>
+
+		<!-- skeleton loading -->
+		<ng-template #skeletonLoading>
+			<div class="w-full g-skeleton" [style.height.px]="heightPx"></div>
+		</ng-template>
+	`,
 	standalone: true,
 	imports: [CommonModule, HighchartsChartModule],
-	templateUrl: './personal-account-account-growth-chart.component.html',
-	styleUrls: ['./personal-account-account-growth-chart.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor implements OnChanges {

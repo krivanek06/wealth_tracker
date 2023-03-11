@@ -89,7 +89,7 @@
 		<ng-container *ngIf="transactionHistory$ | async as transactionHistory">
 			<div *ngIf="showHistoricalTransactions" class="min-h-[300px] sm:pl-4 md:pr-2 lg:col-span-2 mt-4">
 				<div class="mb-2 text-base text-center text-wt-danger-medium">Historical data</div>
-				<div class="text-xs text-center text-gray-500">Hold to remove</div>
+				<div class="text-xs text-center text-wt-gray-dark">Hold to remove</div>
 				<div class="pt-3">
 					<div *ngFor="let history of transactionHistory | sortByKey: 'date': 'desc'">
 						<button

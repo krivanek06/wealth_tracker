@@ -8,6 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { FormMatInputWrapperModule } from 'src/app/shared/components';
 import { DefaultImgDirective } from 'src/app/shared/directives';
+import { DatePickerComponent, NumberKeyboardComponent } from '../../../../shared/components';
 import { NotificationBarModule } from '../../../../shared/dialogs';
 import { LargeNumberFormatterPipe, SortByKeyPipe } from '../../../../shared/pipes';
 import { InvestmentAccountCashChangeItemComponent } from './investment-account-cash-change-item/investment-account-cash-change-item.component';
@@ -28,6 +29,8 @@ import { InvestmentAccountCashChangeComponent } from './investment-account-cash-
 		LargeNumberFormatterPipe,
 		NotificationBarModule,
 		SortByKeyPipe,
+		DatePickerComponent,
+		NumberKeyboardComponent,
 	],
 })
 export class InvestmentAccountCashChangeModule {}

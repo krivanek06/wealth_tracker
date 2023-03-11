@@ -115,12 +115,12 @@ export class InvestmentAccountComponent implements OnInit {
 		);
 	}
 
-	onChangeChangeClick(): void {
+	onCashChangeClick(): void {
 		this.dialog.open(InvestmentAccountCashChangeComponent, {
 			data: {
 				investmentId: this.investmentId,
 			},
-			panelClass: ['g-mat-dialog-big'],
+			panelClass: ['g-mat-dialog-small'],
 		});
 	}
 

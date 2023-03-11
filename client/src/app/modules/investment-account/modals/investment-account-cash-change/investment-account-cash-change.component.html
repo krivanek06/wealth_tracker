@@ -70,6 +70,7 @@
 
 			<!-- table -->
 			<app-investment-account-cash-change-item
+				(clickedEmitter)="onDelete($event)"
 				[cashChange]="cashChange$ | async | sortByKey: 'date': 'desc'  "
 			></app-investment-account-cash-change-item>
 		</div>

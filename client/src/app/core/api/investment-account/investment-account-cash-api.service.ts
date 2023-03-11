@@ -44,6 +44,7 @@ export class InvestmentAccountCashApiService {
 						itemId: new Date().toTimeString(),
 						date: input.date,
 						type: input.type,
+						imageUrl: '',
 					},
 				},
 				update: (store: DataProxy, { data }) => {
@@ -71,6 +72,7 @@ export class InvestmentAccountCashApiService {
 						cashValue: removingItem.cashValue,
 						date: removingItem.date,
 						type: removingItem.type,
+						imageUrl: '',
 					},
 				},
 				update: (store: DataProxy, { data }) => {
@@ -104,8 +106,8 @@ export class InvestmentAccountCashApiService {
 		const account = this.investmentAccountCacheService.getInvestmentAccountFromCache(investmentAccountId);
 		const isExists = account.cashChange.find((d) => d.itemId === result.itemId);
 
-		// update cash only if exists
-		if (!!isExists) {
+		// update cash only if doesn't exists
+		if (!isExists) {
 			const cashChange = [...account.cashChange, result].sort((a, b) => (a.date < b.date ? -1 : 1));
 			this.investmentAccountCacheService.updateInvestmentAccount({ ...account, cashChange });
 		}

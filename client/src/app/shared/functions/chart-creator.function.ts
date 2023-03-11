@@ -6,7 +6,8 @@ export const createGenericChartSeriesPie = <T, TKeyFirst extends keyof T, TKeySe
 	firstKey: TKeyFirst,
 	secondKey?: TKeySecond,
 	color?: TKeySecond,
-	imageUrl?: TKeySecond
+	imageUrl?: TKeySecond,
+	imageUrlFirst?: TKeyFirst
 ): GenericChartSeriesData[] => {
 	const displayIndexes = 10;
 
@@ -23,7 +24,7 @@ export const createGenericChartSeriesPie = <T, TKeyFirst extends keyof T, TKeySe
 						name: String(currData),
 						y: curr?.totalValue ?? curr?.value ?? 0,
 						color: color ? String(curr[firstKey][color]) : undefined,
-						custom: imageUrl ? curr[firstKey][imageUrl] : undefined,
+						custom: imageUrl ? curr[firstKey][imageUrl] : imageUrlFirst ? curr[imageUrlFirst] : undefined,
 					},
 				];
 			} else {

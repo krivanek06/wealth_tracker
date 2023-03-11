@@ -26,6 +26,11 @@ export class InvestmentAccountActiveHoldingOutput {
 	@Field(() => String)
 	sector: string;
 
+	@Field(() => String, {
+		nullable: true,
+	})
+	sectorImageUrl?: string;
+
 	@Field(() => Float, {
 		description: 'Total units for the active holding',
 	})

@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Mutation, Resolver } from '@nestjs/graphql';
+import { Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql/args';
 import { InvestmentAccountHolding, InvestmentAccountHoldingHistory } from '../entities';
@@ -45,5 +45,14 @@ export class InvestmentAccountHoldingResolver {
 		@ReqUser() authUser: RequestUser
 	): Promise<InvestmentAccountHoldingHistory> {
 		return this.investmentAccountHoldingService.deleteHoldingHistory(input, authUser.id);
+	}
+
+	/* Resolvers */
+
+	@ResolveField('sectorImageUrl', () => String, {
+		description: 'Returns corresponding image url for the Cash Type',
+	})
+	getCashTypeImageUrl(@Parent() accountHolding: InvestmentAccountHolding): string {
+		return this.investmentAccountHoldingService.getSectorImageUrl(accountHolding);
 	}
 }

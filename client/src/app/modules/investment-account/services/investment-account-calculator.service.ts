@@ -142,7 +142,14 @@ export class InvestmentAccountCalculatorService {
 	 * @returns chart data based on investment account sector allocation
 	 */
 	getSectorAllocationChart(account: InvestmentAccountFragment): GenericChartSeriesPie {
-		const seriesData = createGenericChartSeriesPie(account.activeHoldings, 'sector');
+		const seriesData = createGenericChartSeriesPie(
+			account.activeHoldings,
+			'sector',
+			undefined,
+			undefined,
+			undefined,
+			'sectorImageUrl'
+		);
 
 		return { data: seriesData, colorByPoint: true, name: 'Holdings sector', innerSize: '40%', type: 'pie' };
 	}

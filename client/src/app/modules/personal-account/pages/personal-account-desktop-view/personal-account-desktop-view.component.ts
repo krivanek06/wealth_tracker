@@ -23,6 +23,7 @@ import {
 import { PersonalAccountDailyDataEntryModule } from '../../modals';
 import { DateFormatterPipe } from '../../pipes';
 import { PersonalAccountTagManagerModalModule } from './../../modals';
+import { PersonalAccountDesktopViewSkeletonComponent } from './personal-account-desktop-view-skeleton/personal-account-desktop-view-skeleton.component';
 
 @Component({
 	selector: 'app-personal-account-desktop-view',
@@ -30,6 +31,7 @@ import { PersonalAccountTagManagerModalModule } from './../../modals';
 	imports: [
 		CommonModule,
 		GenericChartModule,
+		PersonalAccountDesktopViewSkeletonComponent,
 		ValuePresentationButtonControlComponent,
 		ScrollWrapperModule,
 		PersonalAccountTagSpendingChartComponent,

@@ -44,7 +44,7 @@ import { PersonalAccountDataService } from '../../services';
 })
 export class PersonalAccountDailyEntriesFilterComponent implements OnInit, ControlValueAccessor, OnChanges {
 	@Output() addDailyEntryClickEmitter = new EventEmitter<void>();
-	@Input() personalAccountDetails?: PersonalAccountDetailsFragment | null;
+	@Input() personalAccountDetails!: PersonalAccountDetailsFragment;
 
 	/**
 	 * values to filter daily data based on some date (year-month-week)

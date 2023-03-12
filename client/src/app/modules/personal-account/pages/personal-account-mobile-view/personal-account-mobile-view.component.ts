@@ -24,6 +24,7 @@ import {
 import { PersonalAccountDailyEntriesTableMobileComponent } from '../../components/mobile';
 import { AccountState, NO_DATE_SELECTED, PersonalAccountDailyDataAggregation } from '../../models';
 import { GetTagByIdPipe } from '../../pipes';
+import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-mobile-view-skeleton/personal-account-mobile-view-skeleton.component';
 @Component({
 	selector: 'app-personal-account-mobile-view',
 	templateUrl: './personal-account-mobile-view.component.html',
@@ -49,6 +50,7 @@ import { GetTagByIdPipe } from '../../pipes';
 		PersonalAccountDailyEntriesTableMobileComponent,
 		PersonalAccountActionButtonsComponent,
 		PersonalAccountDailyEntriesFilterComponent,
+		PersonalAccountMobileViewSkeletonComponent,
 	],
 })
 export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {

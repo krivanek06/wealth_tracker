@@ -1,8 +1,13 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { InvestmentAccountCashChangeType } from '@prisma/client';
 import { PubSubEngine } from 'graphql-subscriptions';
 import { DATA_MODIFICATION } from '../../../shared/dto';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
-import { INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR, INVESTMENT_ACCOUNT_CASH_PUB_SUB } from '../dto';
+import {
+	INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR,
+	INVESTMENT_ACCOUNT_CASH_CHANGE_TYPE_IMAGES,
+	INVESTMENT_ACCOUNT_CASH_PUB_SUB,
+} from '../dto';
 import { InvestmentAccount, InvestmentAccountCashChange } from '../entities';
 import {
 	InvestmentAccountCashCreateInput,
@@ -99,6 +104,18 @@ export class InvestmentAccountCashChangeService {
 		this.publishChange(input.investmentAccountId, removedCashChange, DATA_MODIFICATION.REMOVED);
 
 		return removedCashChange;
+	}
+
+	getCashTypeImageUrl(cashChange: InvestmentAccountCashChange): string {
+		if (cashChange.type === InvestmentAccountCashChangeType.DEPOSIT) {
+			return INVESTMENT_ACCOUNT_CASH_CHANGE_TYPE_IMAGES.DEPOSIT;
+		}
+
+		if (cashChange.type === InvestmentAccountCashChangeType.WITHDRAWAL) {
+			return INVESTMENT_ACCOUNT_CASH_CHANGE_TYPE_IMAGES.WITHDRAWAL;
+		}
+
+		return INVESTMENT_ACCOUNT_CASH_CHANGE_TYPE_IMAGES.ASSET_OPERATION;
 	}
 
 	private async updateInvestmentAccountCashChange(

@@ -1,74 +1,102 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { CommonModule } from '@angular/common';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	Input,
+	OnChanges,
+	OnInit,
+	SimpleChanges,
+} from '@angular/core';
 import * as Highcharts from 'highcharts';
+import { HighchartsChartModule } from 'highcharts-angular';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 import { InvestmentAccountGrowth } from '../../../../core/graphql';
-import { GeneralFunctionUtil } from '../../../../core/utils';
+import { ChartConstructor, GeneralFunctionUtil } from '../../../../core/utils';
+import { LAYOUT_SM } from '../../../../shared/models';
 
 NoDataToDisplay(Highcharts);
 
 @Component({
 	selector: 'app-investment-account-portfolio-growth-chart',
-	templateUrl: './investment-account-portfolio-growth-chart.component.html',
-	styleUrls: ['./investment-account-portfolio-growth-chart.component.scss'],
+	template: `
+		<highcharts-chart
+			[Highcharts]="Highcharts"
+			[options]="chartOptions"
+			[callbackFunction]="chartCallback"
+			style="width: 100%; display: block"
+			[style.height.px]="550"
+		>
+		</highcharts-chart>
+	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
+	imports: [CommonModule, HighchartsChartModule],
 })
-export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
-	@Input() set investmentAccountGrowth(data: InvestmentAccountGrowth[] | null) {
-		this.showSkeleton = !data;
-		this.initChart(data ?? []);
+export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstructor implements OnInit, OnChanges {
+	@Input() investmentAccountGrowth?: InvestmentAccountGrowth[] | null;
+
+	constructor(private breakpointObserver: BreakpointObserver, private cd: ChangeDetectorRef) {
+		super();
 	}
 
-	showSkeleton = true;
-
-	Highcharts: typeof Highcharts = Highcharts;
-	chart: any;
-	updateFromInput = true;
-	chartCallback: any;
-	chartOptions: Highcharts.Options = {};
-	constructor() {
-		const self = this;
-
-		this.chartCallback = (chart: any) => {
-			self.chart = chart;
-		};
+	ngOnChanges(changes: SimpleChanges): void {
+		if (changes?.['investmentAccountGrowth']?.currentValue) {
+			const isDesktop = this.breakpointObserver.isMatched(LAYOUT_SM);
+			this.initChart(this.investmentAccountGrowth ?? [], !isDesktop);
+		}
 	}
 
-	ngOnInit(): void {}
+	ngOnInit(): void {
+		this.breakpointObserver.observe(LAYOUT_SM).subscribe((match) => {
+			if (this.chart && this.investmentAccountGrowth) {
+				this.initChart(this.investmentAccountGrowth, !match.matches);
+				this.chart.redraw();
+
+				// use change detection otherwise does not redraw
+				this.cd.detectChanges();
+			}
+		});
+	}
 
 	private getChartData(data: InvestmentAccountGrowth[]): {
+		balance: number[][];
 		cash: number[][];
 		invested: number[][];
-		balance: number[][];
 		ownedAssets: number[][];
 	} {
 		const cash = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.cash]);
+		const invested = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.invested]);
 
 		const balance = data
 			.filter((d) => d.invested !== 0)
 			.map((point) => [Date.parse(point.date), point.cash + point.invested]);
-		const invested = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.invested]);
 
 		// create points where owned symbol changed
 		const ownedAssets = data
 			.reduce((acc, curr) => {
+				// first data in array
 				if (acc.length == 0) {
 					return [curr];
 				}
-				const previous = acc[acc.length - 1];
-				if (previous.ownedAssets === curr.ownedAssets) {
-					return acc;
-				}
+				// const previous = acc[acc.length - 1];
+				// if (previous.ownedAssets === curr.ownedAssets) {
+				// 	return acc;
+				// }
 
 				return [...acc, curr];
 			}, [] as InvestmentAccountGrowth[])
 			.filter((d) => d.ownedAssets !== 0)
 			.map((d) => [Date.parse(d.date), d.ownedAssets]);
 
-		return { cash, balance, invested, ownedAssets };
+		console.log({ cash, invested, ownedAssets });
+
+		return { balance, cash, invested, ownedAssets };
 	}
 
-	private initChart(data: InvestmentAccountGrowth[]) {
-		const { balance, invested, cash, ownedAssets } = this.getChartData(data);
+	private initChart(data: InvestmentAccountGrowth[], isMobileView: boolean) {
+		const { invested, cash, balance } = this.getChartData(data);
 
 		this.chartOptions = {
 			chart: {
@@ -112,35 +140,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					minorTickInterval: 'auto',
 					tickPixelInterval: 40,
 					minorGridLineWidth: 0,
-					visible: false,
-				},
-				{
-					title: {
-						text: '',
-					},
-					startOnTick: false,
-					endOnTick: false,
-					gridLineColor: '#66666655',
-					opposite: true,
-					gridLineWidth: 1,
-					minorTickInterval: 'auto',
-					tickPixelInterval: 40,
-					minorGridLineWidth: 0,
-					visible: false,
-				},
-				{
-					title: {
-						text: '',
-					},
-					startOnTick: false,
-					endOnTick: false,
-					gridLineColor: '#66666655',
-					opposite: false,
-					gridLineWidth: 1,
-					minorTickInterval: 'auto',
-					tickPixelInterval: 40,
-					minorGridLineWidth: 0,
-					visible: false,
+					visible: !isMobileView,
 				},
 			],
 			xAxis: {
@@ -201,7 +201,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 				backgroundColor: '#232323',
 				xDateFormat: '%A, %b %e, %Y',
 				style: {
-					fontSize: '14px',
+					fontSize: '15px',
 					color: '#D9D8D8',
 				},
 				shared: true,
@@ -210,7 +210,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					const that = this as any;
 					const value = GeneralFunctionUtil.formatLargeNumber(that.y);
 					const name = that.series.name.toLowerCase();
-					const isCurrency = ['cash', 'balance', 'invested'].includes(name);
+					const isCurrency = ['cash', 'invested'].includes(name);
 
 					const displayTextName = isCurrency ? `Portfolio ${name}` : `${that.series.name}`;
 					const displayTextValue = isCurrency ? `$${value}` : value;
@@ -233,7 +233,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					threshold: null,
 				},
 				series: {
-					borderWidth: 0,
+					borderWidth: 2,
 					enableMouseTracking: true,
 					// events: {
 					// 	legendItemClick: function () {
@@ -244,27 +244,9 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 			},
 			series: [
 				{
-					color: '#ee22dd',
-					type: 'column',
-					visible: true,
-					opacity: 0.7,
-					yAxis: 3,
-					name: 'Owned assets',
-					data: ownedAssets,
-				},
-				{
-					color: '#f24f18',
-					type: 'line',
-					visible: true,
-					opacity: 0.7,
-					yAxis: 2,
-					name: 'Cash',
-					data: cash,
-				},
-				{
 					color: '#00c4dd',
 					type: 'area',
-					yAxis: 1,
+					zIndex: 10,
 					fillColor: {
 						linearGradient: {
 							x1: 1,
@@ -284,6 +266,9 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					color: '#6b00fa',
 					type: 'area',
 					yAxis: 0,
+					opacity: 1,
+					zIndex: 2,
+					visible: !isMobileView,
 					fillColor: {
 						linearGradient: {
 							x1: 1,
@@ -298,6 +283,28 @@ export class InvestmentAccountPortfolioGrowthChartComponent implements OnInit {
 					},
 					name: 'Invested',
 					data: invested,
+				},
+				{
+					color: '#f24f18',
+					type: 'area',
+					visible: !isMobileView,
+					opacity: 0.6,
+					yAxis: 1,
+					zIndex: 1,
+					name: 'Cash',
+					data: cash,
+					fillColor: {
+						linearGradient: {
+							x1: 1,
+							y1: 0,
+							x2: 0,
+							y2: 1,
+						},
+						stops: [
+							[0, '#f24f18'],
+							[1, 'transparent'],
+						],
+					},
 				},
 			],
 		};

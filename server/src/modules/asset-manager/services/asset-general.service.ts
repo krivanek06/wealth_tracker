@@ -38,7 +38,7 @@ export class AssetGeneralService {
 		try {
 			const apiData = await this.financialModelingAPIService.searchAssetBySymbolTickerPrefix(symbolPrefix, isCrypto);
 			// filter out symbol name that include '.' like NN.DE, used to get errors
-			const unsupportedCharacters = ['.', '-'];
+			const unsupportedCharacters = ['.', '-', '='];
 			const symbolNames = apiData.map((d) => d.symbol).filter((d) => !unsupportedCharacters.some((c) => d.includes(c)));
 			return symbolNames.length === 0 ? [] : this.getAssetGeneralForSymbols(symbolNames);
 		} catch (e) {
@@ -216,8 +216,14 @@ export class AssetGeneralService {
 			return [];
 		}
 
+		// https://site.financialmodelingprep.com/developer/docs/#Ticker-Search
+		const allowedExchanges = ['ETF', 'MUTUAL_FUND', 'CRYPTO', 'NASDAQ', 'NYSE'];
+
 		const assetQuotesAPI = await this.financialModelingAPIService.getAssetQuotes(outDatedSymbols);
-		const assetQuotes = assetQuotesAPI.map((d) => AssetGeneralUtil.convertFMQuoteToAssetGeneralQuote(d));
+		const assetQuotes = assetQuotesAPI
+			.map((d) => AssetGeneralUtil.convertFMQuoteToAssetGeneralQuote(d))
+			.filter((d) => !!d.marketCap)
+			.filter((d) => allowedExchanges.includes(d.exchange));
 
 		return Promise.all(
 			assetQuotes.map((d) =>

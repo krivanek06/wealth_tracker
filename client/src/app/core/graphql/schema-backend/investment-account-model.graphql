@@ -14,6 +14,7 @@ fragment InvestmentAccountCashChange on InvestmentAccountCashChange {
 	cashValue
 	type
 	date
+	imageUrl
 }
 fragment InvestmentAccountHolding on InvestmentAccountHolding {
 	id
@@ -21,6 +22,7 @@ fragment InvestmentAccountHolding on InvestmentAccountHolding {
 	investmentAccountId
 	type
 	sector
+	sectorImageUrl
 	holdingHistory {
 		...InvestmentAccountHoldingHistory
 	}
@@ -40,6 +42,7 @@ fragment InvestmentAccountActiveHoldingOutput on InvestmentAccountActiveHoldingO
 	investmentAccountId
 	type
 	sector
+	sectorImageUrl
 	units
 	totalValue
 	beakEvenPrice

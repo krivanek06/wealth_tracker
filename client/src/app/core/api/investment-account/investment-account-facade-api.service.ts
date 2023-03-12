@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import {
 	CreateInvestmentAccountCasheMutation,
 	CreateInvestmentAccountHoldingMutation,
@@ -11,14 +11,15 @@ import {
 	EditInvestmentAccountMutation,
 	InvestmentAccounHoldingCreateInput,
 	InvestmentAccountCashChangeFragment,
+	InvestmentAccountCashChangeType,
 	InvestmentAccountCashCreateInput,
 	InvestmentAccountCashDeleteInput,
 	InvestmentAccountEditInput,
-	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
 	InvestmentAccountOverviewFragment,
 	InvestmentAccountTransactionOutput,
 } from '../../graphql';
+import { InvestmentAccountFragmentExtended } from '../../models/investment-account.model';
 import { InvestmentAccountApiService } from './investment-account-api.service';
 import { InvestmentAccountCashApiService } from './investment-account-cash-api.service';
 import { InvestmentAccountHoldingService } from './investment-account-holding.service';
@@ -37,8 +38,52 @@ export class InvestmentAccountFacadeApiService {
 		return this.investmentAccountApiService.getInvestmentAccounts();
 	}
 
-	getInvestmentAccountById(accountId: string): Observable<InvestmentAccountFragment> {
-		return this.investmentAccountApiService.getInvestmentAccountById(accountId);
+	getInvestmentAccountById(accountId: string): Observable<InvestmentAccountFragmentExtended> {
+		return this.investmentAccountApiService.getInvestmentAccountById(accountId).pipe(
+			map((account) => {
+				const currentCash = account.cashChange.reduce((acc, curr) => {
+					if (curr.type === InvestmentAccountCashChangeType.Withdrawal) {
+						return acc - curr.cashValue;
+					}
+
+					return acc + curr.cashValue;
+				}, 0);
+				const currentInvested = account.activeHoldings.reduce((acc, curr) => acc + curr.totalValue, 0);
+				const currentBalance = currentInvested + currentCash;
+
+				// create aggregation for each operation
+				const aggregation = account.cashChange.reduce(
+					(acc, curr) => {
+						return { ...acc, [curr.type]: acc[curr.type] + curr.cashValue };
+					},
+					{
+						ASSET_OPERATION: 0,
+						DEPOSIT: 0,
+						WITHDRAWAL: 0,
+					} as { [key in InvestmentAccountCashChangeType]: number }
+				);
+
+				// create result
+				const result: InvestmentAccountFragmentExtended = {
+					__typename: account.__typename,
+					id: account.id,
+					accountType: account.accountType,
+					activeHoldings: account.activeHoldings,
+					cashChange: account.cashChange,
+					name: account.createdAt,
+					userId: account.userId,
+					createdAt: account.createdAt,
+					currentCash,
+					currentInvested,
+					currentBalance,
+					AssetOperationTotal: aggregation.ASSET_OPERATION,
+					DepositTotal: aggregation.DEPOSIT,
+					WithdrawalTotal: aggregation.WITHDRAWAL,
+				};
+
+				return result;
+			})
+		);
 	}
 
 	createInvestmentAccount(name: string): Observable<FetchResult<CreateInvestmentAccountMutation>> {

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { InvestmentAccountFragment } from '../../../../core/graphql';
+import { InvestmentAccountFragmentExtended } from '../../../../core/models';
 import { PerceptageIncreaseDirective } from '../../../../shared/directives';
 import { DailyInvestmentChange } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
@@ -17,7 +17,7 @@ import { InvestmentAccountCalculatorService } from '../../services';
 })
 export class InvestmentAccountStateComponent implements OnInit {
 	@Output() cashChangeClickEmitter = new EventEmitter<void>();
-	@Input() set investmentAccount(account: InvestmentAccountFragment | null) {
+	@Input() set investmentAccount(account: InvestmentAccountFragmentExtended | null) {
 		if (!account) {
 			return;
 		}
@@ -25,7 +25,7 @@ export class InvestmentAccountStateComponent implements OnInit {
 		this.currentInvestedAmout =
 			this.investmentAccountCalculatorService.getInvestmentAccountByIdCurrentInvestedAmout(account);
 
-		this.cashAmount = account.cashChange[account.cashChange.length - 1]?.cashValue ?? 0;
+		this.cashAmount = account.currentCash;
 
 		this.dailyInvestmentChange = this.investmentAccountCalculatorService.getDailyInvestmentChange(account);
 
@@ -36,19 +36,19 @@ export class InvestmentAccountStateComponent implements OnInit {
 	/**
 	 * Total invested amount by the user
 	 */
-	totalInvestedAmount?: number;
+	totalInvestedAmount!: number;
 
 	/**
 	 * Current state of investments -> holding.price * units
 	 */
-	currentInvestedAmout?: number;
+	currentInvestedAmout!: number;
 
-	cashAmount?: number;
+	cashAmount!: number;
 
 	/**
 	 * Daily sum and percentage change for investment account
 	 */
-	dailyInvestmentChange?: DailyInvestmentChange | null;
+	dailyInvestmentChange!: DailyInvestmentChange;
 
 	constructor(private investmentAccountCalculatorService: InvestmentAccountCalculatorService) {}
 

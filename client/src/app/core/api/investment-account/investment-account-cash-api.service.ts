@@ -44,11 +44,16 @@ export class InvestmentAccountCashApiService {
 						itemId: new Date().toTimeString(),
 						date: input.date,
 						type: input.type,
+						imageUrl: '',
 					},
 				},
 				update: (store: DataProxy, { data }) => {
 					const result = data?.createInvestmentAccountCashe as InvestmentAccountCashChangeFragment;
-					this.addCashFromCache(input.investmentAccountId, result);
+
+					// add cash entry to the array of entries
+					this.addCashToCache(input.investmentAccountId, result);
+
+					// update 'currentCash'
 				},
 			}
 		);
@@ -71,6 +76,7 @@ export class InvestmentAccountCashApiService {
 						cashValue: removingItem.cashValue,
 						date: removingItem.date,
 						type: removingItem.type,
+						imageUrl: '',
 					},
 				},
 				update: (store: DataProxy, { data }) => {
@@ -92,7 +98,7 @@ export class InvestmentAccountCashApiService {
 				if (result.modification === Data_Modification.Removed) {
 					this.removeCashFromCache(result.accountId, result.data);
 				} else if (result.modification === Data_Modification.Created) {
-					this.addCashFromCache(result.accountId, result.data);
+					this.addCashToCache(result.accountId, result.data);
 				}
 
 				console.log('createdCashSubscription', result);
@@ -100,12 +106,12 @@ export class InvestmentAccountCashApiService {
 		);
 	}
 
-	private addCashFromCache(investmentAccountId: string, result: InvestmentAccountCashChangeFragment): void {
+	private addCashToCache(investmentAccountId: string, result: InvestmentAccountCashChangeFragment): void {
 		const account = this.investmentAccountCacheService.getInvestmentAccountFromCache(investmentAccountId);
 		const isExists = account.cashChange.find((d) => d.itemId === result.itemId);
 
-		// update cash only if exists
-		if (!!isExists) {
+		// update cash only if doesn't exists
+		if (!isExists) {
 			const cashChange = [...account.cashChange, result].sort((a, b) => (a.date < b.date ? -1 : 1));
 			this.investmentAccountCacheService.updateInvestmentAccount({ ...account, cashChange });
 		}

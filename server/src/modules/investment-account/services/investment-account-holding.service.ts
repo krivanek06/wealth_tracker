@@ -10,6 +10,7 @@ import {
 	InvestmentAccountCashCreateInput,
 } from '../inputs';
 import { InvestmentAccountActiveHoldingOutput, InvestmentAccountTransactionOutput } from '../outputs';
+import { ASSET_STOCK_SECTOR_TYPE_IMAGES } from './../../asset-manager';
 import { InvestmentAccountCashChangeService } from './investment-account-cache-change.service';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
@@ -30,6 +31,13 @@ export class InvestmentAccountHoldingService {
 					0
 				) > 0
 		);
+	}
+
+	getSectorImageUrl(accountHolding: InvestmentAccountHolding): string | undefined {
+		// Consumer Defensive -> consumer_defensive
+		const formattedSectorName = accountHolding.sector.toLowerCase().split(' ').join('_');
+		const url = ASSET_STOCK_SECTOR_TYPE_IMAGES[formattedSectorName];
+		return url;
 	}
 
 	async createInvestmentAccountHolding(
@@ -274,6 +282,7 @@ export class InvestmentAccountHoldingService {
 				totalValue: units !== 0 ? totalValue : 0,
 				units,
 				beakEvenPrice,
+				sectorImageUrl: this.getSectorImageUrl(holding),
 			};
 			return merge;
 		});

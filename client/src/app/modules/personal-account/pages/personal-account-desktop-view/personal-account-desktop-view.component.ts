@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import {
 	FormMatInputWrapperModule,
 	GenericChartModule,
+	PieChartComponent,
 	ScrollWrapperModule,
 	ValuePresentationButtonControlComponent,
 } from '../../../../shared/components';
@@ -17,12 +18,12 @@ import {
 	PersonalAccountDailyEntriesFilterComponent,
 	PersonalAccountDailyEntriesTableModule,
 	PersonalAccountExpensesByTagComponent,
-	PersonalAccountTagAllocationChartComponent,
 	PersonalAccountTagSpendingChartComponent,
 } from '../../components';
 import { PersonalAccountDailyDataEntryModule } from '../../modals';
 import { DateFormatterPipe } from '../../pipes';
-import { PersonalAccountTagManagerModalModule } from './../../modals/personal-account-tag-manager-modal/personal-account-tag-manager-modal.module';
+import { PersonalAccountTagManagerModalModule } from './../../modals';
+import { PersonalAccountDesktopViewSkeletonComponent } from './personal-account-desktop-view-skeleton/personal-account-desktop-view-skeleton.component';
 
 @Component({
 	selector: 'app-personal-account-desktop-view',
@@ -30,6 +31,7 @@ import { PersonalAccountTagManagerModalModule } from './../../modals/personal-ac
 	imports: [
 		CommonModule,
 		GenericChartModule,
+		PersonalAccountDesktopViewSkeletonComponent,
 		ValuePresentationButtonControlComponent,
 		ScrollWrapperModule,
 		PersonalAccountTagSpendingChartComponent,
@@ -41,7 +43,7 @@ import { PersonalAccountTagManagerModalModule } from './../../modals/personal-ac
 		FormMatInputWrapperModule,
 		PersonalAccountDailyEntriesFilterComponent,
 		PersonalAccountAccountStateComponent,
-		PersonalAccountTagAllocationChartComponent,
+		PieChartComponent,
 		PersonalAccountAccountGrowthChartComponent,
 		PersonalAccountActionButtonsComponent,
 		PersonalAccountTagManagerModalModule,

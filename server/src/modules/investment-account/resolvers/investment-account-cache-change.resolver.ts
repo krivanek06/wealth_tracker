@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common';
-import { Mutation, Resolver, Subscription } from '@nestjs/graphql';
+import { Mutation, Parent, ResolveField, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSubEngine } from 'graphql-subscriptions';
 import { AuthorizationGuard } from 'src/auth';
 import { RequestUser, ReqUser } from '../../../auth/';
@@ -45,6 +45,15 @@ export class InvestmentAccountCashChangeResolver {
 		@ReqUser() authUser: RequestUser
 	): Promise<InvestmentAccountCashChange> {
 		return this.investmentAccountCacheChangeService.deleteInvestmentAccountCash(input, authUser.id);
+	}
+
+	/* Resolvers */
+
+	@ResolveField('imageUrl', () => String, {
+		description: 'Returns corresponding image url for the Cash Type',
+	})
+	getCashTypeImageUrl(@Parent() cashChange: InvestmentAccountCashChange): string {
+		return this.investmentAccountCacheChangeService.getCashTypeImageUrl(cashChange);
 	}
 
 	/* Subscriptions */

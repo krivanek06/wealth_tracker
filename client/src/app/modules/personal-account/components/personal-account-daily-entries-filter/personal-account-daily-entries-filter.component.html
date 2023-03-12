@@ -1,6 +1,6 @@
 <div class="flex flex-wrap gap-4 max-sm:order-2">
 	<ng-container [formGroup]="formGroup">
-		<div *ngIf="personalAccountDetails; else skeletonLoading" class="w-full md:w-[350px]">
+		<div class="w-full md:w-[350px]">
 			<app-form-mat-input-wrapper
 				inputCaption="Filter by date"
 				controlName="dateFilter"
@@ -18,7 +18,7 @@
 </div>
 
 <!-- add button -->
-<div *ngIf="personalAccountDetails; else skeletonLoading">
+<div>
 	<button
 		mat-stroked-button
 		(click)="onAddDailyEntryClick()"
@@ -34,8 +34,3 @@
 <div class="block my-4 sm:hidden">
 	<mat-divider></mat-divider>
 </div>
-
-<!-- skeleton -->
-<ng-template #skeletonLoading>
-	<div class="g-skeleton w-full md:w-[350px] h-14 mb-3"></div>
-</ng-template>

@@ -1,47 +1,40 @@
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-	<ng-container *ngIf="aggregations; else skeletonLoading">
-		<button
-			*ngFor="let aggregation of aggregations"
-			mat-button
-			(click)="onClick(aggregation)"
-			[ngClass]="{
+	<button
+		*ngFor="let aggregation of aggregations"
+		mat-button
+		(click)="onClick(aggregation)"
+		[ngClass]="{
       'pointer-events-none': disabled,
       'c-selected-button': selectedAggregationIds | inArray: aggregation.id,
       'bg-wt-background-dark': !(selectedAggregationIds | inArray: aggregation.id)
     }"
-			class="w-full max-sm:p-0 shadow-lg md:py-4 h-[95px] md:h-[110px] overflow-hidden"
-		>
-			<div class="flex items-center gap-2 -ml-1">
-				<!-- tag image -->
-				<div
-					class="p-2 rounded-l-xl w-14 md:w-16 h-[95px] md:h-[110px] grid min-w-[60px]"
-					style="background-color: {{aggregation.color}};"
-				>
-					<img appDefaultImg [src]="aggregation.imageUrl" alt="tag image" class="m-auto h-9" />
-				</div>
+		class="w-full max-sm:p-0 shadow-lg md:py-4 h-[95px] md:h-[110px] overflow-hidden"
+	>
+		<div class="flex items-center gap-2 -ml-1">
+			<!-- tag image -->
+			<div
+				class="p-2 rounded-l-xl w-14 md:w-16 h-[95px] md:h-[110px] grid min-w-[60px]"
+				style="background-color: {{aggregation.color}};"
+			>
+				<img appDefaultImg [src]="aggregation.imageUrl" alt="tag image" class="m-auto h-9" />
+			</div>
 
-				<div class="flex flex-col flex-1">
-					<!-- body -->
-					<ng-container [ngTemplateOutlet]="buttonBody" [ngTemplateOutletContext]="{aggregation:aggregation}">
-					</ng-container>
+			<div class="flex flex-col flex-1">
+				<!-- body -->
+				<ng-container [ngTemplateOutlet]="buttonBody" [ngTemplateOutletContext]="{aggregation:aggregation}">
+				</ng-container>
 
-					<!-- progress bar -->
-					<div *ngIf="!aggregation.isWeeklyView" class="-mt-1">
-						<app-progress-item
-							[currentValue]="aggregation.budgetToTimePeriod ? aggregation.totalValue : 0"
-							[totalThresholdValue]="aggregation.budgetToTimePeriod ?? 0"
-						></app-progress-item>
-					</div>
+				<!-- progress bar -->
+				<div *ngIf="!aggregation.isWeeklyView" class="-mt-1">
+					<app-progress-item
+						[currentValue]="aggregation.budgetToTimePeriod ? aggregation.totalValue : 0"
+						[totalThresholdValue]="aggregation.budgetToTimePeriod ?? 0"
+					></app-progress-item>
 				</div>
 			</div>
-		</button>
-	</ng-container>
+		</div>
+	</button>
 </div>
-
-<!-- skeleton loading -->
-<ng-template #skeletonLoading>
-	<div class="w-full g-skeleton h-[95px] md:h-[110px]" *ngRange="12"></div>
-</ng-template>
 
 <!-- button body -->
 <ng-template #buttonBody let-aggregation="aggregation">

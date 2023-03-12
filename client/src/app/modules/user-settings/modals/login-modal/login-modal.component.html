@@ -1,5 +1,11 @@
-<div mat-dialog-title>
-	<h2>Login</h2>
+<div class="flex items-center justify-between p-4 md:px-10">
+	<h2 class="text-lg text-wt-primary-dark">Login</h2>
+
+	<div>
+		<button mat-icon-button mat-dialog-close color="warn">
+			<mat-icon>close</mat-icon>
+		</button>
+	</div>
 </div>
 
 <!-- content -->
@@ -23,5 +29,5 @@
 
 <!-- social media login -->
 <mat-dialog-actions>
-	<a mat-flat-button [href]="loginGoogle" color="warn" class="w-full">Google</a>
+	<a mat-flat-button [href]="loginGoogle" color="warn" class="w-full text-center">Google</a>
 </mat-dialog-actions>

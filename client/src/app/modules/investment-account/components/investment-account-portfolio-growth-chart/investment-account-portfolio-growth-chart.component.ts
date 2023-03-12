@@ -142,20 +142,6 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 					minorGridLineWidth: 0,
 					visible: !isMobileView,
 				},
-				{
-					title: {
-						text: '',
-					},
-					startOnTick: false,
-					endOnTick: false,
-					gridLineColor: '#66666655',
-					opposite: true,
-					gridLineWidth: 1,
-					minorTickInterval: 'auto',
-					tickPixelInterval: 40,
-					minorGridLineWidth: 0,
-					visible: false,
-				},
 			],
 			xAxis: {
 				visible: true,
@@ -260,6 +246,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 				{
 					color: '#00c4dd',
 					type: 'area',
+					zIndex: 10,
 					fillColor: {
 						linearGradient: {
 							x1: 1,
@@ -278,9 +265,9 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 				{
 					color: '#6b00fa',
 					type: 'area',
-					yAxis: 1,
+					yAxis: 0,
 					opacity: 1,
-					zIndex: 3,
+					zIndex: 2,
 					visible: !isMobileView,
 					fillColor: {
 						linearGradient: {
@@ -303,7 +290,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 					visible: !isMobileView,
 					opacity: 0.6,
 					yAxis: 1,
-					zIndex: 2,
+					zIndex: 1,
 					name: 'Cash',
 					data: cash,
 					fillColor: {

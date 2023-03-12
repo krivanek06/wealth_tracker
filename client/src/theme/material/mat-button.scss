@@ -30,3 +30,8 @@ button[mat-stroked-button] {
 	background-color: #4b55636b !important;
 	pointer-events: none !important;
 }
+
+.mat-mdc-unelevated-button[disabled][disabled] {
+	background: var(--gray-dark) !important;
+	color: white !important;
+}

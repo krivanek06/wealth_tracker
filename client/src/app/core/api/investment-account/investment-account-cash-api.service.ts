@@ -49,7 +49,11 @@ export class InvestmentAccountCashApiService {
 				},
 				update: (store: DataProxy, { data }) => {
 					const result = data?.createInvestmentAccountCashe as InvestmentAccountCashChangeFragment;
-					this.addCashFromCache(input.investmentAccountId, result);
+
+					// add cash entry to the array of entries
+					this.addCashToCache(input.investmentAccountId, result);
+
+					// update 'currentCash'
 				},
 			}
 		);
@@ -94,7 +98,7 @@ export class InvestmentAccountCashApiService {
 				if (result.modification === Data_Modification.Removed) {
 					this.removeCashFromCache(result.accountId, result.data);
 				} else if (result.modification === Data_Modification.Created) {
-					this.addCashFromCache(result.accountId, result.data);
+					this.addCashToCache(result.accountId, result.data);
 				}
 
 				console.log('createdCashSubscription', result);
@@ -102,7 +106,7 @@ export class InvestmentAccountCashApiService {
 		);
 	}
 
-	private addCashFromCache(investmentAccountId: string, result: InvestmentAccountCashChangeFragment): void {
+	private addCashToCache(investmentAccountId: string, result: InvestmentAccountCashChangeFragment): void {
 		const account = this.investmentAccountCacheService.getInvestmentAccountFromCache(investmentAccountId);
 		const isExists = account.cashChange.find((d) => d.itemId === result.itemId);
 

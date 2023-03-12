@@ -14,6 +14,15 @@ export class InvestmentAccountService {
 		private assetGeneralService: AssetGeneralService
 	) {}
 
+	getCurrentCashByAccount(investmentAccount: InvestmentAccount): number {
+		return investmentAccount.cashChange.reduce((acc, curr) => {
+			if (curr.type === 'WITHDRAWAL') {
+				return acc - curr.cashValue;
+			}
+			return acc + curr.cashValue;
+		}, 0);
+	}
+
 	getInvestmentAccounts(userId: string): Promise<InvestmentAccount[]> {
 		return this.investmentAccountRepositoryService.getInvestmentAccounts(userId);
 	}

@@ -7,13 +7,12 @@ import {
 	InvestmentAccountCashChangeFragment,
 	InvestmentAccountCashChangeType,
 	InvestmentAccountCashCreateInput,
-	InvestmentAccountFragment,
 } from '../../../../core/graphql';
+import { InvestmentAccountFragmentExtended } from '../../../../core/models';
 import { DateServiceUtil } from '../../../../core/utils';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
 import { InputSource, NONE_INPUT_SOURCE, requiredValidator } from '../../../../shared/models';
-import { CashAllocation, CashChangeTypesInputSource } from '../../models';
-import { InvestmentAccountCalculatorService } from '../../services';
+import { CashChangeTypesInputSource } from '../../models';
 
 @Component({
 	selector: 'app-investment-account-cash-change',
@@ -37,10 +36,7 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 		{ caption: 'Withdrawal', value: InvestmentAccountCashChangeType.Withdrawal },
 	];
 
-	investmentAccount$!: Observable<InvestmentAccountFragment>;
-
-	// display different categories and accumulated cash for them
-	cashCategory$!: Observable<CashAllocation>;
+	investmentAccount$!: Observable<InvestmentAccountFragmentExtended>;
 
 	cashChange$!: Observable<InvestmentAccountCashChangeFragment[]>;
 
@@ -53,18 +49,12 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 
 	constructor(
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
-		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
 		private dialogRef: MatDialogRef<InvestmentAccountCashChangeComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: { investmentId: string }
 	) {}
 
 	ngOnInit(): void {
 		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.data.investmentId);
-
-		// build cash categories
-		this.cashCategory$ = this.investmentAccount$.pipe(
-			map((account) => this.investmentAccountCalculatorService.getCashCategories(account))
-		);
 
 		// displayed cash change in table
 		this.cashChange$ = combineLatest([

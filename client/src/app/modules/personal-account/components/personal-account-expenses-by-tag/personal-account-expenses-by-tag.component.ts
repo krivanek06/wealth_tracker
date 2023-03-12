@@ -32,7 +32,7 @@ import { PersonalAccountTagAggregation } from '../../models';
 	],
 })
 export class PersonalAccountExpensesByTagComponent implements ControlValueAccessor {
-	@Input() aggregations?: PersonalAccountTagAggregation[] | null = null;
+	@Input() aggregations!: PersonalAccountTagAggregation[];
 	@Input() multiple = true;
 	@Input() disabled = false;
 

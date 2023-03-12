@@ -21,7 +21,6 @@ import { PersonalAccountTagFragment } from './../../../../core/graphql';
 })
 export class PersonalAccountDisplayToggleComponent implements ControlValueAccessor {
 	@Input() selectedTag?: PersonalAccountTagFragment | null;
-	@Input() isDataLoaded?: boolean | null;
 
 	showHistoryFormControl = false;
 

@@ -12,5 +12,5 @@ import { AccountState } from '../../models';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountAccountStateComponent {
-	@Input() accountState?: AccountState | null;
+	@Input() accountState!: AccountState;
 }

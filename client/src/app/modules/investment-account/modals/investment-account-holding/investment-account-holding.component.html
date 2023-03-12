@@ -22,7 +22,8 @@
 	>
 		Symbol name is required
 	</div>
-	<div class="mt-2 mb-5 g-error-banner" *ngIf="cashError$ | async">Insufficient cash amount</div>
+	<div class="mt-2 mb-5 g-error-banner" *ngIf="insufficientCashAmountError$ | async">Insufficient cash amount</div>
+	<div class="mt-2 mb-5 g-error-banner" *ngIf="insufficientUnitsError$ | async">Insufficient units to sell</div>
 </div>
 
 <form (ngSubmit)="onSave()" [formGroup]="formGroup">
@@ -34,7 +35,7 @@
 			<!-- transaction type -->
 			<div class="my-4">
 				<button
-					[disabled]="!data.selectedAsset"
+					[disabled]="!data.activeHolding"
 					type="button"
 					mat-flat-button
 					[color]="formGroup.controls.isBuying.value ? 'accent' : 'warn'"
@@ -47,7 +48,7 @@
 
 			<!-- asset type -->
 			<app-form-mat-input-wrapper
-				[disabled]="!!data.selectedAsset"
+				[disabled]="!!data.activeHolding"
 				[inputSource]="TransactionAssetTypeInputSource"
 				class="w-full"
 				controlName="assetType"
@@ -58,7 +59,7 @@
 			<!-- search symbol -->
 			<app-asset-manager-search-asset
 				formControlName="symbol"
-				[isDisabled]="!!data.selectedAsset"
+				[isDisabled]="!!data.activeHolding"
 				[searchableAsset]="formGroup.controls.assetType.value"
 			></app-asset-manager-search-asset>
 		</div>
@@ -69,7 +70,7 @@
 				<div>
 					<span class="text-gray-400">Cash: </span>
 					<span *ngIf="investmentAccount$ | async as investmentAccount">
-						{{ investmentAccount.currentCash | largeNumberFormatter }}
+						{{ investmentAccount.currentCash | currency }}
 					</span>
 				</div>
 				<div>
@@ -124,7 +125,7 @@
 	<mat-dialog-actions>
 		<div class="g-mat-dialog-actions-full">
 			<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
-			<button mat-stroked-button color="primary" type="submit" [disabled]="cashError$ | async">
+			<button mat-stroked-button color="primary" type="submit" [disabled]="isError$ | async">
 				<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
 				Save
 			</button>

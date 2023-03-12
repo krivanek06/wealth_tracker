@@ -1,11 +1,24 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { catchError, combineLatest, EMPTY, filter, first, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import {
+	catchError,
+	combineLatest,
+	EMPTY,
+	filter,
+	first,
+	map,
+	merge,
+	Observable,
+	startWith,
+	switchMap,
+	tap,
+} from 'rxjs';
 import { AssetApiService, InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	AssetGeneralFragment,
 	InvestmentAccounHoldingCreateInput,
+	InvestmentAccountActiveHoldingOutputFragment,
 	InvestmentAccountHoldingHistoryType,
 	InvestmentAccountTransactionOutput,
 } from '../../../../core/graphql';
@@ -48,7 +61,6 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 
 	investmentAccount$!: Observable<InvestmentAccountFragmentExtended>;
 	transactionHistory$!: Observable<InvestmentAccountTransactionOutput[]>;
-	cashError$!: Observable<boolean>;
 
 	// used to show loader
 	isSaving = false;
@@ -58,6 +70,11 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	SearchableAssetEnum = SearchableAssetEnum;
 
 	showHistoricalTransactions = false;
+
+	// error
+	insufficientCashAmountError$!: Observable<boolean>;
+	insufficientUnitsError$!: Observable<boolean>;
+	isError$!: Observable<boolean>;
 
 	datePickerConfig: InputTypeDateTimePickerConfig = {
 		maxDate: new Date(),
@@ -92,22 +109,23 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		if (!this.formGroup.controls.symbol.value) {
 			return 0;
 		}
-		return this.formSymbolPrice.value * Number(this.formGroup.controls.units.value);
+		return this.formSymbolPrice.value * Number(this.units.value);
 	}
 
 	constructor(
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
 		private assetApiService: AssetApiService,
 		private dialogRef: MatDialogRef<InvestmentAccountHoldingComponent>,
-		@Inject(MAT_DIALOG_DATA) public data: { investmentId: string; selectedAsset?: AssetGeneralFragment }
+		@Inject(MAT_DIALOG_DATA)
+		public data: { investmentId: string; activeHolding?: InvestmentAccountActiveHoldingOutputFragment }
 	) {}
 	ngAfterViewInit(): void {
 		this.formGroup.valueChanges.subscribe(console.log);
 
 		// load values for selected asset
 		setTimeout(() => {
-			if (this.data.selectedAsset) {
-				this.formSymbol.patchValue(this.data.selectedAsset);
+			if (this.data.activeHolding) {
+				this.formSymbol.patchValue(this.data.activeHolding.assetGeneral);
 				this.formAssetType.patchValue(SearchableAssetEnum.AseetById);
 			}
 		});
@@ -117,13 +135,27 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.data.investmentId);
 
 		// on form change check if user has enough cash
-		this.cashError$ = this.formGroup.valueChanges.pipe(
+		this.insufficientCashAmountError$ = this.formGroup.valueChanges.pipe(
 			switchMap(() =>
 				this.investmentAccount$.pipe(
 					map((investmentAccount) => investmentAccount.currentCash < this.totalValue && this.isBuying.value)
 				)
 			)
 		);
+
+		// check if user has enough units to sell
+		this.insufficientUnitsError$ = this.formGroup.valueChanges.pipe(
+			switchMap(() =>
+				this.investmentAccount$.pipe(
+					map(
+						() => !!this.data.activeHolding && !this.isBuying.value && this.units.value > this.data.activeHolding.units
+					)
+				)
+			)
+		);
+
+		// merge errors together
+		this.isError$ = merge(this.insufficientCashAmountError$, this.insufficientUnitsError$);
 
 		// on symbol pick load transaction history
 		this.transactionHistory$ = this.formSymbol.valueChanges.pipe(
@@ -136,8 +168,8 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		);
 
 		// IDK why, but keep data in ngAfterViewInit because it just works
-		if (this.data.selectedAsset) {
-			this.formSymbol.patchValue(this.data.selectedAsset);
+		if (this.data.activeHolding) {
+			this.formSymbol.patchValue(this.data.activeHolding.assetGeneral);
 			this.formAssetType.patchValue(SearchableAssetEnum.AseetById);
 		}
 

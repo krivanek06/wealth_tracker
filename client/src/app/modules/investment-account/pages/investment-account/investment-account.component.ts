@@ -124,11 +124,11 @@ export class InvestmentAccountComponent implements OnInit {
 		});
 	}
 
-	onAddHolding(holding?: InvestmentAccountActiveHoldingOutputFragment): void {
+	onAddHolding(activeHolding?: InvestmentAccountActiveHoldingOutputFragment): void {
 		this.dialog.open(InvestmentAccountHoldingComponent, {
 			data: {
 				investmentId: this.investmentId,
-				selectedAsset: holding?.assetGeneral,
+				activeHolding: activeHolding,
 			},
 			panelClass: ['g-mat-dialog-big'],
 		});

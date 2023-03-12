@@ -6,10 +6,10 @@ import { AssetApiService, InvestmentAccountFacadeApiService } from '../../../../
 import {
 	AssetGeneralFragment,
 	InvestmentAccounHoldingCreateInput,
-	InvestmentAccountFragment,
 	InvestmentAccountHoldingHistoryType,
 	InvestmentAccountTransactionOutput,
 } from '../../../../core/graphql';
+import { InvestmentAccountFragmentExtended } from '../../../../core/models';
 import { DateServiceUtil } from '../../../../core/utils';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
 import {
@@ -19,8 +19,7 @@ import {
 	requiredValidator,
 } from '../../../../shared/models';
 import { SearchableAssetEnum } from '../../../asset-manager/models';
-import { CashAllocation, TransactionAssetTypeInputSource } from '../../models';
-import { InvestmentAccountCalculatorService } from '../../services';
+import { TransactionAssetTypeInputSource } from '../../models';
 
 @Component({
 	selector: 'app-investment-account-holding',
@@ -47,11 +46,8 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		date: new FormControl<Date>(new Date(), { validators: [requiredValidator], nonNullable: true }),
 	});
 
-	investmentAccount$!: Observable<InvestmentAccountFragment>;
+	investmentAccount$!: Observable<InvestmentAccountFragmentExtended>;
 	transactionHistory$!: Observable<InvestmentAccountTransactionOutput[]>;
-
-	// display different categories and accumulated cash for them
-	cashCategory$!: Observable<CashAllocation>;
 	cashError$!: Observable<boolean>;
 
 	// used to show loader
@@ -101,7 +97,6 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 
 	constructor(
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
-		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
 		private assetApiService: AssetApiService,
 		private dialogRef: MatDialogRef<InvestmentAccountHoldingComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: { investmentId: string; selectedAsset?: AssetGeneralFragment }
@@ -121,16 +116,11 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	ngOnInit(): void {
 		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.data.investmentId);
 
-		// build cash categories
-		this.cashCategory$ = this.investmentAccount$.pipe(
-			map((account) => this.investmentAccountCalculatorService.getCashCategories(account))
-		);
-
 		// on form change check if user has enough cash
 		this.cashError$ = this.formGroup.valueChanges.pipe(
 			switchMap(() =>
-				this.cashCategory$.pipe(
-					map((c) => c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL < this.totalValue && this.isBuying.value)
+				this.investmentAccount$.pipe(
+					map((investmentAccount) => investmentAccount.currentCash < this.totalValue && this.isBuying.value)
 				)
 			)
 		);

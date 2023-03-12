@@ -94,8 +94,6 @@ export class InvestmentAccountResolver {
 		nullable: false,
 	})
 	getCurrentCash(@Parent() investmentAccount: InvestmentAccount): number {
-		return investmentAccount.cashChange.reduce((acc, curr) => {
-			return acc + curr.cashValue;
-		}, 0);
+		return this.investmentAccountService.getCurrentCashByAccount(investmentAccount);
 	}
 }

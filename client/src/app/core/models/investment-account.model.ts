@@ -4,4 +4,7 @@ export interface InvestmentAccountFragmentExtended extends InvestmentAccountFrag
 	currentCash: number;
 	currentInvested: number;
 	currentBalance: number;
+	AssetOperationTotal: number;
+	DepositTotal: number;
+	WithdrawalTotal: number;
 }

@@ -1,20 +1,13 @@
 import { Injectable } from '@angular/core';
 import {
 	InvestmentAccountActiveHoldingOutputFragment,
-	InvestmentAccountCashChangeType,
 	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
 } from '../../../core/graphql';
 import { DateServiceUtil } from '../../../core/utils';
 import { createGenericChartSeriesPie } from '../../../shared/functions';
 import { GenericChartSeriesPie, ValuePresentItem } from '../../../shared/models';
-import {
-	CashAllocation,
-	DailyInvestmentChange,
-	InvestmentAccountPeriodChange,
-	PeriodChangeDate,
-	SectorAllocation,
-} from '../models';
+import { DailyInvestmentChange, InvestmentAccountPeriodChange, PeriodChangeDate, SectorAllocation } from '../models';
 import { InputSource, NONE_INPUT_SOURCE } from './../../../shared/models/forms.model';
 
 @Injectable({
@@ -152,24 +145,6 @@ export class InvestmentAccountCalculatorService {
 		);
 
 		return { data: seriesData, colorByPoint: true, name: 'Holdings sector', innerSize: '40%', type: 'pie' };
-	}
-
-	/**
-	 *
-	 * @param account
-	 * @returns cash allocated by types
-	 */
-	getCashCategories(account: InvestmentAccountFragment): CashAllocation {
-		return account.cashChange.reduce(
-			(acc, curr) => {
-				return { ...acc, [curr.type]: acc[curr.type] + curr.cashValue };
-			},
-			{
-				ASSET_OPERATION: 0,
-				DEPOSIT: 0,
-				WITHDRAWAL: 0,
-			} as { [key in InvestmentAccountCashChangeType]: number }
-		);
 	}
 
 	getInvestmentAccountPeriodChange(

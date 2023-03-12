@@ -1,6 +1,6 @@
-<div class="mb-6 text-lg text-center">
-	<span class="text-wt-primary-dark">{{ (investmentAccount$ | async)?.name }}: </span
-	><span *ngIf="cashCategory$ | async as c">{{ c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL | currency}}</span>
+<div *ngIf="investmentAccount$ | async as investmentAccount" class="mb-6 text-lg text-center">
+	<span class="text-wt-primary-dark">{{ investmentAccount.name }}: </span>
+	<span>{{ investmentAccount.currentCash| currency}}</span>
 </div>
 
 <div class="lg:grid lg:place-content-center lg:mb-8">
@@ -13,20 +13,24 @@
 <form (ngSubmit)="onSave()" [formGroup]="formGroup">
 	<mat-dialog-content>
 		<!-- cash state -->
-		<div *ngIf="cashCategory$ | async as cashCategory" class="c-cash-wrapper">
+		<div *ngIf="investmentAccount$ | async as investmentAccount" class="c-cash-wrapper">
 			<div>
 				Deposit:
-				<span class="text-wt-success-medium"> {{ cashCategory.DEPOSIT | largeNumberFormatter: false: true }}</span>
-			</div>
-			<div>
-				Assets:
-				<span class="text-wt-danger-medium"
-					>{{ cashCategory.ASSET_OPERATION | largeNumberFormatter: false: true }}</span
+				<span class="text-wt-success-medium">
+					{{ investmentAccount.DepositTotal| largeNumberFormatter: false: true }}</span
 				>
 			</div>
 			<div>
+				Assets:
+				<span class="text-wt-danger-medium">
+					{{ investmentAccount.AssetOperationTotal| largeNumberFormatter: false: true }}
+				</span>
+			</div>
+			<div>
 				Withdrawal:
-				<span class="text-wt-gray-medium">{{ cashCategory.WITHDRAWAL | largeNumberFormatter: false: true }}</span>
+				<span class="text-wt-gray-medium">
+					{{ investmentAccount.WithdrawalTotal| largeNumberFormatter: false: true }}
+				</span>
 			</div>
 		</div>
 

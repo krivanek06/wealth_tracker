@@ -1,6 +1,10 @@
-<div class="mb-6 text-lg text-center">
-	<span>Holding manager: </span>
-	<span class="text-wt-primary-dark">{{ (investmentAccount$ | async)?.name }} </span>
+<div class="text-xl text-center" [ngClass]="{'mb-6': formGroup.controls.symbol.value}">
+	<span>Operation </span>
+	<span
+		[ngClass]="{'text-wt-success-medium': formGroup.controls.isBuying.value, 'text-wt-danger-medium': !formGroup.controls.isBuying.value}"
+	>
+		{{ formGroup.controls.isBuying.value ? 'Buy Asset' : 'Sell Asset' }}
+	</span>
 </div>
 
 <div *ngIf="formGroup.controls.symbol.value" class="flex justify-end lg:mb-4">
@@ -8,6 +12,17 @@
 		<mat-icon>visibility</mat-icon>
 		Show Previous Transactions
 	</button>
+</div>
+
+<!-- error if more than cash -->
+<div class="w-full mx-auto md:w-9/12">
+	<div
+		class="mt-2 mb-5 g-error-banner"
+		*ngIf="formGroup.controls.symbol.touched && formGroup.controls.symbol.errors?.['required']"
+	>
+		Symbol name is required
+	</div>
+	<div class="mt-2 mb-5 g-error-banner" *ngIf="cashError$ | async">Insufficient cash amount</div>
 </div>
 
 <form (ngSubmit)="onSave()" [formGroup]="formGroup">
@@ -19,6 +34,7 @@
 			<!-- transaction type -->
 			<div class="my-4">
 				<button
+					[disabled]="!data.selectedAsset"
 					type="button"
 					mat-flat-button
 					[color]="formGroup.controls.isBuying.value ? 'accent' : 'warn'"
@@ -45,15 +61,6 @@
 				[isDisabled]="!!data.selectedAsset"
 				[searchableAsset]="formGroup.controls.assetType.value"
 			></app-asset-manager-search-asset>
-
-			<!-- error if more than cash -->
-			<div
-				class="mt-2 mb-5 g-error-banner"
-				*ngIf="formGroup.controls.symbol.touched && formGroup.controls.symbol.errors?.['required']"
-			>
-				Symbol name is required
-			</div>
-			<div class="mt-2 mb-5 g-error-banner" *ngIf="cashError$ | async">Insufficient cash amount</div>
 		</div>
 
 		<div>
@@ -61,13 +68,13 @@
 			<div class="c-cash-wrapper">
 				<div>
 					<span class="text-gray-400">Cash: </span>
-					<span *ngIf="cashCategory$ | async as c">
-						{{ c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL | largeNumberFormatter }}
+					<span *ngIf="investmentAccount$ | async as investmentAccount">
+						{{ investmentAccount.currentCash | largeNumberFormatter }}
 					</span>
 				</div>
 				<div>
 					<span class="text-gray-400">Units: </span>
-					<span> {{ units.value ?? 'N/A' }} </span>
+					<span> {{ units.value || 'N/A' }} </span>
 				</div>
 				<div>
 					<span class="text-gray-400">Price: </span>

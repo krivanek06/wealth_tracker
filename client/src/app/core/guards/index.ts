@@ -1,1 +1,1 @@
-export * from './resolve-token.guard';
+export * from './verify-authentication.guard';

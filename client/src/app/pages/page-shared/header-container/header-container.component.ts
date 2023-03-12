@@ -14,7 +14,7 @@ import { LoginModalComponent, UserProfileModalComponent } from '../../../modules
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderContainerComponent implements OnInit {
-	@Input() availableAccounts!: AccountIdentification[];
+	@Input() availableAccounts?: AccountIdentification[] | null;
 
 	authenticatedUser$!: Observable<UserFragment | null>;
 

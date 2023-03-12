@@ -2,6 +2,7 @@ import { ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
 import * as jwt from 'jsonwebtoken';
+import { IS_DEVELOPMENT_ENV } from '../../environments/keys';
 import { RequestUser, RequestUserInt, REQ_USER_PROPERTY } from '../authentication.dto';
 
 @Injectable()
@@ -23,18 +24,21 @@ export class AuthorizationGuard extends AuthGuard('jwt') {
 		// console.log(data.id);
 
 		// mocked user
-		ctx[REQ_USER_PROPERTY] = new RequestUser({
-			id: this.TEST_USER.id,
-			username: this.TEST_USER.username,
-			email: this.TEST_USER.email,
-		});
-
-		// current user
-		// ctx[REQ_USER_PROPERTY] = new RequestUser({
-		// 	id: data.id,
-		// 	username: data.username,
-		// 	email: data.email,
-		// });
+		if (IS_DEVELOPMENT_ENV) {
+			// test user
+			ctx[REQ_USER_PROPERTY] = new RequestUser({
+				id: this.TEST_USER.id,
+				username: this.TEST_USER.username,
+				email: this.TEST_USER.email,
+			});
+		} else {
+			// current user
+			// ctx[REQ_USER_PROPERTY] = new RequestUser({
+			// 	id: data.id,
+			// 	username: data.username,
+			// 	email: data.email,
+			// });
+		}
 
 		return true;
 	}

@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
+import { VerifyAuthentication } from './core/guards';
+import { TOP_LEVEL_NAV } from './core/models';
 
 const routes: Routes = [
 	{
@@ -9,12 +11,17 @@ const routes: Routes = [
 		children: [
 			{
 				path: '',
-				redirectTo: 'dashboard',
+				redirectTo: TOP_LEVEL_NAV.dashboard,
 				pathMatch: 'full',
 			},
 			{
-				path: 'dashboard',
+				path: TOP_LEVEL_NAV.dashboard,
+				canActivate: [VerifyAuthentication],
 				loadChildren: () => import('./pages/dashboard/dashboard.module').then((m) => m.DashboardModule),
+			},
+			{
+				path: TOP_LEVEL_NAV.welcome,
+				loadChildren: () => import('./pages/welcome/welcome.module').then((m) => m.WelcomeModule),
 			},
 			{
 				path: '**',

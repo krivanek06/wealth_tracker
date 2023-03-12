@@ -1,9 +1,9 @@
 :host {
 	.c-action-button-wrapper {
-		@apply flex flex-col max-md:justify-center gap-4;
+		@apply flex flex-col max-lg:justify-center gap-4;
 	}
 
 	.c-action-button {
-		@apply w-full sm:w-10/12 max-md:m-auto min-w-[240px];
+		@apply w-full sm:w-10/12 max-lg:m-auto;
 	}
 }

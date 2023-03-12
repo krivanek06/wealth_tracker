@@ -6,7 +6,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { combineLatest, map, Observable } from 'rxjs';
-import { FormMatInputWrapperModule, ValuePresentationCardComponent } from '../../../../shared/components';
+import {
+	FormMatInputWrapperModule,
+	PieChartComponent,
+	ValuePresentationCardComponent,
+} from '../../../../shared/components';
 import { PersonalAccountParent } from '../../classes';
 import {
 	PersonalAccountAccountStateComponent,
@@ -16,11 +20,11 @@ import {
 	PersonalAccountDisplayToggleComponent,
 	PersonalAccountExpensesByTagComponent,
 	PersonalAccountOverviewChartMobileComponent,
-	PersonalAccountTagAllocationChartComponent,
 } from '../../components';
 import { PersonalAccountDailyEntriesTableMobileComponent } from '../../components/mobile';
 import { AccountState, NO_DATE_SELECTED, PersonalAccountDailyDataAggregation } from '../../models';
 import { GetTagByIdPipe } from '../../pipes';
+import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-mobile-view-skeleton/personal-account-mobile-view-skeleton.component';
 @Component({
 	selector: 'app-personal-account-mobile-view',
 	templateUrl: './personal-account-mobile-view.component.html',
@@ -39,13 +43,14 @@ import { GetTagByIdPipe } from '../../pipes';
 		MatButtonModule,
 		MatIconModule,
 		GetTagByIdPipe,
-		PersonalAccountTagAllocationChartComponent,
+		PieChartComponent,
 		ValuePresentationCardComponent,
 		PersonalAccountAccountStateComponent,
 		PersonalAccountDisplayToggleComponent,
 		PersonalAccountDailyEntriesTableMobileComponent,
 		PersonalAccountActionButtonsComponent,
 		PersonalAccountDailyEntriesFilterComponent,
+		PersonalAccountMobileViewSkeletonComponent,
 	],
 })
 export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {

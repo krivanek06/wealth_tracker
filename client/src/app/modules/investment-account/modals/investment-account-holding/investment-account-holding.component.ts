@@ -1,15 +1,28 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { catchError, combineLatest, EMPTY, filter, first, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import {
+	catchError,
+	combineLatest,
+	EMPTY,
+	filter,
+	first,
+	map,
+	merge,
+	Observable,
+	startWith,
+	switchMap,
+	tap,
+} from 'rxjs';
 import { AssetApiService, InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	AssetGeneralFragment,
 	InvestmentAccounHoldingCreateInput,
-	InvestmentAccountFragment,
+	InvestmentAccountActiveHoldingOutputFragment,
 	InvestmentAccountHoldingHistoryType,
 	InvestmentAccountTransactionOutput,
 } from '../../../../core/graphql';
+import { InvestmentAccountFragmentExtended } from '../../../../core/models';
 import { DateServiceUtil } from '../../../../core/utils';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
 import {
@@ -19,8 +32,7 @@ import {
 	requiredValidator,
 } from '../../../../shared/models';
 import { SearchableAssetEnum } from '../../../asset-manager/models';
-import { CashAllocation, TransactionAssetTypeInputSource } from '../../models';
-import { InvestmentAccountCalculatorService } from '../../services';
+import { TransactionAssetTypeInputSource } from '../../models';
 
 @Component({
 	selector: 'app-investment-account-holding',
@@ -47,12 +59,8 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		date: new FormControl<Date>(new Date(), { validators: [requiredValidator], nonNullable: true }),
 	});
 
-	investmentAccount$!: Observable<InvestmentAccountFragment>;
+	investmentAccount$!: Observable<InvestmentAccountFragmentExtended>;
 	transactionHistory$!: Observable<InvestmentAccountTransactionOutput[]>;
-
-	// display different categories and accumulated cash for them
-	cashCategory$!: Observable<CashAllocation>;
-	cashError$!: Observable<boolean>;
 
 	// used to show loader
 	isSaving = false;
@@ -62,6 +70,11 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	SearchableAssetEnum = SearchableAssetEnum;
 
 	showHistoricalTransactions = false;
+
+	// error
+	insufficientCashAmountError$!: Observable<boolean>;
+	insufficientUnitsError$!: Observable<boolean>;
+	isError$!: Observable<boolean>;
 
 	datePickerConfig: InputTypeDateTimePickerConfig = {
 		maxDate: new Date(),
@@ -96,23 +109,23 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		if (!this.formGroup.controls.symbol.value) {
 			return 0;
 		}
-		return this.formSymbolPrice.value * Number(this.formGroup.controls.units.value);
+		return this.formSymbolPrice.value * Number(this.units.value);
 	}
 
 	constructor(
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
-		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
 		private assetApiService: AssetApiService,
 		private dialogRef: MatDialogRef<InvestmentAccountHoldingComponent>,
-		@Inject(MAT_DIALOG_DATA) public data: { investmentId: string; selectedAsset?: AssetGeneralFragment }
+		@Inject(MAT_DIALOG_DATA)
+		public data: { investmentId: string; activeHolding?: InvestmentAccountActiveHoldingOutputFragment }
 	) {}
 	ngAfterViewInit(): void {
 		this.formGroup.valueChanges.subscribe(console.log);
 
 		// load values for selected asset
 		setTimeout(() => {
-			if (this.data.selectedAsset) {
-				this.formSymbol.patchValue(this.data.selectedAsset);
+			if (this.data.activeHolding) {
+				this.formSymbol.patchValue(this.data.activeHolding.assetGeneral);
 				this.formAssetType.patchValue(SearchableAssetEnum.AseetById);
 			}
 		});
@@ -121,19 +134,28 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	ngOnInit(): void {
 		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.data.investmentId);
 
-		// build cash categories
-		this.cashCategory$ = this.investmentAccount$.pipe(
-			map((account) => this.investmentAccountCalculatorService.getCashCategories(account))
-		);
-
 		// on form change check if user has enough cash
-		this.cashError$ = this.formGroup.valueChanges.pipe(
+		this.insufficientCashAmountError$ = this.formGroup.valueChanges.pipe(
 			switchMap(() =>
-				this.cashCategory$.pipe(
-					map((c) => c.DEPOSIT + c.ASSET_OPERATION - c.WITHDRAWAL < this.totalValue && this.isBuying.value)
+				this.investmentAccount$.pipe(
+					map((investmentAccount) => investmentAccount.currentCash < this.totalValue && this.isBuying.value)
 				)
 			)
 		);
+
+		// check if user has enough units to sell
+		this.insufficientUnitsError$ = this.formGroup.valueChanges.pipe(
+			switchMap(() =>
+				this.investmentAccount$.pipe(
+					map(
+						() => !!this.data.activeHolding && !this.isBuying.value && this.units.value > this.data.activeHolding.units
+					)
+				)
+			)
+		);
+
+		// merge errors together
+		this.isError$ = merge(this.insufficientCashAmountError$, this.insufficientUnitsError$);
 
 		// on symbol pick load transaction history
 		this.transactionHistory$ = this.formSymbol.valueChanges.pipe(
@@ -146,8 +168,8 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		);
 
 		// IDK why, but keep data in ngAfterViewInit because it just works
-		if (this.data.selectedAsset) {
-			this.formSymbol.patchValue(this.data.selectedAsset);
+		if (this.data.activeHolding) {
+			this.formSymbol.patchValue(this.data.activeHolding.assetGeneral);
 			this.formAssetType.patchValue(SearchableAssetEnum.AseetById);
 		}
 

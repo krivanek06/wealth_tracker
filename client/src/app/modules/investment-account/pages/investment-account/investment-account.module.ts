@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { ScrollWrapperModule, ValuePresentationButtonControlComponent } from '../../../../shared/components';
+import { PieChartComponent } from '../../../../shared/components';
 import { RangeDirective } from '../../../../shared/directives';
 import {
+	InvestmentAccountActionButtonsComponent,
 	InvestmentAccountActiveHoldingsTableModule,
 	InvestmentAccountPeriodChangeModule,
-	InvestmentAccountPortfolioGrowthChartModule,
+	InvestmentAccountPortfolioGrowthChartComponent,
 	InvestmentAccountStateComponent,
 } from '../../components';
 import { InvestmentAccountResolverGuard } from '../../guards';
@@ -17,6 +18,7 @@ import {
 	InvestmentAccountTransactionsModule,
 } from '../../modals';
 import { ACCOUNT_KEY } from './../../../../core/graphql/model';
+import { InvestmentAccountSkeletonComponent } from './investment-account-skeleton/investment-account-skeleton.component';
 import { InvestmentAccountComponent } from './investment-account.component';
 
 const routes: Routes = [
@@ -27,14 +29,12 @@ const routes: Routes = [
 	},
 ];
 @NgModule({
-	declarations: [InvestmentAccountComponent],
+	declarations: [InvestmentAccountComponent, InvestmentAccountSkeletonComponent],
 	imports: [
 		CommonModule,
 		InvestmentAccountActiveHoldingsTableModule,
 		InvestmentAccountStateComponent,
-		InvestmentAccountPortfolioGrowthChartModule,
-		ScrollWrapperModule,
-		ValuePresentationButtonControlComponent,
+		InvestmentAccountPortfolioGrowthChartComponent,
 		ReactiveFormsModule,
 		InvestmentAccountCashChangeModule,
 		InvestmentAccountTransactionsModule,
@@ -42,6 +42,8 @@ const routes: Routes = [
 		InvestmentAccountPeriodChangeModule,
 		RouterModule.forChild(routes),
 		RangeDirective,
+		InvestmentAccountActionButtonsComponent,
+		PieChartComponent,
 	],
 	exports: [InvestmentAccountComponent],
 })

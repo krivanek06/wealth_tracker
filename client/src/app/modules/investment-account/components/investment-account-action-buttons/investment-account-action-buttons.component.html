@@ -1,0 +1,28 @@
+<div class="justify-between c-wrapper md:px-4">
+	<div [formGroup]="formGroup" class="order-2 md:order-1">
+		<!-- sector filter -->
+		<div class="md:min-w-[350px]">
+			<app-form-mat-input-wrapper
+				[inputSource]="sectorAllocationInputSource"
+				class="w-full"
+				controlName="selectedSector"
+				inputCaption="Select sector"
+				inputType="SELECT"
+			></app-form-mat-input-wrapper>
+		</div>
+	</div>
+
+	<div class="order-1 c-wrapper md:order-2">
+		<!-- add holding -->
+		<button (click)="onAddClick()" mat-stroked-button type="button" color="primary" class="mb-2">
+			<mat-icon>add</mat-icon>
+			Add holding
+		</button>
+
+		<!-- show transactions -->
+		<button (click)="onShowHistoryClick()" mat-stroked-button type="button" class="mb-2 text-wt-gray-medium">
+			<mat-icon>visibility</mat-icon>
+			Show transactions
+		</button>
+	</div>
+</div>

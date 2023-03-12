@@ -3,19 +3,36 @@ import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleCha
 import { HighchartsChartModule } from 'highcharts-angular';
 import * as Highcharts from 'highcharts/highstock';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
+import { ChartConstructor } from '../../../../../core/utils';
 import { GenericChartSeries } from '../../../../../shared/models';
 
 NoDataToDisplay(Highcharts);
 
 @Component({
 	selector: 'app-personal-account-tag-spending-chart',
-	templateUrl: './personal-account-tag-spending-chart.component.html',
-	styleUrls: ['./personal-account-tag-spending-chart.component.scss'],
+	template: `
+		<highcharts-chart
+			*ngIf="accountOverviewChartData; else skeletonLoading"
+			[Highcharts]="Highcharts"
+			[options]="chartOptions"
+			[callbackFunction]="chartCallback"
+			[(update)]="updateFromInput"
+			[oneToOne]="true"
+			style="width: 100%; display: block"
+			[style.height.px]="heightPx"
+		>
+		</highcharts-chart>
+
+		<!-- skeleton loading -->
+		<ng-template #skeletonLoading>
+			<div class="w-full g-skeleton" [style.height.px]="heightPx"></div>
+		</ng-template>
+	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	standalone: true,
 	imports: [CommonModule, HighchartsChartModule],
 })
-export class PersonalAccountTagSpendingChartComponent implements OnInit, OnChanges {
+export class PersonalAccountTagSpendingChartComponent extends ChartConstructor implements OnInit, OnChanges {
 	@Input() categories!: string[] | null;
 
 	// contains [total growth, total income, total expense]
@@ -26,20 +43,10 @@ export class PersonalAccountTagSpendingChartComponent implements OnInit, OnChang
 
 	@Input() heightPx!: number;
 
-	Highcharts: typeof Highcharts = Highcharts;
-	chart: any;
-	updateFromInput = true;
-	chartCallback: any;
-	chartOptions: Highcharts.Options = {}; //  : Highcharts.Options
-
 	constructor() {
-		const self = this;
-
-		this.chartCallback = (chart: any) => {
-			console.log('chartCallback', chart);
-			self.chart = chart; // new Highcharts.Chart(this.chartOptions); //chart;
-		};
+		super();
 	}
+
 	ngOnChanges(changes: SimpleChanges): void {
 		if (changes?.['accountOverviewChartData']?.currentValue) {
 			this.initChart();

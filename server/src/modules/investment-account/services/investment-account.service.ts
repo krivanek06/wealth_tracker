@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
 import { AssetGeneralService } from '../../asset-manager';
 import { INVESTMENT_ACCOUNT_ERROR, INVESTMENT_ACCOUNT_MAX } from '../dto';
-import { InvestmentAccount } from '../entities';
+import { InvestmentAccount, InvestmentAccountCashChange } from '../entities';
 import { InvestmentAccountCreateInput, InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
 import { InvestmentAccountGrowth } from '../outputs';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
@@ -13,6 +13,15 @@ export class InvestmentAccountService {
 		private investmentAccountRepositoryService: InvestmentAccountRepositoryService,
 		private assetGeneralService: AssetGeneralService
 	) {}
+
+	getCurrentCashByAccount(cashChanges: InvestmentAccountCashChange[]): number {
+		return cashChanges.reduce((acc, curr) => {
+			if (curr.type === 'WITHDRAWAL') {
+				return acc - curr.cashValue;
+			}
+			return acc + curr.cashValue;
+		}, 0);
+	}
 
 	getInvestmentAccounts(userId: string): Promise<InvestmentAccount[]> {
 		return this.investmentAccountRepositoryService.getInvestmentAccounts(userId);
@@ -107,9 +116,14 @@ export class InvestmentAccountService {
 
 		const cashGrowth = MomentServiceUtil.getDates(investmentAccount.cashChange[0]?.date, yesterDay).reduce(
 			(acc, date) => {
+				// YYYY-MM-DD
 				const formattedDate = MomentServiceUtil.format(date);
-				const existingCashEntity = investmentAccount.cashChange.find((d) => d.date === formattedDate);
-				const currentCash = (acc[acc.length - 1]?.calculation ?? 0) + (existingCashEntity?.cashValue ?? 0);
+				// check if there is new cash entry -> can be multiple entries per day - multiple asset operations, etc.
+				const existingCashEntries = investmentAccount.cashChange.filter((d) => d.date === formattedDate);
+				// calculate cash value per date
+				const cashPerDate = this.getCurrentCashByAccount(existingCashEntries);
+				// create difference of new and previous entry
+				const currentCash = (acc[acc.length - 1]?.calculation ?? 0) + cashPerDate;
 
 				const data = {
 					date: formattedDate,
@@ -142,7 +156,7 @@ export class InvestmentAccountService {
 		});
 
 		// filter out if cash and investment is 0
-		// happens because there is a hollyday data, but we create custom range by MomentServiceUtil.getDates(soonestDate, new Date())
+		// happens because there is a holyday data, but we create custom range by MomentServiceUtil.getDates(soonestDate, new Date())
 		const nonZeroResult = result.filter((d) => d.cash + d.invested !== 0);
 
 		return nonZeroResult;

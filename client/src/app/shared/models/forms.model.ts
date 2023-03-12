@@ -12,6 +12,12 @@ export interface InputSource {
 	additionalData?: unknown;
 }
 
+export const NONE_INPUT_SOURCE_VALUE = -99;
+export const NONE_INPUT_SOURCE: InputSource = {
+	caption: 'None',
+	value: NONE_INPUT_SOURCE_VALUE,
+};
+
 export enum InputTypeEnum {
 	TEXT = 'TEXT',
 	NUMBER = 'NUMBER',

@@ -1,19 +1,14 @@
 import { Injectable } from '@angular/core';
 import {
 	InvestmentAccountActiveHoldingOutputFragment,
-	InvestmentAccountCashChangeType,
 	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
 } from '../../../core/graphql';
 import { DateServiceUtil } from '../../../core/utils';
-import { ValuePresentItem } from '../../../shared/models';
-import {
-	CashAllocation,
-	DailyInvestmentChange,
-	InvestmentAccountPeriodChange,
-	PeriodChangeDate,
-	SectorAllocation,
-} from '../models';
+import { createGenericChartSeriesPie } from '../../../shared/functions';
+import { GenericChartSeriesPie, ValuePresentItem } from '../../../shared/models';
+import { DailyInvestmentChange, InvestmentAccountPeriodChange, PeriodChangeDate, SectorAllocation } from '../models';
+import { InputSource, NONE_INPUT_SOURCE } from './../../../shared/models/forms.model';
 
 @Injectable({
 	providedIn: 'root',
@@ -105,19 +100,51 @@ export class InvestmentAccountCalculatorService {
 	/**
 	 *
 	 * @param account
-	 * @returns cash allocated by types
+	 * @returns distinct sectors as Input source
 	 */
-	getCashCategories(account: InvestmentAccountFragment): CashAllocation {
-		return account.cashChange.reduce(
+	getSectorAllocationInputSource(account: InvestmentAccountFragment): InputSource[] {
+		return account.activeHoldings.reduce(
 			(acc, curr) => {
-				return { ...acc, [curr.type]: acc[curr.type] + curr.cashValue };
+				const allocationIndex = acc.findIndex((d) => d.value === curr.sector);
+				// already in array
+				if (allocationIndex !== -1) {
+					return acc;
+				}
+
+				// add new sector to array
+				const source: InputSource = {
+					caption: curr.sector,
+					value: curr.sector,
+				};
+
+				return [...acc, source];
 			},
-			{
-				ASSET_OPERATION: 0,
-				DEPOSIT: 0,
-				WITHDRAWAL: 0,
-			} as { [key in InvestmentAccountCashChangeType]: number }
+			[NONE_INPUT_SOURCE] as InputSource[]
 		);
+	}
+
+	getAssetAllocationChart(account: InvestmentAccountFragment): GenericChartSeriesPie {
+		const seriesData = createGenericChartSeriesPie(account.activeHoldings, 'assetGeneral', 'id');
+
+		return { data: seriesData, colorByPoint: true, name: 'Holdings assets', innerSize: '40%', type: 'pie' };
+	}
+
+	/**
+	 *
+	 * @param account
+	 * @returns chart data based on investment account sector allocation
+	 */
+	getSectorAllocationChart(account: InvestmentAccountFragment): GenericChartSeriesPie {
+		const seriesData = createGenericChartSeriesPie(
+			account.activeHoldings,
+			'sector',
+			undefined,
+			undefined,
+			undefined,
+			'sectorImageUrl'
+		);
+
+		return { data: seriesData, colorByPoint: true, name: 'Holdings sector', innerSize: '40%', type: 'pie' };
 	}
 
 	getInvestmentAccountPeriodChange(

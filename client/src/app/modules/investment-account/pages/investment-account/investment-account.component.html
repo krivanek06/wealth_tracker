@@ -1,61 +1,54 @@
-<div class="grid grid-cols-1 gap-4 2xl:grid-cols-4">
-	<div class="col-span-1 2xl:col-span-3">
-		<!-- account state -->
-		<div class="mb-2">
+<!-- account state -->
+<ng-container *ngIf="investmentAccount$ | async as investmentAccount; else pageSkeleton">
+	<ng-container *ngIf="investmentAccountGrowth$ | async as investmentAccountGrowth; else pageSkeleton">
+		<div class="w-full px-2 mx-auto mb-4 md:w-10/12">
 			<app-investment-account-state
-				(cashChangeClickEmitter)="onChangeChangeClick()"
-				[investmentAccount]="investmentAccount$ | async"
+				(cashChangeClickEmitter)="onCashChangeClick()"
+				[investmentAccount]="investmentAccount"
 			></app-investment-account-state>
 		</div>
 
-		<!-- account growth -->
+		<!-- portfolio change chart -->
 		<app-investment-account-portfolio-growth-chart
-			[investmentAccountGrowth]="investmentAccountGrowth$ | async"
+			[investmentAccountGrowth]="investmentAccountGrowth"
 		></app-investment-account-portfolio-growth-chart>
-	</div>
 
-	<!-- sector allocation -->
-	<app-scroll-wrapper [isFlexRow]="false" [flexColHeightPx]="540" class="items-center hidden 2xl:flex">
-		<app-value-presentation-button-control
-			[isFlexRow]="false"
+		<!-- period change -->
+		<div
+			class="grid grid-cols-1 gap-4 p-4 mt-6 md:mb-10 sm:grid-cols-2 md:grid-cols-3 xl:flex xl:justify-around sm:max-xl:pl-14"
+		>
+			<app-investment-account-period-change
+				*ngFor="let periodChange of accountPeriodChange$ | async"
+				[periodChange]="periodChange"
+			></app-investment-account-period-change>
+		</div>
+
+		<!-- allocation charts -->
+		<div class="grid gap-4 mb-6 lg:grid-cols-2 overflow-x-clip">
+			<!-- sector allocation chart -->
+			<app-pie-chart class="hidden scale-125 lg:block" [series]="sectorAllocationChart$ | async"></app-pie-chart>
+
+			<!-- asset allocation chart -->
+			<app-pie-chart class="md:scale-125" [series]="assetAllocationChart$ | async"></app-pie-chart>
+		</div>
+
+		<!-- action buttons -->
+		<app-investment-account-action-buttons
+			[sectorAllocationInputSource]="sectorAllocationInputSource$ | async"
 			[formControl]="sectorFormControl"
-			[items]="sectorAllocation$ | async"
-			[multiSelect]="false"
-			itemKey="sectorName"
-		></app-value-presentation-button-control>
-	</app-scroll-wrapper>
-</div>
+			(addEmitter)="onAddHolding()"
+			(showHistoryEmitter)="onShowHisotry()"
+		></app-investment-account-action-buttons>
 
-<!-- period change -->
-<div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 xl:flex xl:justify-around sm:max-xl:pl-14">
-	<ng-container *ngIf="accountPeriodChange$ | async as accountPeriodChange; else skeletonPeriod">
-		<app-investment-account-period-change
-			*ngFor="let periodChange of accountPeriodChange"
-			[periodChange]="periodChange"
-		></app-investment-account-period-change>
+		<!-- active investments table -->
+		<app-investment-account-active-holdings-table
+			(holdingClickedEmitter)="onAddHolding($event)"
+			[totalInvestedAmount]="totalInvestedAmount$ | async"
+			[activeHoldings]="filteredActiveHoldings$ | async"
+		></app-investment-account-active-holdings-table>
 	</ng-container>
+</ng-container>
 
-	<ng-template #skeletonPeriod>
-		<div *ngRange="6" class="w-[220px] h-14 g-skeleton"></div>
-	</ng-template>
-</div>
-
-<!-- sector allocation -->
-<app-scroll-wrapper [isFlexRow]="true" class="block 2xl:hidden">
-	<app-value-presentation-button-control
-		[isFlexRow]="true"
-		[formControl]="sectorFormControl"
-		[items]="sectorAllocation$ | async"
-		[multiSelect]="false"
-		itemKey="sectorName"
-	></app-value-presentation-button-control>
-</app-scroll-wrapper>
-
-<!-- active investments table -->
-<app-investment-account-active-holdings-table
-	(holdingClickedEmitter)="onAddHolding($event)"
-	(addEmitter)="onAddHolding()"
-	(showHistoryEmitter)="onShowHisotry()"
-	[totalInvestedAmount]="totalInvestedAmount$ | async"
-	[activeHoldings]="filteredActiveHoldings$ | async"
-></app-investment-account-active-holdings-table>
+<ng-template #pageSkeleton>
+	<app-investment-account-skeleton></app-investment-account-skeleton>
+</ng-template>

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LodashServiceUtil } from '../../../utils';
-import { INVESTMENT_ACCOUNT_SEARCH_LIMIS } from '../dto';
+import { INVESTMENT_ACCOUNT_SEARCH_LIMITS } from '../dto';
 import { InvestmentAccount, InvestmentAccountHoldingHistory } from '../entities';
 import { InvestmentAccountTransactionInput, InvestmentAccountTransactionInputOrderType } from '../inputs';
 import { InvestmentAccountTransactionOutput, InvestmentAccountTransactionWrapperOutput } from '../outputs';
@@ -61,7 +61,7 @@ export class InvestmentAccountTransactionService {
 
 		const order = input.orderAsc ? 'asc' : 'desc';
 		const offset = input.offset;
-		const limit = input.offset + INVESTMENT_ACCOUNT_SEARCH_LIMIS;
+		const limit = input.offset + INVESTMENT_ACCOUNT_SEARCH_LIMITS;
 
 		if (input.orderType === InvestmentAccountTransactionInputOrderType.ORDER_BY_VALUE) {
 			return this.getTransactionsOrder(account, history, 'return', order, offset, limit);

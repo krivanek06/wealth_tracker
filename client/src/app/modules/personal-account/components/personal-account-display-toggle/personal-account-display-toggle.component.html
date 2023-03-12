@@ -10,17 +10,7 @@
 		</ng-container>
 	</div>
 
-	<button
-		*ngIf="isDataLoaded; else skeletonLoading"
-		mat-stroked-button
-		[color]="showHistoryFormControl ? 'warn' : 'primary' "
-		(click)="onDisplayClick()"
-	>
+	<button mat-stroked-button [color]="showHistoryFormControl ? 'warn' : 'primary' " (click)="onDisplayClick()">
 		{{ showHistoryFormControl ? 'Displayed History' : 'Displayed Aggregation' }}
 	</button>
 </div>
-
-<!-- skeleton -->
-<ng-template #skeletonLoading>
-	<div class="g-skeleton w-[200px] h-12"></div>
-</ng-template>

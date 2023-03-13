@@ -15,9 +15,9 @@ export class VerifyAuthentication implements CanActivate {
 		route: ActivatedRouteSnapshot,
 		state: RouterStateSnapshot
 	): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
+		// token is in local storage
 		if (this.getTokenFromLocalStorage()) {
-			this.router.navigate([TOP_LEVEL_NAV.welcome]);
-			return false;
+			return true;
 		}
 
 		const accessToken = route.queryParamMap.get('accessToken');

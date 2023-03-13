@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../core/auth';
 import { AccountIdentification, UserFragment } from '../../../core/graphql';
+import { TOP_LEVEL_NAV } from '../../../core/models';
 import { ManagerAccountListAccountsComponent } from '../../../modules/manager-account/modals';
 import { LoginModalComponent, UserProfileModalComponent } from '../../../modules/user-settings';
 
@@ -32,16 +33,24 @@ export class HeaderContainerComponent implements OnInit {
 
 	onUserLogout(): void {
 		this.authenticationFacadeService.logoutUser();
+		this.router.navigate([TOP_LEVEL_NAV.welcome]);
 	}
 
 	onAccountButtonClick(account: AccountIdentification) {
-		this.router.navigate(['dashboard', account.accountType, account.id]);
+		this.router.navigate([TOP_LEVEL_NAV.dashboard, account.accountType, account.id]);
 	}
 
 	onLoginClick(): void {
-		this.dialog.open(LoginModalComponent, {
-			panelClass: ['g-mat-dialog-small'],
-		});
+		this.dialog
+			.open(LoginModalComponent, {
+				panelClass: ['g-mat-dialog-small'],
+			})
+			.afterClosed()
+			.subscribe((res: boolean) => {
+				if (res) {
+					this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+				}
+			});
 	}
 
 	onUserProfile(): void {

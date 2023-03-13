@@ -23,7 +23,8 @@ export class InvestmentAccountCashChangeItemComponent implements OnInit {
 	@Output() clickedEmitter = new EventEmitter<InvestmentAccountCashChangeFragment>();
 
 	@Input() set cashChange(activeHoldingsData: InvestmentAccountCashChangeFragment[]) {
-		this.dataSource = new MatTableDataSource(activeHoldingsData ?? []);
+		const data = (activeHoldingsData ?? []).filter((d) => d.type !== InvestmentAccountCashChangeType.AssetOperation);
+		this.dataSource = new MatTableDataSource(data);
 		this.dataSource.paginator = this.paginator;
 	}
 

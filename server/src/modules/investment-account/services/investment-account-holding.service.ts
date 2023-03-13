@@ -112,7 +112,7 @@ export class InvestmentAccountHoldingService {
 		};
 
 		// save cash
-		const savedCash = await this.investmentAccountCashChangeService.createInvestmentAccountCashe(cashInput, userId);
+		const savedCash = await this.investmentAccountCashChangeService.createInvestmentAccountCash(cashInput, userId);
 
 		// calculate return & returnChange if Sell operation
 		const breakEvenPrice = SharedServiceUtil.roundDec(bepHelpers.value / bepHelpers.units);

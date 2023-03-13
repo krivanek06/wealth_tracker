@@ -141,11 +141,6 @@ export type ChangePasswordInput = {
   passwordRepeat: Scalars['String'];
 };
 
-export enum Data_Modification {
-  Created = 'CREATED',
-  Removed = 'REMOVED'
-}
-
 export type HoldingInputData = {
   /** Date when we added this holding to our investment account */
   date: Scalars['String'];
@@ -228,13 +223,6 @@ export type InvestmentAccountCashChange = {
   imageUrl: Scalars['String'];
   itemId: Scalars['String'];
   type: InvestmentAccountCashChangeType;
-};
-
-export type InvestmentAccountCashChangeSubscription = {
-  __typename?: 'InvestmentAccountCashChangeSubscription';
-  accountId: Scalars['String'];
-  data: InvestmentAccountCashChange;
-  modification: Data_Modification;
 };
 
 export enum InvestmentAccountCashChangeType {
@@ -406,20 +394,20 @@ export type Mutation = {
   __typename?: 'Mutation';
   changePassword: Scalars['Boolean'];
   createInvestmentAccount: InvestmentAccount;
-  createInvestmentAccountCashe: InvestmentAccountCashChange;
+  createInvestmentAccountCash: InvestmentAccountCashChange;
   createInvestmentAccountHolding: InvestmentAccountActiveHoldingOutputWrapper;
   createPersonalAccount: PersonalAccount;
   createPersonalAccountDailyEntry: PersonalAccountDailyDataOutput;
   createPersonalAccountTag: PersonalAccountTag;
   /** Returns the ID of the removed investment account */
   deleteInvestmentAccount: InvestmentAccount;
-  deleteInvestmentAccountCashe: InvestmentAccountCashChange;
+  deleteInvestmentAccountCash: InvestmentAccountCashChange;
   deleteInvestmentAccountHolding: InvestmentAccountHoldingHistory;
   deletePersonalAccount: PersonalAccount;
   deletePersonalAccountDailyEntry: PersonalAccountDailyDataOutput;
   deletePersonalAccountTag: PersonalAccountTag;
   editInvestmentAccount: InvestmentAccount;
-  editInvestmentAccountCashe: InvestmentAccountCashChange;
+  editInvestmentAccountCash: InvestmentAccountCashChange;
   editPersonalAccount: PersonalAccount;
   editPersonalAccountDailyEntry: PersonalAccountDailyDataEditOutput;
   editPersonalAccountTag: PersonalAccountTag;
@@ -439,7 +427,7 @@ export type MutationCreateInvestmentAccountArgs = {
 };
 
 
-export type MutationCreateInvestmentAccountCasheArgs = {
+export type MutationCreateInvestmentAccountCashArgs = {
   input: InvestmentAccountCashCreateInput;
 };
 
@@ -469,7 +457,7 @@ export type MutationDeleteInvestmentAccountArgs = {
 };
 
 
-export type MutationDeleteInvestmentAccountCasheArgs = {
+export type MutationDeleteInvestmentAccountCashArgs = {
   input: InvestmentAccountCashDeleteInput;
 };
 
@@ -499,7 +487,7 @@ export type MutationEditInvestmentAccountArgs = {
 };
 
 
-export type MutationEditInvestmentAccountCasheArgs = {
+export type MutationEditInvestmentAccountCashArgs = {
   input: InvestmentAccountCashEditInput;
 };
 
@@ -814,11 +802,6 @@ export type RegisterUserInput = {
   passwordRepeat: Scalars['String'];
 };
 
-export type Subscription = {
-  __typename?: 'Subscription';
-  cashModification: InvestmentAccountCashChangeSubscription;
-};
-
 export enum TagDataType {
   Expense = 'EXPENSE',
   Income = 'INCOME'
@@ -953,31 +936,26 @@ export type DeleteInvestmentAccountHoldingMutationVariables = Exact<{
 
 export type DeleteInvestmentAccountHoldingMutation = { __typename?: 'Mutation', deleteInvestmentAccountHolding: { __typename?: 'InvestmentAccountHoldingHistory', itemId: string, date: string, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, cashChangeId: string } };
 
-export type CreateInvestmentAccountCasheMutationVariables = Exact<{
+export type CreateInvestmentAccountCashMutationVariables = Exact<{
   input: InvestmentAccountCashCreateInput;
 }>;
 
 
-export type CreateInvestmentAccountCasheMutation = { __typename?: 'Mutation', createInvestmentAccountCashe: { __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string, imageUrl: string } };
+export type CreateInvestmentAccountCashMutation = { __typename?: 'Mutation', createInvestmentAccountCash: { __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string, imageUrl: string } };
 
-export type EditInvestmentAccountCasheMutationVariables = Exact<{
+export type EditInvestmentAccountCashMutationVariables = Exact<{
   input: InvestmentAccountCashEditInput;
 }>;
 
 
-export type EditInvestmentAccountCasheMutation = { __typename?: 'Mutation', editInvestmentAccountCashe: { __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string, imageUrl: string } };
+export type EditInvestmentAccountCashMutation = { __typename?: 'Mutation', editInvestmentAccountCash: { __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string, imageUrl: string } };
 
-export type DeleteInvestmentAccountCasheMutationVariables = Exact<{
+export type DeleteInvestmentAccountCashMutationVariables = Exact<{
   input: InvestmentAccountCashDeleteInput;
 }>;
 
 
-export type DeleteInvestmentAccountCasheMutation = { __typename?: 'Mutation', deleteInvestmentAccountCashe: { __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string, imageUrl: string } };
-
-export type CashModificationSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type CashModificationSubscriptionSubscription = { __typename?: 'Subscription', cashModification: { __typename?: 'InvestmentAccountCashChangeSubscription', modification: Data_Modification, accountId: string, data: { __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string, imageUrl: string } } };
+export type DeleteInvestmentAccountCashMutation = { __typename?: 'Mutation', deleteInvestmentAccountCash: { __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string, imageUrl: string } };
 
 export type GetTopTransactionsQueryVariables = Exact<{
   input: Scalars['String'];
@@ -1613,9 +1591,9 @@ export const DeleteInvestmentAccountHoldingDocument = gql`
       super(apollo);
     }
   }
-export const CreateInvestmentAccountCasheDocument = gql`
-    mutation CreateInvestmentAccountCashe($input: InvestmentAccountCashCreateInput!) {
-  createInvestmentAccountCashe(input: $input) {
+export const CreateInvestmentAccountCashDocument = gql`
+    mutation CreateInvestmentAccountCash($input: InvestmentAccountCashCreateInput!) {
+  createInvestmentAccountCash(input: $input) {
     ...InvestmentAccountCashChange
   }
 }
@@ -1624,16 +1602,16 @@ export const CreateInvestmentAccountCasheDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class CreateInvestmentAccountCasheGQL extends Apollo.Mutation<CreateInvestmentAccountCasheMutation, CreateInvestmentAccountCasheMutationVariables> {
-    override document = CreateInvestmentAccountCasheDocument;
+  export class CreateInvestmentAccountCashGQL extends Apollo.Mutation<CreateInvestmentAccountCashMutation, CreateInvestmentAccountCashMutationVariables> {
+    override document = CreateInvestmentAccountCashDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const EditInvestmentAccountCasheDocument = gql`
-    mutation EditInvestmentAccountCashe($input: InvestmentAccountCashEditInput!) {
-  editInvestmentAccountCashe(input: $input) {
+export const EditInvestmentAccountCashDocument = gql`
+    mutation EditInvestmentAccountCash($input: InvestmentAccountCashEditInput!) {
+  editInvestmentAccountCash(input: $input) {
     ...InvestmentAccountCashChange
   }
 }
@@ -1642,16 +1620,16 @@ export const EditInvestmentAccountCasheDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class EditInvestmentAccountCasheGQL extends Apollo.Mutation<EditInvestmentAccountCasheMutation, EditInvestmentAccountCasheMutationVariables> {
-    override document = EditInvestmentAccountCasheDocument;
+  export class EditInvestmentAccountCashGQL extends Apollo.Mutation<EditInvestmentAccountCashMutation, EditInvestmentAccountCashMutationVariables> {
+    override document = EditInvestmentAccountCashDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const DeleteInvestmentAccountCasheDocument = gql`
-    mutation DeleteInvestmentAccountCashe($input: InvestmentAccountCashDeleteInput!) {
-  deleteInvestmentAccountCashe(input: $input) {
+export const DeleteInvestmentAccountCashDocument = gql`
+    mutation DeleteInvestmentAccountCash($input: InvestmentAccountCashDeleteInput!) {
+  deleteInvestmentAccountCash(input: $input) {
     ...InvestmentAccountCashChange
   }
 }
@@ -1660,30 +1638,8 @@ export const DeleteInvestmentAccountCasheDocument = gql`
   @Injectable({
     providedIn: 'root'
   })
-  export class DeleteInvestmentAccountCasheGQL extends Apollo.Mutation<DeleteInvestmentAccountCasheMutation, DeleteInvestmentAccountCasheMutationVariables> {
-    override document = DeleteInvestmentAccountCasheDocument;
-    
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const CashModificationSubscriptionDocument = gql`
-    subscription CashModificationSubscription {
-  cashModification {
-    modification
-    accountId
-    data {
-      ...InvestmentAccountCashChange
-    }
-  }
-}
-    ${InvestmentAccountCashChangeFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class CashModificationSubscriptionGQL extends Apollo.Subscription<CashModificationSubscriptionSubscription, CashModificationSubscriptionSubscriptionVariables> {
-    override document = CashModificationSubscriptionDocument;
+  export class DeleteInvestmentAccountCashGQL extends Apollo.Mutation<DeleteInvestmentAccountCashMutation, DeleteInvestmentAccountCashMutationVariables> {
+    override document = DeleteInvestmentAccountCashDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

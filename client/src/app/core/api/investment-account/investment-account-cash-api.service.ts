@@ -1,15 +1,12 @@
 import { Injectable } from '@angular/core';
 import { DataProxy, FetchResult } from '@apollo/client/core';
-import { map, Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import {
-	CashModificationSubscriptionGQL,
-	CreateInvestmentAccountCasheGQL,
-	CreateInvestmentAccountCasheMutation,
-	Data_Modification,
-	DeleteInvestmentAccountCasheGQL,
-	DeleteInvestmentAccountCasheMutation,
+	CreateInvestmentAccountCashGQL,
+	CreateInvestmentAccountCashMutation,
+	DeleteInvestmentAccountCashGQL,
+	DeleteInvestmentAccountCashMutation,
 	InvestmentAccountCashChangeFragment,
-	InvestmentAccountCashChangeSubscription,
 	InvestmentAccountCashCreateInput,
 	InvestmentAccountCashDeleteInput,
 } from '../../graphql';
@@ -20,25 +17,22 @@ import { InvestmentAccountCacheService } from './investment-account-cache.servic
 })
 export class InvestmentAccountCashApiService {
 	constructor(
-		private createInvestmentAccountCasheGQL: CreateInvestmentAccountCasheGQL,
-		private deleteInvestmentAccountCasheGQL: DeleteInvestmentAccountCasheGQL,
-		private cashModificationSubscriptionGQL: CashModificationSubscriptionGQL,
+		private createInvestmentAccountCashGQL: CreateInvestmentAccountCashGQL,
+		private deleteInvestmentAccountCashGQL: DeleteInvestmentAccountCashGQL,
 		private investmentAccountCacheService: InvestmentAccountCacheService
-	) {
-		this.cashModificationSubscription().subscribe();
-	}
+	) {}
 
 	createInvestmentAccountCash(
 		input: InvestmentAccountCashCreateInput
-	): Observable<FetchResult<CreateInvestmentAccountCasheMutation>> {
-		return this.createInvestmentAccountCasheGQL.mutate(
+	): Observable<FetchResult<CreateInvestmentAccountCashMutation>> {
+		return this.createInvestmentAccountCashGQL.mutate(
 			{
 				input,
 			},
 			{
 				optimisticResponse: {
 					__typename: 'Mutation',
-					createInvestmentAccountCashe: {
+					createInvestmentAccountCash: {
 						__typename: 'InvestmentAccountCashChange',
 						cashValue: input.cashValue,
 						itemId: new Date().toTimeString(),
@@ -48,12 +42,10 @@ export class InvestmentAccountCashApiService {
 					},
 				},
 				update: (store: DataProxy, { data }) => {
-					const result = data?.createInvestmentAccountCashe as InvestmentAccountCashChangeFragment;
+					const result = data?.createInvestmentAccountCash as InvestmentAccountCashChangeFragment;
 
 					// add cash entry to the array of entries
 					this.addCashToCache(input.investmentAccountId, result);
-
-					// update 'currentCash'
 				},
 			}
 		);
@@ -62,15 +54,15 @@ export class InvestmentAccountCashApiService {
 	deleteInvestmentAccountCash(
 		input: InvestmentAccountCashDeleteInput,
 		removingItem: InvestmentAccountCashChangeFragment
-	): Observable<FetchResult<DeleteInvestmentAccountCasheMutation>> {
-		return this.deleteInvestmentAccountCasheGQL.mutate(
+	): Observable<FetchResult<DeleteInvestmentAccountCashMutation>> {
+		return this.deleteInvestmentAccountCashGQL.mutate(
 			{
 				input,
 			},
 			{
 				optimisticResponse: {
 					__typename: 'Mutation',
-					deleteInvestmentAccountCashe: {
+					deleteInvestmentAccountCash: {
 						__typename: 'InvestmentAccountCashChange',
 						itemId: removingItem.itemId,
 						cashValue: removingItem.cashValue,
@@ -80,51 +72,26 @@ export class InvestmentAccountCashApiService {
 					},
 				},
 				update: (store: DataProxy, { data }) => {
-					const result = data?.deleteInvestmentAccountCashe as InvestmentAccountCashChangeFragment;
+					const result = data?.deleteInvestmentAccountCash as InvestmentAccountCashChangeFragment;
 					this.removeCashFromCache(input.investmentAccountId, result);
 				},
 			}
 		);
 	}
 
-	cashModificationSubscription(): Observable<InvestmentAccountCashChangeSubscription | undefined> {
-		return this.cashModificationSubscriptionGQL.subscribe().pipe(
-			map((res) => res.data?.cashModification),
-			tap((result) => {
-				if (!result) {
-					return;
-				}
-
-				if (result.modification === Data_Modification.Removed) {
-					this.removeCashFromCache(result.accountId, result.data);
-				} else if (result.modification === Data_Modification.Created) {
-					this.addCashToCache(result.accountId, result.data);
-				}
-
-				console.log('createdCashSubscription', result);
-			})
-		);
-	}
-
 	private addCashToCache(investmentAccountId: string, result: InvestmentAccountCashChangeFragment): void {
 		const account = this.investmentAccountCacheService.getInvestmentAccountFromCache(investmentAccountId);
-		const isExists = account.cashChange.find((d) => d.itemId === result.itemId);
 
 		// update cash only if doesn't exists
-		if (!isExists) {
-			const cashChange = [...account.cashChange, result].sort((a, b) => (a.date < b.date ? -1 : 1));
-			this.investmentAccountCacheService.updateInvestmentAccount({ ...account, cashChange });
-		}
+		const cashChange = [...account.cashChange, result].sort((a, b) => (a.date < b.date ? -1 : 1));
+		this.investmentAccountCacheService.updateInvestmentAccount({ ...account, cashChange });
 	}
 
 	private removeCashFromCache(investmentAccountId: string, result: InvestmentAccountCashChangeFragment): void {
 		const account = this.investmentAccountCacheService.getInvestmentAccountFromCache(investmentAccountId);
-		const isExists = account.cashChange.find((d) => d.itemId === result.itemId);
 
 		// update cash only if exists
-		if (!!isExists) {
-			const cashChange = account.cashChange.filter((d) => d.itemId !== result.itemId);
-			this.investmentAccountCacheService.updateInvestmentAccount({ ...account, cashChange });
-		}
+		const cashChange = account.cashChange.filter((d) => d.itemId !== result.itemId);
+		this.investmentAccountCacheService.updateInvestmentAccount({ ...account, cashChange });
 	}
 }

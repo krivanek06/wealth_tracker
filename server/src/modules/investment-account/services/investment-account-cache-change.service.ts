@@ -1,31 +1,20 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InvestmentAccountCashChangeType } from '@prisma/client';
-import { PubSubEngine } from 'graphql-subscriptions';
-import { DATA_MODIFICATION } from '../../../shared/dto';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
-import {
-	INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR,
-	INVESTMENT_ACCOUNT_CASH_CHANGE_TYPE_IMAGES,
-	INVESTMENT_ACCOUNT_CASH_PUB_SUB,
-} from '../dto';
+import { INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR, INVESTMENT_ACCOUNT_CASH_CHANGE_TYPE_IMAGES } from '../dto';
 import { InvestmentAccount, InvestmentAccountCashChange } from '../entities';
 import {
 	InvestmentAccountCashCreateInput,
 	InvestmentAccountCashDeleteInput,
 	InvestmentAccountCashEditInput,
 } from '../inputs';
-import { InvestmentAccountCashChangeSubscription } from '../outputs';
-import { PUB_SUB } from './../../../graphql/graphql.types';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
 @Injectable()
 export class InvestmentAccountCashChangeService {
-	constructor(
-		private investmentAccountRepositoryService: InvestmentAccountRepositoryService,
-		@Inject(PUB_SUB) private pubSub: PubSubEngine
-	) {}
+	constructor(private investmentAccountRepositoryService: InvestmentAccountRepositoryService) {}
 
-	async createInvestmentAccountCashe(
+	async createInvestmentAccountCash(
 		input: InvestmentAccountCashCreateInput,
 		userId: string
 	): Promise<InvestmentAccountCashChange> {
@@ -43,9 +32,6 @@ export class InvestmentAccountCashChangeService {
 
 		// modify in DB
 		await this.updateInvestmentAccountCashChange(input.investmentAccountId, [...account.cashChange, entry]);
-
-		// publish change
-		this.publishChange(input.investmentAccountId, entry, DATA_MODIFICATION.CREATED);
 
 		return entry;
 	}
@@ -100,9 +86,6 @@ export class InvestmentAccountCashChangeService {
 		// modify in DB
 		await this.updateInvestmentAccountCashChange(input.investmentAccountId, filteredOut);
 
-		// publish change
-		this.publishChange(input.investmentAccountId, removedCashChange, DATA_MODIFICATION.REMOVED);
-
 		return removedCashChange;
 	}
 
@@ -126,22 +109,6 @@ export class InvestmentAccountCashChangeService {
 		const cashChange = cashChangeInput.sort((a, b) => (a.date < b.date ? -1 : 1));
 		return this.investmentAccountRepositoryService.updateInvestmentAccount(investmentAccountId, {
 			cashChange: cashChange,
-		});
-	}
-
-	private publishChange(
-		investmentAccountId: string,
-		data: InvestmentAccountCashChange,
-		modification: DATA_MODIFICATION
-	): void {
-		const publish: InvestmentAccountCashChangeSubscription = {
-			accountId: investmentAccountId,
-			data,
-			modification,
-		};
-
-		this.pubSub.publish(INVESTMENT_ACCOUNT_CASH_PUB_SUB, {
-			[INVESTMENT_ACCOUNT_CASH_PUB_SUB]: publish,
 		});
 	}
 }

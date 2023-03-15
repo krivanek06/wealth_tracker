@@ -13,25 +13,10 @@ html,
 body {
 	height: 100%;
 }
+
 body {
 	margin: 0;
+	padding: 0;
 	font-family: Pippins, sans-serif !important;
-	padding: 16px;
-
 	width: 100%;
-
-	@screen lg {
-		margin: auto;
-		width: 95%;
-	}
-
-	@screen 2xl {
-		margin: auto;
-		width: 90%;
-	}
-
-	@screen 2xl {
-		margin: auto;
-		width: 85%;
-	}
 }

@@ -27,7 +27,7 @@ import { InvestmentAccountPeriodChange } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
 @Component({
-	selector: 'app-investment-account',
+	selector: 'app-welcome-investment-account',
 	templateUrl: './investment-account.component.html',
 	styleUrls: ['./investment-account.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,

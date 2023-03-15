@@ -1,8 +1,9 @@
 @import './custom/custom-paginator.scss';
 @import './custom/custom-tooltip.scss';
 @import './custom/custom-highcharts.scss';
+@import './custom/custom-page-welcome.scss';
 
-body {
+.g-application-body {
 	background: linear-gradient(
 		168.19deg,
 		#0e1247 1.34%,
@@ -15,6 +16,21 @@ body {
 	padding: 24px;
 	height: 100%;
 	background-attachment: fixed;
+
+	@screen lg {
+		margin: auto;
+		width: 95%;
+	}
+
+	@screen 2xl {
+		margin: auto;
+		width: 90%;
+	}
+
+	@screen 2xl {
+		margin: auto;
+		width: 85%;
+	}
 }
 
 .g-custom-snack-bar {

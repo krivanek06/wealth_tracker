@@ -1,21 +1,7 @@
 @import './custom/custom-paginator.scss';
 @import './custom/custom-tooltip.scss';
 @import './custom/custom-highcharts.scss';
-
-body {
-	background: linear-gradient(
-		168.19deg,
-		#0e1247 1.34%,
-		rgb(22 29 93 / 95%) 16.59%,
-		#182167 26.25%,
-		#171b54 65.39%,
-		#080f44 91.31%
-	);
-	color: var(--gray-light);
-	padding: 24px;
-	height: 100%;
-	background-attachment: fixed;
-}
+@import './custom/custom-page-welcome.scss';
 
 .g-custom-snack-bar {
 	background-color: #232439 !important;
@@ -34,10 +20,6 @@ body {
 
 .g-error-banner {
 	@apply text-lg text-center text-white bg-red-500 p-2 rounded-lg;
-}
-
-.g-button-size-lg {
-	min-width: 220px !important;
 }
 
 .mdc-tooltip--shown .mdc-tooltip__surface-animation {

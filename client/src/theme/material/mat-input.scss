@@ -1,12 +1,12 @@
 .mat-mdc-input-element:disabled,
 .mat-mdc-form-field-type-mat-native-select.mat-mdc-form-field-disabled .mat-mdc-form-field-infix::after {
-	color: var(--gray-dark) !important;
+	color: var(--disable-default) !important;
 }
 
 fieldset:disabled {
 	mat-form-field {
 		.mat-mdc-text-field-wrapper {
-			background-color: var(--gray-dark) !important;
+			background-color: var(--disable-default) !important;
 		}
 	}
 }

@@ -5,7 +5,6 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule, Routes } from '@angular/router';
 import { AccountType } from 'src/app/core/graphql';
-import { ResolveTokenGuard } from '../../core/guards';
 import { HeaderContainerModule } from '../page-shared';
 import { PersonalAccountMobileViewComponent } from './../../modules/personal-account/pages/personal-account-mobile-view/personal-account-mobile-view.component';
 import { DashboardComponent } from './dashboard.component';
@@ -14,7 +13,6 @@ const routes: Routes = [
 	{
 		path: '',
 		component: DashboardComponent,
-		resolve: [ResolveTokenGuard],
 		children: [
 			{
 				path: `${AccountType.Personal}/:id`,

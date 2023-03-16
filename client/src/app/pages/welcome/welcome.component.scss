@@ -1,0 +1,13 @@
+:host {
+	display: block;
+	background-color: black;
+	overflow: hidden;
+}
+
+footer {
+	height: 15px;
+
+	@screen lg {
+		height: 120px;
+	}
+}

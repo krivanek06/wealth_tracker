@@ -57,31 +57,21 @@ mutation DeleteInvestmentAccountHolding($input: InvestmentAccounHoldingHistoryDe
 
 ### Investment account cash
 
-mutation CreateInvestmentAccountCashe($input: InvestmentAccountCashCreateInput!) {
-	createInvestmentAccountCashe(input: $input) {
+mutation CreateInvestmentAccountCash($input: InvestmentAccountCashCreateInput!) {
+	createInvestmentAccountCash(input: $input) {
 		...InvestmentAccountCashChange
 	}
 }
 
-mutation EditInvestmentAccountCashe($input: InvestmentAccountCashEditInput!) {
-	editInvestmentAccountCashe(input: $input) {
+mutation EditInvestmentAccountCash($input: InvestmentAccountCashEditInput!) {
+	editInvestmentAccountCash(input: $input) {
 		...InvestmentAccountCashChange
 	}
 }
 
-mutation DeleteInvestmentAccountCashe($input: InvestmentAccountCashDeleteInput!) {
-	deleteInvestmentAccountCashe(input: $input) {
+mutation DeleteInvestmentAccountCash($input: InvestmentAccountCashDeleteInput!) {
+	deleteInvestmentAccountCash(input: $input) {
 		...InvestmentAccountCashChange
-	}
-}
-
-subscription CashModificationSubscription {
-	cashModification {
-		modification
-		accountId
-		data {
-			...InvestmentAccountCashChange
-		}
 	}
 }
 

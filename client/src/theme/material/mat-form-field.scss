@@ -94,7 +94,7 @@ mat-hint {
 }
 
 mat-divider {
-	background-color: #3a418b !important;
+	background-color: var(--background-light) !important;
 }
 
 .mat-mdc-form-field-error {

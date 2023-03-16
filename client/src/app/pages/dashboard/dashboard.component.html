@@ -1,30 +1,35 @@
-<ng-container *ngIf="availableAccounts$ | async as accounts">
-	<!-- header -->
-	<app-header-container [availableAccounts]="accounts"> </app-header-container>
+<div class="c-screen-size">
+	<ng-container *ngIf="availableAccounts$ | async as accounts">
+		<!-- header -->
+		<app-header-container [availableAccounts]="accounts"> </app-header-container>
 
-	<!-- dashboard navigation -->
-	<div class="justify-end hidden my-4 sm:flex">
-		<nav mat-tab-nav-bar dynamicHeight [tabPanel]="tabPanel">
-			<a
-				mat-tab-link
-				*ngFor="let account of accounts"
-				[routerLink]="[account.accountType, account.id]"
-				routerLinkActive
-				#rla="routerLinkActive"
-				[active]="rla.isActive"
-				class="mr-3"
-			>
-				{{account.name}}
-			</a>
-		</nav>
+		<!-- dashboard navigation -->
+		<div class="justify-end hidden my-4 sm:flex">
+			<nav mat-tab-nav-bar dynamicHeight [tabPanel]="tabPanel">
+				<a
+					mat-tab-link
+					*ngFor="let account of accounts"
+					[routerLink]="[account.accountType, account.id]"
+					routerLinkActive
+					#rla="routerLinkActive"
+					[active]="rla.isActive"
+					class="mr-3"
+				>
+					{{account.name}}
+				</a>
+			</nav>
+		</div>
+	</ng-container>
+
+	<div class="max-sm:py-4">
+		<mat-divider class="sm:hidden"></mat-divider>
 	</div>
-</ng-container>
 
-<div class="max-sm:py-4">
-	<mat-divider class="sm:hidden"></mat-divider>
+	<!-- routing -->
+	<mat-tab-nav-panel #tabPanel>
+		<router-outlet></router-outlet>
+	</mat-tab-nav-panel>
+
+	<!-- empty footer -->
+	<footer></footer>
 </div>
-
-<!-- routing -->
-<mat-tab-nav-panel #tabPanel>
-	<router-outlet></router-outlet>
-</mat-tab-nav-panel>

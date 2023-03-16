@@ -4,7 +4,7 @@
 }
 
 .mdc-tab--active .mdc-tab__text-label {
-	color: var(--secondary-dark) !important;
+	color: var(--primary-dark) !important;
 }
 
 .mat-mdc-tab-list {
@@ -13,4 +13,8 @@
 
 .mat-mdc-tab-body {
 	padding: 8px !important;
+}
+
+.mat-mdc-tab .mdc-tab__text-label {
+	color: var(--gray-medium) !important;
 }

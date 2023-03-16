@@ -5,25 +5,6 @@
 }
 
 .c-background-image {
-	background-image: url('https://storage.googleapis.com/frequently_accessible_assets/general-images/welcome_hero_bg.jpg');
-	-webkit-background-size: contain;
-	-moz-background-size: contain;
-	-o-background-size: contain;
-	background-size: contain;
-
-	background-repeat: no-repeat;
-	background-position: center;
-
-	position: absolute;
-	height: 85%;
-	width: 85%;
-
-	left: 0;
-	right: 0;
-	margin-left: auto;
-	margin-right: auto;
-	top: 2%;
-
 	animation: rotation 60s infinite linear;
 }
 

@@ -2,7 +2,7 @@
 	@apply grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-4 lg:gap-8;
 
 	.c-text {
-		@apply text-xl text-center text-white mt-2;
+		@apply text-xl xl:text-2xl text-center text-white mt-2;
 	}
 
 	app-value-presentation-card {

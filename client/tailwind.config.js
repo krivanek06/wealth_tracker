@@ -20,8 +20,8 @@ module.exports = {
 				'wt-primary-dark': 'var(--primary-dark)',
 
 				/* secondary */
-				'wt-secondary-dark': 'var(--secondary-dark)',
-				'wt-secondary-medium': 'var(--secondary-medium)',
+				// 'wt-secondary-dark': 'var(--secondary-dark)',
+				// 'wt-secondary-medium': 'var(--secondary-medium)',
 
 				/* success */
 				'wt-success-dark': 'var(--success-dark)',

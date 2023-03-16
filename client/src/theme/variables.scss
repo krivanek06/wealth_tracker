@@ -6,8 +6,8 @@
 	// --primary-dark-transparent-low: #e8511f32;
 
 	/* secondary */
-	--secondary-dark: #00a9da;
-	--secondary-medium: #33bfe7;
+	// --secondary-dark: #00a9da;
+	// --secondary-medium: #33bfe7;
 
 	/* success */
 	--success-dark: #0c9710;
@@ -24,15 +24,17 @@
 	--gray-light: #dcdcdc;
 
 	/* table */
-	--table-hover: #35386475;
-	--table-border: #2c3280;
+	--table-hover: #01383855;
+	--table-border: #002424;
 
 	/* background */
-	--background-dark: #0f1348;
-	--background-medium: #1e2566;
-	--background-light: #2d3263;
+	--background-dark: #031e1e;
+	--background-medium: #013838;
+	--background-light: #064d4d;
 
 	/* chart color */
 	--chart-danger: #ac1414;
 	--chart-success: #149a19;
+
+	--disable-default: #3e5156;
 }

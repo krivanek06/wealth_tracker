@@ -3,36 +3,6 @@
 @import './custom/custom-highcharts.scss';
 @import './custom/custom-page-welcome.scss';
 
-.g-application-body {
-	background: linear-gradient(
-		168.19deg,
-		#0e1247 1.34%,
-		rgb(22 29 93 / 95%) 16.59%,
-		#182167 26.25%,
-		#171b54 65.39%,
-		#080f44 91.31%
-	);
-	color: var(--gray-light);
-	padding: 24px;
-	height: 100%;
-	background-attachment: fixed;
-
-	@screen lg {
-		margin: auto;
-		width: 95%;
-	}
-
-	@screen 2xl {
-		margin: auto;
-		width: 90%;
-	}
-
-	@screen 2xl {
-		margin: auto;
-		width: 85%;
-	}
-}
-
 .g-custom-snack-bar {
 	background-color: #232439 !important;
 	color: #f6f6f7 !important;

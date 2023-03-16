@@ -14,13 +14,18 @@
 
 	<div class="order-1 c-wrapper md:order-2">
 		<!-- add holding -->
-		<button (click)="onAddClick()" mat-stroked-button type="button" color="primary" class="mb-2">
+		<button (click)="onAddClick()" mat-stroked-button type="button" color="primary" class="mb-2 g-button-size-lg">
 			<mat-icon>add</mat-icon>
 			Add holding
 		</button>
 
 		<!-- show transactions -->
-		<button (click)="onShowHistoryClick()" mat-stroked-button type="button" class="mb-2 text-wt-gray-medium">
+		<button
+			(click)="onShowHistoryClick()"
+			mat-stroked-button
+			type="button"
+			class="mb-2 text-wt-gray-medium g-button-size-lg"
+		>
 			<mat-icon>visibility</mat-icon>
 			Show transactions
 		</button>

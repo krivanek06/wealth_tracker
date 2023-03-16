@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
 import { map, Observable } from 'rxjs';
 import {
-	CreateInvestmentAccountCasheMutation,
+	CreateInvestmentAccountCashMutation,
 	CreateInvestmentAccountHoldingMutation,
 	CreateInvestmentAccountMutation,
-	DeleteInvestmentAccountCasheMutation,
+	DeleteInvestmentAccountCashMutation,
 	DeleteInvestmentAccountHoldingMutation,
 	DeleteInvestmentAccountMutation,
 	EditInvestmentAccountMutation,
@@ -48,8 +48,13 @@ export class InvestmentAccountFacadeApiService {
 
 					return acc + curr.cashValue;
 				}, 0);
-				const currentInvested = account.activeHoldings.reduce((acc, curr) => acc + curr.totalValue, 0);
-				const currentBalance = currentInvested + currentCash;
+				const currentInvestments = account.activeHoldings.reduce((acc, curr) => acc + curr.totalValue, 0);
+				const currentBalance = currentInvestments + currentCash;
+
+				const assetOperationTotal = account.activeHoldings.reduce(
+					(acc, curr) => acc + curr.beakEvenPrice * curr.units,
+					0
+				);
 
 				// create aggregation for each operation
 				const aggregation = account.cashChange.reduce(
@@ -57,7 +62,7 @@ export class InvestmentAccountFacadeApiService {
 						return { ...acc, [curr.type]: acc[curr.type] + curr.cashValue };
 					},
 					{
-						ASSET_OPERATION: 0,
+						ASSET_OPERATION: 0, // don't use
 						DEPOSIT: 0,
 						WITHDRAWAL: 0,
 					} as { [key in InvestmentAccountCashChangeType]: number }
@@ -74,9 +79,9 @@ export class InvestmentAccountFacadeApiService {
 					userId: account.userId,
 					createdAt: account.createdAt,
 					currentCash,
-					currentInvested,
+					currentInvestments,
 					currentBalance,
-					AssetOperationTotal: aggregation.ASSET_OPERATION,
+					AssetOperationTotal: assetOperationTotal,
 					DepositTotal: aggregation.DEPOSIT,
 					WithdrawalTotal: aggregation.WITHDRAWAL,
 				};
@@ -125,14 +130,14 @@ export class InvestmentAccountFacadeApiService {
 
 	createInvestmentAccountCash(
 		input: InvestmentAccountCashCreateInput
-	): Observable<FetchResult<CreateInvestmentAccountCasheMutation>> {
+	): Observable<FetchResult<CreateInvestmentAccountCashMutation>> {
 		return this.investmentAccountCashApiService.createInvestmentAccountCash(input);
 	}
 
 	deleteInvestmentAccountCash(
 		input: InvestmentAccountCashDeleteInput,
 		removingItem: InvestmentAccountCashChangeFragment
-	): Observable<FetchResult<DeleteInvestmentAccountCasheMutation>> {
+	): Observable<FetchResult<DeleteInvestmentAccountCashMutation>> {
 		return this.investmentAccountCashApiService.deleteInvestmentAccountCash(input, removingItem);
 	}
 }

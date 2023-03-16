@@ -52,7 +52,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 		this.breakpointObserver.observe(LAYOUT_SM).subscribe((match) => {
 			if (this.chart && this.investmentAccountGrowth) {
 				this.initChart(this.investmentAccountGrowth, !match.matches);
-				this.chart.redraw();
+				this.chart?.redraw();
 
 				// use change detection otherwise does not redraw
 				this.cd.detectChanges();

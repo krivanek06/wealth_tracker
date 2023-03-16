@@ -45,9 +45,8 @@ export class InvestmentAccountActiveHoldingsTableComponent implements OnInit {
 		'invested',
 		'volume',
 		'invested_xs',
-		'statistics',
-		'52WeekRange',
 		'addditional_info',
+		'52WeekRange',
 	];
 
 	dataSource!: MatTableDataSource<InvestmentAccountActiveHoldingOutputFragment>;

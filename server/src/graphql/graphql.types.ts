@@ -8,4 +8,5 @@ export const Void = new GraphQLScalarType({
 	serialize: () => null,
 });
 
+// USE: @Inject(PUB_SUB) private pubSub: PubSubEngine
 export const PUB_SUB = 'PUB_SUB';

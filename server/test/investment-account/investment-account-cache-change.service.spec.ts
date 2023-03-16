@@ -88,7 +88,7 @@ describe('InvestmentAccountCashChangeService', () => {
 				date: input.date,
 			};
 
-			const result = await service.createInvestmentAccountCashe(input, mockUserId);
+			const result = await service.createInvestmentAccountCash(input, mockUserId);
 
 			expect(result).toStrictEqual(expectedResponse);
 			expect(prismaServiceMock.investmentAccount.update).toHaveBeenCalledWith({
@@ -104,7 +104,7 @@ describe('InvestmentAccountCashChangeService', () => {
 		});
 
 		it('should thrown an error if investment account not found', async () => {
-			await expect(service.createInvestmentAccountCashe(input, 'NOT_EXISTING')).rejects.toThrowError(
+			await expect(service.createInvestmentAccountCash(input, 'NOT_EXISTING')).rejects.toThrowError(
 				INVESTMENT_ACCOUNT_ERROR.NOT_FOUND
 			);
 		});

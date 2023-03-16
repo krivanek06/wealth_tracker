@@ -68,7 +68,7 @@ export class LoginModalComponent implements OnInit {
 					this.authenticationFacadeService.loginUserBasic(res).pipe(
 						tap(() => {
 							DialogServiceUtil.showNotificationBar(`You have been successfully logged in`, 'success');
-							this.dialogRef.close();
+							this.dialogRef.close(true);
 						})
 					)
 				)

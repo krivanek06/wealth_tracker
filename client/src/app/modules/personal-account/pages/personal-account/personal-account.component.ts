@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ACCOUNT_KEY, PersonalAccountOverviewFragment } from '../../../../core/graphql';
 
 @Component({
-	selector: 'app-personal-account',
+	selector: 'app-welcome-personal-account',
 	templateUrl: './personal-account.component.html',
 	styleUrls: ['./personal-account.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,

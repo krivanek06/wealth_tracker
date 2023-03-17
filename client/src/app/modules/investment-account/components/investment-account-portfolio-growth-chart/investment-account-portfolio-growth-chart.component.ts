@@ -244,7 +244,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 			},
 			series: [
 				{
-					color: '#00c4dd',
+					color: '#07b9b9',
 					type: 'area',
 					zIndex: 10,
 					fillColor: {
@@ -255,7 +255,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 							y2: 1,
 						},
 						stops: [
-							[0, '#25aedd'],
+							[0, '#07b9b9'],
 							[1, 'transparent'],
 						],
 					},

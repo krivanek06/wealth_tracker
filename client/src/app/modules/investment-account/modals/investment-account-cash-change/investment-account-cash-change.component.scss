@@ -2,7 +2,7 @@
 	display: block;
 
 	.c-cash-wrapper {
-		@apply flex flex-col md:grid md:grid-cols-2 gap-x-8 xl:gap-x-12 gap-y-4 justify-between p-2 mb-2;
+		@apply flex flex-col md:grid md:grid-cols-2 gap-x-8 xl:gap-x-12 gap-y-4 p-2 mb-2;
 		& > div {
 			@apply text-xl flex justify-between gap-2;
 		}

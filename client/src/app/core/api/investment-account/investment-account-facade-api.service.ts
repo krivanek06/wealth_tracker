@@ -75,7 +75,7 @@ export class InvestmentAccountFacadeApiService {
 					accountType: account.accountType,
 					activeHoldings: account.activeHoldings,
 					cashChange: account.cashChange,
-					name: account.createdAt,
+					name: account.name,
 					userId: account.userId,
 					createdAt: account.createdAt,
 					currentCash,

@@ -5,7 +5,7 @@ mat-list-item {
 
 mat-selection-list > .mdc-list-group__subheader,
 mat-list > .mdc-list-group__subheader {
-	color: var(--gray-medium) !important;
+	color: var(--primary-dark) !important;
 }
 
 .mdc-list-item__secondary-text {
@@ -14,4 +14,14 @@ mat-list > .mdc-list-group__subheader {
 
 .mdc-list-item--with-leading-icon .mdc-list-item__start {
 	color: var(--gray-medium) !important;
+}
+
+mat-list-option {
+	overflow-y: visible !important;
+	overflow-x: clip !important;
+
+	.mdc-list-item__content {
+		overflow-y: visible !important;
+		overflow-x: clip !important;
+	}
 }

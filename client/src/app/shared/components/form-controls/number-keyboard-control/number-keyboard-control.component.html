@@ -1,5 +1,5 @@
 <div class="grid grid-cols-3 gap-2">
-	<button *ngFor="let button of KeyboardComponent" type="button" mat-stroked-button (click)="onButtonClick(button)">
+	<button *ngFor="let button of KeyboardComponent" type="button" mat-stroked-button (click)="onButtonClick(button)" class="min-h-[52px]">
 		{{button.label}}
 	</button>
 </div>

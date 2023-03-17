@@ -22,16 +22,12 @@ export class PersonalAccountDailyEntriesTableComponent implements OnInit {
 		this.dataSource.paginator = this.paginator;
 		this.dataSource.sort = this.sort;
 	}
-	displayedColumns: string[] = ['tag', 'value', 'date'];
+	displayedColumns: string[] = ['tag', 'value'];
 	dataSource!: MatTableDataSource<PersonalAccountDailyDataOutputFragment>;
 
 	TagDataType = TagDataType;
 
 	constructor() {}
-	// ngAfterViewInit(): void {
-	// 	this.dataSource.paginator = this.paginator;
-	// 	this.dataSource.sort = this.sort;
-	// }
 
 	ngOnInit(): void {}
 

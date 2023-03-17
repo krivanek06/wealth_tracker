@@ -1,6 +1,6 @@
 <mat-list>
 	<ng-container *ngFor="let item of personalAccountDailyData">
-		<div mat-subheader>{{item.date | date: 'EEEE, MMM d.'}}</div>
+		<div mat-subheader>{{item.date | date: 'EEEE, MMM. d.'}}</div>
 		<mat-selection-list [multiple]="false" [hideSingleSelectionIndicator]="true">
 			<mat-list-option
 				*ngFor="let data of item.data"
@@ -14,7 +14,7 @@
               		style="border-color: {{data.tag.color}}"
 							  class="px-2 rounded-md border-x-4 h-7"
              -->
-						<img class="-mt-1 h-7" appDefaultImg [src]="data.tag.imageUrl" />
+						<img class="h-8 -mt-1" appDefaultImg [src]="data.tag.imageUrl" />
 
 						<!-- tag data -->
 						<div class="flex flex-col">
@@ -36,7 +36,7 @@
 				</div>
 
 				<!-- description -->
-				<div class="mt-2 whitespace-pre-wrap text-wt-gray-medium" [innerText]="data.description "></div>
+				<div class="pl-2 mt-2 mb-2 whitespace-pre-wrap text-wt-gray-medium" [innerText]="data.description "></div>
 			</mat-list-option>
 		</mat-selection-list>
 

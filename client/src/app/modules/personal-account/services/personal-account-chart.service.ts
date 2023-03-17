@@ -225,7 +225,8 @@ export class PersonalAccountChartService {
 	getExpenseAllocationChartData(
 		data: (PersonalAccountDailyDataOutputFragment | PersonalAccountAggregationDataOutput)[]
 	): GenericChartSeriesPie {
-		const seriesData = createGenericChartSeriesPie(data, 'tag', 'name', 'color', 'imageUrl');
+		const notIncomeData = data.filter((d) => d.tag.type !== TagDataType.Income);
+		const seriesData = createGenericChartSeriesPie(notIncomeData, 'tag', 'name', 'color', 'imageUrl');
 
 		return { data: seriesData, colorByPoint: true, name: 'Expenses', innerSize: '80%', type: 'pie' };
 	}

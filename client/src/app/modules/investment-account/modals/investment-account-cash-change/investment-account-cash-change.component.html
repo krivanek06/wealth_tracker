@@ -1,6 +1,5 @@
 <div *ngIf="investmentAccount$ | async as investmentAccount" class="mb-6 text-lg text-center">
-	<span class="text-wt-primary-dark">{{ investmentAccount.name }}: </span>
-	<span>{{ investmentAccount.currentCash| currency}}</span>
+	<span class="text-wt-primary-dark">{{ investmentAccount.name }}</span>
 </div>
 
 <div class="lg:grid lg:place-content-center lg:mb-8">
@@ -32,6 +31,10 @@
 					{{ investmentAccount.WithdrawalTotal| largeNumberFormatter: false: true }}
 				</span>
 			</div>
+			<div>
+				Cash:
+				<span class="text-wt-gray-light"> {{ investmentAccount.currentCash| currency }} </span>
+			</div>
 		</div>
 
 		<!-- date picker -->
@@ -56,7 +59,7 @@
 		<app-number-keyboard-control formControlName="value"></app-number-keyboard-control>
 
 		<!-- history of changed cash -->
-		<div *ngIf="showCashHistory" class="pl-4 mt-4 md:pr-2">
+		<div *ngIf="showCashHistory" class="mt-4 sm:pl-4 md:pr-2">
 			<div class="my-4">
 				<mat-divider></mat-divider>
 			</div>

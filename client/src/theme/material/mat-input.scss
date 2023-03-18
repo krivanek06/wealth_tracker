@@ -19,3 +19,8 @@ input,
 textarea {
 	font-size: 16px !important;
 }
+
+.mat-form-field-hide-placeholder .mat-mdc-select-placeholder {
+	-webkit-text-fill-color: var(--gray-medium) !important;
+	text-fill-color: var(--gray-medium) !important;
+}

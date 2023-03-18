@@ -22,7 +22,7 @@ export class PersonalAccountDailyService {
 		input: PersonalAccountDailyDataQuery,
 		userId: string
 	): Promise<PersonalAccountDailyDataOutput[]> {
-		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(input.personalAccountId);
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserIdStrict(userId);
 		const monthlyData = await this.personalAccountMonthlyDataRepositoryService.getMonthlyDataByYearAndMont(
 			input.personalAccountId,
 			input.year,
@@ -181,7 +181,9 @@ export class PersonalAccountDailyService {
 	 * @returns output of the data that contains the associated tag object
 	 */
 	private async transformDailyDataToOutput(data: PersonalAccountDailyData): Promise<PersonalAccountDailyDataOutput> {
-		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(data.personalAccountId);
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountByIdStrict(
+			data.personalAccountId
+		);
 		const personalAccountTag = personalAccount.personalAccountTag.find((d) => d.id === data.tagId);
 		return { ...data, tag: personalAccountTag };
 	}

@@ -10,20 +10,16 @@ export class PersonalAccountService {
 	constructor(private readonly personalAccountRepositoryService: PersonalAccountRepositoryService) {}
 
 	/* Queries */
-	getPersonalAccountById(personalAccountId: string): Promise<PersonalAccount> {
-		return this.personalAccountRepositoryService.getPersonalAccountById(personalAccountId);
-	}
-
-	getPersonalAccounts(userId: string): Promise<PersonalAccount[]> {
-		return this.personalAccountRepositoryService.getPersonalAccounts(userId);
+	getPersonalAccountByUserIdStrict(userId: string): Promise<PersonalAccount> {
+		return this.personalAccountRepositoryService.getPersonalAccountByUserIdStrict(userId);
 	}
 
 	/* Mutations */
 	async createPersonalAccount({ name }: PersonalAccountCreateInput, userId: string): Promise<PersonalAccount> {
-		const personalAccountCount = await this.personalAccountRepositoryService.getPersonalAccountCount(userId);
+		const existingPersonalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserId(userId);
 
 		// prevent creating more than 5 personal accounts per user
-		if (personalAccountCount > 4) {
+		if (existingPersonalAccount) {
 			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_ALLOWED_TO_CREATE, HttpStatus.FORBIDDEN);
 		}
 
@@ -34,21 +30,14 @@ export class PersonalAccountService {
 			AccountType.PERSONAL
 		);
 
-		// TODO: remove this - on dailyData create will be fire to create monthly data
-		// created date details
-		// const { year, month } = MomentServiceUtil.getDetailsInformationFromDate(personalAccount.createdAt);
-
-		// // create monthly data for the new personal account
-		// await this.personalAccountMonthlyService.createMonthlyData(personalAccount, userId, year, month);
-
 		return personalAccount;
 	}
 
 	async editPersonalAccount({ id, name }: PersonalAccountEditInput, userId: string): Promise<PersonalAccount> {
-		const isPersonalAccountExists = await this.personalAccountRepositoryService.isPersonalAccountExist(id, userId);
+		const existingPersonalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserId(userId);
 
 		// no account found to be deleted
-		if (!isPersonalAccountExists) {
+		if (!existingPersonalAccount) {
 			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
@@ -56,13 +45,10 @@ export class PersonalAccountService {
 	}
 
 	async deletePersonalAccount(personalAccountId: string, userId: string): Promise<PersonalAccount> {
-		const isPersonalAccountExists = await this.personalAccountRepositoryService.isPersonalAccountExist(
-			personalAccountId,
-			userId
-		);
+		const existingPersonalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserId(userId);
 
 		// no account found to be deleted
-		if (!isPersonalAccountExists) {
+		if (!existingPersonalAccount) {
 			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 

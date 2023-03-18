@@ -18,15 +18,16 @@ model User {
     // how user created his account
     authentication UserAuthentication
 
-    // 1 - N relationship with multiple investment accounts
-    // one user can craete multiple investment accounts
-    investmentAccounts InvestmentAccount[]
+    // 1 - 1 relationship with an investment account
+    investmentAccount InvestmentAccount?
 
-    // 1 - N relationship with multiple personal accounts
-    // one user can craete multiple personal accounts & monthly data
-    personalAccounts                PersonalAccount[]
+    // 1 - 1 relationship with a personal account
+    personalAccount                 PersonalAccount?
     personalAccountMonthlyData      PersonalAccountMonthlyData[]
     PersonalAccountRecurringExpense PersonalAccountRecurringExpense[]
+
+    personalAccountId   String? @db.ObjectId
+    investmentAccountId String? @db.ObjectId
 }
 
 type UserAuthentication {
@@ -53,15 +54,15 @@ model PersonalAccount {
     accountType      AccountType
     enabledBudgeting Boolean
 
+    // 1 - 1 relationship with user
+    userId String @unique @db.ObjectId
+    user   User   @relation(fields: [userId], references: [id])
+
     // 1 - N relationship with PersonalAccountTag
     personalAccountTag PersonalAccountTag[]
 
     // 1 - N reference with PersonalAccountMonthlyData
     MonthlyData PersonalAccountMonthlyData[]
-
-    // N - 1 relationship with user
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @db.ObjectId
 
     // 1 - N relationship with PersonalAccountReccuringExpense
     PersonalAccountRecurringExpense PersonalAccountRecurringExpense[]
@@ -125,13 +126,13 @@ model PersonalAccountMonthlyData {
     // daily entries of user's expenses / incomes - changed on user's input
     dailyData PersonalAccountDailyData[]
 
+    // N - 1 reference to User
+    User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @unique @db.ObjectId
+
     // N - 1 reference to PersonalAccount
     PersonalAccount   PersonalAccount @relation(fields: [personalAccountId], references: [id], onDelete: Cascade)
     personalAccountId String          @db.ObjectId
-
-    // N - 1 reference to User
-    User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @db.ObjectId
 }
 
 type PersonalAccountDailyData {
@@ -154,15 +155,15 @@ model InvestmentAccount {
     createdAt   DateTime    @default(now())
     accountType AccountType
 
+    // 1 - 1 relationship with user
+    userId String @unique @db.ObjectId
+    user   User   @relation(fields: [userId], references: [id])
+
     // whole history of changed cash on hand
     cashChange InvestmentAccountCashChange[]
 
     // whole history of purchased/sold assets
     holdings InvestmentAccountHolding[]
-
-    // 1 - N relationship with user
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @db.ObjectId
 }
 
 type InvestmentAccountCashChange {

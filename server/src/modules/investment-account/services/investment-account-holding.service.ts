@@ -56,7 +56,7 @@ export class InvestmentAccountHoldingService {
 
 		// prevent adding future holdings
 		if (MomentServiceUtil.format(new Date()) < MomentServiceUtil.format(input.holdingInputData.date)) {
-			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTRED_DATE_RANGE, HttpStatus.FORBIDDEN);
+			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTED_DATE_RANGE, HttpStatus.FORBIDDEN);
 		}
 
 		// get year data form input and today
@@ -65,14 +65,11 @@ export class InvestmentAccountHoldingService {
 
 		// prevent loading more than N year of asset data or future data - just in case
 		if (todayYear - inputYear > INVESTMENT_ACCOUNT_HOLDING_MAX_YEARS) {
-			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTRED_DATE_RANGE, HttpStatus.FORBIDDEN);
+			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTED_DATE_RANGE, HttpStatus.FORBIDDEN);
 		}
 
 		// load investment account to which we want to create the holding
-		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountById(
-			input.investmentAccountId,
-			userId
-		);
+		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
 
 		// find existing holding
 		const existingHolding = investmentAccount.holdings.find((x) => x.id === input.symbol);
@@ -174,10 +171,7 @@ export class InvestmentAccountHoldingService {
 		userId: string
 	): Promise<InvestmentAccountHoldingHistory> {
 		// load investment account
-		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountById(
-			input.investmentAccountId,
-			userId
-		);
+		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
 
 		// find existing holding
 		const existingHoldingIndex = investmentAccount.holdings.findIndex((x) => x.id === input.symbol);

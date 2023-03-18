@@ -4,7 +4,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { AppService } from './app.service';
 import { AuthenticationModule } from './auth';
 import { GraphQLBackendModule } from './graphql';
-import { AssetManagerModule, InvestmentAccountModule, PersonalAccountModule, UserModule } from './modules';
+import {
+	AccountManagerModule,
+	AssetManagerModule,
+	InvestmentAccountModule,
+	PersonalAccountModule,
+	UserModule,
+} from './modules';
 
 @Module({
 	imports: [
@@ -18,6 +24,7 @@ import { AssetManagerModule, InvestmentAccountModule, PersonalAccountModule, Use
 		PersonalAccountModule,
 		InvestmentAccountModule,
 		AssetManagerModule,
+		AccountManagerModule,
 	],
 	controllers: [],
 	providers: [AppService],

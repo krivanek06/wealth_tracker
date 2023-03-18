@@ -1,8 +1,8 @@
 <div class="c-screen-size">
-	<ng-container *ngIf="availableAccounts$ | async as accounts">
-		<!-- header -->
-		<app-header-container [availableAccounts]="accounts"> </app-header-container>
+	<!-- header -->
+	<app-header-container> </app-header-container>
 
+	<ng-container *ngIf="availableAccounts$ | async as accounts">
 		<!-- dashboard navigation -->
 		<div class="justify-end hidden my-4 sm:flex">
 			<nav mat-tab-nav-bar dynamicHeight [tabPanel]="tabPanel">

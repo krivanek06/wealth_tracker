@@ -21,8 +21,8 @@ mutation EditPersonalAccount($input: PersonalAccountEditInput!) {
 	}
 }
 
-mutation DeletePersonalAccount($accountId: String!) {
-	deletePersonalAccount(input: $accountId) {
+mutation DeletePersonalAccount {
+	deletePersonalAccount {
 		...PersonalAccountOverview
 	}
 }

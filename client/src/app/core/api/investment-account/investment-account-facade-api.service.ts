@@ -95,12 +95,12 @@ export class InvestmentAccountFacadeApiService {
 		return this.investmentAccountApiService.editInvestmentAccount(input);
 	}
 
-	deleteInvestmentAccount(accountId: string): Observable<FetchResult<DeleteInvestmentAccountMutation>> {
-		return this.investmentAccountApiService.deleteInvestmentAccount(accountId);
+	deleteInvestmentAccount(): Observable<FetchResult<DeleteInvestmentAccountMutation>> {
+		return this.investmentAccountApiService.deleteInvestmentAccount();
 	}
 
-	getInvestmentAccountGrowth(accountId: string): Observable<InvestmentAccountGrowth[]> {
-		return this.investmentAccountApiService.getInvestmentAccountGrowth(accountId);
+	getInvestmentAccountGrowth(): Observable<InvestmentAccountGrowth[]> {
+		return this.investmentAccountApiService.getInvestmentAccountGrowth();
 	}
 
 	getTransactionHistory(): Observable<InvestmentAccountTransactionOutput[]> {

@@ -286,7 +286,6 @@ export type InvestmentAccountGrowth = {
 };
 
 export type InvestmentAccountGrowthInput = {
-  investmenAccountId: Scalars['String'];
   /** Sectors which to filter by. If empty, no filtering */
   sectors?: InputMaybe<Array<Scalars['String']>>;
 };
@@ -464,11 +463,6 @@ export type MutationCreatePersonalAccountTagArgs = {
 };
 
 
-export type MutationDeleteInvestmentAccountArgs = {
-  input: Scalars['String'];
-};
-
-
 export type MutationDeleteInvestmentAccountCashArgs = {
   input: InvestmentAccountCashDeleteInput;
 };
@@ -476,11 +470,6 @@ export type MutationDeleteInvestmentAccountCashArgs = {
 
 export type MutationDeleteInvestmentAccountHoldingArgs = {
   input: InvestmentAccounHoldingHistoryDeleteInput;
-};
-
-
-export type MutationDeletePersonalAccountArgs = {
-  input: Scalars['String'];
 };
 
 
@@ -899,9 +888,7 @@ export type EditInvestmentAccountMutationVariables = Exact<{
 
 export type EditInvestmentAccountMutation = { __typename?: 'Mutation', editInvestmentAccount: { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType } };
 
-export type DeleteInvestmentAccountMutationVariables = Exact<{
-  input: Scalars['String'];
-}>;
+export type DeleteInvestmentAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type DeleteInvestmentAccountMutation = { __typename?: 'Mutation', deleteInvestmentAccount: { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType } };
@@ -989,9 +976,7 @@ export type EditPersonalAccountMutationVariables = Exact<{
 
 export type EditPersonalAccountMutation = { __typename?: 'Mutation', editPersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType } };
 
-export type DeletePersonalAccountMutationVariables = Exact<{
-  accountId: Scalars['String'];
-}>;
+export type DeletePersonalAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type DeletePersonalAccountMutation = { __typename?: 'Mutation', deletePersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType } };
@@ -1509,8 +1494,8 @@ export const EditInvestmentAccountDocument = gql`
     }
   }
 export const DeleteInvestmentAccountDocument = gql`
-    mutation DeleteInvestmentAccount($input: String!) {
-  deleteInvestmentAccount(input: $input) {
+    mutation DeleteInvestmentAccount {
+  deleteInvestmentAccount {
     ...InvestmentAccountOverview
   }
 }
@@ -1727,8 +1712,8 @@ export const EditPersonalAccountDocument = gql`
     }
   }
 export const DeletePersonalAccountDocument = gql`
-    mutation DeletePersonalAccount($accountId: String!) {
-  deletePersonalAccount(input: $accountId) {
+    mutation DeletePersonalAccount {
+  deletePersonalAccount {
     ...PersonalAccountOverview
   }
 }

@@ -120,9 +120,9 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 
 	async onDeleteAccountClick(account: AccountIdentification): Promise<void> {
 		if (account.accountType === AccountType.Personal) {
-			await firstValueFrom(this.personalAccountFacadeService.deletePersonalAccount(account.id));
+			await firstValueFrom(this.personalAccountFacadeService.deletePersonalAccount());
 		} else if (account.accountType === AccountType.Investment) {
-			await firstValueFrom(this.investmentAccountFacadeApiService.deleteInvestmentAccount(account.id));
+			await firstValueFrom(this.investmentAccountFacadeApiService.deleteInvestmentAccount());
 		}
 
 		this.onCancelClick();

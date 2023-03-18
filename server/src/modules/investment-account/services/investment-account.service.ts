@@ -170,14 +170,14 @@ export class InvestmentAccountService {
 	}
 
 	async editInvestmentAccount(input: InvestmentAccountEditInput, userId: string): Promise<InvestmentAccount> {
-		await this.investmentAccountRepositoryService.isInvestmentAccountExist(input.investmentAccountId, userId);
+		await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 		return this.investmentAccountRepositoryService.updateInvestmentAccount(input.investmentAccountId, {
 			name: input.name,
 		});
 	}
 
-	async deleteInvestmentAccount(investmentAccountId: string, userId: string): Promise<InvestmentAccount> {
-		await this.investmentAccountRepositoryService.isInvestmentAccountExist(investmentAccountId, userId);
-		return this.investmentAccountRepositoryService.deleteInvestmentAccount(investmentAccountId);
+	async deleteInvestmentAccount(userId: string): Promise<InvestmentAccount> {
+		await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
+		return this.investmentAccountRepositoryService.deleteInvestmentAccount(userId);
 	}
 }

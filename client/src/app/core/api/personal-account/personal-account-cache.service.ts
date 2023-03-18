@@ -1,15 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import {
+	GetPersonalAccountByUserDocument,
+	GetPersonalAccountByUserQuery,
 	GetPersonalAccountDailyDataDocument,
 	GetPersonalAccountDailyDataQuery,
-	GetPersonalAccountsDocument,
-	GetPersonalAccountsQuery,
 	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountDailyDataQuery,
 	PersonalAccountDetailsFragment,
-	PersonalAccountDetailsFragmentDoc,
-	PersonalAccountOverviewFragment,
 	PersonalAccountTagFragment,
 	PersonalAccountTagFragmentDoc,
 } from '../../graphql';
@@ -58,46 +56,27 @@ export class PersonalAccountCacheService {
 		return fragment;
 	}
 
-	getPersonalAccountsOverview(): PersonalAccountOverviewFragment[] {
-		const query = this.apollo.client.readQuery<GetPersonalAccountsQuery>({
-			query: GetPersonalAccountsDocument,
-		});
-
-		return query?.getPersonalAccounts ?? [];
-	}
-
-	updatePersonalAccountsOverview(data: PersonalAccountOverviewFragment[]): void {
-		this.apollo.client.writeQuery<GetPersonalAccountsQuery>({
-			query: GetPersonalAccountsDocument,
-			data: {
-				__typename: 'Query',
-				getPersonalAccounts: [...data],
-			},
-		});
-	}
-
-	getPersonalAccountDetails(personalAccountId: string): PersonalAccountDetailsFragment {
-		const fragment = this.apollo.client.readFragment<PersonalAccountDetailsFragment>({
-			id: `PersonalAccount:${personalAccountId}`,
-			fragmentName: 'PersonalAccountDetails',
-			fragment: PersonalAccountDetailsFragmentDoc,
+	getPersonalAccountDetails(): PersonalAccountDetailsFragment {
+		const fragment = this.apollo.client.readQuery<GetPersonalAccountByUserQuery>({
+			query: GetPersonalAccountByUserDocument,
 		});
 
 		// not found - personal account must be in cache
-		if (!fragment) {
+		if (!fragment?.getPersonalAccountByUser) {
 			throw new Error(`[PersonalAccountApiService]: Unable to find the correct personal account details`);
 		}
 
-		return fragment;
+		return fragment.getPersonalAccountByUser;
 	}
 
-	updatePersonalAccountDetails(accountId: string, data: PersonalAccountDetailsFragment): void {
-		this.apollo.client.writeFragment<PersonalAccountDetailsFragment>({
-			id: `PersonalAccount:${accountId}`,
-			fragmentName: 'PersonalAccountDetails',
-			fragment: PersonalAccountDetailsFragmentDoc,
+	updatePersonalAccountDetails(data: PersonalAccountDetailsFragment): void {
+		this.apollo.client.writeQuery<GetPersonalAccountByUserQuery>({
+			query: GetPersonalAccountByUserDocument,
 			data: {
-				...data,
+				__typename: 'Query',
+				getPersonalAccountByUser: {
+					...data,
+				},
 			},
 		});
 	}

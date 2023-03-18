@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
 import { filter, map, Observable, tap } from 'rxjs';
 import {
+	AccountType,
 	EditPersonalAccountMutation,
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataDelete,
@@ -19,6 +20,7 @@ import {
 	TagDataType,
 } from '../../graphql';
 import { DateServiceUtil } from '../../utils/date-service.util';
+import { AccountManagerCacheService } from '../account-manager';
 import { PersonalAccountApiService } from './personal-account-api.service';
 import { PersonalAccountCacheService } from './personal-account-cache.service';
 import { PersonalAccountDataAggregatorService } from './personal-account-data-aggregator.service';
@@ -30,7 +32,8 @@ export class PersonalAccountFacadeService {
 	constructor(
 		private personalAccountApiService: PersonalAccountApiService,
 		private personalAccountDataAggregatorService: PersonalAccountDataAggregatorService,
-		private personalAccountCacheService: PersonalAccountCacheService
+		private personalAccountCacheService: PersonalAccountCacheService,
+		private accountManagerCacheService: AccountManagerCacheService
 	) {}
 
 	getPersonalAccountAvailableTagImages(): Observable<string[]> {
@@ -39,7 +42,7 @@ export class PersonalAccountFacadeService {
 
 	getPersonalAccountDetailsByUser(): Observable<PersonalAccountDetailsFragment> {
 		return this.personalAccountApiService
-			.getPersonalAccountDetailsByUser()
+			.getPersonalAccountDetails()
 			.pipe(filter((data): data is PersonalAccountDetailsFragment => !!data));
 	}
 
@@ -54,10 +57,8 @@ export class PersonalAccountFacadeService {
 					return;
 				}
 
-				const accounts = this.personalAccountCacheService.getPersonalAccountsOverview();
-
 				// update cache
-				this.personalAccountCacheService.updatePersonalAccountsOverview([...accounts, result]);
+				this.accountManagerCacheService.createAccountType(result);
 			})
 		);
 	}
@@ -66,15 +67,11 @@ export class PersonalAccountFacadeService {
 		return this.personalAccountApiService.editPersonalAccount(input);
 	}
 
-	deletePersonalAccount(accountId: string): Observable<PersonalAccountOverviewFragment | undefined> {
-		return this.personalAccountApiService.deletePersonalAccount(accountId).pipe(
-			tap((res) => {
-				// load accounts from cache
-				const accounts = this.personalAccountCacheService.getPersonalAccountsOverview();
-				const updatedAccounts = accounts.filter((d) => d.id !== accountId);
-
+	deletePersonalAccount(): Observable<PersonalAccountOverviewFragment | undefined> {
+		return this.personalAccountApiService.deletePersonalAccount().pipe(
+			tap(() => {
 				// update cache
-				this.personalAccountCacheService.updatePersonalAccountsOverview([...updatedAccounts]);
+				this.accountManagerCacheService.removeAccountType(AccountType.Personal);
 			})
 		);
 	}
@@ -97,15 +94,11 @@ export class PersonalAccountFacadeService {
 	 * @param dateFormat - year-month-week
 	 * @returns
 	 */
-	getPersonalAccountDailyData(
-		personalAccountId: string,
-		dateFormat: string
-	): Observable<PersonalAccountDailyDataOutputFragment[]> {
+	getPersonalAccountDailyData(dateFormat: string): Observable<PersonalAccountDailyDataOutputFragment[]> {
 		const [year, month, week] = dateFormat.split('-').map((d) => Number(d));
 
 		return this.personalAccountApiService
 			.getPersonalAccountDailyData({
-				personalAccountId,
 				year,
 				month,
 			})
@@ -124,9 +117,9 @@ export class PersonalAccountFacadeService {
 					return;
 				}
 
-				const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails(input.personalAccountId);
+				const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails();
 
-				this.personalAccountCacheService.updatePersonalAccountDetails(input.personalAccountId, {
+				this.personalAccountCacheService.updatePersonalAccountDetails({
 					...personalAccount,
 					personalAccountTag: [...personalAccount.personalAccountTag, result],
 				});
@@ -145,10 +138,10 @@ export class PersonalAccountFacadeService {
 					return;
 				}
 
-				const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails(input.personalAccountId);
+				const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails();
 
 				// remove tag from array in personal account
-				this.personalAccountCacheService.updatePersonalAccountDetails(input.personalAccountId, {
+				this.personalAccountCacheService.updatePersonalAccountDetails({
 					...personalAccount,
 					personalAccountTag: personalAccount.personalAccountTag.filter((d) => d.id !== result.id),
 				});
@@ -166,12 +159,10 @@ export class PersonalAccountFacadeService {
 				if (!entry) {
 					return;
 				}
-				const personalAccountId = input.personalAccountId;
 
 				// check if daily data for specific data is in cache, if so, add this one too
 				const { year, month } = DateServiceUtil.getDetailsInformationFromDate(input.date);
 				const dailyDataCache = this.personalAccountCacheService.getPersonalAccountDailyDataFromCache({
-					personalAccountId,
 					year,
 					month,
 				});
@@ -179,14 +170,13 @@ export class PersonalAccountFacadeService {
 				// if daily data is loaded, add this on too sorted
 				if (dailyDataCache) {
 					this.personalAccountCacheService.updatePersonalAccountDailyDataCache([...dailyDataCache, entry], {
-						personalAccountId,
 						year,
 						month,
 					});
 				}
 
 				// update yearly, monthly, weekly aggregation
-				this.personalAccountDataAggregatorService.updateAggregations(input.personalAccountId, entry, 'increase');
+				this.personalAccountDataAggregatorService.updateAggregations(entry, 'increase');
 			})
 		);
 	}
@@ -200,24 +190,15 @@ export class PersonalAccountFacadeService {
 				// check if daily data for specific data is in cache, if so, add this one too
 				const { year, month } = DateServiceUtil.getDetailsInformationFromDate(Number(addedDailyData.date));
 				const dailyDataCache = this.personalAccountCacheService.getPersonalAccountDailyDataFromCache({
-					personalAccountId: addedDailyData.personalAccountId,
 					year,
 					month,
 				});
 
 				// subtract old data from aggregations
-				this.personalAccountDataAggregatorService.updateAggregations(
-					input.dailyDataDelete.personalAccountId,
-					removedDailyData,
-					'decrease'
-				);
+				this.personalAccountDataAggregatorService.updateAggregations(removedDailyData, 'decrease');
 
 				// add new data to aggregations
-				this.personalAccountDataAggregatorService.updateAggregations(
-					input.dailyDataDelete.personalAccountId,
-					addedDailyData,
-					'increase'
-				);
+				this.personalAccountDataAggregatorService.updateAggregations(addedDailyData, 'increase');
 
 				// remove from cache
 				this.personalAccountCacheService.removePersonalAccountDailyDataFromCache(removedDailyData.id);
@@ -230,7 +211,6 @@ export class PersonalAccountFacadeService {
 					this.personalAccountCacheService.updatePersonalAccountDailyDataCache(
 						[...removedOldDailyData, addedDailyData],
 						{
-							personalAccountId: addedDailyData.personalAccountId,
 							year,
 							month,
 						}
@@ -250,7 +230,7 @@ export class PersonalAccountFacadeService {
 				}
 
 				// update yearly, monthly, weekly aggregation
-				this.personalAccountDataAggregatorService.updateAggregations(input.personalAccountId, entry, 'decrease');
+				this.personalAccountDataAggregatorService.updateAggregations(entry, 'decrease');
 
 				// remove from cache
 				this.personalAccountCacheService.removePersonalAccountDailyDataFromCache(entry.id);

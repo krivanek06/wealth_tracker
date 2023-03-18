@@ -24,8 +24,8 @@ mutation EditInvestmentAccount($input: InvestmentAccountEditInput!) {
 	}
 }
 
-mutation DeleteInvestmentAccount($input: String!) {
-	deleteInvestmentAccount(input: $input) {
+mutation DeleteInvestmentAccount {
+	deleteInvestmentAccount {
 		...InvestmentAccountOverview
 	}
 }

@@ -47,8 +47,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		private dialogRef: MatDialogRef<PersonalAccountDailyDataEntryComponent>,
 		@Inject(MAT_DIALOG_DATA)
 		public data: {
-			personalAccountId: string;
-			personalAccountName: string;
 			dailyData: PersonalAccountDailyDataOutputFragment | null;
 		}
 	) {}
@@ -73,7 +71,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			.deletePersonalAccountDailyEntry({
 				dailyDataId: this.data.dailyData.id,
 				monthlyDataId: this.data.dailyData.monthlyDataId,
-				personalAccountId: this.data.personalAccountId,
 			})
 			.pipe(
 				// notify user
@@ -115,7 +112,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 								dailyDataDelete: {
 									dailyDataId: editedDailyData.id,
 									monthlyDataId: editedDailyData.monthlyDataId,
-									personalAccountId: this.data.personalAccountId,
 								},
 						  })
 				),
@@ -173,7 +169,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			date: combinedDate.toString(),
 			value: Number(valueValue),
 			tagId: tagValue,
-			personalAccountId: this.data.personalAccountId,
 			description: description,
 		};
 

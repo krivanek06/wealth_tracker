@@ -52,7 +52,7 @@ export class PersonalAccountApiService {
 	) {}
 
 	// TODO: does this work if I have no account and I create one ???
-	getPersonalAccountDetailsByUser(): Observable<PersonalAccountDetailsFragment | null> {
+	getPersonalAccountDetails(): Observable<PersonalAccountDetailsFragment | null> {
 		return this.getPersonalAccountByUserGQL
 			.watch()
 			.valueChanges.pipe(map((res) => res.data.getPersonalAccountByUser ?? null));
@@ -72,12 +72,8 @@ export class PersonalAccountApiService {
 		});
 	}
 
-	deletePersonalAccount(accountId: string): Observable<PersonalAccountOverviewFragment | undefined> {
-		return this.deletePersonalAccountGQL
-			.mutate({
-				accountId,
-			})
-			.pipe(map((res) => res.data?.deletePersonalAccount));
+	deletePersonalAccount(): Observable<PersonalAccountOverviewFragment | undefined> {
+		return this.deletePersonalAccountGQL.mutate().pipe(map((res) => res.data?.deletePersonalAccount));
 	}
 
 	createPersonalAccountDailyEntry(

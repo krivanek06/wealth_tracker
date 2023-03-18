@@ -28,7 +28,7 @@ export abstract class PersonalAccountParent {
 			return;
 		}
 		this.personalAccountBasic = data;
-		this.initData(data);
+		this.initData();
 	}
 
 	personalAccountDetails$!: Observable<PersonalAccountDetailsFragment>;
@@ -109,8 +109,8 @@ export abstract class PersonalAccountParent {
 
 	constructor() {}
 
-	private initData(account: AccountIdentification): void {
-		this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsByUser(account.id);
+	private initData(): void {
+		this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsByUser();
 
 		// calculate account state - balance, cash, invested
 		this.accountTotalState$ = this.personalAccountDetails$.pipe(

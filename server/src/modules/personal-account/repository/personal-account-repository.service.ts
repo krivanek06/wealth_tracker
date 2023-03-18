@@ -75,13 +75,13 @@ export class PersonalAccountRepositoryService {
 		});
 	}
 
-	updatePersonalAccount(accountId: string, data: Partial<PersonalAccount>): Promise<PersonalAccount> {
+	updatePersonalAccount(userId: string, data: Partial<PersonalAccount>): Promise<PersonalAccount> {
 		return this.prisma.personalAccount.update({
 			data: {
 				...data,
 			},
 			where: {
-				id: accountId,
+				userId,
 			},
 		});
 	}

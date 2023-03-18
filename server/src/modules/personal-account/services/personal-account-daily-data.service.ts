@@ -23,17 +23,22 @@ export class PersonalAccountDailyService {
 		userId: string
 	): Promise<PersonalAccountDailyDataOutput[]> {
 		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserId(userId);
+
+		if (!personalAccount) {
+			return [];
+		}
+
 		const monthlyData = await this.personalAccountMonthlyDataRepositoryService.getMonthlyDataByYearAndMont(
-			input.personalAccountId,
+			personalAccount.id,
 			input.year,
 			input.month
 		);
 
-		if (!personalAccount || !monthlyData) {
+		if (!monthlyData) {
 			return [];
 		}
 
-		// create correct returning object
+		// create correct returning object - merging monthly data with tags
 		const transformedDailyData: PersonalAccountDailyDataOutput[] = monthlyData.dailyData.map((d) => {
 			const personalAccountTag = personalAccount.personalAccountTag.find((tag) => tag.id === d.tagId);
 			return { ...d, tag: personalAccountTag };
@@ -57,12 +62,15 @@ export class PersonalAccountDailyService {
 		const inputDate = new Date(input.date);
 		const uuid = SharedServiceUtil.getUUID();
 
+		// if no account - error is thrown
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserIdStrict(userId);
+
 		// calculate date details
 		const { year, month, week } = MomentServiceUtil.getDetailsInformationFromDate(inputDate);
 
 		// load monthly data to which we want to register the dailyData
 		let monthlyData = await this.personalAccountMonthlyDataRepositoryService.getMonthlyDataByYearAndMont(
-			input.personalAccountId,
+			personalAccount.id,
 			year,
 			month
 		);
@@ -71,7 +79,7 @@ export class PersonalAccountDailyService {
 		// create new monthly data for the new daily data
 		if (!isMonthlyDataExist) {
 			monthlyData = await this.personalAccountMonthlyDataRepositoryService.createMonthlyData(
-				input.personalAccountId,
+				personalAccount.id,
 				userId,
 				year,
 				month
@@ -85,7 +93,7 @@ export class PersonalAccountDailyService {
 			tagId: input.tagId,
 			description: input.description,
 			monthlyDataId: monthlyData.id,
-			personalAccountId: input.personalAccountId,
+			personalAccountId: personalAccount.id,
 			value: input.value,
 			week: week,
 			date: inputDate,

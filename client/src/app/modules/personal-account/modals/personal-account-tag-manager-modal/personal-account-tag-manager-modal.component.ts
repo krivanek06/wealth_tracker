@@ -30,7 +30,7 @@ export class PersonalAccountTagManagerModalComponent implements OnInit {
 	) {}
 	ngOnInit(): void {
 		const personalAccountTags$ = this.personalAccountFacadeService
-			.getPersonalAccountDetailsByUser(this.data.personalAccountId)
+			.getPersonalAccountDetailsByUser()
 			.pipe(map((res) => res.personalAccountTag));
 
 		this.personalAccountIncomeTags$ = personalAccountTags$.pipe(

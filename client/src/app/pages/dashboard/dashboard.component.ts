@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { InvestmentAccountFacadeApiService, PersonalAccountFacadeService } from '../../core/api';
-import { AccountCreation } from '../page-shared/header-container/header-model';
+import { AccountManagerApiService } from '../../core/api';
+import { AccountIdentificationFragment } from '../../core/graphql';
 
 @Component({
 	selector: 'app-dashboard',
@@ -10,12 +10,11 @@ import { AccountCreation } from '../page-shared/header-container/header-model';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit {
-	availableAccounts$!: Observable<AccountCreation[]>;
+	availableAccounts$!: Observable<AccountIdentificationFragment[]>;
 
-	constructor(
-		private personalAccountFacadeService: PersonalAccountFacadeService,
-		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService
-	) {}
+	constructor(private managerAccountApiService: AccountManagerApiService) {}
 
-	ngOnInit(): void {}
+	ngOnInit(): void {
+		this.availableAccounts$ = this.managerAccountApiService.getAvailableAccounts();
+	}
 }

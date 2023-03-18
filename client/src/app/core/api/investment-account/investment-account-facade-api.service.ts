@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
-import { map, Observable } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 import {
 	CreateInvestmentAccountCashMutation,
 	CreateInvestmentAccountHoldingMutation,
@@ -35,6 +35,7 @@ export class InvestmentAccountFacadeApiService {
 
 	getInvestmentAccountByUser(): Observable<InvestmentAccountFragmentExtended> {
 		return this.investmentAccountApiService.getInvestmentAccountByUser().pipe(
+			filter((data): data is InvestmentAccountFragmentExtended => !!data),
 			map((account) => {
 				const currentCash = account.cashChange.reduce((acc, curr) => {
 					if (curr.type === InvestmentAccountCashChangeType.Withdrawal) {

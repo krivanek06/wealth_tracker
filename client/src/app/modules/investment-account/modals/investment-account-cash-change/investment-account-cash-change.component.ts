@@ -54,7 +54,7 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountByUser(this.data.investmentId);
+		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountByUser();
 
 		// displayed cash change in table
 		this.cashChange$ = combineLatest([

@@ -17,8 +17,8 @@ import { PersonalAccountFacadeService } from './../../../core/api';
 export class PersonalAccountDataService {
 	constructor(private personalAccountFacadeService: PersonalAccountFacadeService) {}
 
-	getAvailableTagInputSourceWrapper(personalAccountId: string): Observable<InputSourceWrapper[]> {
-		const expenseTags$ = this.personalAccountFacadeService.getPersonalAccountTagsExpense(personalAccountId).pipe(
+	getAvailableTagInputSourceWrapper(): Observable<InputSourceWrapper[]> {
+		const expenseTags$ = this.personalAccountFacadeService.getPersonalAccountTagsExpense().pipe(
 			map((res) => {
 				return {
 					name: res[0].type,
@@ -34,7 +34,7 @@ export class PersonalAccountDataService {
 			})
 		);
 
-		const incomeTags$ = this.personalAccountFacadeService.getPersonalTagsIncome(personalAccountId).pipe(
+		const incomeTags$ = this.personalAccountFacadeService.getPersonalTagsIncome().pipe(
 			map((res) => {
 				return {
 					name: res[0].type,

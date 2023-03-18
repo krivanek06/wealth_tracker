@@ -22,7 +22,7 @@ export class PersonalAccountDailyService {
 		input: PersonalAccountDailyDataQuery,
 		userId: string
 	): Promise<PersonalAccountDailyDataOutput[]> {
-		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserIdStrict(userId);
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserId(userId);
 		const monthlyData = await this.personalAccountMonthlyDataRepositoryService.getMonthlyDataByYearAndMont(
 			input.personalAccountId,
 			input.year,

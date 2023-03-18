@@ -6,7 +6,7 @@ import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import { InvestmentAccountTransactionOutput } from '../../../../core/graphql';
 import { GeneralFunctionUtil } from '../../../../core/utils';
 import { InputSource } from '../../../../shared/models';
-import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.util';
+import { DialogServiceUtil } from './../../../../shared/dialogs';
 
 // TODO - virtual scrolling if many transactions
 @Component({
@@ -36,17 +36,15 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.symbolInputSource$ = this.investmentAccountFacadeApiService
-			.getAvailableTransactionSymbols(this.data.investmentId)
-			.pipe(
-				map((symbols) =>
-					symbols.map((d) => {
-						return { caption: d, value: d, image: GeneralFunctionUtil.getAssetUrl(d) } as InputSource;
-					})
-				)
-			);
+		this.symbolInputSource$ = this.investmentAccountFacadeApiService.getAvailableTransactionSymbols().pipe(
+			map((symbols) =>
+				symbols.map((d) => {
+					return { caption: d, value: d, image: GeneralFunctionUtil.getAssetUrl(d) } as InputSource;
+				})
+			)
+		);
 
-		this.transactionHistory$ = this.investmentAccountFacadeApiService.getTransactionHistory(this.data.investmentId);
+		this.transactionHistory$ = this.investmentAccountFacadeApiService.getTransactionHistory();
 	}
 
 	onRemove(data: InvestmentAccountTransactionOutput): void {

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { mergeMap, Observable, zip } from 'rxjs';
 import { InvestmentAccountFacadeApiService, PersonalAccountFacadeService } from '../../core/api';
-import { AccountIdentification } from '../../core/graphql';
+import { AccountCreation } from '../page-shared/header-container/header-model';
 
 @Component({
 	selector: 'app-dashboard',
@@ -10,7 +10,7 @@ import { AccountIdentification } from '../../core/graphql';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit {
-	availableAccounts$!: Observable<AccountIdentification[]>;
+	availableAccounts$!: Observable<AccountCreation[]>;
 
 	constructor(
 		private personalAccountFacadeService: PersonalAccountFacadeService,

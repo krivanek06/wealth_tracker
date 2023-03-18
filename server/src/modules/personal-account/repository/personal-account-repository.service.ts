@@ -39,7 +39,7 @@ export class PersonalAccountRepositoryService {
 		return personalAccount;
 	}
 
-	getPersonalAccountByUserId(userId: string): Promise<PersonalAccount> {
+	getPersonalAccountByUserId(userId: string): Promise<PersonalAccount | undefined> {
 		return this.prisma.personalAccount.findUnique({
 			where: {
 				userId,

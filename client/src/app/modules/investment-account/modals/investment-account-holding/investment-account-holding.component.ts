@@ -162,7 +162,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 			startWith(this.formSymbol.value),
 			switchMap((value: AssetGeneralFragment) =>
 				this.investmentAccountFacadeApiService
-					.getTransactionHistory(this.data.investmentId)
+					.getTransactionHistory()
 					.pipe(map((transactions) => transactions.filter((d) => (!!value ? d.assetId === value.id : false))))
 			)
 		);

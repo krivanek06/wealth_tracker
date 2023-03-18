@@ -23,9 +23,10 @@ export class PersonalAccountResolver {
 	/* Queries */
 	@Query(() => PersonalAccount, {
 		description: 'Returns personal accounts for authenticated user',
+		nullable: true,
 	})
-	getPersonalAccountByUser(@ReqUser() authUser: RequestUser): Promise<PersonalAccount> {
-		return this.personalAccountService.getPersonalAccountByUserIdStrict(authUser.id);
+	getPersonalAccountByUser(@ReqUser() authUser: RequestUser): Promise<PersonalAccount | undefined> {
+		return this.personalAccountService.getPersonalAccountByUserId(authUser.id);
 	}
 
 	/* Mutation */

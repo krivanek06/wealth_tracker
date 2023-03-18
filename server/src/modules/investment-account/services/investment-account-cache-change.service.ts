@@ -18,7 +18,7 @@ export class InvestmentAccountCashChangeService {
 		input: InvestmentAccountCashCreateInput,
 		userId: string
 	): Promise<InvestmentAccountCashChange> {
-		const account = await this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
+		const account = await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 
 		const entry: InvestmentAccountCashChange = {
 			itemId: SharedServiceUtil.getUUID(),
@@ -37,7 +37,7 @@ export class InvestmentAccountCashChangeService {
 		input: InvestmentAccountCashEditInput,
 		userId: string
 	): Promise<InvestmentAccountCashChange> {
-		const account = await this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
+		const account = await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 
 		// edit the correct itemId
 		const editedCashChanges = account.cashChange.map((d) => {
@@ -68,7 +68,7 @@ export class InvestmentAccountCashChangeService {
 		input: InvestmentAccountCashDeleteInput,
 		userId: string
 	): Promise<InvestmentAccountCashChange> {
-		const account = await this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
+		const account = await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 
 		// return back to user
 		const removedCashChange = account.cashChange.find((d) => d.itemId === input.itemId);

@@ -8,7 +8,15 @@ import { InvestmentAccount } from '../entities';
 export class InvestmentAccountRepositoryService {
 	constructor(private prisma: PrismaService) {}
 
-	async getInvestmentAccountByUserId(userId: string): Promise<InvestmentAccount> {
+	getInvestmentAccountByUserId(userId: string): Promise<InvestmentAccount | undefined> {
+		return this.prisma.investmentAccount.findUnique({
+			where: {
+				userId,
+			},
+		});
+	}
+
+	async getInvestmentAccountByUserIdStrict(userId: string): Promise<InvestmentAccount> {
 		const investmentAccount = await this.prisma.investmentAccount.findUnique({
 			where: {
 				userId,

@@ -9,9 +9,8 @@ import {
 	DeleteInvestmentAccountMutation,
 	EditInvestmentAccountGQL,
 	EditInvestmentAccountMutation,
-	GetInvestmentAccountByIdGQL,
+	GetInvestmentAccountByUserGQL,
 	GetInvestmentAccountGrowthGQL,
-	GetInvestmentAccountsGQL,
 	GetTransactionHistoryGQL,
 	GetTransactionSymbolsGQL,
 	InvestmentAccountEditInput,
@@ -27,8 +26,7 @@ import { InvestmentAccountCacheService } from './investment-account-cache.servic
 })
 export class InvestmentAccountApiService {
 	constructor(
-		private getInvestmentAccountsGQL: GetInvestmentAccountsGQL,
-		private getInvestmentAccountByIdGQL: GetInvestmentAccountByIdGQL,
+		private getInvestmentAccountByUserGQL: GetInvestmentAccountByUserGQL,
 		private getInvestmentAccountGrowthGQL: GetInvestmentAccountGrowthGQL,
 		private createInvestmentAccountGQL: CreateInvestmentAccountGQL,
 		private editInvestmentAccountGQL: EditInvestmentAccountGQL,
@@ -39,16 +37,10 @@ export class InvestmentAccountApiService {
 		private apollo: Apollo
 	) {}
 
-	getInvestmentAccounts(): Observable<InvestmentAccountOverviewFragment[]> {
-		return this.getInvestmentAccountsGQL.watch().valueChanges.pipe(map((res) => res.data.getInvestmentAccounts));
-	}
-
-	getInvestmentAccountById(accountId: string): Observable<InvestmentAccountFragment> {
-		return this.getInvestmentAccountByIdGQL
-			.watch({
-				input: accountId,
-			})
-			.valueChanges.pipe(map((res) => res.data.getInvestmentAccountById));
+	getInvestmentAccountByUser(): Observable<InvestmentAccountFragment | undefined | null> {
+		return this.getInvestmentAccountByUserGQL
+			.watch()
+			.valueChanges.pipe(map((res) => res.data.getInvestmentAccountByUser));
 	}
 
 	getInvestmentAccountGrowth(investmenAccountId: string): Observable<InvestmentAccountGrowth[]> {
@@ -62,20 +54,12 @@ export class InvestmentAccountApiService {
 			.valueChanges.pipe(map((res) => res.data.getInvestmentAccountGrowth));
 	}
 
-	getTransactionHistory(accountId: string): Observable<InvestmentAccountTransactionOutput[]> {
-		return this.getTransactionHistoryGQL
-			.watch({
-				accountId,
-			})
-			.valueChanges.pipe(map((res) => res.data.getTransactionHistory));
+	getTransactionHistory(): Observable<InvestmentAccountTransactionOutput[]> {
+		return this.getTransactionHistoryGQL.watch().valueChanges.pipe(map((res) => res.data.getTransactionHistory));
 	}
 
-	getAvailableTransactionSymbols(input: string): Observable<string[]> {
-		return this.getTransactionSymbolsGQL
-			.watch({
-				input,
-			})
-			.valueChanges.pipe(map((res) => res.data.getTransactionSymbols));
+	getAvailableTransactionSymbols(): Observable<string[]> {
+		return this.getTransactionSymbolsGQL.watch().valueChanges.pipe(map((res) => res.data.getTransactionSymbols));
 	}
 
 	createInvestmentAccount(name: string): Observable<FetchResult<CreateInvestmentAccountMutation>> {

@@ -110,16 +110,16 @@ export abstract class PersonalAccountParent {
 	constructor() {}
 
 	private initData(account: AccountIdentification): void {
-		this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsById(account.id);
+		this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsByUser(account.id);
 
 		// calculate account state - balance, cash, invested
 		this.accountTotalState$ = this.personalAccountDetails$.pipe(
-			map((account) => this.personalAccountChartService.getAccountState(account.yearlyAggregaton))
+			map((account) => this.personalAccountChartService.getAccountState(account.yearlyAggregation))
 		);
 
 		// filter out expense tags to show them to the user
 		this.yearlyExpenseTags$ = this.personalAccountDetails$.pipe(
-			map((account) => account.yearlyAggregaton.filter((d) => d.tag.type === TagDataType.Expense)),
+			map((account) => account.yearlyAggregation.filter((d) => d.tag.type === TagDataType.Expense)),
 			map((expenseTags) => this.personalAccountDataService.createValuePresentItemFromTag(expenseTags))
 		);
 
@@ -188,7 +188,7 @@ export abstract class PersonalAccountParent {
 			map((result) => (!!result ? this.personalAccountChartService.getExpenseAllocationChartData(result) : null))
 		);
 		this.personalAccountYearlyTagExpensePieChart$ = this.personalAccountDetails$.pipe(
-			map((result) => this.personalAccountChartService.getExpenseAllocationChartData(result.yearlyAggregaton))
+			map((result) => this.personalAccountChartService.getExpenseAllocationChartData(result.yearlyAggregation))
 		);
 
 		this.accountTagAggregationForTimePeriod$ = combineLatest([
@@ -205,7 +205,7 @@ export abstract class PersonalAccountParent {
 				]) =>
 					dateFilter === NO_DATE_SELECTED
 						? this.personalAccountDataService.getPersonalAccountTagAggregationByAggregationData(
-								details.yearlyAggregaton
+								details.yearlyAggregation
 						  )
 						: this.personalAccountDataService.getPersonalAccountTagAggregationByDailyData(result, dateFilter)
 			)

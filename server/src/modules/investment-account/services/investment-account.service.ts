@@ -24,11 +24,7 @@ export class InvestmentAccountService {
 	}
 
 	getInvestmentAccountByUserId(userId: string): Promise<InvestmentAccount | null> {
-		try {
-			return this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
-		} catch {
-			return null;
-		}
+		return this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
 	}
 
 	/**
@@ -43,7 +39,7 @@ export class InvestmentAccountService {
 		userId: string
 	): Promise<InvestmentAccountGrowth[]> {
 		// load investment account
-		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
+		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 
 		// symbolIds filter out by sectors
 		const filteredHoldings = investmentAccount.holdings

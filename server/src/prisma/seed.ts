@@ -33,7 +33,7 @@ const USER_ID = '63457ee3bb8dd0d311fbbe33';
 const getPersonalAccount = async (): Promise<PersonalAccount> => {
 	// remove previous
 	try {
-		const accounts = await personalAccountService.getPersonalAccountByUserIdStrict(USER_ID);
+		const accounts = await personalAccountService.getPersonalAccountByUserId(USER_ID);
 		return accounts;
 	} catch {
 		const input: PersonalAccountCreateInput = {

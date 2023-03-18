@@ -20,7 +20,7 @@ export class InvestmentAccountResolver {
 		description: 'Returns investment account for authenticated user',
 		nullable: true,
 	})
-	getInvestmentAccountByUser(@ReqUser() authUser: RequestUser): Promise<InvestmentAccount | null> {
+	getInvestmentAccountByUser(@ReqUser() authUser: RequestUser): Promise<InvestmentAccount | undefined> {
 		return this.investmentAccountService.getInvestmentAccountByUserId(authUser.id);
 	}
 

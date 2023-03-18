@@ -10,8 +10,8 @@ export class PersonalAccountService {
 	constructor(private readonly personalAccountRepositoryService: PersonalAccountRepositoryService) {}
 
 	/* Queries */
-	getPersonalAccountByUserIdStrict(userId: string): Promise<PersonalAccount> {
-		return this.personalAccountRepositoryService.getPersonalAccountByUserIdStrict(userId);
+	getPersonalAccountByUserId(userId: string): Promise<PersonalAccount | undefined> {
+		return this.personalAccountRepositoryService.getPersonalAccountByUserId(userId);
 	}
 
 	/* Mutations */

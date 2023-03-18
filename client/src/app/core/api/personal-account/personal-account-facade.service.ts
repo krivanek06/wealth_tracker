@@ -33,16 +33,12 @@ export class PersonalAccountFacadeService {
 		private personalAccountCacheService: PersonalAccountCacheService
 	) {}
 
-	getPersonalAccounts(): Observable<PersonalAccountOverviewFragment[]> {
-		return this.personalAccountApiService.getPersonalAccounts();
-	}
-
 	getPersonalAccountAvailableTagImages(): Observable<string[]> {
 		return this.personalAccountApiService.getPersonalAccountAvailableTagImages();
 	}
 
-	getPersonalAccountDetailsById(input: string): Observable<PersonalAccountDetailsFragment> {
-		return this.personalAccountApiService.getPersonalAccountDetailsById(input);
+	getPersonalAccountDetailsByUser(): Observable<PersonalAccountDetailsFragment | undefined> {
+		return this.personalAccountApiService.getPersonalAccountDetailsByUser();
 	}
 
 	getPersonalAccountTagFromCache(tagId: string): PersonalAccountTagFragment | null {
@@ -82,7 +78,7 @@ export class PersonalAccountFacadeService {
 	}
 
 	getPersonalAccountTags(accountId: string): Observable<PersonalAccountTag[]> {
-		return this.getPersonalAccountDetailsById(accountId).pipe(map((account) => account.personalAccountTag));
+		return this.getPersonalAccountDetailsByUser(accountId).pipe(map((account) => account.personalAccountTag));
 	}
 
 	getPersonalAccountTagsExpense(accountId: string): Observable<PersonalAccountTag[]> {

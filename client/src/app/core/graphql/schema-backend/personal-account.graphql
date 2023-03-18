@@ -1,16 +1,10 @@
 ### Personal account
-query getPersonalAccounts {
-	getPersonalAccounts {
-		...PersonalAccountOverview
-	}
-}
-
 query getPersonalAccountAvailableTagImages {
 	getAllAvailableTagImages
 }
 
-query getPersonalAccountById($input: String!) {
-	getPersonalAccountById(input: $input) {
+query GetPersonalAccountByUser {
+	getPersonalAccountByUser {
 		...PersonalAccountDetails
 	}
 }

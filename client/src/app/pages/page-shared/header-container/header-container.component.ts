@@ -3,10 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../core/auth';
-import { AccountIdentification, UserFragment } from '../../../core/graphql';
+import { UserFragment } from '../../../core/graphql';
 import { TOP_LEVEL_NAV } from '../../../core/models';
 import { ManagerAccountListAccountsComponent } from '../../../modules/manager-account/modals';
 import { LoginModalComponent, UserProfileModalComponent } from '../../../modules/user-settings';
+import { AccountCreation } from './header-model';
 
 @Component({
 	selector: 'app-header-container',
@@ -15,7 +16,7 @@ import { LoginModalComponent, UserProfileModalComponent } from '../../../modules
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderContainerComponent implements OnInit {
-	@Input() availableAccounts?: AccountIdentification[] | null;
+	@Input() availableAccounts?: AccountCreation[] | null;
 
 	authenticatedUser$!: Observable<UserFragment | null>;
 
@@ -36,8 +37,8 @@ export class HeaderContainerComponent implements OnInit {
 		this.router.navigate([TOP_LEVEL_NAV.welcome]);
 	}
 
-	onAccountButtonClick(account: AccountIdentification) {
-		this.router.navigate([TOP_LEVEL_NAV.dashboard, account.accountType, account.id]);
+	onAccountButtonClick(account: AccountCreation) {
+		this.router.navigate([TOP_LEVEL_NAV.dashboard, account.accountType]);
 	}
 
 	onLoginClick(): void {

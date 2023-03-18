@@ -10,9 +10,8 @@ import {
 	EditPersonalAccountGQL,
 	EditPersonalAccountMutation,
 	GetPersonalAccountAvailableTagImagesGQL,
-	GetPersonalAccountByIdGQL,
+	GetPersonalAccountByUserGQL,
 	GetPersonalAccountDailyDataGQL,
-	GetPersonalAccountsGQL,
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
@@ -38,8 +37,7 @@ import {
 })
 export class PersonalAccountApiService {
 	constructor(
-		private getPersonalAccountsGQL: GetPersonalAccountsGQL,
-		private getPersonalAccountByIdGQL: GetPersonalAccountByIdGQL,
+		private getPersonalAccountByUserGQL: GetPersonalAccountByUserGQL,
 		private createPersonalAccountGQL: CreatePersonalAccountGQL,
 		private editPersonalAccountGQL: EditPersonalAccountGQL,
 		private deletePersonalAccountGQL: DeletePersonalAccountGQL,
@@ -53,16 +51,9 @@ export class PersonalAccountApiService {
 		private deletePersonalAccountTagGQL: DeletePersonalAccountTagGQL
 	) {}
 
-	getPersonalAccounts(): Observable<PersonalAccountOverviewFragment[]> {
-		return this.getPersonalAccountsGQL.watch().valueChanges.pipe(map((res) => res.data.getPersonalAccounts));
-	}
-
-	getPersonalAccountDetailsById(input: string): Observable<PersonalAccountDetailsFragment> {
-		return this.getPersonalAccountByIdGQL
-			.watch({
-				input,
-			})
-			.valueChanges.pipe(map((res) => res.data.getPersonalAccountById));
+	// TODO: does this work if I have no account and I create one ???
+	getPersonalAccountDetailsByUser(): Observable<PersonalAccountDetailsFragment | undefined | null> {
+		return this.getPersonalAccountByUserGQL.watch().valueChanges.pipe(map((res) => res.data.getPersonalAccountByUser));
 	}
 
 	createPersonalAccount(name: string): Observable<PersonalAccountOverviewFragment | undefined> {

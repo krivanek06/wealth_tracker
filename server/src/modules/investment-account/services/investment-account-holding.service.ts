@@ -69,7 +69,7 @@ export class InvestmentAccountHoldingService {
 		}
 
 		// load investment account to which we want to create the holding
-		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
+		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 
 		// find existing holding
 		const existingHolding = investmentAccount.holdings.find((x) => x.id === input.symbol);
@@ -171,7 +171,7 @@ export class InvestmentAccountHoldingService {
 		userId: string
 	): Promise<InvestmentAccountHoldingHistory> {
 		// load investment account
-		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
+		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 
 		// find existing holding
 		const existingHoldingIndex = investmentAccount.holdings.findIndex((x) => x.id === input.symbol);

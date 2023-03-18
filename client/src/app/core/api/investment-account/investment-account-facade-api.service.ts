@@ -39,7 +39,7 @@ export class InvestmentAccountFacadeApiService {
 	}
 
 	getInvestmentAccountById(accountId: string): Observable<InvestmentAccountFragmentExtended> {
-		return this.investmentAccountApiService.getInvestmentAccountById(accountId).pipe(
+		return this.investmentAccountApiService.getInvestmentAccountByUser(accountId).pipe(
 			map((account) => {
 				const currentCash = account.cashChange.reduce((acc, curr) => {
 					if (curr.type === InvestmentAccountCashChangeType.Withdrawal) {
@@ -107,12 +107,12 @@ export class InvestmentAccountFacadeApiService {
 		return this.investmentAccountApiService.getInvestmentAccountGrowth(accountId);
 	}
 
-	getTransactionHistory(accountId: string): Observable<InvestmentAccountTransactionOutput[]> {
-		return this.investmentAccountApiService.getTransactionHistory(accountId);
+	getTransactionHistory(): Observable<InvestmentAccountTransactionOutput[]> {
+		return this.investmentAccountApiService.getTransactionHistory();
 	}
 
-	getAvailableTransactionSymbols(input: string): Observable<string[]> {
-		return this.investmentAccountApiService.getAvailableTransactionSymbols(input);
+	getAvailableTransactionSymbols(): Observable<string[]> {
+		return this.investmentAccountApiService.getAvailableTransactionSymbols();
 	}
 
 	createInvestmentAccountHolding(

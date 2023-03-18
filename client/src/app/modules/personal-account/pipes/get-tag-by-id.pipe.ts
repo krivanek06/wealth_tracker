@@ -12,7 +12,7 @@ export class GetTagByIdPipe implements PipeTransform {
 
 	transform(personalAccountBasic: AccountIdentification, tagId: string): Observable<PersonalAccountTag | undefined> {
 		return this.personalAccountFacadeService
-			.getPersonalAccountDetailsById(personalAccountBasic.id)
+			.getPersonalAccountDetailsByUser(personalAccountBasic.id)
 			.pipe(map((res) => res.personalAccountTag.find((d) => d.id === tagId)));
 	}
 }

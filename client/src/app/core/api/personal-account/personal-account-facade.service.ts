@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
-import { map, Observable, tap } from 'rxjs';
+import { filter, map, Observable, tap } from 'rxjs';
 import {
 	EditPersonalAccountMutation,
 	PersonalAccountDailyDataCreate,
@@ -37,8 +37,10 @@ export class PersonalAccountFacadeService {
 		return this.personalAccountApiService.getPersonalAccountAvailableTagImages();
 	}
 
-	getPersonalAccountDetailsByUser(): Observable<PersonalAccountDetailsFragment | undefined> {
-		return this.personalAccountApiService.getPersonalAccountDetailsByUser();
+	getPersonalAccountDetailsByUser(): Observable<PersonalAccountDetailsFragment> {
+		return this.personalAccountApiService
+			.getPersonalAccountDetailsByUser()
+			.pipe(filter((data): data is PersonalAccountDetailsFragment => !!data));
 	}
 
 	getPersonalAccountTagFromCache(tagId: string): PersonalAccountTagFragment | null {
@@ -77,20 +79,16 @@ export class PersonalAccountFacadeService {
 		);
 	}
 
-	getPersonalAccountTags(accountId: string): Observable<PersonalAccountTag[]> {
-		return this.getPersonalAccountDetailsByUser(accountId).pipe(map((account) => account.personalAccountTag));
+	getPersonalAccountTags(): Observable<PersonalAccountTag[]> {
+		return this.getPersonalAccountDetailsByUser().pipe(map((account) => account?.personalAccountTag ?? []));
 	}
 
-	getPersonalAccountTagsExpense(accountId: string): Observable<PersonalAccountTag[]> {
-		return this.getPersonalAccountTags(accountId).pipe(
-			map((tags) => tags.filter((d) => d.type === TagDataType.Expense))
-		);
+	getPersonalAccountTagsExpense(): Observable<PersonalAccountTag[]> {
+		return this.getPersonalAccountTags().pipe(map((tags) => tags.filter((d) => d.type === TagDataType.Expense)));
 	}
 
-	getPersonalTagsIncome(accountId: string): Observable<PersonalAccountTag[]> {
-		return this.getPersonalAccountTags(accountId).pipe(
-			map((tags) => tags.filter((d) => d.type === TagDataType.Income))
-		);
+	getPersonalTagsIncome(): Observable<PersonalAccountTag[]> {
+		return this.getPersonalAccountTags().pipe(map((tags) => tags.filter((d) => d.type === TagDataType.Income)));
 	}
 
 	/**

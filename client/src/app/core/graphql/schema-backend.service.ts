@@ -570,8 +570,6 @@ export type PersonalAccountDailyDataCreate = {
   date: Scalars['String'];
   /** Description to daily data */
   description?: InputMaybe<Scalars['String']>;
-  /** Id of personal account to which this entry will be added */
-  personalAccountId: Scalars['String'];
   /** Which tag to associate this entry */
   tagId: Scalars['String'];
   /** How much value (amount) shall be added to the account */
@@ -581,7 +579,6 @@ export type PersonalAccountDailyDataCreate = {
 export type PersonalAccountDailyDataDelete = {
   dailyDataId: Scalars['String'];
   monthlyDataId: Scalars['String'];
-  personalAccountId: Scalars['String'];
 };
 
 export type PersonalAccountDailyDataEdit = {
@@ -625,8 +622,6 @@ export type PersonalAccountDailyDataOutput = {
 export type PersonalAccountDailyDataQuery = {
   /** Which year to query daily data */
   month: Scalars['Int'];
-  /** Id of personal account to which this entry will be added */
-  personalAccountId: Scalars['String'];
   /** Which year to query daily data */
   year: Scalars['Int'];
 };
@@ -674,14 +669,12 @@ export type PersonalAccountTagDataCreate = {
   color: Scalars['String'];
   imageUrl: Scalars['String'];
   name: Scalars['String'];
-  personalAccountId: Scalars['String'];
   type: TagDataType;
 };
 
 export type PersonalAccountTagDataDelete = {
   /** tag id */
   id: Scalars['String'];
-  personalAccountId: Scalars['String'];
 };
 
 export type PersonalAccountTagDataEdit = {
@@ -690,7 +683,6 @@ export type PersonalAccountTagDataEdit = {
   id: Scalars['String'];
   imageUrl: Scalars['String'];
   name: Scalars['String'];
-  personalAccountId: Scalars['String'];
 };
 
 export type PersonalAccountWeeklyAggregationOutput = {

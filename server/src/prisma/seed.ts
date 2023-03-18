@@ -64,7 +64,6 @@ const personalAccountCreateDailyData = async (account: PersonalAccount): Promise
 
 			const input: PersonalAccountDailyDataCreate = {
 				date: today.toISOString(),
-				personalAccountId: account.id,
 				description: '',
 				tagId: randomTag.id,
 				value: randomIntFromInterval(11, 66),

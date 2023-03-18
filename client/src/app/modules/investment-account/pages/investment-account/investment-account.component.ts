@@ -79,7 +79,7 @@ export class InvestmentAccountComponent implements OnInit {
 	ngOnInit(): void {
 		this.investmentAccountsOverview = this.route.snapshot.data?.[ACCOUNT_KEY] as InvestmentAccountOverviewFragment;
 		this.investmentId = this.investmentAccountsOverview.id;
-		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountByUser(this.investmentId);
+		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountByUser();
 		this.investmentAccountGrowth$ = this.investmentAccountFacadeApiService.getInvestmentAccountGrowth(
 			this.investmentId
 		);

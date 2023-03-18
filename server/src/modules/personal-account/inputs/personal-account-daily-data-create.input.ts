@@ -24,12 +24,6 @@ export class PersonalAccountDailyDataCreate {
 	description: string;
 
 	@Field(() => String, {
-		description: 'Id of personal account to which this entry will be added',
-	})
-	@MaxLength(50)
-	personalAccountId: string;
-
-	@Field(() => String, {
 		description: 'Date (past, current, future) to which assign this entry. Timezone difference for current date',
 	})
 	@IsDate()

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { ACCOUNT_KEY, PersonalAccountOverviewFragment } from '../../../../core/graphql';
 
 @Component({
@@ -11,7 +10,7 @@ import { ACCOUNT_KEY, PersonalAccountOverviewFragment } from '../../../../core/g
 export class PersonalAccountComponent implements OnInit {
 	personalAccountBasic?: PersonalAccountOverviewFragment;
 
-	constructor(private route: ActivatedRoute) {}
+	constructor() {}
 
 	ngOnInit(): void {
 		this.personalAccountBasic = this.route.snapshot.data?.[ACCOUNT_KEY] as PersonalAccountOverviewFragment;

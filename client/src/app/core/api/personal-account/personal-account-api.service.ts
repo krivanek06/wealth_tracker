@@ -52,8 +52,10 @@ export class PersonalAccountApiService {
 	) {}
 
 	// TODO: does this work if I have no account and I create one ???
-	getPersonalAccountDetailsByUser(): Observable<PersonalAccountDetailsFragment | undefined | null> {
-		return this.getPersonalAccountByUserGQL.watch().valueChanges.pipe(map((res) => res.data.getPersonalAccountByUser));
+	getPersonalAccountDetailsByUser(): Observable<PersonalAccountDetailsFragment | null> {
+		return this.getPersonalAccountByUserGQL
+			.watch()
+			.valueChanges.pipe(map((res) => res.data.getPersonalAccountByUser ?? null));
 	}
 
 	createPersonalAccount(name: string): Observable<PersonalAccountOverviewFragment | undefined> {

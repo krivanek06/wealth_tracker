@@ -1,25 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { firstValueFrom, Observable } from 'rxjs';
-import { InvestmentAccountFacadeApiService, PersonalAccountFacadeService } from '../../../../core/api';
 import {
-	AccountIdentification,
-	AccountType,
-	InvestmentAccountOverviewFragment,
-	PersonalAccountOverviewFragment,
-} from '../../../../core/graphql';
+	AccountManagerApiService,
+	InvestmentAccountFacadeApiService,
+	PersonalAccountFacadeService,
+} from '../../../../core/api';
+import { AccountIdentification, AccountIdentificationFragment, AccountType } from '../../../../core/graphql';
 import { requiredValidator } from '../../../../shared/models';
-import { GeneralAccountTypeInputSource } from '../../models';
+import { ACCOUNT_NAMES, GeneralAccountTypeInputSource } from '../../models';
 import { DialogServiceUtil } from './../../../../shared/dialogs';
-
 @Component({
 	selector: 'app-manager-account-list-accounts',
 	templateUrl: './manager-account-list-accounts.component.html',
 	styleUrls: ['./manager-account-list-accounts.component.scss'],
 })
 export class ManagerAccountListAccountsComponent implements OnInit {
-	personalAccounts$!: Observable<PersonalAccountOverviewFragment[]>;
-	investmentAccounts$!: Observable<InvestmentAccountOverviewFragment[]>;
+	availableAccounts$!: Observable<AccountIdentificationFragment[]>;
+
+	ACCOUNT_NAMES = ACCOUNT_NAMES;
 
 	// control to select from existing account
 	selectedAccountControl = new FormControl<AccountIdentification | null>(null);
@@ -39,13 +38,13 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 	GeneralAccountTypeInputSource = GeneralAccountTypeInputSource;
 
 	constructor(
+		private accountManagerApiService: AccountManagerApiService,
 		private personalAccountFacadeService: PersonalAccountFacadeService,
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService
 	) {}
 
 	ngOnInit(): void {
-		this.personalAccounts$ = this.personalAccountFacadeService.getPersonalAccounts();
-		this.investmentAccounts$ = this.investmentAccountFacadeApiService.getInvestmentAccounts();
+		this.availableAccounts$ = this.accountManagerApiService.getAvailableAccounts();
 
 		this.selectedAccountControl.valueChanges.subscribe((value) => {
 			this.showSelectAccount = !value;

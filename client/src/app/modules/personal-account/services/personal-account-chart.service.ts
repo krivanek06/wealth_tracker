@@ -83,7 +83,7 @@ export class PersonalAccountChartService {
 	 * @returns weekly or monthly categories in string format
 	 */
 	getChartCategories(data: PersonalAccountDetailsFragment, aggregation: 'week' | 'month' = 'week'): string[] {
-		const categories = data.weeklyAggregaton.map((d) => {
+		const categories = data.weeklyAggregation.map((d) => {
 			const monthName = DateServiceUtil.formatDate(new Date(d.year, d.month), 'LLL');
 			return `Week: ${d.week}, ${monthName}`;
 		});
@@ -104,7 +104,7 @@ export class PersonalAccountChartService {
 		activeTagIds: string[] = []
 	): GenericChartSeries {
 		// aggregates total income / expenses on a weekly bases
-		const weeklyAggregation: number[] = data.weeklyAggregaton.map((d) =>
+		const weeklyAggregation: number[] = data.weeklyAggregation.map((d) =>
 			d.data.reduce((acc, curr) => {
 				if (curr.tag.type === TagDataType.Income) {
 					return acc + curr.value;
@@ -142,10 +142,10 @@ export class PersonalAccountChartService {
 		activeTagIds: string[] = []
 	): [GenericChartSeries, GenericChartSeries] {
 		// reduce data
-		const income: number[] = data.weeklyAggregaton.map((d) =>
+		const income: number[] = data.weeklyAggregation.map((d) =>
 			d.data.filter((d) => d.tag.type === TagDataType.Income).reduce((acc, curr) => acc + curr.value, 0)
 		);
-		const expense: number[] = data.weeklyAggregaton.map((d) =>
+		const expense: number[] = data.weeklyAggregation.map((d) =>
 			d.data
 				.filter(
 					(d) => d.tag.type === TagDataType.Expense && (activeTagIds.length === 0 || activeTagIds.includes(d.tag.id))
@@ -186,7 +186,7 @@ export class PersonalAccountChartService {
 	): GenericChartSeries[] {
 		// go through all weekly data and for each availableExpenseTags save a value
 		// if tag not exist for the specifc week, put 0
-		const series = data.weeklyAggregaton
+		const series = data.weeklyAggregation
 			.map((weeklyData) =>
 				availableExpenseTags
 					// filter out only active tags

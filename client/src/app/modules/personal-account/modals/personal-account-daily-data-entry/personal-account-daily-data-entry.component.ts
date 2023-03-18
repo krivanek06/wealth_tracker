@@ -59,9 +59,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			this.initEditing(this.data.dailyData);
 		}
 
-		this.displayTagsInputSource$ = this.personalAccountDataService.getAvailableTagInputSourceWrapper(
-			this.data.personalAccountId
-		);
+		this.displayTagsInputSource$ = this.personalAccountDataService.getAvailableTagInputSourceWrapper();
 	}
 
 	onRemove(): void {

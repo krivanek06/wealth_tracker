@@ -71,7 +71,7 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 		if (this.personalAccountDetails) {
 			// get dates that we can filter by
 			this.filterDateInputSourceWrapper = this.personalAccountDataService.getMonthlyInputSource(
-				this.personalAccountDetails.weeklyAggregaton
+				this.personalAccountDetails.weeklyAggregation
 			);
 		}
 	}

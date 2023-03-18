@@ -20,12 +20,8 @@ export class PersonalAccountDataAggregatorService {
 	 * @param dailyData
 	 * @param operation - increase add dailyData.value (create), 'decrease' removes the value (delete)
 	 */
-	updateAggregations(
-		personalAccountId: string,
-		dailyData: PersonalAccountDailyDataOutputFragment,
-		operation: 'increase' | 'decrease'
-	): void {
-		const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails(personalAccountId);
+	updateAggregations(dailyData: PersonalAccountDailyDataOutputFragment, operation: 'increase' | 'decrease'): void {
+		const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails();
 		const dateDetails = DateServiceUtil.getDetailsInformationFromDate(Number(dailyData.date));
 		const multiplier = operation === 'increase' ? 1 : -1; // add or remove data from aggregation
 
@@ -58,12 +54,12 @@ export class PersonalAccountDataAggregatorService {
 		const weeklyAggregationId = `${dateDetails.year}-${dateDetails.month}-${dateDetails.week}`;
 
 		// if -1 means dailyData was created for not yet saved monthly data
-		const weeklyAggregatonIndex = personalAccount.weeklyAggregaton.findIndex(
+		const weeklyAggregatonIndex = personalAccount.weeklyAggregation.findIndex(
 			(weeklyData) => weeklyData.id === weeklyAggregationId
 		);
 
 		// if -1 means there is not weekly aggregation for specific TAG
-		const weeklyAggregatonDataIndex = personalAccount.weeklyAggregaton[weeklyAggregatonIndex]?.data?.findIndex(
+		const weeklyAggregatonDataIndex = personalAccount.weeklyAggregation[weeklyAggregatonIndex]?.data?.findIndex(
 			(d) => d.tag.id === dailyData.tag.id
 		);
 
@@ -90,15 +86,15 @@ export class PersonalAccountDataAggregatorService {
 		 * - add tag value (if not present) for a specific week
 		 * - add whole new week with tag value if week not exist and sort by date
 		 */
-		const weeklyAggregaton: PersonalAccountWeeklyAggregationFragment[] =
+		const weeklyAggregation: PersonalAccountWeeklyAggregationFragment[] =
 			weeklyAggregatonIndex === -1
 				? // append new weeklyAggregationData to other, sort by date
-				  [...personalAccount.weeklyAggregaton, weeklyAggregationData].sort(
+				  [...personalAccount.weeklyAggregation, weeklyAggregationData].sort(
 						(a, b) => new Date(a.year, a.month, a.week).getTime() - new Date(b.year, b.month, b.week).getTime()
 				  )
 				: weeklyAggregatonDataIndex === -1
 				? // append new weekly TAG aggregation
-				  personalAccount.weeklyAggregaton.map((d) =>
+				  personalAccount.weeklyAggregation.map((d) =>
 						d.id === weeklyAggregationId
 							? {
 									...d,
@@ -115,7 +111,7 @@ export class PersonalAccountDataAggregatorService {
 							: { ...d }
 				  )
 				: // increase value for saved tag on specific week
-				  personalAccount.weeklyAggregaton.map((d) =>
+				  personalAccount.weeklyAggregation.map((d) =>
 						d.id === weeklyAggregationId
 							? {
 									...d,
@@ -134,10 +130,10 @@ export class PersonalAccountDataAggregatorService {
 				  );
 
 		// update cache
-		this.personalAccountCacheService.updatePersonalAccountDetails(personalAccountId, {
+		this.personalAccountCacheService.updatePersonalAccountDetails({
 			...personalAccount,
-			yearlyAggregation: yearlyAggregation,
-			weeklyAggregaton,
+			yearlyAggregation,
+			weeklyAggregation,
 		});
 	}
 }

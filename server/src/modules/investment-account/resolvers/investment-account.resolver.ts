@@ -57,11 +57,8 @@ export class InvestmentAccountResolver {
 	@Mutation(() => InvestmentAccount, {
 		description: 'Returns the ID of the removed investment account',
 	})
-	deleteInvestmentAccount(
-		@ReqUser() authUser: RequestUser,
-		@Input() investmentAccountId: string
-	): Promise<InvestmentAccount> {
-		return this.investmentAccountService.deleteInvestmentAccount(investmentAccountId, authUser.id);
+	deleteInvestmentAccount(@ReqUser() authUser: RequestUser): Promise<InvestmentAccount> {
+		return this.investmentAccountService.deleteInvestmentAccount(authUser.id);
 	}
 
 	/* Resolvers */

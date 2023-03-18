@@ -1,4 +1,4 @@
-import { Directive, inject, Input } from '@angular/core';
+import { Directive, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, map, merge, Observable, of, reduce, startWith, switchMap, tap } from 'rxjs';
@@ -23,14 +23,6 @@ import { PersonalAccountChartService, PersonalAccountDataService } from '../serv
 
 @Directive()
 export abstract class PersonalAccountParent {
-	@Input() set accountIdentification(data: AccountIdentification | undefined | null) {
-		if (!data) {
-			return;
-		}
-		this.personalAccountBasic = data;
-		this.initData();
-	}
-
 	personalAccountDetails$!: Observable<PersonalAccountDetailsFragment>;
 
 	yearlyExpenseTags$!: Observable<ValuePresentItem<PersonalAccountTagFragment>[]>;
@@ -107,7 +99,9 @@ export abstract class PersonalAccountParent {
 		);
 	}
 
-	constructor() {}
+	constructor() {
+		this.initData();
+	}
 
 	private initData(): void {
 		this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsByUser();
@@ -162,7 +156,7 @@ export abstract class PersonalAccountParent {
 			switchMap((dateFilter) =>
 				dateFilter === NO_DATE_SELECTED
 					? of([])
-					: this.personalAccountFacadeService.getPersonalAccountDailyData(this.personalAccountBasic.id, dateFilter)
+					: this.personalAccountFacadeService.getPersonalAccountDailyData(dateFilter)
 			)
 		);
 
@@ -218,8 +212,6 @@ export abstract class PersonalAccountParent {
 		this.dialog.open(PersonalAccountDailyDataEntryComponent, {
 			data: {
 				dailyData: editingDailyData,
-				personalAccountId: this.personalAccountBasic.id,
-				personalAccountName: this.personalAccountBasic.name,
 			},
 			panelClass: ['g-mat-dialog-small'],
 		});
@@ -227,10 +219,6 @@ export abstract class PersonalAccountParent {
 
 	onActionButtonClick(type: PersonalAccountActionButtonType): void {
 		this.dialog.open(PersonalAccountTagManagerModalComponent, {
-			data: {
-				personalAccountId: this.personalAccountBasic.id,
-				personalAccountName: this.personalAccountBasic.name,
-			},
 			panelClass: ['g-mat-dialog-big'],
 		});
 	}

@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ACCOUNT_KEY, PersonalAccountOverviewFragment } from '../../../../core/graphql';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
 	selector: 'app-welcome-personal-account',
@@ -7,12 +6,4 @@ import { ACCOUNT_KEY, PersonalAccountOverviewFragment } from '../../../../core/g
 	styleUrls: ['./personal-account.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PersonalAccountComponent implements OnInit {
-	personalAccountBasic?: PersonalAccountOverviewFragment;
-
-	constructor() {}
-
-	ngOnInit(): void {
-		this.personalAccountBasic = this.route.snapshot.data?.[ACCOUNT_KEY] as PersonalAccountOverviewFragment;
-	}
-}
+export class PersonalAccountComponent {}

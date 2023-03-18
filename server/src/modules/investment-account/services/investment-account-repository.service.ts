@@ -62,32 +62,11 @@ export class InvestmentAccountRepositoryService {
 		});
 	}
 
-	deleteInvestmentAccount(investmentAccountId: string): Promise<InvestmentAccount> {
+	deleteInvestmentAccount(userId: string): Promise<InvestmentAccount> {
 		return this.prisma.investmentAccount.delete({
 			where: {
-				id: investmentAccountId,
-			},
-		});
-	}
-
-	/**
-	 *
-	 * @param investmentAccountId {string} id of the investment account we want to load
-	 * @returns whether a investment account exists by the investmentAccountId
-	 */
-	async isInvestmentAccountExist(investmentAccountId: string, userId: string): Promise<boolean> {
-		const accountCount = await this.prisma.investmentAccount.count({
-			where: {
-				id: investmentAccountId,
 				userId,
 			},
 		});
-
-		// no account found to be deleted
-		if (!accountCount || accountCount === 0) {
-			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
-		return accountCount > 0;
 	}
 }

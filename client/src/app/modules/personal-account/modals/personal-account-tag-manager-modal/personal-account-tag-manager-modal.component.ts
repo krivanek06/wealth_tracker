@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { map, Observable } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../../core/api';
 import { PersonalAccountTagFragment, TagDataType } from '../../../../core/graphql';
@@ -21,12 +21,7 @@ export class PersonalAccountTagManagerModalComponent implements OnInit {
 
 	constructor(
 		private personalAccountFacadeService: PersonalAccountFacadeService,
-		private dialogRef: MatDialogRef<PersonalAccountTagManagerModalComponent>,
-		@Inject(MAT_DIALOG_DATA)
-		public data: {
-			personalAccountId: string;
-			personalAccountName: string;
-		}
+		private dialogRef: MatDialogRef<PersonalAccountTagManagerModalComponent>
 	) {}
 	ngOnInit(): void {
 		const personalAccountTags$ = this.personalAccountFacadeService

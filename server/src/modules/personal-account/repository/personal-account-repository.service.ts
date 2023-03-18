@@ -86,10 +86,10 @@ export class PersonalAccountRepositoryService {
 		});
 	}
 
-	deletePersonalAccount(accountId: string): Promise<PersonalAccount> {
+	deletePersonalAccount(userId: string): Promise<PersonalAccount> {
 		return this.prisma.personalAccount.delete({
 			where: {
-				id: accountId,
+				userId,
 			},
 		});
 	}

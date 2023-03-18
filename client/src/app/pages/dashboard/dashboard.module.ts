@@ -32,7 +32,7 @@ const routes: Routes = [
 
 						// checks if personal account exists
 						return service.getAvailableAccounts().pipe(
-							map((accounts) => accounts.find((d) => d.accountType === AccountType.Investment)),
+							map((accounts) => accounts.find((d) => d.accountType === AccountType.Personal)),
 							map((existingAccount) => {
 								if (existingAccount) {
 									return true;

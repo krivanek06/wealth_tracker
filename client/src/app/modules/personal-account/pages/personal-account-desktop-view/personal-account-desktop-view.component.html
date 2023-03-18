@@ -24,7 +24,7 @@
 		></app-value-presentation-button-control>
 	</app-scroll-wrapper>
 
-	<div class="grid gap-4 lg:grid-cols-1">
+	<div class="grid gap-4 2xl:grid-cols-2">
 		<!-- account overview chart -->
 		<app-personal-account-tag-spending-chart
 			[accountOverviewChartData]="accountOverviewChartData$ | async"
@@ -42,13 +42,15 @@
 	</div>
 
 	<!-- date filter control -->
-	<app-personal-account-daily-entries-filter
-		(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
-		[formControl]="filterDailyDataGroup.controls.dateFilter"
-		[personalAccountDetails]="personalAccountDetails"
-	></app-personal-account-daily-entries-filter>
+	<div class="md:px-8">
+		<app-personal-account-daily-entries-filter
+			(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
+			[formControl]="filterDailyDataGroup.controls.dateFilter"
+			[personalAccountDetails]="personalAccountDetails"
+		></app-personal-account-daily-entries-filter>
+	</div>
 
-	<div class="grid items-center grid-cols-1 gap-4 lg:grid-cols-4">
+	<div class="grid items-center grid-cols-1 gap-4 md:px-8 lg:grid-cols-4">
 		<!-- table body -->
 		<div class="h-full lg:col-span-2">
 			<app-personal-account-daily-entries-table

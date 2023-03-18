@@ -1,4 +1,5 @@
 import {
+	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
 	EventEmitter,
@@ -20,7 +21,7 @@ import { GeneralFunctionUtil } from '../../../../../core/utils';
 	styleUrls: ['./investment-account-transaction-table.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InvestmentAccountTransactionTableComponent implements OnInit {
+export class InvestmentAccountTransactionTableComponent implements OnInit, AfterViewInit {
 	@Output() removeDataEmitter = new EventEmitter<InvestmentAccountTransactionOutput>();
 
 	@Input() set symbolSelect(values: string[] | null) {
@@ -52,6 +53,12 @@ export class InvestmentAccountTransactionTableComponent implements OnInit {
 	InvestmentAccountHoldingHistoryType = InvestmentAccountHoldingHistoryType;
 
 	constructor() {}
+
+	ngAfterViewInit(): void {
+		if (this.dataSource) {
+			this.dataSource.paginator = this.paginator;
+		}
+	}
 
 	ngOnInit(): void {}
 

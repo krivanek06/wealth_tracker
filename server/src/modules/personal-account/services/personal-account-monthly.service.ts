@@ -24,7 +24,7 @@ export class PersonalAccountMonthlyService {
 		personalAccountMonthlyData: PersonalAccountMonthlyData,
 		tagType: PersonalAccountTagDataType
 	): Promise<PersonalAccountDailyDataOutput[]> {
-		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountByIdStrict(
 			personalAccountMonthlyData.personalAccountId
 		);
 

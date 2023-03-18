@@ -8,19 +8,9 @@ import { InvestmentAccount } from '../entities';
 export class InvestmentAccountRepositoryService {
 	constructor(private prisma: PrismaService) {}
 
-	getInvestmentAccounts(userId: string): Promise<InvestmentAccount[]> {
-		return this.prisma.investmentAccount.findMany({
+	async getInvestmentAccountByUserId(userId: string): Promise<InvestmentAccount> {
+		const investmentAccount = await this.prisma.investmentAccount.findUnique({
 			where: {
-				userId,
-			},
-		});
-	}
-
-	async getInvestmentAccountById(investmentAccountId: string, userId: string): Promise<InvestmentAccount> {
-		// load investment account
-		const investmentAccount = await this.prisma.investmentAccount.findFirst({
-			where: {
-				id: investmentAccountId,
 				userId,
 			},
 		});

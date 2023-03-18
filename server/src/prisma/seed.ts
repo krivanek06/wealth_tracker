@@ -28,20 +28,19 @@ const personalAccountMonthlyService = new PersonalAccountMonthlyService(
 );
 const personalAccountService = new PersonalAccountService(personalAccountRepo);
 
-const USER_ID = '63457ee2bb8dd0d311fbbe2b';
+const USER_ID = '63457ee3bb8dd0d311fbbe33';
 
 const getPersonalAccount = async (): Promise<PersonalAccount> => {
 	// remove previous
-	const accounts = await personalAccountService.getPersonalAccounts(USER_ID);
-
-	if (accounts.length > 0) {
-		return accounts[0];
+	try {
+		const accounts = await personalAccountService.getPersonalAccountByUserIdStrict(USER_ID);
+		return accounts;
+	} catch {
+		const input: PersonalAccountCreateInput = {
+			name: 'Test account One',
+		};
+		return personalAccountService.createPersonalAccount(input, USER_ID);
 	}
-
-	const input: PersonalAccountCreateInput = {
-		name: 'Test account One',
-	};
-	return personalAccountService.createPersonalAccount(input, USER_ID);
 };
 
 const randomIntFromInterval = (min: number, max: number) => {

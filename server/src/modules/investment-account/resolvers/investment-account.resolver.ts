@@ -16,21 +16,12 @@ export class InvestmentAccountResolver {
 	) {}
 
 	/* Queries */
-
-	@Query(() => [InvestmentAccount], {
-		description: 'Returns all investment accounts for the requester',
-		defaultValue: [],
-	})
-	getInvestmentAccounts(@ReqUser() authUser: RequestUser): Promise<InvestmentAccount[]> {
-		return this.investmentAccountService.getInvestmentAccounts(authUser.id);
-	}
-
 	@Query(() => InvestmentAccount, {
-		description: 'Returns investment account by id',
-		defaultValue: [],
+		description: 'Returns investment account for authenticated user',
+		nullable: true,
 	})
-	getInvestmentAccountById(@ReqUser() authUser: RequestUser, @Input() input: string): Promise<InvestmentAccount> {
-		return this.investmentAccountService.getInvestmentAccountById(input, authUser.id);
+	getInvestmentAccountByUser(@ReqUser() authUser: RequestUser): Promise<InvestmentAccount | null> {
+		return this.investmentAccountService.getInvestmentAccountByUserId(authUser.id);
 	}
 
 	// TODO: implement caching for assets historical prices: https://docs.nestjs.com/techniques/caching

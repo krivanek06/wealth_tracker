@@ -16,8 +16,8 @@ export class InvestmentAccountTransactionService {
 	 * @param userId
 	 * @returns array of symbols located in the transaction history. Used for filtering transaction history by symbols
 	 */
-	async getTransactionSymbols(accountId: string, userId: string): Promise<string[]> {
-		const account = await this.investmentAccountRepositoryService.getInvestmentAccountById(accountId, userId);
+	async getTransactionSymbols(userId: string): Promise<string[]> {
+		const account = await this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
 		const history = account.holdings
 			.map((d) => d.holdingHistory)
 			.reduce((a, b) => [...a, ...b])
@@ -26,8 +26,8 @@ export class InvestmentAccountTransactionService {
 		return [...new Set(history)];
 	}
 
-	async getTopTransactions(accountId: string, userId: string): Promise<InvestmentAccountTransactionWrapperOutput> {
-		const account = await this.investmentAccountRepositoryService.getInvestmentAccountById(accountId, userId);
+	async getTopTransactions(userId: string): Promise<InvestmentAccountTransactionWrapperOutput> {
+		const account = await this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
 
 		// get every symbol holding history into arrya with existing return
 		const history = account.holdings
@@ -47,7 +47,7 @@ export class InvestmentAccountTransactionService {
 		input: InvestmentAccountTransactionInput,
 		userId: string
 	): Promise<InvestmentAccountTransactionOutput[]> {
-		const account = await this.investmentAccountRepositoryService.getInvestmentAccountById(input.accountId, userId);
+		const account = await this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
 
 		// filter out valid holdings
 		const history = account.holdings

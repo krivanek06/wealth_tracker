@@ -8,8 +8,8 @@ import { RequestUser, RequestUserInt, REQ_USER_PROPERTY } from '../authenticatio
 @Injectable()
 export class AuthorizationGuard extends AuthGuard('jwt') {
 	private TEST_USER: RequestUser = {
-		id: '63457ee2bb8dd0d311fbbe2b',
-		username: 'Jimmie_Boehm10',
+		id: '63457ee3bb8dd0d311fbbe33',
+		username: 'Ana.Wuckert46',
 		email: 'Judge67@gmail.com',
 	};
 

@@ -1,32 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AccountType } from '@prisma/client';
 import { PrismaService } from '../../../prisma';
 import { SharedServiceUtil } from '../../../utils';
-import { PERSONAL_ACCOUNT_DEFAULT_TAGS } from '../dto';
+import { PERSONAL_ACCOUNT_DEFAULT_TAGS, PERSONAL_ACCOUNT_ERROR } from '../dto';
 import { PersonalAccount, PersonalAccountTag } from '../entities';
 
 @Injectable()
 export class PersonalAccountRepositoryService {
 	constructor(private prisma: PrismaService) {}
 
-	getPersonalAccountById(personalAccountId: string): Promise<PersonalAccount> {
-		return this.prisma.personalAccount.findFirst({
+	async getPersonalAccountByIdStrict(personalAccountId: string): Promise<PersonalAccount> {
+		const personalAccount = this.prisma.personalAccount.findFirst({
 			where: {
 				id: personalAccountId,
 			},
 		});
+
+		// not found investment account
+		if (!personalAccount) {
+			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+		}
+
+		return personalAccount;
 	}
 
-	getPersonalAccounts(userId: string): Promise<PersonalAccount[]> {
-		return this.prisma.personalAccount.findMany({
+	async getPersonalAccountByUserIdStrict(userId: string): Promise<PersonalAccount> {
+		const personalAccount = this.prisma.personalAccount.findUnique({
 			where: {
 				userId,
 			},
 		});
+
+		// not found investment account
+		if (!personalAccount) {
+			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+		}
+
+		return personalAccount;
 	}
 
-	getPersonalAccountCount(userId: string): Promise<number> {
-		return this.prisma.personalAccount.count({
+	getPersonalAccountByUserId(userId: string): Promise<PersonalAccount> {
+		return this.prisma.personalAccount.findUnique({
 			where: {
 				userId,
 			},
@@ -78,21 +92,5 @@ export class PersonalAccountRepositoryService {
 				id: accountId,
 			},
 		});
-	}
-
-	/**
-	 *
-	 * @param personalAccountId {string} id of the personal account we want to load
-	 * @returns whether a personal account exists by the personalAccountId
-	 */
-	async isPersonalAccountExist(personalAccountId: string, userId: string): Promise<boolean> {
-		const accountCount = await this.prisma.personalAccount.count({
-			where: {
-				id: personalAccountId,
-				userId,
-			},
-		});
-
-		return accountCount > 0;
 	}
 }

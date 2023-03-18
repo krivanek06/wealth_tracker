@@ -23,12 +23,12 @@ export class InvestmentAccountService {
 		}, 0);
 	}
 
-	getInvestmentAccounts(userId: string): Promise<InvestmentAccount[]> {
-		return this.investmentAccountRepositoryService.getInvestmentAccounts(userId);
-	}
-
-	async getInvestmentAccountById(investmentAccountId: string, userId: string): Promise<InvestmentAccount> {
-		return this.investmentAccountRepositoryService.getInvestmentAccountById(investmentAccountId, userId);
+	getInvestmentAccountByUserId(userId: string): Promise<InvestmentAccount | null> {
+		try {
+			return this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
+		} catch {
+			return null;
+		}
 	}
 
 	/**
@@ -43,10 +43,7 @@ export class InvestmentAccountService {
 		userId: string
 	): Promise<InvestmentAccountGrowth[]> {
 		// load investment account
-		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountById(
-			input.investmenAccountId,
-			userId
-		);
+		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
 
 		// symbolIds filter out by sectors
 		const filteredHoldings = investmentAccount.holdings

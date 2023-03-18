@@ -20,7 +20,7 @@ export class PersonalAccountTagService {
 	}
 
 	async getTagsForPersonalAccount(personalAccountId: string): Promise<PersonalAccountTag[]> {
-		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(personalAccountId);
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountByIdStrict(personalAccountId);
 
 		return personalAccount.personalAccountTag;
 	}

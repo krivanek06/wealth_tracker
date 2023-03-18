@@ -14,11 +14,8 @@ export class InvestmentAccountTransactionResolver {
 	@Query(() => InvestmentAccountTransactionWrapperOutput, {
 		description: 'Returns SOLD transaction in different orders',
 	})
-	getTopTransactions(
-		@ReqUser() authUser: RequestUser,
-		@Input() input: string
-	): Promise<InvestmentAccountTransactionWrapperOutput> {
-		return this.investmentAccountTransactionService.getTopTransactions(input, authUser.id);
+	getTopTransactions(@ReqUser() authUser: RequestUser): Promise<InvestmentAccountTransactionWrapperOutput> {
+		return this.investmentAccountTransactionService.getTopTransactions(authUser.id);
 	}
 
 	@Query(() => [InvestmentAccountTransactionOutput], {
@@ -32,10 +29,10 @@ export class InvestmentAccountTransactionResolver {
 	}
 
 	@Query(() => [String], {
-		description: 'All asset symbols that were ever inside holdings',
+		description: 'All asset symbols that were ever inside holdings, some transaction were made by them',
 		defaultValue: [],
 	})
-	getTransactionSymbols(@ReqUser() authUser: RequestUser, @Input() input: string): Promise<string[]> {
-		return this.investmentAccountTransactionService.getTransactionSymbols(input, authUser.id);
+	getTransactionSymbols(@ReqUser() authUser: RequestUser): Promise<string[]> {
+		return this.investmentAccountTransactionService.getTransactionSymbols(authUser.id);
 	}
 }

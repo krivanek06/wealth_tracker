@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { PersonalAccount as PersonalAccountClient } from '@prisma/client';
-import { AccountIdentification } from '../../../shared/dto';
+import { AccountIdentification } from './../../account-manager/entities';
 import { PersonalAccountTag } from './personal-account-tag.entity';
 
 @ObjectType()

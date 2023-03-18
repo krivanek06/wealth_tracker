@@ -17,6 +17,19 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type AccountIdentification = {
+  __typename?: 'AccountIdentification';
+  /** What account types it is */
+  accountType: AccountType;
+  /** Date time when account was created */
+  createdAt: Scalars['String'];
+  id: Scalars['ID'];
+  /** custom name for account */
+  name: Scalars['String'];
+  /** Reference to User.ID who created this account */
+  userId: Scalars['String'];
+};
+
 export enum AccountType {
   Investment = 'INVESTMENT',
   Personal = 'PERSONAL'
@@ -705,6 +718,8 @@ export type Query = {
   getAssetHistoricalPricesStartToEnd: AssetGeneralHistoricalPrices;
   /** Return authenticated user based on header information */
   getAuthenticatedUser: User;
+  /** Returns available accounts for authenticated user */
+  getAvailableAccounts: Array<AccountIdentification>;
   /** Returns investment account for authenticated user */
   getInvestmentAccountByUser?: Maybe<InvestmentAccount>;
   /** Returns the investment account history growth, based on the input values */
@@ -799,6 +814,13 @@ export type UserAuthentication = {
   __typename?: 'UserAuthentication';
   authenticationType: AuthenticationType;
 };
+
+export type AccountIdentificationFragment = { __typename?: 'AccountIdentification', id: string, name: string, createdAt: string, userId: string, accountType: AccountType };
+
+export type GetAvailableAccountsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAvailableAccountsQuery = { __typename?: 'Query', getAvailableAccounts: Array<{ __typename?: 'AccountIdentification', id: string, name: string, createdAt: string, userId: string, accountType: AccountType }> };
 
 export type AssetGeneralHistoricalPricesDataFragment = { __typename?: 'AssetGeneralHistoricalPricesData', date: string, close: number };
 
@@ -1068,6 +1090,15 @@ export type GetAuthenticatedUserQueryVariables = Exact<{ [key: string]: never; }
 
 export type GetAuthenticatedUserQuery = { __typename?: 'Query', getAuthenticatedUser: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string, authentication: { __typename?: 'UserAuthentication', authenticationType: AuthenticationType } } };
 
+export const AccountIdentificationFragmentDoc = gql`
+    fragment AccountIdentification on AccountIdentification {
+  id
+  name
+  createdAt
+  userId
+  accountType
+}
+    `;
 export const AssetGeneralHistoricalPricesDataFragmentDoc = gql`
     fragment AssetGeneralHistoricalPricesData on AssetGeneralHistoricalPricesData {
   date
@@ -1305,6 +1336,24 @@ export const LoggedUserOutputFragmentDoc = gql`
   accessToken
 }
     `;
+export const GetAvailableAccountsDocument = gql`
+    query getAvailableAccounts {
+  getAvailableAccounts {
+    ...AccountIdentification
+  }
+}
+    ${AccountIdentificationFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetAvailableAccountsGQL extends Apollo.Query<GetAvailableAccountsQuery, GetAvailableAccountsQueryVariables> {
+    override document = GetAvailableAccountsDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const GetAssetHistoricalPricesStartToEndDocument = gql`
     query GetAssetHistoricalPricesStartToEnd($input: AssetGeneralHistoricalPricesInput!) {
   getAssetHistoricalPricesStartToEnd(input: $input) {

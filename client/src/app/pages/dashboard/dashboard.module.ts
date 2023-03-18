@@ -5,10 +5,10 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router, RouterModule, Routes } from '@angular/router';
 import { map } from 'rxjs';
-import { InvestmentAccountFacadeApiService, PersonalAccountFacadeService } from '../../core/api';
+import { AccountManagerApiService } from '../../core/api';
+import { AccountType } from '../../core/graphql';
 import { DASHBOARD_ROUTES } from '../../core/models';
 import { HeaderContainerModule } from '../page-shared';
-import { PersonalAccountMobileViewComponent } from './../../modules/personal-account/pages/personal-account-mobile-view/personal-account-mobile-view.component';
 import { DashboardComponent } from './dashboard.component';
 
 const routes: Routes = [
@@ -17,15 +17,24 @@ const routes: Routes = [
 		component: DashboardComponent,
 		children: [
 			{
+				path: DASHBOARD_ROUTES.NO_ACCOUNT,
+				loadChildren: () =>
+					import('../../modules/manager-account/pages/account-manager/account-manager.module').then(
+						(m) => m.AccountManagerModule
+					),
+			},
+			{
 				path: DASHBOARD_ROUTES.PERSONAL_ACCOUNT,
 				canActivate: [
 					() => {
-						const service = inject(PersonalAccountFacadeService);
+						const service = inject(AccountManagerApiService);
 						const router = inject(Router);
 
-						return service.getPersonalAccountDetailsByUser().pipe(
-							map((user) => {
-								if (user) {
+						// checks if personal account exists
+						return service.getAvailableAccounts().pipe(
+							map((accounts) => accounts.find((d) => d.accountType === AccountType.Investment)),
+							map((existingAccount) => {
+								if (existingAccount) {
 									return true;
 								}
 
@@ -44,12 +53,14 @@ const routes: Routes = [
 				path: DASHBOARD_ROUTES.INVESTMENT_ACCOUNT,
 				canActivate: [
 					() => {
-						const service = inject(InvestmentAccountFacadeApiService);
+						const service = inject(AccountManagerApiService);
 						const router = inject(Router);
 
-						return service.getInvestmentAccountById().pipe(
-							map((user) => {
-								if (user) {
+						// checks if investment account exists
+						return service.getAvailableAccounts().pipe(
+							map((accounts) => accounts.find((d) => d.accountType === AccountType.Investment)),
+							map((existingAccount) => {
+								if (existingAccount) {
 									return true;
 								}
 
@@ -75,7 +86,6 @@ const routes: Routes = [
 		RouterModule.forChild(routes),
 		LayoutModule,
 		HeaderContainerModule,
-		PersonalAccountMobileViewComponent,
 		MatDividerModule,
 		MatTabsModule,
 	],

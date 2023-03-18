@@ -132,7 +132,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	}
 
 	ngOnInit(): void {
-		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.data.investmentId);
+		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountByUser(this.data.investmentId);
 
 		// on form change check if user has enough cash
 		this.insufficientCashAmountError$ = this.formGroup.valueChanges.pipe(

@@ -18,7 +18,7 @@
 		<mat-menu #menu="matMenu">
 			<!-- user's accounts -->
 			<button
-				*ngFor="let account of availableAccounts"
+				*ngFor="let account of availableAccounts$ | async"
 				mat-menu-item
 				(click)="onAccountButtonClick(account)"
 				class="h-[52px]"

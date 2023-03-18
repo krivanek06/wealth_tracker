@@ -16,7 +16,6 @@ import {
 	InvestmentAccountCashDeleteInput,
 	InvestmentAccountEditInput,
 	InvestmentAccountGrowth,
-	InvestmentAccountOverviewFragment,
 	InvestmentAccountTransactionOutput,
 } from '../../graphql';
 import { InvestmentAccountFragmentExtended } from '../../models/investment-account.model';
@@ -34,12 +33,8 @@ export class InvestmentAccountFacadeApiService {
 		private investmentAccountHoldingService: InvestmentAccountHoldingService
 	) {}
 
-	getInvestmentAccounts(): Observable<InvestmentAccountOverviewFragment[]> {
-		return this.investmentAccountApiService.getInvestmentAccounts();
-	}
-
-	getInvestmentAccountById(accountId: string): Observable<InvestmentAccountFragmentExtended> {
-		return this.investmentAccountApiService.getInvestmentAccountByUser(accountId).pipe(
+	getInvestmentAccountByUser(): Observable<InvestmentAccountFragmentExtended> {
+		return this.investmentAccountApiService.getInvestmentAccountByUser().pipe(
 			map((account) => {
 				const currentCash = account.cashChange.reduce((acc, curr) => {
 					if (curr.type === InvestmentAccountCashChangeType.Withdrawal) {

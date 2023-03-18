@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { InvestmentAccount as InvestmentAccountClient } from '@prisma/client';
-import { AccountIdentification } from '../../../shared/dto';
+import { AccountIdentification } from './../../account-manager/entities';
+
 import { InvestmentAccountCashChange } from './investment-account-cash-change.entity';
 import { InvestmentAccountHolding } from './investment-account-holding.entity';
 

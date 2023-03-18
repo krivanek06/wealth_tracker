@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { mergeMap, Observable, zip } from 'rxjs';
+import { Observable } from 'rxjs';
 import { InvestmentAccountFacadeApiService, PersonalAccountFacadeService } from '../../core/api';
 import { AccountCreation } from '../page-shared/header-container/header-model';
 
@@ -17,12 +17,5 @@ export class DashboardComponent implements OnInit {
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService
 	) {}
 
-	ngOnInit(): void {
-		this.availableAccounts$ = zip(
-			// flatten by merge map
-			this.personalAccountFacadeService.getPersonalAccounts().pipe(mergeMap((d) => d)),
-			// flatten by merge map
-			this.investmentAccountFacadeApiService.getInvestmentAccounts().pipe(mergeMap((d) => d))
-		);
-	}
+	ngOnInit(): void {}
 }

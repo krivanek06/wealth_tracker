@@ -80,7 +80,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 				// client error message
 				catchError(() => {
 					this.isSaving = false;
-					DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
 					return EMPTY;
 				}),
 				// memory leak
@@ -122,7 +121,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 				// client error message
 				catchError(() => {
 					this.isSaving = false;
-					DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
 					return EMPTY;
 				}),
 				// memory leak

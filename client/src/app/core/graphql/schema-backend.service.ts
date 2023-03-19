@@ -163,8 +163,6 @@ export type HoldingInputData = {
 
 export type InvestmentAccounHoldingCreateInput = {
   holdingInputData: HoldingInputData;
-  /** Investment account associated with the asset */
-  investmentAccountId: Scalars['String'];
   isCrypto: Scalars['Boolean'];
   /** Symbol ID */
   symbol: Scalars['String'];
@@ -172,8 +170,6 @@ export type InvestmentAccounHoldingCreateInput = {
 };
 
 export type InvestmentAccounHoldingHistoryDeleteInput = {
-  /** Investment account associated with the asset */
-  investmentAccountId: Scalars['String'];
   /** Id of the item the user wants to remove */
   itemId: Scalars['String'];
   /** Symbol ID */
@@ -248,12 +244,10 @@ export type InvestmentAccountCashCreateInput = {
   cashValue: Scalars['Float'];
   /** What date to associate cash account change */
   date: Scalars['String'];
-  investmentAccountId: Scalars['String'];
   type: InvestmentAccountCashChangeType;
 };
 
 export type InvestmentAccountCashDeleteInput = {
-  investmentAccountId: Scalars['String'];
   /** If value is assigned, it will change existing cash value or create a new entry */
   itemId: Scalars['String'];
 };
@@ -262,7 +256,6 @@ export type InvestmentAccountCashEditInput = {
   cashCurrent: Scalars['Float'];
   /** What date to associate cash account change */
   date: Scalars['String'];
-  investmentAccountId: Scalars['String'];
   /** If value is assigned, it will change existing cash value or create a new entry */
   itemId: Scalars['String'];
 };
@@ -272,7 +265,6 @@ export type InvestmentAccountCreateInput = {
 };
 
 export type InvestmentAccountEditInput = {
-  investmentAccountId: Scalars['String'];
   name: Scalars['String'];
 };
 
@@ -856,7 +848,7 @@ export type InvestmentAccountOverviewFragment = { __typename?: 'InvestmentAccoun
 
 export type InvestmentAccountActiveHoldingOutputFragment = { __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, sectorImageUrl?: string | null, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } };
 
-export type InvestmentAccountFragment = { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType, cashChange: Array<{ __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string, imageUrl: string }>, activeHoldings: Array<{ __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, sectorImageUrl?: string | null, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } }> };
+export type InvestmentAccountDetailsFragment = { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType, cashChange: Array<{ __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string, imageUrl: string }>, activeHoldings: Array<{ __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, sectorImageUrl?: string | null, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } }> };
 
 export type InvestmentAccountGrowthFragment = { __typename?: 'InvestmentAccountGrowth', invested: number, cash: number, date: string, ownedAssets: number };
 
@@ -1184,8 +1176,8 @@ export const InvestmentAccountActiveHoldingOutputFragmentDoc = gql`
   }
 }
     ${AssetGeneralFragmentDoc}`;
-export const InvestmentAccountFragmentDoc = gql`
-    fragment InvestmentAccount on InvestmentAccount {
+export const InvestmentAccountDetailsFragmentDoc = gql`
+    fragment InvestmentAccountDetails on InvestmentAccount {
   ...InvestmentAccountOverview
   cashChange {
     ...InvestmentAccountCashChange
@@ -1424,10 +1416,10 @@ export const GetAssetGeneralHistoricalPricesDataOnDateDocument = gql`
 export const GetInvestmentAccountByUserDocument = gql`
     query getInvestmentAccountByUser {
   getInvestmentAccountByUser {
-    ...InvestmentAccount
+    ...InvestmentAccountDetails
   }
 }
-    ${InvestmentAccountFragmentDoc}`;
+    ${InvestmentAccountDetailsFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

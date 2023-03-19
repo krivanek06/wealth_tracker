@@ -102,7 +102,6 @@ export class InvestmentAccountHoldingService {
 
 		// save cash change -> if SELL add cash / if BUY subtract cash
 		const cashInput: InvestmentAccountCashCreateInput = {
-			investmentAccountId: input.investmentAccountId,
 			type: 'ASSET_OPERATION',
 			date: input.holdingInputData.date,
 			cashValue: input.holdingInputData.units * closedValueApi * (input.type === 'SELL' ? 1 : -1),
@@ -214,7 +213,6 @@ export class InvestmentAccountHoldingService {
 		// remove cash change
 		await this.investmentAccountCashChangeService.deleteInvestmentAccountCash(
 			{
-				investmentAccountId: input.investmentAccountId,
 				itemId: removedHoldingHistory.cashChangeId,
 			},
 			userId
@@ -340,7 +338,7 @@ export class InvestmentAccountHoldingService {
 		// create new holding
 		const holding: InvestmentAccountHolding = {
 			id: input.symbol,
-			investmentAccountId: input.investmentAccountId,
+			investmentAccountId: investmentAccount.id,
 			assetId: input.symbol,
 			type: holdingType,
 			sector: assetSector,
@@ -348,7 +346,7 @@ export class InvestmentAccountHoldingService {
 		};
 
 		// save entity
-		await this.investmentAccountRepositoryService.updateInvestmentAccount(input.investmentAccountId, {
+		await this.investmentAccountRepositoryService.updateInvestmentAccount(investmentAccount.userId, {
 			holdings: [...investmentAccount.holdings, holding],
 		});
 

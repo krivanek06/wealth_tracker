@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
 	InvestmentAccountActiveHoldingOutputFragment,
-	InvestmentAccountFragment,
+	InvestmentAccountDetailsFragment,
 	InvestmentAccountGrowth,
 } from '../../../core/graphql';
 import { DateServiceUtil } from '../../../core/utils';
@@ -21,7 +21,7 @@ export class InvestmentAccountCalculatorService {
 	 * @param account
 	 * @returns aggregated investedAmount for each symbol
 	 */
-	getInvestmentAccountByIdTotalInvestedAmount(account: InvestmentAccountFragment): number {
+	getInvestmentAccountByIdTotalInvestedAmount(account: InvestmentAccountDetailsFragment): number {
 		return account.activeHoldings.reduce((acc, curr) => {
 			return acc + curr.totalValue;
 		}, 0);
@@ -33,7 +33,7 @@ export class InvestmentAccountCalculatorService {
 	 * @param account
 	 * @returns
 	 */
-	getInvestmentAccountByIdCurrentInvestedAmout(account: InvestmentAccountFragment): number {
+	getInvestmentAccountByIdCurrentInvestedAmout(account: InvestmentAccountDetailsFragment): number {
 		return account.activeHoldings.reduce((acc, curr) => {
 			return acc + curr.units * curr.assetGeneral.assetQuote.price;
 		}, 0);
@@ -45,7 +45,7 @@ export class InvestmentAccountCalculatorService {
 	 * @param account
 	 * @returns
 	 */
-	getDailyInvestmentChange(account: InvestmentAccountFragment): DailyInvestmentChange {
+	getDailyInvestmentChange(account: InvestmentAccountDetailsFragment): DailyInvestmentChange {
 		// get list of changesPercentage and compute average
 		const valuePrctList = account.activeHoldings.map((d) => d.assetGeneral.assetQuote.changesPercentage);
 		const valuePrctAvg = valuePrctList.reduce((a, b) => a + b, 0) / valuePrctList.length || 0;
@@ -67,7 +67,7 @@ export class InvestmentAccountCalculatorService {
 	 * @returns how many symbols are allocated for a specific sector and what is the
 	 *          total value allocated
 	 */
-	getSectorAllocation(account: InvestmentAccountFragment): ValuePresentItem<SectorAllocation>[] {
+	getSectorAllocation(account: InvestmentAccountDetailsFragment): ValuePresentItem<SectorAllocation>[] {
 		const totalInvestedAmount = account.activeHoldings.reduce((acc, curr) => acc + curr.totalValue, 0);
 		return account.activeHoldings.reduce((acc, curr) => {
 			const allocationIndex = acc.findIndex((d) => d.name === curr.sector);
@@ -102,7 +102,7 @@ export class InvestmentAccountCalculatorService {
 	 * @param account
 	 * @returns distinct sectors as Input source
 	 */
-	getSectorAllocationInputSource(account: InvestmentAccountFragment): InputSource[] {
+	getSectorAllocationInputSource(account: InvestmentAccountDetailsFragment): InputSource[] {
 		return account.activeHoldings.reduce(
 			(acc, curr) => {
 				const allocationIndex = acc.findIndex((d) => d.value === curr.sector);
@@ -123,7 +123,7 @@ export class InvestmentAccountCalculatorService {
 		);
 	}
 
-	getAssetAllocationChart(account: InvestmentAccountFragment): GenericChartSeriesPie {
+	getAssetAllocationChart(account: InvestmentAccountDetailsFragment): GenericChartSeriesPie {
 		const seriesData = createGenericChartSeriesPie(account.activeHoldings, 'assetGeneral', 'id');
 
 		return { data: seriesData, colorByPoint: true, name: 'Holdings assets', innerSize: '40%', type: 'pie' };
@@ -134,7 +134,7 @@ export class InvestmentAccountCalculatorService {
 	 * @param account
 	 * @returns chart data based on investment account sector allocation
 	 */
-	getSectorAllocationChart(account: InvestmentAccountFragment): GenericChartSeriesPie {
+	getSectorAllocationChart(account: InvestmentAccountDetailsFragment): GenericChartSeriesPie {
 		const seriesData = createGenericChartSeriesPie(
 			account.activeHoldings,
 			'sector',

@@ -212,7 +212,6 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		this.isSaving = true;
 
 		const input: InvestmentAccounHoldingCreateInput = {
-			investmentAccountId: this.data.investmentId,
 			isCrypto: controls.assetType.value === SearchableAssetEnum.Crypto,
 			symbol: controls.symbol.value.id,
 			type: controls.isBuying.value
@@ -252,7 +251,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 
 	onDelete(history: InvestmentAccountTransactionOutput): void {
 		this.investmentAccountFacadeApiService
-			.deleteInvestmentAccountHolding(this.data.investmentId, history)
+			.deleteInvestmentAccountHolding(history)
 			.pipe(
 				tap(() => {
 					DialogServiceUtil.showNotificationBar(`Holding history has been removed`);

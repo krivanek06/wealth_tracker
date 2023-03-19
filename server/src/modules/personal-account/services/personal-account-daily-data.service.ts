@@ -166,9 +166,9 @@ export class PersonalAccountDailyService {
 		}
 
 		// prevent deleting someone else daily data
-		if (dailyData.userId !== userId) {
-			throw new HttpException(PERSONAL_ACCOUNT_ERROR_DAILY_DATA.INCORRECT_USER_ID, HttpStatus.FORBIDDEN);
-		}
+		// if (dailyData.userId !== userId) {
+		// 	throw new HttpException(PERSONAL_ACCOUNT_ERROR_DAILY_DATA.INCORRECT_USER_ID, HttpStatus.FORBIDDEN);
+		// }
 
 		// filter array that doesn't match dailyDataId
 		const filteredDailyData = monthlyData.dailyData.filter((d) => d.id !== dailyDataId);

@@ -51,7 +51,7 @@ fragment InvestmentAccountActiveHoldingOutput on InvestmentAccountActiveHoldingO
 	}
 }
 
-fragment InvestmentAccount on InvestmentAccount {
+fragment InvestmentAccountDetails on InvestmentAccount {
 	...InvestmentAccountOverview
 	cashChange {
 		...InvestmentAccountCashChange

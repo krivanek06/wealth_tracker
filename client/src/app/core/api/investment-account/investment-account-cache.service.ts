@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import {
+	GetInvestmentAccountByUserDocument,
+	GetInvestmentAccountByUserQuery,
 	GetTransactionHistoryDocument,
 	GetTransactionHistoryQuery,
-	InvestmentAccountFragment,
-	InvestmentAccountFragmentDoc,
-	InvestmentAccountOverviewFragment,
+	InvestmentAccountDetailsFragment,
 	InvestmentAccountTransactionOutputFragment,
 } from '../../graphql';
 
@@ -15,49 +15,42 @@ import {
 export class InvestmentAccountCacheService {
 	constructor(private apollo: Apollo) {}
 
-	getInvestmentAccountFromCache(accountId: string): InvestmentAccountFragment {
-		const fragment = this.apollo.client.readFragment<InvestmentAccountFragment>({
-			id: `InvestmentAccount:${accountId}`,
-			fragmentName: 'InvestmentAccount',
-			fragment: InvestmentAccountFragmentDoc,
+	getInvestmentAccountDetails(): InvestmentAccountDetailsFragment {
+		const fragment = this.apollo.client.readQuery<GetInvestmentAccountByUserQuery>({
+			query: GetInvestmentAccountByUserDocument,
 		});
 
 		// not found
-		if (!fragment) {
-			throw new Error(`[InvestmentAccountApiService]: Unable to find InvestmentAccountFragment`);
+		if (!fragment?.getInvestmentAccountByUser) {
+			throw new Error(`[InvestmentAccountApiService]: Unable to find InvestmentAccountDetailsFragment`);
 		}
 
-		return fragment;
+		return fragment.getInvestmentAccountByUser;
 	}
 
-	updateInvestmentAccount(data: InvestmentAccountFragment): void {
-		this.apollo.client.writeFragment<InvestmentAccountOverviewFragment>({
-			id: `InvestmentAccount:${data.id}`,
-			fragmentName: 'InvestmentAccount',
-			fragment: InvestmentAccountFragmentDoc,
+	updateInvestmentAccountDetails(data: InvestmentAccountDetailsFragment): void {
+		this.apollo.client.writeQuery<GetInvestmentAccountByUserQuery>({
+			query: GetInvestmentAccountByUserDocument,
 			data: {
-				...data,
+				__typename: 'Query',
+				getInvestmentAccountByUser: {
+					...data,
+				},
 			},
 		});
 	}
 
-	getTransactionHistory(accountId: string): InvestmentAccountTransactionOutputFragment[] | undefined {
+	getTransactionHistory(): InvestmentAccountTransactionOutputFragment[] | undefined {
 		const query = this.apollo.client.readQuery<GetTransactionHistoryQuery>({
 			query: GetTransactionHistoryDocument,
-			variables: {
-				accountId,
-			},
 		});
 
 		return query?.getTransactionHistory;
 	}
 
-	updateTransactionHistory(accountId: string, transaction: InvestmentAccountTransactionOutputFragment[]): void {
+	updateTransactionHistory(transaction: InvestmentAccountTransactionOutputFragment[]): void {
 		this.apollo.client.writeQuery<GetTransactionHistoryQuery>({
 			query: GetTransactionHistoryDocument,
-			variables: {
-				accountId,
-			},
 			data: {
 				__typename: 'Query',
 				getTransactionHistory: [...transaction],

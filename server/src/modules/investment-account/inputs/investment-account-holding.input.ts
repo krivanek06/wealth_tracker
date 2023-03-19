@@ -30,11 +30,6 @@ export class InvestmentAccounHoldingCreateInput {
 	})
 	symbol: string;
 
-	@Field(() => String, {
-		description: 'Investment account associated with the asset',
-	})
-	investmentAccountId: string;
-
 	@Field(() => Boolean)
 	isCrypto: boolean;
 
@@ -54,11 +49,6 @@ export class InvestmentAccounHoldingHistoryDeleteInput {
 		description: 'Symbol ID',
 	})
 	symbol: string;
-
-	@Field(() => String, {
-		description: 'Investment account associated with the asset',
-	})
-	investmentAccountId: string;
 
 	@Field(() => String, {
 		description: 'Id of the item the user wants to remove',

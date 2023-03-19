@@ -132,7 +132,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	}
 
 	ngOnInit(): void {
-		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.data.investmentId);
+		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountByUser();
 
 		// on form change check if user has enough cash
 		this.insufficientCashAmountError$ = this.formGroup.valueChanges.pipe(
@@ -162,7 +162,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 			startWith(this.formSymbol.value),
 			switchMap((value: AssetGeneralFragment) =>
 				this.investmentAccountFacadeApiService
-					.getTransactionHistory(this.data.investmentId)
+					.getTransactionHistory()
 					.pipe(map((transactions) => transactions.filter((d) => (!!value ? d.assetId === value.id : false))))
 			)
 		);
@@ -212,7 +212,6 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		this.isSaving = true;
 
 		const input: InvestmentAccounHoldingCreateInput = {
-			investmentAccountId: this.data.investmentId,
 			isCrypto: controls.assetType.value === SearchableAssetEnum.Crypto,
 			symbol: controls.symbol.value.id,
 			type: controls.isBuying.value
@@ -252,7 +251,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 
 	onDelete(history: InvestmentAccountTransactionOutput): void {
 		this.investmentAccountFacadeApiService
-			.deleteInvestmentAccountHolding(this.data.investmentId, history)
+			.deleteInvestmentAccountHolding(history)
 			.pipe(
 				tap(() => {
 					DialogServiceUtil.showNotificationBar(`Holding history has been removed`);

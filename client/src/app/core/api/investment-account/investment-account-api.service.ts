@@ -3,79 +3,66 @@ import { DataProxy, FetchResult } from '@apollo/client/core';
 import { Apollo } from 'apollo-angular';
 import { map, Observable } from 'rxjs';
 import {
+	AccountType,
 	CreateInvestmentAccountGQL,
 	CreateInvestmentAccountMutation,
 	DeleteInvestmentAccountGQL,
 	DeleteInvestmentAccountMutation,
 	EditInvestmentAccountGQL,
 	EditInvestmentAccountMutation,
-	GetInvestmentAccountByIdGQL,
+	GetInvestmentAccountByUserGQL,
 	GetInvestmentAccountGrowthGQL,
-	GetInvestmentAccountsGQL,
 	GetTransactionHistoryGQL,
 	GetTransactionSymbolsGQL,
+	InvestmentAccountDetailsFragment,
 	InvestmentAccountEditInput,
-	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
-	InvestmentAccountOverviewFragment,
 	InvestmentAccountTransactionOutput,
 } from '../../graphql';
-import { InvestmentAccountCacheService } from './investment-account-cache.service';
+import { AccountManagerCacheService } from '../account-manager';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class InvestmentAccountApiService {
 	constructor(
-		private getInvestmentAccountsGQL: GetInvestmentAccountsGQL,
-		private getInvestmentAccountByIdGQL: GetInvestmentAccountByIdGQL,
+		private getInvestmentAccountByUserGQL: GetInvestmentAccountByUserGQL,
 		private getInvestmentAccountGrowthGQL: GetInvestmentAccountGrowthGQL,
 		private createInvestmentAccountGQL: CreateInvestmentAccountGQL,
 		private editInvestmentAccountGQL: EditInvestmentAccountGQL,
 		private deleteInvestmentAccountGQL: DeleteInvestmentAccountGQL,
 		private getTransactionHistoryGQL: GetTransactionHistoryGQL,
 		private getTransactionSymbolsGQL: GetTransactionSymbolsGQL,
-		private investmentAccountCacheService: InvestmentAccountCacheService,
+		private accountManagerCacheService: AccountManagerCacheService,
 		private apollo: Apollo
 	) {}
 
-	getInvestmentAccounts(): Observable<InvestmentAccountOverviewFragment[]> {
-		return this.getInvestmentAccountsGQL.watch().valueChanges.pipe(map((res) => res.data.getInvestmentAccounts));
+	getInvestmentAccountByUser(): Observable<InvestmentAccountDetailsFragment | undefined | null> {
+		return this.getInvestmentAccountByUserGQL
+			.watch()
+			.valueChanges.pipe(map((res) => res.data.getInvestmentAccountByUser));
 	}
 
-	getInvestmentAccountById(accountId: string): Observable<InvestmentAccountFragment> {
-		return this.getInvestmentAccountByIdGQL
-			.watch({
-				input: accountId,
-			})
-			.valueChanges.pipe(map((res) => res.data.getInvestmentAccountById));
-	}
-
-	getInvestmentAccountGrowth(investmenAccountId: string): Observable<InvestmentAccountGrowth[]> {
+	getInvestmentAccountGrowth(): Observable<InvestmentAccountGrowth[]> {
 		return this.getInvestmentAccountGrowthGQL
 			.watch({
 				input: {
-					investmenAccountId,
 					sectors: [],
 				},
 			})
 			.valueChanges.pipe(map((res) => res.data.getInvestmentAccountGrowth));
 	}
 
-	getTransactionHistory(accountId: string): Observable<InvestmentAccountTransactionOutput[]> {
+	getTransactionHistory(): Observable<InvestmentAccountTransactionOutput[]> {
 		return this.getTransactionHistoryGQL
 			.watch({
-				accountId,
+				input: {},
 			})
 			.valueChanges.pipe(map((res) => res.data.getTransactionHistory));
 	}
 
-	getAvailableTransactionSymbols(input: string): Observable<string[]> {
-		return this.getTransactionSymbolsGQL
-			.watch({
-				input,
-			})
-			.valueChanges.pipe(map((res) => res.data.getTransactionSymbols));
+	getAvailableTransactionSymbols(): Observable<string[]> {
+		return this.getTransactionSymbolsGQL.watch().valueChanges.pipe(map((res) => res.data.getTransactionSymbols));
 	}
 
 	createInvestmentAccount(name: string): Observable<FetchResult<CreateInvestmentAccountMutation>> {
@@ -87,40 +74,48 @@ export class InvestmentAccountApiService {
 			},
 			{
 				update: (store: DataProxy, { data }) => {
-					const result = data?.createInvestmentAccount as InvestmentAccountOverviewFragment;
+					const result = data?.createInvestmentAccount;
 
-					// load accounts from cache
-					const accounts = this.investmentAccountCacheService.getInvestmentAccountsFromCache() ?? [];
+					if (!result) {
+						return;
+					}
 
 					// update cache
-					this.investmentAccountCacheService.updateInvestmentAccountsList([...accounts, result]);
+					this.accountManagerCacheService.createAccountType(result);
 				},
 			}
 		);
 	}
 
 	editInvestmentAccount(input: InvestmentAccountEditInput): Observable<FetchResult<EditInvestmentAccountMutation>> {
-		return this.editInvestmentAccountGQL.mutate({
-			input,
-		});
-	}
-
-	deleteInvestmentAccount(accountId: string): Observable<FetchResult<DeleteInvestmentAccountMutation>> {
-		return this.deleteInvestmentAccountGQL.mutate(
+		return this.editInvestmentAccountGQL.mutate(
 			{
-				input: accountId,
+				input,
 			},
 			{
 				update: (store: DataProxy, { data }) => {
-					// load accounts from cache
-					const accounts = this.investmentAccountCacheService.getInvestmentAccountsFromCache() ?? [];
-					const updatedAccounts = accounts.filter((d) => d.id !== accountId);
+					this.accountManagerCacheService.renameAccountType(input.name, AccountType.Investment);
+				},
+			}
+		);
+	}
+
+	deleteInvestmentAccount(): Observable<FetchResult<DeleteInvestmentAccountMutation>> {
+		return this.deleteInvestmentAccountGQL.mutate(
+			{},
+			{
+				update: (store: DataProxy, { data }) => {
+					const result = data?.deleteInvestmentAccount;
+
+					if (!result) {
+						return;
+					}
 
 					// update cache
-					this.investmentAccountCacheService.updateInvestmentAccountsList([...updatedAccounts]);
+					this.accountManagerCacheService.removeAccountType(AccountType.Investment);
 
 					// remove from cache
-					this.apollo.client.cache.evict({ id: `${data?.__typename}:${accountId}` });
+					this.apollo.client.cache.evict({ id: `${data?.__typename}:${data?.deleteInvestmentAccount.id}` });
 					this.apollo.client.cache.gc();
 				},
 			}

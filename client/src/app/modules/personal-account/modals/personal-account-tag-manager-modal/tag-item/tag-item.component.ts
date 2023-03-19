@@ -21,8 +21,6 @@ import { DialogServiceUtil } from './../../../../../shared/dialogs';
 })
 export class TagItemComponent implements OnInit {
 	@Output() removeNewTag = new EventEmitter<void>();
-
-	@Input() personalAccountId!: string;
 	@Input() editing = false;
 
 	/**
@@ -98,7 +96,6 @@ export class TagItemComponent implements OnInit {
 		this.personalAccountFacadeService
 			.deletePersonalAccountTag({
 				id: removingTagId,
-				personalAccountId: this.personalAccountId,
 			})
 			.pipe(
 				tap((result) => {
@@ -138,7 +135,6 @@ export class TagItemComponent implements OnInit {
 				color: controls.color.value,
 				imageUrl: controls.icon.value,
 				budgetMonthly: controls.budget.value,
-				personalAccountId: this.personalAccountId,
 				type: this.tagType,
 			})
 			.pipe(
@@ -170,7 +166,6 @@ export class TagItemComponent implements OnInit {
 				color: controls.color.value,
 				imageUrl: controls.icon.value,
 				budgetMonthly: controls.budget.value,
-				personalAccountId: this.personalAccountId,
 			})
 			.pipe(
 				tap((result) => {

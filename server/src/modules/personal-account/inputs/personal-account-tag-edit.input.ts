@@ -20,10 +20,6 @@ export class PersonalAccountTagDataEdit {
 	@MaxLength(100)
 	imageUrl: string;
 
-	@Field(() => String)
-	@MaxLength(100)
-	personalAccountId: string;
-
 	@Field(() => Float, {
 		defaultValue: null,
 	})

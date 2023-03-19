@@ -1,7 +1,7 @@
 import { addDays } from 'date-fns';
 import { PubSub } from 'graphql-subscriptions';
+import { PersonalAccountCreateInput } from '../modules/personal-account/inputs/personal-account.input';
 import { PersonalAccount } from './../modules/personal-account/entities/personal-account.entity';
-import { PersonalAccountCreateInput } from './../modules/personal-account/inputs/personal-account-create.input';
 import { PersonalAccountDailyDataCreate } from './../modules/personal-account/inputs/personal-account-daily-data-create.input';
 import { PersonalAccountMonthlyDataRepositoryService } from './../modules/personal-account/repository/personal-account-monthly-data-repository.service';
 import { PersonalAccountRepositoryService } from './../modules/personal-account/repository/personal-account-repository.service';
@@ -28,20 +28,19 @@ const personalAccountMonthlyService = new PersonalAccountMonthlyService(
 );
 const personalAccountService = new PersonalAccountService(personalAccountRepo);
 
-const USER_ID = '63457ee2bb8dd0d311fbbe2b';
+const USER_ID = '63457ee3bb8dd0d311fbbe33';
 
 const getPersonalAccount = async (): Promise<PersonalAccount> => {
 	// remove previous
-	const accounts = await personalAccountService.getPersonalAccounts(USER_ID);
-
-	if (accounts.length > 0) {
-		return accounts[0];
+	try {
+		const accounts = await personalAccountService.getPersonalAccountByUserId(USER_ID);
+		return accounts;
+	} catch {
+		const input: PersonalAccountCreateInput = {
+			name: 'Test account One',
+		};
+		return personalAccountService.createPersonalAccount(input, USER_ID);
 	}
-
-	const input: PersonalAccountCreateInput = {
-		name: 'Test account One',
-	};
-	return personalAccountService.createPersonalAccount(input, USER_ID);
 };
 
 const randomIntFromInterval = (min: number, max: number) => {
@@ -53,7 +52,7 @@ const personalAccountCreateDailyData = async (account: PersonalAccount): Promise
 	// console.log(defaultTags);
 
 	// for each day
-	for (let i = 0; i < 150; i++) {
+	for (let i = 0; i < 220; i++) {
 		const randomDailyEntries = randomIntFromInterval(2, 5);
 		console.log(`Daily data: ${i}, entities: ${randomDailyEntries}`);
 		const today = addDays(new Date('2022-08-01'), i);
@@ -65,7 +64,6 @@ const personalAccountCreateDailyData = async (account: PersonalAccount): Promise
 
 			const input: PersonalAccountDailyDataCreate = {
 				date: today.toISOString(),
-				personalAccountId: account.id,
 				description: '',
 				tagId: randomTag.id,
 				value: randomIntFromInterval(11, 66),

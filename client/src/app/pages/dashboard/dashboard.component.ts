@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { mergeMap, Observable, zip } from 'rxjs';
-import { InvestmentAccountFacadeApiService, PersonalAccountFacadeService } from '../../core/api';
-import { AccountIdentification } from '../../core/graphql';
+import { Observable } from 'rxjs';
+import { AccountManagerApiService } from '../../core/api';
+import { AccountManagerRoutes } from '../../core/models';
 
 @Component({
 	selector: 'app-dashboard',
@@ -10,19 +10,11 @@ import { AccountIdentification } from '../../core/graphql';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit {
-	availableAccounts$!: Observable<AccountIdentification[]>;
+	availableAccounts$!: Observable<AccountManagerRoutes[]>;
 
-	constructor(
-		private personalAccountFacadeService: PersonalAccountFacadeService,
-		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService
-	) {}
+	constructor(private managerAccountApiService: AccountManagerApiService) {}
 
 	ngOnInit(): void {
-		this.availableAccounts$ = zip(
-			// flatten by merge map
-			this.personalAccountFacadeService.getPersonalAccounts().pipe(mergeMap((d) => d)),
-			// flatten by merge map
-			this.investmentAccountFacadeApiService.getInvestmentAccounts().pipe(mergeMap((d) => d))
-		);
+		this.availableAccounts$ = this.managerAccountApiService.getAvailableAccountRoutes();
 	}
 }

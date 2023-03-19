@@ -36,8 +36,7 @@ export class InvestmentAccountHoldingService {
 					const result = data?.createInvestmentAccountHolding as InvestmentAccountActiveHoldingOutputWrapper;
 					const { holdingOutput, transaction } = result;
 
-					const accountId = input.investmentAccountId;
-					const account = this.investmentAccountCacheService.getInvestmentAccountFromCache(accountId);
+					const account = this.investmentAccountCacheService.getInvestmentAccountDetails();
 					const holdingIndex = account.activeHoldings.findIndex((d) => d.assetId === holdingOutput.assetId);
 
 					// if sell I may reduce or completely sell every holding
@@ -46,7 +45,7 @@ export class InvestmentAccountHoldingService {
 							holdingOutput.units !== 0
 								? account.activeHoldings.map((d) => (d.assetId === holdingOutput.assetId ? holdingOutput : d))
 								: account.activeHoldings.filter((d) => d.id !== holdingOutput.id);
-						this.investmentAccountCacheService.updateInvestmentAccount({ ...account, activeHoldings });
+						this.investmentAccountCacheService.updateInvestmentAccountDetails({ ...account, activeHoldings });
 					}
 
 					// if buy then symbol may or may not be in my active holdings
@@ -55,16 +54,13 @@ export class InvestmentAccountHoldingService {
 							holdingIndex > -1
 								? account.activeHoldings.map((d) => (d.assetId === holdingOutput.assetId ? holdingOutput : d))
 								: [...account.activeHoldings, holdingOutput];
-						this.investmentAccountCacheService.updateInvestmentAccount({ ...account, activeHoldings });
+						this.investmentAccountCacheService.updateInvestmentAccountDetails({ ...account, activeHoldings });
 					}
 
 					// update transaction history
-					const cachedTransactionHistory = this.investmentAccountCacheService.getTransactionHistory(accountId);
+					const cachedTransactionHistory = this.investmentAccountCacheService.getTransactionHistory();
 					if (cachedTransactionHistory) {
-						this.investmentAccountCacheService.updateTransactionHistory(accountId, [
-							...cachedTransactionHistory,
-							transaction,
-						]);
+						this.investmentAccountCacheService.updateTransactionHistory([...cachedTransactionHistory, transaction]);
 					}
 				},
 			}
@@ -72,13 +68,11 @@ export class InvestmentAccountHoldingService {
 	}
 
 	deleteInvestmentAccountHolding(
-		accountId: string,
 		history: InvestmentAccountTransactionOutput
 	): Observable<FetchResult<DeleteInvestmentAccountHoldingMutation>> {
 		return this.deleteInvestmentAccountHoldingGQL.mutate(
 			{
 				input: {
-					investmentAccountId: accountId,
 					itemId: history.itemId,
 					symbol: history.assetId,
 				},
@@ -100,7 +94,7 @@ export class InvestmentAccountHoldingService {
 				},
 				update: (store: DataProxy, { data }) => {
 					const result = data?.deleteInvestmentAccountHolding as InvestmentAccountHoldingHistoryFragment;
-					const account = this.investmentAccountCacheService.getInvestmentAccountFromCache(accountId);
+					const account = this.investmentAccountCacheService.getInvestmentAccountDetails();
 
 					// remove cashChangeId from cashChange
 					const cashChange = account.cashChange.filter((d) => d.itemId !== result.cashChangeId);
@@ -116,13 +110,13 @@ export class InvestmentAccountHoldingService {
 							: d
 					);
 					// save update in cache
-					this.investmentAccountCacheService.updateInvestmentAccount({ ...account, cashChange, activeHoldings });
+					this.investmentAccountCacheService.updateInvestmentAccountDetails({ ...account, cashChange, activeHoldings });
 
 					// update transaction history
-					const cachedTransactionHistory = this.investmentAccountCacheService.getTransactionHistory(accountId);
+					const cachedTransactionHistory = this.investmentAccountCacheService.getTransactionHistory();
 					if (cachedTransactionHistory) {
 						const filteredHistory = cachedTransactionHistory.filter((d) => d.itemId !== result.itemId);
-						this.investmentAccountCacheService.updateTransactionHistory(accountId, filteredHistory);
+						this.investmentAccountCacheService.updateTransactionHistory(filteredHistory);
 					}
 				},
 			}

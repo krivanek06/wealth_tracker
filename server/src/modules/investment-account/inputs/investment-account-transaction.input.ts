@@ -14,9 +14,6 @@ registerEnumType(InvestmentAccountTransactionInputOrderType, {
 
 @InputType()
 export class InvestmentAccountTransactionInput {
-	@Field(() => String)
-	accountId: string;
-
 	@Field(() => Int, {
 		defaultValue: 0,
 	})

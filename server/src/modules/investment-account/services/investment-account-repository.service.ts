@@ -8,19 +8,17 @@ import { InvestmentAccount } from '../entities';
 export class InvestmentAccountRepositoryService {
 	constructor(private prisma: PrismaService) {}
 
-	getInvestmentAccounts(userId: string): Promise<InvestmentAccount[]> {
-		return this.prisma.investmentAccount.findMany({
+	getInvestmentAccountByUserId(userId: string): Promise<InvestmentAccount | undefined> {
+		return this.prisma.investmentAccount.findUnique({
 			where: {
 				userId,
 			},
 		});
 	}
 
-	async getInvestmentAccountById(investmentAccountId: string, userId: string): Promise<InvestmentAccount> {
-		// load investment account
-		const investmentAccount = await this.prisma.investmentAccount.findFirst({
+	async getInvestmentAccountByUserIdStrict(userId: string): Promise<InvestmentAccount> {
+		const investmentAccount = await this.prisma.investmentAccount.findUnique({
 			where: {
-				id: investmentAccountId,
 				userId,
 			},
 		});
@@ -45,13 +43,13 @@ export class InvestmentAccountRepositoryService {
 		});
 	}
 
-	updateInvestmentAccount(accountId: string, data: Partial<InvestmentAccount>): Promise<InvestmentAccount> {
+	updateInvestmentAccount(userId: string, data: Partial<InvestmentAccount>): Promise<InvestmentAccount> {
 		return this.prisma.investmentAccount.update({
 			data: {
 				...data,
 			},
 			where: {
-				id: accountId,
+				userId,
 			},
 		});
 	}
@@ -64,32 +62,11 @@ export class InvestmentAccountRepositoryService {
 		});
 	}
 
-	deleteInvestmentAccount(investmentAccountId: string): Promise<InvestmentAccount> {
+	deleteInvestmentAccount(userId: string): Promise<InvestmentAccount> {
 		return this.prisma.investmentAccount.delete({
 			where: {
-				id: investmentAccountId,
-			},
-		});
-	}
-
-	/**
-	 *
-	 * @param investmentAccountId {string} id of the investment account we want to load
-	 * @returns whether a investment account exists by the investmentAccountId
-	 */
-	async isInvestmentAccountExist(investmentAccountId: string, userId: string): Promise<boolean> {
-		const accountCount = await this.prisma.investmentAccount.count({
-			where: {
-				id: investmentAccountId,
 				userId,
 			},
 		});
-
-		// no account found to be deleted
-		if (!accountCount || accountCount === 0) {
-			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
-		return accountCount > 0;
 	}
 }

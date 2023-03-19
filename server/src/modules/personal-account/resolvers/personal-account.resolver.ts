@@ -21,20 +21,12 @@ export class PersonalAccountResolver {
 	) {}
 
 	/* Queries */
-
-	@Query(() => [PersonalAccount], {
-		description: 'Returns all personal accounts for the requester',
-		defaultValue: [],
-	})
-	getPersonalAccounts(@ReqUser() authUser: RequestUser): Promise<PersonalAccount[]> {
-		return this.personalAccountService.getPersonalAccounts(authUser.id);
-	}
-
 	@Query(() => PersonalAccount, {
-		description: 'Returns personal accounts by Id',
+		description: 'Returns personal accounts for authenticated user',
+		nullable: true,
 	})
-	getPersonalAccountById(@ReqUser() authUser: RequestUser, @Input() input: string): Promise<PersonalAccount> {
-		return this.personalAccountService.getPersonalAccountById(input);
+	getPersonalAccountByUser(@ReqUser() authUser: RequestUser): Promise<PersonalAccount | undefined> {
+		return this.personalAccountService.getPersonalAccountByUserId(authUser.id);
 	}
 
 	/* Mutation */
@@ -55,11 +47,8 @@ export class PersonalAccountResolver {
 	}
 
 	@Mutation(() => PersonalAccount)
-	deletePersonalAccount(
-		@ReqUser() authUser: RequestUser,
-		@Input() personalAccountId: string
-	): Promise<PersonalAccount> {
-		return this.personalAccountService.deletePersonalAccount(personalAccountId, authUser.id);
+	deletePersonalAccount(@ReqUser() authUser: RequestUser): Promise<PersonalAccount> {
+		return this.personalAccountService.deletePersonalAccount(authUser.id);
 	}
 
 	/* Resolvers */
@@ -69,14 +58,14 @@ export class PersonalAccountResolver {
 		return this.personalAccountMonthlyService.getMonthlyDataByAccountId(personalAccount.id);
 	}
 
-	@ResolveField('weeklyAggregaton', () => [PersonalAccountWeeklyAggregationOutput])
+	@ResolveField('weeklyAggregation', () => [PersonalAccountWeeklyAggregationOutput])
 	getAllWeeklyAggregatedData(
 		@Parent() personalAccount: PersonalAccount
 	): Promise<PersonalAccountWeeklyAggregationOutput[]> {
 		return this.personalAccountDataAggregatorService.getAllWeeklyAggregatedData(personalAccount);
 	}
 
-	@ResolveField('yearlyAggregaton', () => [PersonalAccountAggregationDataOutput])
+	@ResolveField('yearlyAggregation', () => [PersonalAccountAggregationDataOutput])
 	getAllYearlyAggregatedData(
 		@Parent() personalAccount: PersonalAccount
 	): Promise<PersonalAccountAggregationDataOutput[]> {

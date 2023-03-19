@@ -16,10 +16,6 @@ export class InvestmentAccountCreateInput {
 export class InvestmentAccountEditInput {
 	@Field(() => String)
 	@MaxLength(50)
-	investmentAccountId: string;
-
-	@Field(() => String)
-	@MaxLength(50)
 	name: string;
 }
 

@@ -9,8 +9,4 @@ export class PersonalAccountTagDataDelete {
 	})
 	@MaxLength(100)
 	id: string;
-
-	@Field(() => String)
-	@MaxLength(100)
-	personalAccountId: string;
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
-import { map, Observable } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 import {
 	CreateInvestmentAccountCashMutation,
 	CreateInvestmentAccountHoldingMutation,
@@ -16,7 +16,6 @@ import {
 	InvestmentAccountCashDeleteInput,
 	InvestmentAccountEditInput,
 	InvestmentAccountGrowth,
-	InvestmentAccountOverviewFragment,
 	InvestmentAccountTransactionOutput,
 } from '../../graphql';
 import { InvestmentAccountFragmentExtended } from '../../models/investment-account.model';
@@ -34,12 +33,9 @@ export class InvestmentAccountFacadeApiService {
 		private investmentAccountHoldingService: InvestmentAccountHoldingService
 	) {}
 
-	getInvestmentAccounts(): Observable<InvestmentAccountOverviewFragment[]> {
-		return this.investmentAccountApiService.getInvestmentAccounts();
-	}
-
-	getInvestmentAccountById(accountId: string): Observable<InvestmentAccountFragmentExtended> {
-		return this.investmentAccountApiService.getInvestmentAccountById(accountId).pipe(
+	getInvestmentAccountByUser(): Observable<InvestmentAccountFragmentExtended> {
+		return this.investmentAccountApiService.getInvestmentAccountByUser().pipe(
+			filter((data): data is InvestmentAccountFragmentExtended => !!data),
 			map((account) => {
 				const currentCash = account.cashChange.reduce((acc, curr) => {
 					if (curr.type === InvestmentAccountCashChangeType.Withdrawal) {
@@ -75,7 +71,7 @@ export class InvestmentAccountFacadeApiService {
 					accountType: account.accountType,
 					activeHoldings: account.activeHoldings,
 					cashChange: account.cashChange,
-					name: account.createdAt,
+					name: account.name,
 					userId: account.userId,
 					createdAt: account.createdAt,
 					currentCash,
@@ -99,20 +95,20 @@ export class InvestmentAccountFacadeApiService {
 		return this.investmentAccountApiService.editInvestmentAccount(input);
 	}
 
-	deleteInvestmentAccount(accountId: string): Observable<FetchResult<DeleteInvestmentAccountMutation>> {
-		return this.investmentAccountApiService.deleteInvestmentAccount(accountId);
+	deleteInvestmentAccount(): Observable<FetchResult<DeleteInvestmentAccountMutation>> {
+		return this.investmentAccountApiService.deleteInvestmentAccount();
 	}
 
-	getInvestmentAccountGrowth(accountId: string): Observable<InvestmentAccountGrowth[]> {
-		return this.investmentAccountApiService.getInvestmentAccountGrowth(accountId);
+	getInvestmentAccountGrowth(): Observable<InvestmentAccountGrowth[]> {
+		return this.investmentAccountApiService.getInvestmentAccountGrowth();
 	}
 
-	getTransactionHistory(accountId: string): Observable<InvestmentAccountTransactionOutput[]> {
-		return this.investmentAccountApiService.getTransactionHistory(accountId);
+	getTransactionHistory(): Observable<InvestmentAccountTransactionOutput[]> {
+		return this.investmentAccountApiService.getTransactionHistory();
 	}
 
-	getAvailableTransactionSymbols(input: string): Observable<string[]> {
-		return this.investmentAccountApiService.getAvailableTransactionSymbols(input);
+	getAvailableTransactionSymbols(): Observable<string[]> {
+		return this.investmentAccountApiService.getAvailableTransactionSymbols();
 	}
 
 	createInvestmentAccountHolding(
@@ -122,10 +118,9 @@ export class InvestmentAccountFacadeApiService {
 	}
 
 	deleteInvestmentAccountHolding(
-		accountId: string,
 		history: InvestmentAccountTransactionOutput
 	): Observable<FetchResult<DeleteInvestmentAccountHoldingMutation>> {
-		return this.investmentAccountHoldingService.deleteInvestmentAccountHolding(accountId, history);
+		return this.investmentAccountHoldingService.deleteInvestmentAccountHolding(history);
 	}
 
 	createInvestmentAccountCash(

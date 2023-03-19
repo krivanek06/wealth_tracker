@@ -7,9 +7,9 @@
 		<mat-chip-listbox aria-label="Authenticated user">
 			<mat-chip
 				[matMenuTriggerFor]="menu"
-				class="p-5 bg-transparent border-2 border-solid cursor-pointer text-wt-primary-dark border-wt-primary-dark"
+				class="h-12 p-5 bg-transparent border-2 border-solid cursor-pointer text-wt-primary-dark border-wt-primary-dark"
 			>
-				<img appDefaultImg matChipAvatar [src]="user.imageUrl" alt="Authenticated user photo" />
+				<img appDefaultImg matChipAvatar [src]="user.imageUrl" alt="Authenticated user photo" class="h-7 w-7" />
 				{{user.username}}
 			</mat-chip>
 		</mat-chip-listbox>
@@ -17,7 +17,12 @@
 		<!-- menu when clicking on mat-chip -->
 		<mat-menu #menu="matMenu">
 			<!-- user's accounts -->
-			<button *ngFor="let account of availableAccounts" mat-menu-item (click)="onAccountButtonClick(account)">
+			<button
+				*ngFor="let account of availableAccounts$ | async"
+				mat-menu-item
+				(click)="onAccountButtonClick(account)"
+				class="h-[52px]"
+			>
 				<mat-icon>manage_accounts</mat-icon>
 				<span>{{account.name}}</span>
 			</button>
@@ -25,15 +30,15 @@
 			<mat-divider></mat-divider>
 
 			<!-- additional functionalities -->
-			<button mat-menu-item (click)="onUserProfile()">
+			<button class="h-[52px]" mat-menu-item (click)="onUserProfile()">
 				<mat-icon>manage_accounts</mat-icon>
 				<span>User profile</span>
 			</button>
-			<button mat-menu-item (click)="onManageAccountClick()">
+			<button class="h-[52px]" mat-menu-item (click)="onManageAccountClick()">
 				<mat-icon>account_balance_wallet</mat-icon>
 				<span>Manage accounts</span>
 			</button>
-			<button mat-menu-item (click)="onUserLogout()">
+			<button class="h-[52px]" mat-menu-item (click)="onUserLogout()">
 				<mat-icon>logout</mat-icon>
 				<span>Logout</span>
 			</button>

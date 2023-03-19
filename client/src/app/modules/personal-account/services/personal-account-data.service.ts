@@ -17,8 +17,8 @@ import { PersonalAccountFacadeService } from './../../../core/api';
 export class PersonalAccountDataService {
 	constructor(private personalAccountFacadeService: PersonalAccountFacadeService) {}
 
-	getAvailableTagInputSourceWrapper(personalAccountId: string): Observable<InputSourceWrapper[]> {
-		const expenseTags$ = this.personalAccountFacadeService.getPersonalAccountTagsExpense(personalAccountId).pipe(
+	getAvailableTagInputSourceWrapper(): Observable<InputSourceWrapper[]> {
+		const expenseTags$ = this.personalAccountFacadeService.getPersonalAccountTagsExpense().pipe(
 			map((res) => {
 				return {
 					name: res[0].type,
@@ -34,7 +34,7 @@ export class PersonalAccountDataService {
 			})
 		);
 
-		const incomeTags$ = this.personalAccountFacadeService.getPersonalTagsIncome(personalAccountId).pipe(
+		const incomeTags$ = this.personalAccountFacadeService.getPersonalTagsIncome().pipe(
 			map((res) => {
 				return {
 					name: res[0].type,
@@ -241,11 +241,11 @@ export class PersonalAccountDataService {
 	): PersonalAccountDailyDataAggregation[] {
 		return data
 			.reduce((acc, curr) => {
-				const lastItem = acc[acc.length - 1];
-				const lastDateSaved = lastItem?.date ?? curr.date;
+				// check if an entry with the same date is already saved
+				const lastItem = acc.find((d) => DateServiceUtil.isSameDay(d.date, curr.date));
 
 				// if same date, add to the last entry in array
-				if (!!lastItem && DateServiceUtil.isSameDay(lastDateSaved, curr.date)) {
+				if (lastItem) {
 					lastItem.data = [...lastItem.data, curr];
 					return acc;
 				}

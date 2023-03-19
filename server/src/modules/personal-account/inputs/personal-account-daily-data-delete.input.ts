@@ -10,9 +10,5 @@ export class PersonalAccountDailyDataDelete {
 
 	@Field(() => String)
 	@MaxLength(100)
-	personalAccountId: string;
-
-	@Field(() => String)
-	@MaxLength(100)
 	monthlyDataId: string;
 }

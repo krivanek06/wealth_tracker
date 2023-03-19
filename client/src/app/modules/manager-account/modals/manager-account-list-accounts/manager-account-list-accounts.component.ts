@@ -1,28 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { firstValueFrom, Observable } from 'rxjs';
-import { InvestmentAccountFacadeApiService, PersonalAccountFacadeService } from '../../../../core/api';
 import {
-	AccountIdentification,
-	AccountType,
-	InvestmentAccountOverviewFragment,
-	PersonalAccountOverviewFragment,
-} from '../../../../core/graphql';
+	AccountManagerApiService,
+	InvestmentAccountFacadeApiService,
+	PersonalAccountFacadeService,
+} from '../../../../core/api';
+import { AccountIdentification, AccountIdentificationFragment, AccountType } from '../../../../core/graphql';
 import { requiredValidator } from '../../../../shared/models';
-import { GeneralAccountTypeInputSource } from '../../models';
+import { ACCOUNT_NAMES, GeneralAccountTypeInputSource } from '../../models';
 import { DialogServiceUtil } from './../../../../shared/dialogs';
-
 @Component({
 	selector: 'app-manager-account-list-accounts',
 	templateUrl: './manager-account-list-accounts.component.html',
 	styleUrls: ['./manager-account-list-accounts.component.scss'],
 })
 export class ManagerAccountListAccountsComponent implements OnInit {
-	personalAccounts$!: Observable<PersonalAccountOverviewFragment[]>;
-	investmentAccounts$!: Observable<InvestmentAccountOverviewFragment[]>;
+	availableAccounts$!: Observable<AccountIdentificationFragment[]>;
+
+	ACCOUNT_NAMES = ACCOUNT_NAMES;
 
 	// control to select from existing account
-	selectedAccountControl = new FormControl<AccountIdentification | null>(null);
+	selectedAccountControl = new FormControl<[AccountIdentification] | null>(null);
 
 	// form to edit account or create new
 	accountForm = new FormGroup({
@@ -39,23 +38,22 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 	GeneralAccountTypeInputSource = GeneralAccountTypeInputSource;
 
 	constructor(
+		private accountManagerApiService: AccountManagerApiService,
 		private personalAccountFacadeService: PersonalAccountFacadeService,
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService
 	) {}
 
 	ngOnInit(): void {
-		this.personalAccounts$ = this.personalAccountFacadeService.getPersonalAccounts();
-		this.investmentAccounts$ = this.investmentAccountFacadeApiService.getInvestmentAccounts();
+		this.availableAccounts$ = this.accountManagerApiService.getAvailableAccounts();
 
 		this.selectedAccountControl.valueChanges.subscribe((value) => {
+			const data = value && value[0];
 			this.showSelectAccount = !value;
 			this.accountForm.setValue({
-				accountName: value?.name || null,
-				accountType: value?.accountType || null,
+				accountName: data?.name || null,
+				accountType: data?.accountType || null,
 			});
 		});
-
-		this.accountForm.valueChanges.subscribe(console.log);
 	}
 
 	onCancelClick(): void {
@@ -67,7 +65,7 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 		this.accountForm.markAllAsTouched();
 		const accountName = this.accountForm.controls.accountName.value;
 		const accountType = this.accountForm.controls.accountType.value;
-		const selectedAccountControl = this.selectedAccountControl.value;
+		const selectedAccountControl = this.selectedAccountControl.value && this.selectedAccountControl.value[0];
 		const isEditing = !!selectedAccountControl;
 
 		if (this.accountForm.invalid || !accountName || !accountType) {
@@ -87,7 +85,6 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 			console.log('personal account edit');
 			await firstValueFrom(
 				this.personalAccountFacadeService.editPersonalAccount({
-					id: selectedAccountControl.id,
 					name: accountName,
 				})
 			);
@@ -105,7 +102,6 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 			await firstValueFrom(
 				this.investmentAccountFacadeApiService.editInvestmentAccount({
 					name: accountName,
-					investmentAccountId: selectedAccountControl.id,
 				})
 			);
 			DialogServiceUtil.showNotificationBar(`Investment account ${accountName} has been edited`, 'success');
@@ -119,11 +115,17 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 		this.showSelectAccount = false;
 	}
 
-	async onDeleteAccountClick(account: AccountIdentification): Promise<void> {
+	async onDeleteAccountClick(): Promise<void> {
+		const account = this.selectedAccountControl.value && this.selectedAccountControl.value[0];
+
+		if (!account) {
+			return;
+		}
+
 		if (account.accountType === AccountType.Personal) {
-			await firstValueFrom(this.personalAccountFacadeService.deletePersonalAccount(account.id));
+			await firstValueFrom(this.personalAccountFacadeService.deletePersonalAccount());
 		} else if (account.accountType === AccountType.Investment) {
-			await firstValueFrom(this.investmentAccountFacadeApiService.deleteInvestmentAccount(account.id));
+			await firstValueFrom(this.investmentAccountFacadeApiService.deleteInvestmentAccount());
 		}
 
 		this.onCancelClick();

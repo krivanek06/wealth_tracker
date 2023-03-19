@@ -1,14 +1,10 @@
 import { ArgsType, Field, Float, InputType } from '@nestjs/graphql';
 import { InvestmentAccountCashChangeType } from '@prisma/client';
-import { MaxLength, Min } from 'class-validator';
+import { Min } from 'class-validator';
 
 @InputType()
 @ArgsType()
 export class InvestmentAccountCashCreateInput {
-	@Field(() => String)
-	@MaxLength(50)
-	investmentAccountId: string;
-
 	@Field(() => Float)
 	@Min(0)
 	cashValue: number;
@@ -32,10 +28,6 @@ export class InvestmentAccountCashEditInput {
 	})
 	itemId: string;
 
-	@Field(() => String)
-	@MaxLength(50)
-	investmentAccountId: string;
-
 	@Field(() => Float)
 	@Min(0)
 	cashCurrent: number;
@@ -55,8 +47,4 @@ export class InvestmentAccountCashDeleteInput {
 		description: 'If value is assigned, it will change existing cash value or create a new entry',
 	})
 	itemId: string;
-
-	@Field(() => String)
-	@MaxLength(50)
-	investmentAccountId: string;
 }

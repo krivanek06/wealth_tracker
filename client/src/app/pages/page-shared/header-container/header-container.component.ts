@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { AccountManagerApiService } from '../../../core/api';
 import { AuthenticationFacadeService } from '../../../core/auth';
-import { AccountIdentification, UserFragment } from '../../../core/graphql';
+import { AccountIdentificationFragment, UserFragment } from '../../../core/graphql';
 import { TOP_LEVEL_NAV } from '../../../core/models';
-import { ManagerAccountListAccountsComponent } from '../../../modules/manager-account/modals';
+import { ManagerAccountListAccountsComponent } from '../../../modules/manager-account';
 import { LoginModalComponent, UserProfileModalComponent } from '../../../modules/user-settings';
 
 @Component({
@@ -15,18 +16,19 @@ import { LoginModalComponent, UserProfileModalComponent } from '../../../modules
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderContainerComponent implements OnInit {
-	@Input() availableAccounts?: AccountIdentification[] | null;
-
+	availableAccounts$!: Observable<AccountIdentificationFragment[]>;
 	authenticatedUser$!: Observable<UserFragment | null>;
 
 	constructor(
 		private authenticationFacadeService: AuthenticationFacadeService,
+		private managerAccountApiService: AccountManagerApiService,
 		private dialog: MatDialog,
 		private router: Router
 	) {}
 
 	ngOnInit(): void {
 		this.authenticatedUser$ = this.authenticationFacadeService.getAuthenticatedUser();
+		this.availableAccounts$ = this.managerAccountApiService.getAvailableAccounts();
 
 		this.authenticatedUser$.subscribe(console.log);
 	}
@@ -36,8 +38,8 @@ export class HeaderContainerComponent implements OnInit {
 		this.router.navigate([TOP_LEVEL_NAV.welcome]);
 	}
 
-	onAccountButtonClick(account: AccountIdentification) {
-		this.router.navigate([TOP_LEVEL_NAV.dashboard, account.accountType, account.id]);
+	onAccountButtonClick(account: AccountIdentificationFragment) {
+		this.router.navigate([TOP_LEVEL_NAV.dashboard, account.accountType]);
 	}
 
 	onLoginClick(): void {

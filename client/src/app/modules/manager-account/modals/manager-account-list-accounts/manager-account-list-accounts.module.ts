@@ -8,11 +8,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormMatInputWrapperModule } from '../../../../shared/components';
-import { ListAccountsComponent } from './list-accounts/list-accounts.component';
 import { ManagerAccountListAccountsComponent } from './manager-account-list-accounts.component';
 
 @NgModule({
-	declarations: [ManagerAccountListAccountsComponent, ListAccountsComponent],
+	declarations: [ManagerAccountListAccountsComponent],
 	imports: [
 		CommonModule,
 		MatListModule,

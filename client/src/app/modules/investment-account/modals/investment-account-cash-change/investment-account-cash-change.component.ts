@@ -82,7 +82,6 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 		this.isSaving = true;
 
 		const input: InvestmentAccountCashCreateInput = {
-			investmentAccountId: this.data.investmentId,
 			cashValue: Number(this.formGroup.controls.value.value),
 			date: DateServiceUtil.formatDate(this.formGroup.controls.date.value),
 			type: this.formGroup.controls.type.value,
@@ -94,9 +93,7 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 				tap(() => {
 					DialogServiceUtil.showNotificationBar(`Cash entry has been saved`);
 				}),
-				// client error message
 				catchError(() => {
-					DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
 					return EMPTY;
 				})
 			)
@@ -110,7 +107,6 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 		this.investmentAccountFacadeApiService
 			.deleteInvestmentAccountCash(
 				{
-					investmentAccountId: this.data.investmentId,
 					itemId: item.itemId,
 				},
 				item
@@ -120,7 +116,6 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 				tap(() => DialogServiceUtil.showNotificationBar(`Daily entry has been removed`)),
 				// client error message
 				catchError(() => {
-					DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
 					return EMPTY;
 				})
 			)

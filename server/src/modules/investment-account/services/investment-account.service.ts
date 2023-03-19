@@ -171,7 +171,7 @@ export class InvestmentAccountService {
 
 	async editInvestmentAccount(input: InvestmentAccountEditInput, userId: string): Promise<InvestmentAccount> {
 		await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
-		return this.investmentAccountRepositoryService.updateInvestmentAccount(input.investmentAccountId, {
+		return this.investmentAccountRepositoryService.updateInvestmentAccount(userId, {
 			name: input.name,
 		});
 	}

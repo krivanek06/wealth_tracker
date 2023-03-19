@@ -9,13 +9,13 @@
 				<a
 					mat-tab-link
 					*ngFor="let account of accounts"
-					[routerLink]="[account.accountType]"
+					[routerLink]="[account.route]"
 					routerLinkActive
 					#rla="routerLinkActive"
 					[active]="rla.isActive"
 					class="mr-3"
 				>
-					{{account.name}}
+					{{account.data.name}}
 				</a>
 			</nav>
 		</div>

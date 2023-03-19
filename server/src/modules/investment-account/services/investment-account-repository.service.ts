@@ -43,13 +43,13 @@ export class InvestmentAccountRepositoryService {
 		});
 	}
 
-	updateInvestmentAccount(accountId: string, data: Partial<InvestmentAccount>): Promise<InvestmentAccount> {
+	updateInvestmentAccount(userId: string, data: Partial<InvestmentAccount>): Promise<InvestmentAccount> {
 		return this.prisma.investmentAccount.update({
 			data: {
 				...data,
 			},
 			where: {
-				id: accountId,
+				userId,
 			},
 		});
 	}

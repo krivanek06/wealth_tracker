@@ -118,10 +118,9 @@ export class InvestmentAccountFacadeApiService {
 	}
 
 	deleteInvestmentAccountHolding(
-		accountId: string,
 		history: InvestmentAccountTransactionOutput
 	): Observable<FetchResult<DeleteInvestmentAccountHoldingMutation>> {
-		return this.investmentAccountHoldingService.deleteInvestmentAccountHolding(accountId, history);
+		return this.investmentAccountHoldingService.deleteInvestmentAccountHolding(history);
 	}
 
 	createInvestmentAccountCash(

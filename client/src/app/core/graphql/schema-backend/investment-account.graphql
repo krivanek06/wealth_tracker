@@ -2,7 +2,7 @@
 
 query getInvestmentAccountByUser {
 	getInvestmentAccountByUser {
-		...InvestmentAccount
+		...InvestmentAccountDetails
 	}
 }
 

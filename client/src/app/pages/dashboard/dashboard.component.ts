@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AccountManagerApiService } from '../../core/api';
-import { AccountIdentificationFragment } from '../../core/graphql';
+import { AccountManagerRoutes } from '../../core/models';
 
 @Component({
 	selector: 'app-dashboard',
@@ -10,11 +10,11 @@ import { AccountIdentificationFragment } from '../../core/graphql';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit {
-	availableAccounts$!: Observable<AccountIdentificationFragment[]>;
+	availableAccounts$!: Observable<AccountManagerRoutes[]>;
 
 	constructor(private managerAccountApiService: AccountManagerApiService) {}
 
 	ngOnInit(): void {
-		this.availableAccounts$ = this.managerAccountApiService.getAvailableAccounts();
+		this.availableAccounts$ = this.managerAccountApiService.getAvailableAccountRoutes();
 	}
 }

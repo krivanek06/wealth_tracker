@@ -1,6 +1,6 @@
-import { InvestmentAccountFragment } from '../graphql';
+import { InvestmentAccountDetailsFragment } from '../graphql';
 
-export interface InvestmentAccountFragmentExtended extends InvestmentAccountFragment {
+export interface InvestmentAccountFragmentExtended extends InvestmentAccountDetailsFragment {
 	currentCash: number;
 	currentInvestments: number;
 	currentBalance: number;

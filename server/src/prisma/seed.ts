@@ -52,7 +52,7 @@ const personalAccountCreateDailyData = async (account: PersonalAccount): Promise
 	// console.log(defaultTags);
 
 	// for each day
-	for (let i = 0; i < 150; i++) {
+	for (let i = 0; i < 220; i++) {
 		const randomDailyEntries = randomIntFromInterval(2, 5);
 		console.log(`Daily data: ${i}, entities: ${randomDailyEntries}`);
 		const today = addDays(new Date('2022-08-01'), i);

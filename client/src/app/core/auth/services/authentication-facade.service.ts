@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Apollo } from 'apollo-angular';
 import { catchError, EMPTY, map, Observable, of, switchMap, tap } from 'rxjs';
 import { AuthenticationApiService } from '../../api';
@@ -10,6 +11,7 @@ import {
 	RegisterUserInput,
 	UserFragment,
 } from '../../graphql';
+import { TOP_LEVEL_NAV } from '../../models';
 import { TokenStorageService } from './token-storage.service';
 
 @Injectable({
@@ -19,20 +21,32 @@ export class AuthenticationFacadeService {
 	constructor(
 		private tokenStorageService: TokenStorageService,
 		private authenticationApiService: AuthenticationApiService,
-		private apollo: Apollo
+		private apollo: Apollo,
+		private router: Router
 	) {}
 
 	getAuthenticatedUser(): Observable<UserFragment | null> {
-		return this.tokenStorageService
-			.getAccessToken()
-			.pipe(switchMap((token) => (!token ? of(null) : this.authenticationApiService.getAuthenticatedUser())));
+		return this.tokenStorageService.getAccessToken().pipe(
+			switchMap((token) =>
+				!token
+					? of(null)
+					: this.authenticationApiService.getAuthenticatedUser().pipe(
+							catchError(() => {
+								this.logoutUser();
+								return EMPTY;
+							})
+					  )
+			)
+		);
 	}
 
 	logoutUser(): void {
-		// remove token from localstorage
+		// remove token from local storage
 		this.tokenStorageService.setAccessToken(null);
 		// clear graphql cache
 		this.apollo.client.cache.reset();
+		// logout
+		this.router.navigateByUrl(TOP_LEVEL_NAV.welcome);
 	}
 
 	setAccessToken(token: LoggedUserOutputFragment | null): void {

@@ -104,7 +104,6 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 			await firstValueFrom(
 				this.investmentAccountFacadeApiService.editInvestmentAccount({
 					name: accountName,
-					investmentAccountId: selectedAccountControl.id,
 				})
 			);
 			DialogServiceUtil.showNotificationBar(`Investment account ${accountName} has been edited`, 'success');

@@ -14,8 +14,8 @@ import {
 	GetInvestmentAccountGrowthGQL,
 	GetTransactionHistoryGQL,
 	GetTransactionSymbolsGQL,
+	InvestmentAccountDetailsFragment,
 	InvestmentAccountEditInput,
-	InvestmentAccountFragment,
 	InvestmentAccountGrowth,
 	InvestmentAccountTransactionOutput,
 } from '../../graphql';
@@ -37,7 +37,7 @@ export class InvestmentAccountApiService {
 		private apollo: Apollo
 	) {}
 
-	getInvestmentAccountByUser(): Observable<InvestmentAccountFragment | undefined | null> {
+	getInvestmentAccountByUser(): Observable<InvestmentAccountDetailsFragment | undefined | null> {
 		return this.getInvestmentAccountByUserGQL
 			.watch()
 			.valueChanges.pipe(map((res) => res.data.getInvestmentAccountByUser));

@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { map, Observable, tap } from 'rxjs';
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import { InvestmentAccountTransactionOutput } from '../../../../core/graphql';
@@ -31,8 +31,7 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 
 	constructor(
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
-		private dialogRef: MatDialogRef<InvestmentAccountTransactionsComponent>,
-		@Inject(MAT_DIALOG_DATA) public data: { investmentId: string }
+		private dialogRef: MatDialogRef<InvestmentAccountTransactionsComponent>
 	) {}
 
 	ngOnInit(): void {
@@ -49,7 +48,7 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 
 	onRemove(data: InvestmentAccountTransactionOutput): void {
 		this.investmentAccountFacadeApiService
-			.deleteInvestmentAccountHolding(this.data.investmentId, data)
+			.deleteInvestmentAccountHolding(data)
 			.pipe(
 				tap(() => {
 					DialogServiceUtil.showNotificationBar(`Holding history has been removed`);

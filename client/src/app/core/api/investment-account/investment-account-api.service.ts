@@ -54,7 +54,11 @@ export class InvestmentAccountApiService {
 	}
 
 	getTransactionHistory(): Observable<InvestmentAccountTransactionOutput[]> {
-		return this.getTransactionHistoryGQL.watch().valueChanges.pipe(map((res) => res.data.getTransactionHistory));
+		return this.getTransactionHistoryGQL
+			.watch({
+				input: {},
+			})
+			.valueChanges.pipe(map((res) => res.data.getTransactionHistory));
 	}
 
 	getAvailableTransactionSymbols(): Observable<string[]> {
@@ -84,9 +88,16 @@ export class InvestmentAccountApiService {
 	}
 
 	editInvestmentAccount(input: InvestmentAccountEditInput): Observable<FetchResult<EditInvestmentAccountMutation>> {
-		return this.editInvestmentAccountGQL.mutate({
-			input,
-		});
+		return this.editInvestmentAccountGQL.mutate(
+			{
+				input,
+			},
+			{
+				update: (store: DataProxy, { data }) => {
+					this.accountManagerCacheService.renameAccountType(input.name, AccountType.Investment);
+				},
+			}
+		);
 	}
 
 	deleteInvestmentAccount(): Observable<FetchResult<DeleteInvestmentAccountMutation>> {

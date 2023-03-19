@@ -64,7 +64,11 @@ export class PersonalAccountFacadeService {
 	}
 
 	editPersonalAccount(input: PersonalAccountEditInput): Observable<FetchResult<EditPersonalAccountMutation>> {
-		return this.personalAccountApiService.editPersonalAccount(input);
+		return this.personalAccountApiService.editPersonalAccount(input).pipe(
+			tap(() => {
+				this.accountManagerCacheService.renameAccountType(input.name, AccountType.Personal);
+			})
+		);
 	}
 
 	deletePersonalAccount(): Observable<PersonalAccountOverviewFragment | undefined> {

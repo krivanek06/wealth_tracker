@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import {
+	AccountIdentification,
 	AccountIdentificationFragment,
+	AccountIdentificationFragmentDoc,
 	AccountType,
 	GetAvailableAccountsDocument,
 	GetAvailableAccountsQuery,
@@ -31,6 +33,18 @@ export class AccountManagerCacheService {
 		this.updateAccountsOverview([...accounts, identification]);
 	}
 
+	renameAccountType(name: string, type: AccountType): void {
+		const accounts = this.getAccountsOverview();
+		const accountSelected = accounts.find((d) => d.accountType === type);
+
+		if (!accountSelected) {
+			return;
+		}
+
+		// update cache
+		this.updateAccountType({ ...accountSelected, name });
+	}
+
 	removeAccountType(type: AccountType): void {
 		// load accounts from cache
 		const accounts = this.getAccountsOverview();
@@ -54,6 +68,25 @@ export class AccountManagerCacheService {
 			data: {
 				__typename: 'Query',
 				getAvailableAccounts: [...data],
+			},
+		});
+	}
+
+	private getAccountType(tagId: string): AccountIdentificationFragment | null {
+		const fragment = this.apollo.client.readFragment<AccountIdentificationFragment>({
+			id: `AccountIdentification:${tagId}`,
+			fragment: AccountIdentificationFragmentDoc,
+		});
+		return fragment;
+	}
+
+	private updateAccountType(data: AccountIdentification): void {
+		this.apollo.client.writeFragment<AccountIdentificationFragment>({
+			id: `AccountIdentification:${data.id}`,
+			fragmentName: 'AccountIdentification',
+			fragment: AccountIdentificationFragmentDoc,
+			data: {
+				...data,
 			},
 		});
 	}

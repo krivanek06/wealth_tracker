@@ -21,7 +21,7 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 	ACCOUNT_NAMES = ACCOUNT_NAMES;
 
 	// control to select from existing account
-	selectedAccountControl = new FormControl<AccountIdentification | null>(null);
+	selectedAccountControl = new FormControl<[AccountIdentification] | null>(null);
 
 	// form to edit account or create new
 	accountForm = new FormGroup({
@@ -47,14 +47,13 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 		this.availableAccounts$ = this.accountManagerApiService.getAvailableAccounts();
 
 		this.selectedAccountControl.valueChanges.subscribe((value) => {
+			const data = value && value[0];
 			this.showSelectAccount = !value;
 			this.accountForm.setValue({
-				accountName: value?.name || null,
-				accountType: value?.accountType || null,
+				accountName: data?.name || null,
+				accountType: data?.accountType || null,
 			});
 		});
-
-		this.accountForm.valueChanges.subscribe(console.log);
 	}
 
 	onCancelClick(): void {
@@ -66,7 +65,7 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 		this.accountForm.markAllAsTouched();
 		const accountName = this.accountForm.controls.accountName.value;
 		const accountType = this.accountForm.controls.accountType.value;
-		const selectedAccountControl = this.selectedAccountControl.value;
+		const selectedAccountControl = this.selectedAccountControl.value && this.selectedAccountControl.value[0];
 		const isEditing = !!selectedAccountControl;
 
 		if (this.accountForm.invalid || !accountName || !accountType) {
@@ -86,7 +85,6 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 			console.log('personal account edit');
 			await firstValueFrom(
 				this.personalAccountFacadeService.editPersonalAccount({
-					id: selectedAccountControl.id,
 					name: accountName,
 				})
 			);
@@ -117,7 +115,13 @@ export class ManagerAccountListAccountsComponent implements OnInit {
 		this.showSelectAccount = false;
 	}
 
-	async onDeleteAccountClick(account: AccountIdentification): Promise<void> {
+	async onDeleteAccountClick(): Promise<void> {
+		const account = this.selectedAccountControl.value && this.selectedAccountControl.value[0];
+
+		if (!account) {
+			return;
+		}
+
 		if (account.accountType === AccountType.Personal) {
 			await firstValueFrom(this.personalAccountFacadeService.deletePersonalAccount());
 		} else if (account.accountType === AccountType.Investment) {

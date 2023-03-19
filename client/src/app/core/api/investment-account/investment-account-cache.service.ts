@@ -16,16 +16,16 @@ export class InvestmentAccountCacheService {
 	constructor(private apollo: Apollo) {}
 
 	getInvestmentAccountDetails(): InvestmentAccountDetailsFragment {
-		const fragment = this.apollo.client.readQuery<GetInvestmentAccountByUserQuery>({
+		const query = this.apollo.client.readQuery<GetInvestmentAccountByUserQuery>({
 			query: GetInvestmentAccountByUserDocument,
 		});
 
 		// not found
-		if (!fragment?.getInvestmentAccountByUser) {
+		if (!query?.getInvestmentAccountByUser) {
 			throw new Error(`[InvestmentAccountApiService]: Unable to find InvestmentAccountDetailsFragment`);
 		}
 
-		return fragment.getInvestmentAccountByUser;
+		return query.getInvestmentAccountByUser;
 	}
 
 	updateInvestmentAccountDetails(data: InvestmentAccountDetailsFragment): void {
@@ -43,6 +43,9 @@ export class InvestmentAccountCacheService {
 	getTransactionHistory(): InvestmentAccountTransactionOutputFragment[] | undefined {
 		const query = this.apollo.client.readQuery<GetTransactionHistoryQuery>({
 			query: GetTransactionHistoryDocument,
+			variables: {
+				input: {},
+			},
 		});
 
 		return query?.getTransactionHistory;
@@ -54,6 +57,9 @@ export class InvestmentAccountCacheService {
 			data: {
 				__typename: 'Query',
 				getTransactionHistory: [...transaction],
+			},
+			variables: {
+				input: {},
 			},
 		});
 	}

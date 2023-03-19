@@ -10,9 +10,8 @@ import {
 	EditPersonalAccountGQL,
 	EditPersonalAccountMutation,
 	GetPersonalAccountAvailableTagImagesGQL,
-	GetPersonalAccountByIdGQL,
+	GetPersonalAccountByUserGQL,
 	GetPersonalAccountDailyDataGQL,
-	GetPersonalAccountsGQL,
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
@@ -38,8 +37,7 @@ import {
 })
 export class PersonalAccountApiService {
 	constructor(
-		private getPersonalAccountsGQL: GetPersonalAccountsGQL,
-		private getPersonalAccountByIdGQL: GetPersonalAccountByIdGQL,
+		private getPersonalAccountByUserGQL: GetPersonalAccountByUserGQL,
 		private createPersonalAccountGQL: CreatePersonalAccountGQL,
 		private editPersonalAccountGQL: EditPersonalAccountGQL,
 		private deletePersonalAccountGQL: DeletePersonalAccountGQL,
@@ -53,16 +51,11 @@ export class PersonalAccountApiService {
 		private deletePersonalAccountTagGQL: DeletePersonalAccountTagGQL
 	) {}
 
-	getPersonalAccounts(): Observable<PersonalAccountOverviewFragment[]> {
-		return this.getPersonalAccountsGQL.watch().valueChanges.pipe(map((res) => res.data.getPersonalAccounts));
-	}
-
-	getPersonalAccountDetailsById(input: string): Observable<PersonalAccountDetailsFragment> {
-		return this.getPersonalAccountByIdGQL
-			.watch({
-				input,
-			})
-			.valueChanges.pipe(map((res) => res.data.getPersonalAccountById));
+	// TODO: does this work if I have no account and I create one ???
+	getPersonalAccountDetails(): Observable<PersonalAccountDetailsFragment | null> {
+		return this.getPersonalAccountByUserGQL
+			.watch()
+			.valueChanges.pipe(map((res) => res.data.getPersonalAccountByUser ?? null));
 	}
 
 	createPersonalAccount(name: string): Observable<PersonalAccountOverviewFragment | undefined> {
@@ -79,12 +72,8 @@ export class PersonalAccountApiService {
 		});
 	}
 
-	deletePersonalAccount(accountId: string): Observable<PersonalAccountOverviewFragment | undefined> {
-		return this.deletePersonalAccountGQL
-			.mutate({
-				accountId,
-			})
-			.pipe(map((res) => res.data?.deletePersonalAccount));
+	deletePersonalAccount(): Observable<PersonalAccountOverviewFragment | undefined> {
+		return this.deletePersonalAccountGQL.mutate().pipe(map((res) => res.data?.deletePersonalAccount));
 	}
 
 	createPersonalAccountDailyEntry(

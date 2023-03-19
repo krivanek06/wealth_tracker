@@ -20,7 +20,7 @@ export class PersonalAccountTagService {
 	}
 
 	async getTagsForPersonalAccount(personalAccountId: string): Promise<PersonalAccountTag[]> {
-		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountById(personalAccountId);
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountByIdStrict(personalAccountId);
 
 		return personalAccount.personalAccountTag;
 	}
@@ -29,7 +29,10 @@ export class PersonalAccountTagService {
 		tagDataCreate: PersonalAccountTagDataCreate,
 		userId: string
 	): Promise<PersonalAccountTag> {
-		const tags = await this.getTagsForPersonalAccount(tagDataCreate.personalAccountId);
+		// if no account - error is thrown
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserIdStrict(userId);
+
+		const tags = await this.getTagsForPersonalAccount(personalAccount.id);
 		const newTag: PersonalAccountTag = {
 			id: SharedServiceUtil.getUUID(),
 			imageUrl: tagDataCreate.imageUrl,
@@ -42,7 +45,7 @@ export class PersonalAccountTagService {
 		};
 
 		// save new tag
-		await this.personalAccountRepositoryService.updatePersonalAccount(tagDataCreate.personalAccountId, {
+		await this.personalAccountRepositoryService.updatePersonalAccount(userId, {
 			personalAccountTag: [...tags, newTag],
 		});
 
@@ -50,7 +53,10 @@ export class PersonalAccountTagService {
 	}
 
 	async editPersonalAccountTag(tagDataEdit: PersonalAccountTagDataEdit, userId: string): Promise<PersonalAccountTag> {
-		const tags = await this.getTagsForPersonalAccount(tagDataEdit.personalAccountId);
+		// if no account - error is thrown
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserIdStrict(userId);
+
+		const tags = await this.getTagsForPersonalAccount(personalAccount.id);
 		const searchedTag = tags.find((d) => d.id === tagDataEdit.id);
 
 		// not found
@@ -71,7 +77,7 @@ export class PersonalAccountTagService {
 		const allSavingTags = tags.map((d) => (d.id === tagDataEdit.id ? modifiedTag : d));
 
 		// save new tag
-		await this.personalAccountRepositoryService.updatePersonalAccount(tagDataEdit.personalAccountId, {
+		await this.personalAccountRepositoryService.updatePersonalAccount(userId, {
 			personalAccountTag: allSavingTags,
 		});
 
@@ -82,7 +88,10 @@ export class PersonalAccountTagService {
 		tagDataDelete: PersonalAccountTagDataDelete,
 		userId: string
 	): Promise<PersonalAccountTag> {
-		const tags = await this.getTagsForPersonalAccount(tagDataDelete.personalAccountId);
+		// if no account - error is thrown
+		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserIdStrict(userId);
+
+		const tags = await this.getTagsForPersonalAccount(personalAccount.id);
 		const searchedTag = tags.find((d) => d.id === tagDataDelete.id);
 
 		// not found
@@ -94,7 +103,7 @@ export class PersonalAccountTagService {
 		const allSavingTags = tags.filter((d) => d.id !== tagDataDelete.id);
 
 		// save new tag
-		await this.personalAccountRepositoryService.updatePersonalAccount(tagDataDelete.personalAccountId, {
+		await this.personalAccountRepositoryService.updatePersonalAccount(userId, {
 			personalAccountTag: allSavingTags,
 		});
 

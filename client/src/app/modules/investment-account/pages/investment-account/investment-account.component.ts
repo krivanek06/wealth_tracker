@@ -7,7 +7,6 @@ import { InvestmentAccountFragmentExtended } from '../../../../core/models';
 
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
-	ACCOUNT_KEY,
 	InvestmentAccountActiveHoldingOutputFragment,
 	InvestmentAccountGrowth,
 	InvestmentAccountOverviewFragment,
@@ -77,12 +76,8 @@ export class InvestmentAccountComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.investmentAccountsOverview = this.route.snapshot.data?.[ACCOUNT_KEY] as InvestmentAccountOverviewFragment;
-		this.investmentId = this.investmentAccountsOverview.id;
-		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountById(this.investmentId);
-		this.investmentAccountGrowth$ = this.investmentAccountFacadeApiService.getInvestmentAccountGrowth(
-			this.investmentId
-		);
+		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountByUser();
+		this.investmentAccountGrowth$ = this.investmentAccountFacadeApiService.getInvestmentAccountGrowth();
 		this.filteredActiveHoldings$ = combineLatest([
 			this.investmentAccount$,
 			this.sectorFormControl.valueChanges.pipe(startWith(this.sectorFormControl.value)),

@@ -23,12 +23,8 @@ export class InvestmentAccountService {
 		}, 0);
 	}
 
-	getInvestmentAccounts(userId: string): Promise<InvestmentAccount[]> {
-		return this.investmentAccountRepositoryService.getInvestmentAccounts(userId);
-	}
-
-	async getInvestmentAccountById(investmentAccountId: string, userId: string): Promise<InvestmentAccount> {
-		return this.investmentAccountRepositoryService.getInvestmentAccountById(investmentAccountId, userId);
+	getInvestmentAccountByUserId(userId: string): Promise<InvestmentAccount | null> {
+		return this.investmentAccountRepositoryService.getInvestmentAccountByUserId(userId);
 	}
 
 	/**
@@ -43,10 +39,7 @@ export class InvestmentAccountService {
 		userId: string
 	): Promise<InvestmentAccountGrowth[]> {
 		// load investment account
-		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountById(
-			input.investmenAccountId,
-			userId
-		);
+		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 
 		// symbolIds filter out by sectors
 		const filteredHoldings = investmentAccount.holdings
@@ -177,14 +170,14 @@ export class InvestmentAccountService {
 	}
 
 	async editInvestmentAccount(input: InvestmentAccountEditInput, userId: string): Promise<InvestmentAccount> {
-		await this.investmentAccountRepositoryService.isInvestmentAccountExist(input.investmentAccountId, userId);
-		return this.investmentAccountRepositoryService.updateInvestmentAccount(input.investmentAccountId, {
+		await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
+		return this.investmentAccountRepositoryService.updateInvestmentAccount(userId, {
 			name: input.name,
 		});
 	}
 
-	async deleteInvestmentAccount(investmentAccountId: string, userId: string): Promise<InvestmentAccount> {
-		await this.investmentAccountRepositoryService.isInvestmentAccountExist(investmentAccountId, userId);
-		return this.investmentAccountRepositoryService.deleteInvestmentAccount(investmentAccountId);
+	async deleteInvestmentAccount(userId: string): Promise<InvestmentAccount> {
+		await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
+		return this.investmentAccountRepositoryService.deleteInvestmentAccount(userId);
 	}
 }

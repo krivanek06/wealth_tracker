@@ -40,11 +40,11 @@ fragment PersonalAccountDetails on PersonalAccount {
 		...PersonalAccountTag
 	}
 
-	yearlyAggregaton {
+	yearlyAggregation {
 		...PersonalAccountAggregationData
 	}
 
-	weeklyAggregaton {
+	weeklyAggregation {
 		...PersonalAccountWeeklyAggregation
 	}
 }

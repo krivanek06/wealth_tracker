@@ -47,8 +47,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		private dialogRef: MatDialogRef<PersonalAccountDailyDataEntryComponent>,
 		@Inject(MAT_DIALOG_DATA)
 		public data: {
-			personalAccountId: string;
-			personalAccountName: string;
 			dailyData: PersonalAccountDailyDataOutputFragment | null;
 		}
 	) {}
@@ -59,9 +57,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			this.initEditing(this.data.dailyData);
 		}
 
-		this.displayTagsInputSource$ = this.personalAccountDataService.getAvailableTagInputSourceWrapper(
-			this.data.personalAccountId
-		);
+		this.displayTagsInputSource$ = this.personalAccountDataService.getAvailableTagInputSourceWrapper();
 	}
 
 	onRemove(): void {
@@ -75,7 +71,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			.deletePersonalAccountDailyEntry({
 				dailyDataId: this.data.dailyData.id,
 				monthlyDataId: this.data.dailyData.monthlyDataId,
-				personalAccountId: this.data.personalAccountId,
 			})
 			.pipe(
 				// notify user
@@ -85,7 +80,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 				// client error message
 				catchError(() => {
 					this.isSaving = false;
-					DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
 					return EMPTY;
 				}),
 				// memory leak
@@ -117,7 +111,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 								dailyDataDelete: {
 									dailyDataId: editedDailyData.id,
 									monthlyDataId: editedDailyData.monthlyDataId,
-									personalAccountId: this.data.personalAccountId,
 								},
 						  })
 				),
@@ -128,7 +121,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 				// client error message
 				catchError(() => {
 					this.isSaving = false;
-					DialogServiceUtil.showNotificationBar(`Unable to perform the action`, 'error');
 					return EMPTY;
 				}),
 				// memory leak
@@ -175,7 +167,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			date: combinedDate.toString(),
 			value: Number(valueValue),
 			tagId: tagValue,
-			personalAccountId: this.data.personalAccountId,
 			description: description,
 		};
 

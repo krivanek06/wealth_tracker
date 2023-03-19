@@ -1,6 +1,6 @@
-<div class="p-4 max-w-xl">
+<div class="p-4 max-w-xl min-w-[300px]">
 	<p class="text-base text-center">{{ data.dialogTitle }}</p>
-	<div class="flex flex-col-reverse md:flex-row gap-4 mt-6">
+	<div class="flex flex-col-reverse gap-4 mt-6 md:flex-row">
 		<button mat-stroked-button *ngIf="data.showCancelButton" class="w-full" (click)="cancel()">Cancel</button>
 		<button mat-flat-button class="w-full" color="primary" (click)="confirm()">{{ data.confirmButton }}</button>
 	</div>

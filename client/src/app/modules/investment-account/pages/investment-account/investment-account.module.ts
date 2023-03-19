@@ -11,13 +11,11 @@ import {
 	InvestmentAccountPortfolioGrowthChartComponent,
 	InvestmentAccountStateComponent,
 } from '../../components';
-import { InvestmentAccountResolverGuard } from '../../guards';
 import {
 	InvestmentAccountCashChangeModule,
 	InvestmentAccountHoldingModule,
 	InvestmentAccountTransactionsModule,
 } from '../../modals';
-import { ACCOUNT_KEY } from './../../../../core/graphql/model';
 import { InvestmentAccountSkeletonComponent } from './investment-account-skeleton/investment-account-skeleton.component';
 import { InvestmentAccountComponent } from './investment-account.component';
 
@@ -25,7 +23,6 @@ const routes: Routes = [
 	{
 		path: '',
 		component: InvestmentAccountComponent,
-		resolve: { [ACCOUNT_KEY]: InvestmentAccountResolverGuard },
 	},
 ];
 @NgModule({

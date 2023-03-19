@@ -45,7 +45,7 @@ export class InvestmentAccountCashApiService {
 					const result = data?.createInvestmentAccountCash as InvestmentAccountCashChangeFragment;
 
 					// add cash entry to the array of entries
-					this.addCashToCache(input.investmentAccountId, result);
+					this.addCashToCache(result);
 				},
 			}
 		);
@@ -73,25 +73,25 @@ export class InvestmentAccountCashApiService {
 				},
 				update: (store: DataProxy, { data }) => {
 					const result = data?.deleteInvestmentAccountCash as InvestmentAccountCashChangeFragment;
-					this.removeCashFromCache(input.investmentAccountId, result);
+					this.removeCashFromCache(result);
 				},
 			}
 		);
 	}
 
-	private addCashToCache(investmentAccountId: string, result: InvestmentAccountCashChangeFragment): void {
-		const account = this.investmentAccountCacheService.getInvestmentAccountFromCache(investmentAccountId);
+	private addCashToCache(result: InvestmentAccountCashChangeFragment): void {
+		const account = this.investmentAccountCacheService.getInvestmentAccountDetails();
 
 		// update cash only if doesn't exists
 		const cashChange = [...account.cashChange, result].sort((a, b) => (a.date < b.date ? -1 : 1));
-		this.investmentAccountCacheService.updateInvestmentAccount({ ...account, cashChange });
+		this.investmentAccountCacheService.updateInvestmentAccountDetails({ ...account, cashChange });
 	}
 
-	private removeCashFromCache(investmentAccountId: string, result: InvestmentAccountCashChangeFragment): void {
-		const account = this.investmentAccountCacheService.getInvestmentAccountFromCache(investmentAccountId);
+	private removeCashFromCache(result: InvestmentAccountCashChangeFragment): void {
+		const account = this.investmentAccountCacheService.getInvestmentAccountDetails();
 
 		// update cash only if exists
 		const cashChange = account.cashChange.filter((d) => d.itemId !== result.itemId);
-		this.investmentAccountCacheService.updateInvestmentAccount({ ...account, cashChange });
+		this.investmentAccountCacheService.updateInvestmentAccountDetails({ ...account, cashChange });
 	}
 }

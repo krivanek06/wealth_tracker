@@ -19,13 +19,13 @@ export class InvestmentAccountTransactionWrapperOutput {
 		description: 'list of best transaction by value change (%)',
 		defaultValue: [],
 	})
-	bestValueChage: InvestmentAccountTransactionOutput[];
+	bestValueChange: InvestmentAccountTransactionOutput[];
 
 	@Field(() => [InvestmentAccountTransactionOutput], {
 		description: 'list of worst transaction by value change (%)',
 		defaultValue: [],
 	})
-	worstValueChage: InvestmentAccountTransactionOutput[];
+	worstValueChange: InvestmentAccountTransactionOutput[];
 
 	@Field(() => [InvestmentAccountTransactionOutput], {
 		description: 'list of best transaction by value',

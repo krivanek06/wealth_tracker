@@ -2,7 +2,7 @@
 	<h2 class="text-wt-gray-light">Account manager</h2>
 	<div>
 		<!-- create button -->
-		<button
+		<!-- <button
 			*ngIf="showSelectAccount"
 			mat-stroked-button
 			color="accent"
@@ -11,14 +11,14 @@
 		>
 			<mat-icon>add</mat-icon>
 			Create new
-		</button>
+		</button> -->
 
 		<!-- delete button -->
 		<button
 			*ngIf="!!selectedAccountControl.value"
 			mat-stroked-button
 			color="warn"
-			(click)="onDeleteAccountClick(selectedAccountControl.value)"
+			(click)="onDeleteAccountClick()"
 			matTooltip="Delete selected account"
 		>
 			<mat-icon>delete</mat-icon>
@@ -30,12 +30,18 @@
 <!-- content -->
 <mat-dialog-content>
 	<!-- account lists -->
-	<app-list-accounts
-		*ngIf="showSelectAccount"
-		[formControl]="selectedAccountControl"
-		[personalAccounts]="personalAccounts$ | async"
-		[investmentAccounts]="investmentAccounts$ | async"
-	></app-list-accounts>
+	<mat-selection-list *ngIf="showSelectAccount" [formControl]="selectedAccountControl" [multiple]="false">
+		<ng-container *ngFor="let account of availableAccounts$ | async">
+			<div mat-subheader>{{ ACCOUNT_NAMES[account.accountType] }}</div>
+			<mat-list-option [value]="account">
+				<mat-icon matListItemIcon>folder</mat-icon>
+				<div matListItemTitle>{{account.name}}</div>
+				<div matListItemLine>{{account.createdAt| date}}</div>
+			</mat-list-option>
+
+			<mat-divider></mat-divider>
+		</ng-container>
+	</mat-selection-list>
 
 	<!-- editing form -->
 	<form *ngIf="!showSelectAccount" [formGroup]="accountForm" class="p-4" (ngSubmit)="onSubmit()">

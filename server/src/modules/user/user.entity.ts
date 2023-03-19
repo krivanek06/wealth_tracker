@@ -37,4 +37,14 @@ export class User implements UserClient {
 
 	@Field(() => UserAuthentication)
 	authentication: UserAuthentication;
+
+	@Field(() => String, {
+		nullable: true,
+	})
+	personalAccountId: string | null;
+
+	@Field(() => String, {
+		nullable: true,
+	})
+	investmentAccountId: string | null;
 }

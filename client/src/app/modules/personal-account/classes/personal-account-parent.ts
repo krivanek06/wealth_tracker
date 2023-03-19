@@ -1,4 +1,4 @@
-import { Directive, inject, Input } from '@angular/core';
+import { Directive, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, map, merge, Observable, of, reduce, startWith, switchMap, tap } from 'rxjs';
@@ -23,14 +23,6 @@ import { PersonalAccountChartService, PersonalAccountDataService } from '../serv
 
 @Directive()
 export abstract class PersonalAccountParent {
-	@Input() set accountIdentification(data: AccountIdentification | undefined | null) {
-		if (!data) {
-			return;
-		}
-		this.personalAccountBasic = data;
-		this.initData(data);
-	}
-
 	personalAccountDetails$!: Observable<PersonalAccountDetailsFragment>;
 
 	yearlyExpenseTags$!: Observable<ValuePresentItem<PersonalAccountTagFragment>[]>;
@@ -107,19 +99,21 @@ export abstract class PersonalAccountParent {
 		);
 	}
 
-	constructor() {}
+	constructor() {
+		this.initData();
+	}
 
-	private initData(account: AccountIdentification): void {
-		this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsById(account.id);
+	private initData(): void {
+		this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsByUser();
 
 		// calculate account state - balance, cash, invested
 		this.accountTotalState$ = this.personalAccountDetails$.pipe(
-			map((account) => this.personalAccountChartService.getAccountState(account.yearlyAggregaton))
+			map((account) => this.personalAccountChartService.getAccountState(account.yearlyAggregation))
 		);
 
 		// filter out expense tags to show them to the user
 		this.yearlyExpenseTags$ = this.personalAccountDetails$.pipe(
-			map((account) => account.yearlyAggregaton.filter((d) => d.tag.type === TagDataType.Expense)),
+			map((account) => account.yearlyAggregation.filter((d) => d.tag.type === TagDataType.Expense)),
 			map((expenseTags) => this.personalAccountDataService.createValuePresentItemFromTag(expenseTags))
 		);
 
@@ -162,7 +156,7 @@ export abstract class PersonalAccountParent {
 			switchMap((dateFilter) =>
 				dateFilter === NO_DATE_SELECTED
 					? of([])
-					: this.personalAccountFacadeService.getPersonalAccountDailyData(this.personalAccountBasic.id, dateFilter)
+					: this.personalAccountFacadeService.getPersonalAccountDailyData(dateFilter)
 			)
 		);
 
@@ -188,7 +182,7 @@ export abstract class PersonalAccountParent {
 			map((result) => (!!result ? this.personalAccountChartService.getExpenseAllocationChartData(result) : null))
 		);
 		this.personalAccountYearlyTagExpensePieChart$ = this.personalAccountDetails$.pipe(
-			map((result) => this.personalAccountChartService.getExpenseAllocationChartData(result.yearlyAggregaton))
+			map((result) => this.personalAccountChartService.getExpenseAllocationChartData(result.yearlyAggregation))
 		);
 
 		this.accountTagAggregationForTimePeriod$ = combineLatest([
@@ -205,7 +199,7 @@ export abstract class PersonalAccountParent {
 				]) =>
 					dateFilter === NO_DATE_SELECTED
 						? this.personalAccountDataService.getPersonalAccountTagAggregationByAggregationData(
-								details.yearlyAggregaton
+								details.yearlyAggregation
 						  )
 						: this.personalAccountDataService.getPersonalAccountTagAggregationByDailyData(result, dateFilter)
 			)
@@ -218,8 +212,6 @@ export abstract class PersonalAccountParent {
 		this.dialog.open(PersonalAccountDailyDataEntryComponent, {
 			data: {
 				dailyData: editingDailyData,
-				personalAccountId: this.personalAccountBasic.id,
-				personalAccountName: this.personalAccountBasic.name,
 			},
 			panelClass: ['g-mat-dialog-small'],
 		});
@@ -227,10 +219,6 @@ export abstract class PersonalAccountParent {
 
 	onActionButtonClick(type: PersonalAccountActionButtonType): void {
 		this.dialog.open(PersonalAccountTagManagerModalComponent, {
-			data: {
-				personalAccountId: this.personalAccountBasic.id,
-				personalAccountName: this.personalAccountBasic.name,
-			},
 			panelClass: ['g-mat-dialog-big'],
 		});
 	}

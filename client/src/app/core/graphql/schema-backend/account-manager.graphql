@@ -1,0 +1,5 @@
+query getAvailableAccounts {
+	getAvailableAccounts {
+		...AccountIdentification
+	}
+}

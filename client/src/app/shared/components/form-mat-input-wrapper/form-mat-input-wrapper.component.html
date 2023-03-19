@@ -24,7 +24,6 @@
 				<mat-select
 					[disableRipple]="disabled"
 					[formControl]="formInputControl"
-					placeholder="Select value"
 					[ngClass]="{'disabled-element': disabled}"
 				>
 					<mat-select-trigger *ngIf="selectedInputSource" class="flex items-center gap-2">
@@ -61,7 +60,6 @@
 				<mat-select
 					[disableRipple]="disabled"
 					[formControl]="formInputControl"
-					placeholder="Select value"
 					[ngClass]="{'disabled-element': disabled}"
 					[multiple]="inputType === InputType.MULTISELECT"
 				>

@@ -5,24 +5,25 @@
 		<td mat-cell *matCellDef="let row">
 			<div class="flex items-center gap-3">
 				<!-- tag svg -->
-				<img appDefaultImg [src]="row.tag.imageUrl" class="h-7" />
+				<img appDefaultImg [src]="row.tag.imageUrl" class="h-9" />
 
 				<!-- tag data -->
 				<div class="flex flex-col">
-					<span class="text-gray-200">{{ row.tag.name }}</span>
-					<span class="table-cell sm:hidden">{{ row.date | date: 'EEEE h:mm a, MMM d.' }}</span>
-				</div>
+					<div class="flex items-center gap-4">
+						<div style="color: {{row.tag.color}}" class="text-base">{{ row.tag.name }}</div>
+						<!-- description -->
+						<mat-icon *ngIf="row.description" [matTooltip]="row.description" class="text-wt-gray-medium">
+							description
+						</mat-icon>
+					</div>
 
-				<!-- description -->
-				<button
-					*ngIf="row.description"
-					type="button"
-					mat-icon-button
-					[matTooltip]="row.description"
-					class="text-wt-gray-medium"
-				>
-					<mat-icon>description</mat-icon>
-				</button>
+					<!-- date -->
+					<div>
+						<span class="text-wt-gray-light">{{ row.date | date: 'MMMM d.' }}</span> |
+						<span> {{ row.date | date: 'EEEE' }}</span> |
+						<span>Week {{row.week}}.</span>
+					</div>
+				</div>
 			</div>
 		</td>
 	</ng-container>
@@ -33,6 +34,7 @@
 		<td
 			mat-cell
 			*matCellDef="let row"
+			class="text-lg"
 			[ngClass]="{
         'text-wt-danger-medium': row.tag.type === TagDataType.Expense,
         'text-wt-success-medium': row.tag.type === TagDataType.Income
@@ -42,18 +44,13 @@
 		</td>
 	</ng-container>
 
-	<!-- date -->
-	<ng-container matColumnDef="date">
-		<th mat-header-cell *matHeaderCellDef class="hidden sm:table-cell">Date</th>
-		<td mat-cell *matCellDef="let row" class="hidden sm:table-cell">
-			<span class="text-wt-gray-light">{{ row.date | date: 'MMMM d.' }}</span> |
-			<span> {{ row.date | date: 'EEEE' }}</span> |
-			<span>Week {{row.week}}.</span>
-		</td>
-	</ng-container>
-
-	<tr mat-header-row *matHeaderRowDef="displayedColumns" class="hidden sm:contents"></tr>
-	<tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="onEditDailyEntryClick(row)"></tr>
+	<tr mat-header-row *matHeaderRowDef="displayedColumns" class="hidden"></tr>
+	<tr
+		mat-row
+		*matRowDef="let row; columns: displayedColumns"
+		(click)="onEditDailyEntryClick(row)"
+		class="h-[60px]"
+	></tr>
 
 	<!-- Row shown when there is no matching data. -->
 	<tr class="mat-row" *matNoDataRow>

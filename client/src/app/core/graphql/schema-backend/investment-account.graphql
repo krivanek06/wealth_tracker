@@ -1,14 +1,8 @@
 ### Investment account
 
-query GetInvestmentAccountById($input: String!) {
-	getInvestmentAccountById(input: $input) {
-		...InvestmentAccount
-	}
-}
-
-query GetInvestmentAccounts {
-	getInvestmentAccounts {
-		...InvestmentAccountOverview
+query getInvestmentAccountByUser {
+	getInvestmentAccountByUser {
+		...InvestmentAccountDetails
 	}
 }
 
@@ -30,8 +24,8 @@ mutation EditInvestmentAccount($input: InvestmentAccountEditInput!) {
 	}
 }
 
-mutation DeleteInvestmentAccount($input: String!) {
-	deleteInvestmentAccount(input: $input) {
+mutation DeleteInvestmentAccount {
+	deleteInvestmentAccount {
 		...InvestmentAccountOverview
 	}
 }
@@ -76,29 +70,12 @@ mutation DeleteInvestmentAccountCash($input: InvestmentAccountCashDeleteInput!) 
 }
 
 ### Transactions
-query GetTopTransactions($input: String!) {
-	getTopTransactions(input: $input) {
-		bestValueChage {
-			...InvestmentAccountTransactionOutput
-		}
-		worstValueChage {
-			...InvestmentAccountTransactionOutput
-		}
-		bestValue {
-			...InvestmentAccountTransactionOutput
-		}
-		worstValue {
-			...InvestmentAccountTransactionOutput
-		}
-	}
-}
-
-query GetTransactionHistory($accountId: String!) {
-	getTransactionHistory(input: { accountId: $accountId }) {
+query GetTransactionHistory($input: InvestmentAccountTransactionInput!) {
+	getTransactionHistory(input: $input) {
 		...InvestmentAccountTransactionOutput
 	}
 }
 
-query GetTransactionSymbols($input: String!) {
-	getTransactionSymbols(input: $input)
+query GetTransactionSymbols {
+	getTransactionSymbols
 }

@@ -18,10 +18,7 @@ export class InvestmentAccountCashChangeService {
 		input: InvestmentAccountCashCreateInput,
 		userId: string
 	): Promise<InvestmentAccountCashChange> {
-		const account = await this.investmentAccountRepositoryService.getInvestmentAccountById(
-			input.investmentAccountId,
-			userId
-		);
+		const account = await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 
 		const entry: InvestmentAccountCashChange = {
 			itemId: SharedServiceUtil.getUUID(),
@@ -31,7 +28,7 @@ export class InvestmentAccountCashChangeService {
 		};
 
 		// modify in DB
-		await this.updateInvestmentAccountCashChange(input.investmentAccountId, [...account.cashChange, entry]);
+		await this.updateInvestmentAccountCashChange(userId, [...account.cashChange, entry]);
 
 		return entry;
 	}
@@ -40,10 +37,7 @@ export class InvestmentAccountCashChangeService {
 		input: InvestmentAccountCashEditInput,
 		userId: string
 	): Promise<InvestmentAccountCashChange> {
-		const account = await this.investmentAccountRepositoryService.getInvestmentAccountById(
-			input.investmentAccountId,
-			userId
-		);
+		const account = await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 
 		// edit the correct itemId
 		const editedCashChanges = account.cashChange.map((d) => {
@@ -65,7 +59,7 @@ export class InvestmentAccountCashChangeService {
 		}
 
 		// modify in DB
-		await this.updateInvestmentAccountCashChange(input.investmentAccountId, editedCashChanges);
+		await this.updateInvestmentAccountCashChange(userId, editedCashChanges);
 
 		return editedChange;
 	}
@@ -74,17 +68,14 @@ export class InvestmentAccountCashChangeService {
 		input: InvestmentAccountCashDeleteInput,
 		userId: string
 	): Promise<InvestmentAccountCashChange> {
-		const account = await this.investmentAccountRepositoryService.getInvestmentAccountById(
-			input.investmentAccountId,
-			userId
-		);
+		const account = await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 
 		// return back to user
 		const removedCashChange = account.cashChange.find((d) => d.itemId === input.itemId);
 		const filteredOut = account.cashChange.filter((d) => d.itemId !== input.itemId);
 
 		// modify in DB
-		await this.updateInvestmentAccountCashChange(input.investmentAccountId, filteredOut);
+		await this.updateInvestmentAccountCashChange(userId, filteredOut);
 
 		return removedCashChange;
 	}
@@ -102,12 +93,12 @@ export class InvestmentAccountCashChangeService {
 	}
 
 	private async updateInvestmentAccountCashChange(
-		investmentAccountId: string,
+		userId: string,
 		cashChangeInput: InvestmentAccountCashChange[]
 	): Promise<InvestmentAccount> {
 		// order ASC
 		const cashChange = cashChangeInput.sort((a, b) => (a.date < b.date ? -1 : 1));
-		return this.investmentAccountRepositoryService.updateInvestmentAccount(investmentAccountId, {
+		return this.investmentAccountRepositoryService.updateInvestmentAccount(userId, {
 			cashChange: cashChange,
 		});
 	}

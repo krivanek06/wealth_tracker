@@ -33,7 +33,7 @@ export class PersonalAccountService {
 		return personalAccount;
 	}
 
-	async editPersonalAccount({ id, name }: PersonalAccountEditInput, userId: string): Promise<PersonalAccount> {
+	async editPersonalAccount({ name }: PersonalAccountEditInput, userId: string): Promise<PersonalAccount> {
 		const existingPersonalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserId(userId);
 
 		// no account found to be deleted
@@ -41,7 +41,7 @@ export class PersonalAccountService {
 			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return this.personalAccountRepositoryService.updatePersonalAccount(id, { name });
+		return this.personalAccountRepositoryService.updatePersonalAccount(userId, { name });
 	}
 
 	async deletePersonalAccount(userId: string): Promise<PersonalAccount> {

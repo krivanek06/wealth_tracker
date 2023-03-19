@@ -227,7 +227,7 @@ export class InvestmentAccountHoldingService {
 		});
 
 		// save entity
-		await this.investmentAccountRepositoryService.updateInvestmentAccount(investmentAccount.id, {
+		await this.investmentAccountRepositoryService.updateInvestmentAccount(userId, {
 			holdings: modifiedHoldings,
 		});
 
@@ -311,7 +311,7 @@ export class InvestmentAccountHoldingService {
 		}
 
 		// save entity
-		await this.investmentAccountRepositoryService.updateInvestmentAccount(investmentAccount.id, {
+		await this.investmentAccountRepositoryService.updateInvestmentAccount(investmentAccount.userId, {
 			holdings: modifiedHoldings,
 		});
 

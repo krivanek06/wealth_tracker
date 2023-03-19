@@ -8,3 +8,11 @@ export class PersonalAccountCreateInput {
 	@MaxLength(50)
 	name: string;
 }
+
+@InputType()
+@ArgsType()
+export class PersonalAccountEditInput {
+	@Field(() => String)
+	@MaxLength(50)
+	name: string;
+}

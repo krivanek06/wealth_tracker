@@ -608,7 +608,6 @@ export type PersonalAccountDailyDataQuery = {
 };
 
 export type PersonalAccountEditInput = {
-  id: Scalars['String'];
   name: Scalars['String'];
 };
 

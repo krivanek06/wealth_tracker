@@ -1,7 +1,9 @@
 import { LayoutModule } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { inject, NgModule } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router, RouterModule, Routes } from '@angular/router';
 import { map } from 'rxjs';
@@ -16,6 +18,11 @@ const routes: Routes = [
 		path: '',
 		component: DashboardComponent,
 		children: [
+			{
+				path: '',
+				redirectTo: DASHBOARD_ROUTES.NO_ACCOUNT,
+				pathMatch: 'full',
+			},
 			{
 				path: DASHBOARD_ROUTES.NO_ACCOUNT,
 				loadChildren: () =>
@@ -88,6 +95,8 @@ const routes: Routes = [
 		HeaderContainerModule,
 		MatDividerModule,
 		MatTabsModule,
+		MatButtonModule,
+		MatIconModule,
 	],
 })
 export class DashboardModule {}

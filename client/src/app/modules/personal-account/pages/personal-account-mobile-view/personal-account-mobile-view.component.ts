@@ -85,8 +85,6 @@ export class PersonalAccountMobileViewComponent extends PersonalAccountParent im
 			map((res) => this.personalAccountDataService.aggregateDailyDataOutputByDays(res))
 		);
 
-		this.dailyDataAggregation$.subscribe(console.log);
-
 		// check show history when selecting a tagId
 		this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.subscribe((value) => {
 			if (value.length !== 0) {

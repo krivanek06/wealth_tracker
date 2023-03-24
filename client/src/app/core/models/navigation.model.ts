@@ -5,7 +5,7 @@ export enum TOP_LEVEL_NAV {
 }
 
 export enum DASHBOARD_ROUTES {
-	NO_ACCOUNT = 'no_account',
+	NO_ACCOUNT = 'no_account_selected',
 	PERSONAL_ACCOUNT = 'personal_account',
 	INVESTMENT_ACCOUNT = 'investment_account',
 }

@@ -1,8 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { AccountManagerApiService } from '../../../../core/api';
-import { AccountManagerRoutes, TOP_LEVEL_NAV } from '../../../../core/models';
+import { firstValueFrom, map, Observable } from 'rxjs';
+import { Confirmable } from 'src/app/shared/decorators';
+import {
+	AccountManagerApiService,
+	InvestmentAccountFacadeApiService,
+	PersonalAccountFacadeService,
+} from '../../../../core/api';
+import { AccountIdentificationFragment, AccountType } from '../../../../core/graphql';
+import { AccountManagerEdit, ACCOUNT_NAMES, ACCOUNT_NAME_OPTIONS } from '../../models';
+import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.util';
 
 @Component({
 	selector: 'app-account-manager',
@@ -11,15 +17,75 @@ import { AccountManagerRoutes, TOP_LEVEL_NAV } from '../../../../core/models';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountManagerComponent {
-	availableAccounts$!: Observable<AccountManagerRoutes[]>;
+	availableAccounts$!: Observable<AccountIdentificationFragment[]>;
 
-	constructor(private managerAccountApiService: AccountManagerApiService, private router: Router) {}
+	creatingAccounts$!: Observable<AccountType[]>;
+
+	ACCOUNT_NAMES = ACCOUNT_NAMES;
+
+	constructor(
+		private managerAccountApiService: AccountManagerApiService,
+		private personalAccountFacadeService: PersonalAccountFacadeService,
+		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService
+	) {}
 
 	ngOnInit(): void {
-		this.availableAccounts$ = this.managerAccountApiService.getAvailableAccountRoutes();
+		this.availableAccounts$ = this.managerAccountApiService.getAvailableAccounts();
+
+		this.creatingAccounts$ = this.availableAccounts$.pipe(
+			map((accounts) => accounts.map((d) => d.accountType)),
+			map((accounts) => ACCOUNT_NAME_OPTIONS.filter((d) => !accounts.includes(d)))
+		);
 	}
 
-	onRouteClick(route: string) {
-		this.router.navigate([TOP_LEVEL_NAV.dashboard, route]);
+	async onSubmit(formData: AccountManagerEdit, type: AccountType): Promise<void> {
+		const isEditing = !!formData.id;
+		const accountName = formData.name;
+
+		DialogServiceUtil.showNotificationBar(`Request is sending for ${accountName}`, 'notification');
+
+		// create new personal account
+		if (!isEditing && type === AccountType.Personal) {
+			await firstValueFrom(this.personalAccountFacadeService.createPersonalAccount(accountName));
+			DialogServiceUtil.showNotificationBar(`Personal account ${accountName} has been created`, 'success');
+		}
+
+		// edit personal account
+		else if (isEditing && type === AccountType.Personal) {
+			console.log('personal account edit');
+			await firstValueFrom(
+				this.personalAccountFacadeService.editPersonalAccount({
+					name: accountName,
+				})
+			);
+			DialogServiceUtil.showNotificationBar(`PErsonal account ${accountName} has been edited`, 'success');
+		}
+
+		// create new investment account
+		else if (!isEditing && type === AccountType.Investment) {
+			await firstValueFrom(this.investmentAccountFacadeApiService.createInvestmentAccount(accountName));
+			DialogServiceUtil.showNotificationBar(`Investment account ${accountName} has been created`, 'success');
+		}
+
+		// edit investment account
+		else if (isEditing && type === AccountType.Investment) {
+			await firstValueFrom(
+				this.investmentAccountFacadeApiService.editInvestmentAccount({
+					name: accountName,
+				})
+			);
+			DialogServiceUtil.showNotificationBar(`Investment account ${accountName} has been edited`, 'success');
+		}
+	}
+
+	@Confirmable('Please confirm before removing account type')
+	async onDelete(accountType: AccountType): Promise<void> {
+		if (accountType === AccountType.Personal) {
+			await firstValueFrom(this.personalAccountFacadeService.deletePersonalAccount());
+		} else if (accountType === AccountType.Investment) {
+			await firstValueFrom(this.investmentAccountFacadeApiService.deleteInvestmentAccount());
+		}
+
+		DialogServiceUtil.showNotificationBar(`Account ${ACCOUNT_NAMES[accountType]} has been removed`, 'success');
 	}
 }

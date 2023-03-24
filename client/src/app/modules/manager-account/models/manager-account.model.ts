@@ -10,3 +10,10 @@ export const ACCOUNT_NAMES: { [key in AccountType]: string } = {
 	PERSONAL: 'Personal Account',
 	INVESTMENT: 'Investment Account',
 } as const;
+
+export const ACCOUNT_NAME_OPTIONS: AccountType[] = [AccountType.Personal, AccountType.Investment];
+
+export interface AccountManagerEdit {
+	id: string | null;
+	name: string;
+}

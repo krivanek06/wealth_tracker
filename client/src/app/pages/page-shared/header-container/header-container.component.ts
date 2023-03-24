@@ -5,8 +5,7 @@ import { Observable } from 'rxjs';
 import { AccountManagerApiService } from '../../../core/api';
 import { AuthenticationFacadeService } from '../../../core/auth';
 import { AccountIdentificationFragment, UserFragment } from '../../../core/graphql';
-import { TOP_LEVEL_NAV } from '../../../core/models';
-import { ManagerAccountListAccountsComponent } from '../../../modules/manager-account';
+import { DASHBOARD_ROUTES, TOP_LEVEL_NAV } from '../../../core/models';
 import { LoginModalComponent, UserProfileModalComponent } from '../../../modules/user-settings';
 
 @Component({
@@ -59,8 +58,6 @@ export class HeaderContainerComponent implements OnInit {
 	}
 
 	onManageAccountClick(): void {
-		this.dialog.open(ManagerAccountListAccountsComponent, {
-			panelClass: ['g-mat-dialog-medium'],
-		});
+		this.router.navigate([TOP_LEVEL_NAV.dashboard, DASHBOARD_ROUTES.ACCOUNT_MANAGER]);
 	}
 }

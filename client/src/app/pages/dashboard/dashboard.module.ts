@@ -20,11 +20,11 @@ const routes: Routes = [
 		children: [
 			{
 				path: '',
-				redirectTo: DASHBOARD_ROUTES.NO_ACCOUNT,
+				redirectTo: DASHBOARD_ROUTES.ACCOUNT_MANAGER,
 				pathMatch: 'full',
 			},
 			{
-				path: DASHBOARD_ROUTES.NO_ACCOUNT,
+				path: DASHBOARD_ROUTES.ACCOUNT_MANAGER,
 				loadChildren: () =>
 					import('../../modules/manager-account/pages/account-manager/account-manager.module').then(
 						(m) => m.AccountManagerModule
@@ -45,7 +45,7 @@ const routes: Routes = [
 									return true;
 								}
 
-								router.navigate([DASHBOARD_ROUTES.NO_ACCOUNT]);
+								router.navigate([DASHBOARD_ROUTES.ACCOUNT_MANAGER]);
 								return false;
 							})
 						);
@@ -71,7 +71,7 @@ const routes: Routes = [
 									return true;
 								}
 
-								router.navigate([DASHBOARD_ROUTES.NO_ACCOUNT]);
+								router.navigate([DASHBOARD_ROUTES.ACCOUNT_MANAGER]);
 								return false;
 							})
 						);

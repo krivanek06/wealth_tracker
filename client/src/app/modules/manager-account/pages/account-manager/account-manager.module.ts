@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule, Routes } from '@angular/router';
+import { AccountManagerItemComponent } from '../../components';
 import { AccountManagerComponent } from './account-manager.component';
 
 const routes: Routes = [
@@ -14,6 +15,6 @@ const routes: Routes = [
 
 @NgModule({
 	declarations: [AccountManagerComponent],
-	imports: [CommonModule, MatIconModule, MatButtonModule, RouterModule.forChild(routes)],
+	imports: [CommonModule, MatIconModule, MatButtonModule, RouterModule.forChild(routes), AccountManagerItemComponent],
 })
 export class AccountManagerModule {}

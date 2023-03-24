@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Apollo } from 'apollo-angular';
-import { catchError, EMPTY, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, map, Observable, switchMap, tap } from 'rxjs';
 import { AuthenticationApiService } from '../../api';
 import {
 	ChangePasswordInput,
@@ -26,27 +26,16 @@ export class AuthenticationFacadeService {
 	) {}
 
 	getAuthenticatedUser(): Observable<UserFragment | null> {
-		return this.tokenStorageService.getAccessToken().pipe(
-			switchMap((token) =>
-				!token
-					? of(null)
-					: this.authenticationApiService.getAuthenticatedUser().pipe(
-							catchError(() => {
-								this.logoutUser();
-								return EMPTY;
-							})
-					  )
-			)
-		);
+		return this.authenticationApiService.getAuthenticatedUser();
 	}
 
-	logoutUser(): void {
+	async logoutUser(): Promise<void> {
 		// remove token from local storage
 		this.tokenStorageService.setAccessToken(null);
-		// clear graphql cache
-		this.apollo.client.cache.reset();
 		// logout
-		this.router.navigateByUrl(TOP_LEVEL_NAV.welcome);
+		await this.router.navigate([TOP_LEVEL_NAV.welcome]);
+		// clear graphql cache
+		await this.apollo.client.resetStore();
 	}
 
 	setAccessToken(token: LoggedUserOutputFragment | null): void {

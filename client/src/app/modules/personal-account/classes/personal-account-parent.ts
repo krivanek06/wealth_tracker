@@ -204,8 +204,6 @@ export abstract class PersonalAccountParent {
 						: this.personalAccountDataService.getPersonalAccountTagAggregationByDailyData(result, dateFilter)
 			)
 		);
-
-		this.accountTagAggregationForTimePeriod$.subscribe((d) => console.log('watch me', d));
 	}
 
 	onDailyEntryClick(editingDailyData: PersonalAccountDailyDataOutputFragment | null): void {

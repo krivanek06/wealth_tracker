@@ -29,13 +29,10 @@ export class HeaderContainerComponent implements OnInit {
 	ngOnInit(): void {
 		this.authenticatedUser$ = this.authenticationFacadeService.getAuthenticatedUser();
 		this.availableAccounts$ = this.managerAccountApiService.getAvailableAccounts();
-
-		this.authenticatedUser$.subscribe(console.log);
 	}
 
 	onUserLogout(): void {
 		this.authenticationFacadeService.logoutUser();
-		this.router.navigate([TOP_LEVEL_NAV.welcome]);
 	}
 
 	onAccountButtonClick(account: AccountIdentificationFragment) {

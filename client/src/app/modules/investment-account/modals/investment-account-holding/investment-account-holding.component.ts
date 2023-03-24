@@ -120,8 +120,6 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		public data: { investmentId: string; activeHolding?: InvestmentAccountActiveHoldingOutputFragment }
 	) {}
 	ngAfterViewInit(): void {
-		this.formGroup.valueChanges.subscribe(console.log);
-
 		// load values for selected asset
 		setTimeout(() => {
 			if (this.data.activeHolding) {

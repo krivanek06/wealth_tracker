@@ -3,11 +3,11 @@
 	<h2 class="hidden text-xl lg:text-4xl text-wt-primary-dark sm:block">Wealth tracker</h2>
 
 	<!-- right section -->
-	<div *ngIf="authenticatedUser$ | async as user; else noUser" class="flex items-center gap-4">
-		<mat-chip-listbox aria-label="Authenticated user">
+	<div *ngIf="authenticatedUser$ | async as user" class="flex items-center gap-4 max-sm:w-full">
+		<mat-chip-listbox aria-label="Authenticated user" class="max-sm:w-full">
 			<mat-chip
 				[matMenuTriggerFor]="menu"
-				class="h-12 p-5 bg-transparent border-2 border-solid cursor-pointer text-wt-primary-dark border-wt-primary-dark"
+				class="h-12 p-5 bg-transparent border-2 border-solid cursor-pointer text-wt-primary-dark border-wt-primary-dark max-sm:w-full"
 			>
 				<img appDefaultImg matChipAvatar [src]="user.imageUrl" alt="Authenticated user photo" class="h-7 w-7" />
 				{{user.username}}
@@ -44,9 +44,4 @@
 			</button>
 		</mat-menu>
 	</div>
-
-	<!-- login section -->
-	<ng-template #noUser>
-		<button (click)="onLoginClick()" mat-stroked-button color="primary" class="g-button-size-lg">Login</button>
-	</ng-template>
 </div>

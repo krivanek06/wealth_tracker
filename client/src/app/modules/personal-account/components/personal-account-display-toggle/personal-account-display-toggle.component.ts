@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { DefaultImgDirective } from '../../../../shared/directives';
 import { PersonalAccountTagFragment } from './../../../../core/graphql';
 
 @Component({
 	selector: 'app-personal-account-display-toggle',
 	standalone: true,
-	imports: [CommonModule, MatButtonModule],
+	imports: [CommonModule, MatButtonModule, DefaultImgDirective],
 	templateUrl: './personal-account-display-toggle.component.html',
 	styleUrls: ['./personal-account-display-toggle.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,

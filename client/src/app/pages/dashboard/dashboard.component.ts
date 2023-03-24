@@ -20,6 +20,6 @@ export class DashboardComponent implements OnInit {
 	}
 
 	onAccountCreateNav(): void {
-		this.router.navigate([TOP_LEVEL_NAV.dashboard, DASHBOARD_ROUTES.NO_ACCOUNT]);
+		this.router.navigate([TOP_LEVEL_NAV.dashboard, DASHBOARD_ROUTES.ACCOUNT_MANAGER]);
 	}
 }

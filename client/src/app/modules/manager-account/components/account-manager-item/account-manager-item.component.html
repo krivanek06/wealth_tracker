@@ -1,24 +1,28 @@
-<h3 class="mb-4 text-xl text-wt-primary-dark">{{ ACCOUNT_NAMES[accountType] }}</h3>
+<h3 class="mb-4 text-xl text-center text-wt-primary-dark">{{ ACCOUNT_NAMES[accountType] }}</h3>
 
 <!-- presentation -->
-<button
-	*ngIf="!isEditing && account; else showForm"
-	mat-stroked-button
-	type="button"
-	(click)="onEditingToggle()"
-	class="w-full h-16"
->
-	<div class="flex items-center gap-x-6">
-		<mat-icon>folder</mat-icon>
-		<div class="flex flex-col text-start">
-			<span class="text-wt-gray-light">{{ account.name }}</span>
-			<span>{{ account.createdAt | date }}</span>
+<div *ngIf="!isEditing && account" class="flex items-center gap-x-6">
+	<button mat-stroked-button type="button" (click)="onAccountClick()" class="w-full h-16">
+		<div class="flex items-center gap-x-6">
+			<mat-icon>folder</mat-icon>
+			<div class="flex flex-col text-start">
+				<span class="text-wt-gray-light">{{ account.name }}</span>
+				<span>{{ account.createdAt | date }}</span>
+			</div>
 		</div>
-	</div>
-</button>
+	</button>
+
+	<button
+		mat-icon-button
+		(click)="onEditingToggle()"
+		class="border border-solid border-wt-gray-medium color-wt-gray-medium"
+	>
+		<mat-icon>edit</mat-icon>
+	</button>
+</div>
 
 <!-- editing -->
-<ng-template #showForm>
+<ng-container *ngIf="isEditing">
 	<form [formGroup]="accountForm" class="flex flex-col justify-between p-4 md:flex-row gap-x-6" (ngSubmit)="onSubmit()">
 		<!-- account name -->
 		<app-form-mat-input-wrapper
@@ -48,4 +52,15 @@
 			</button>
 		</div>
 	</form>
-</ng-template>
+</ng-container>
+
+<!-- create new account -->
+<ng-container *ngIf="!account">
+	<p class="w-10/12 m-auto mb-4 text-lg text-center">
+		Create your personal account to have an insight into your expenses and create your own budgeting plan
+	</p>
+	<button mat-stroked-button (click)="onAccountCreate()" class="w-full">
+		<mat-icon>add</mat-icon>
+		Crate account
+	</button>
+</ng-container>

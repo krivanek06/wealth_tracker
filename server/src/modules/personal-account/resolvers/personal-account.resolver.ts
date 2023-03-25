@@ -3,7 +3,7 @@ import { Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql/args';
 import { PersonalAccount, PersonalAccountMonthlyData } from '../entities';
-import { PersonalAccountCreateInput, PersonalAccountEditInput } from '../inputs';
+import { PersonalAccountEditInput } from '../inputs';
 import { PersonalAccountAggregationDataOutput, PersonalAccountWeeklyAggregationOutput } from '../outputs';
 import {
 	PersonalAccountDataAggregatorService,
@@ -31,11 +31,8 @@ export class PersonalAccountResolver {
 
 	/* Mutation */
 	@Mutation(() => PersonalAccount)
-	createPersonalAccount(
-		@ReqUser() authUser: RequestUser,
-		@Input() input: PersonalAccountCreateInput
-	): Promise<PersonalAccount> {
-		return this.personalAccountService.createPersonalAccount(input, authUser.id);
+	createPersonalAccount(@ReqUser() authUser: RequestUser): Promise<PersonalAccount> {
+		return this.personalAccountService.createPersonalAccount(authUser.id);
 	}
 
 	@Mutation(() => PersonalAccount)

@@ -2,17 +2,18 @@
 	<!-- existing accounts -->
 	<div *ngFor="let account of availableAccounts$ | async" class="mb-8">
 		<app-account-manager-item
-			(editEmitter)="onSubmit($event, account.accountType)"
+			(editEmitter)="onEdit($event, account.accountType)"
 			(deleteEmitter)="onDelete(account.accountType)"
+			(clickedEmitter)="onClick(account.accountType)"
 			[accountData]="account"
 			[accountType]="account.accountType"
 		></app-account-manager-item>
 	</div>
 
 	<!-- not created accounts -->
-	<div *ngFor="let accountType of creatingAccounts$ | async" class="mb-8">
+	<div *ngFor="let accountType of creatingAccounts$ | async" class="mb-12">
 		<app-account-manager-item
-			(editEmitter)="onSubmit($event, accountType)"
+			(createEmitter)="onCreate(accountType)"
 			[accountType]="accountType"
 		></app-account-manager-item>
 	</div>

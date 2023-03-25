@@ -1,6 +1,5 @@
 import { addDays } from 'date-fns';
 import { PubSub } from 'graphql-subscriptions';
-import { PersonalAccountCreateInput } from '../modules/personal-account/inputs/personal-account.input';
 import { PersonalAccount } from './../modules/personal-account/entities/personal-account.entity';
 import { PersonalAccountDailyDataCreate } from './../modules/personal-account/inputs/personal-account-daily-data-create.input';
 import { PersonalAccountMonthlyDataRepositoryService } from './../modules/personal-account/repository/personal-account-monthly-data-repository.service';
@@ -36,10 +35,7 @@ const getPersonalAccount = async (): Promise<PersonalAccount> => {
 		const accounts = await personalAccountService.getPersonalAccountByUserId(USER_ID);
 		return accounts;
 	} catch {
-		const input: PersonalAccountCreateInput = {
-			name: 'Test account One',
-		};
-		return personalAccountService.createPersonalAccount(input, USER_ID);
+		return personalAccountService.createPersonalAccount(USER_ID);
 	}
 };
 

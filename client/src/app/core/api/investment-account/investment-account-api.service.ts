@@ -65,13 +65,9 @@ export class InvestmentAccountApiService {
 		return this.getTransactionSymbolsGQL.watch().valueChanges.pipe(map((res) => res.data.getTransactionSymbols));
 	}
 
-	createInvestmentAccount(name: string): Observable<FetchResult<CreateInvestmentAccountMutation>> {
+	createInvestmentAccount(): Observable<FetchResult<CreateInvestmentAccountMutation>> {
 		return this.createInvestmentAccountGQL.mutate(
-			{
-				input: {
-					name,
-				},
-			},
+			{},
 			{
 				update: (store: DataProxy, { data }) => {
 					const result = data?.createInvestmentAccount;

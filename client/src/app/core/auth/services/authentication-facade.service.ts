@@ -33,9 +33,9 @@ export class AuthenticationFacadeService {
 		// remove token from local storage
 		this.tokenStorageService.setAccessToken(null);
 		// logout
-		await this.router.navigate([TOP_LEVEL_NAV.welcome]);
+		this.router.navigate([TOP_LEVEL_NAV.welcome]);
 		// clear graphql cache
-		await this.apollo.client.resetStore();
+		this.apollo.client.resetStore();
 	}
 
 	setAccessToken(token: LoggedUserOutputFragment | null): void {
@@ -48,7 +48,13 @@ export class AuthenticationFacadeService {
 			tap((res) => {
 				this.tokenStorageService.setAccessToken(res);
 			}),
-			switchMap(() => this.authenticationApiService.getAuthenticatedUser()),
+			switchMap(() =>
+				this.authenticationApiService.getAuthenticatedUser().pipe(
+					tap(() => {
+						this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+					})
+				)
+			),
 			catchError(() => EMPTY)
 		);
 	}
@@ -59,7 +65,13 @@ export class AuthenticationFacadeService {
 			tap((res) => {
 				this.tokenStorageService.setAccessToken(res);
 			}),
-			switchMap(() => this.authenticationApiService.getAuthenticatedUser()),
+			switchMap(() =>
+				this.authenticationApiService.getAuthenticatedUser().pipe(
+					tap(() => {
+						this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+					})
+				)
+			),
 			catchError(() => EMPTY)
 		);
 	}

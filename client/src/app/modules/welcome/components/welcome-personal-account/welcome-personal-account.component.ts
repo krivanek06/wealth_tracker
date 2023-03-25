@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { WELCOME_PERSONAL_1, WELCOME_PERSONAL_2, WELCOME_PERSONAL_3 } from '../../models/links.model';
+import {
+	WELCOME_PERSONAL_1,
+	WELCOME_PERSONAL_2,
+	WELCOME_PERSONAL_3,
+	WELCOME_PERSONAL_4,
+} from '../../models/links.model';
 
 @Component({
 	selector: 'app-welcome-personal-account',
@@ -14,4 +19,5 @@ export class WelcomePersonalAccountComponent {
 	WELCOME_PERSONAL_1 = WELCOME_PERSONAL_1;
 	WELCOME_PERSONAL_2 = WELCOME_PERSONAL_2;
 	WELCOME_PERSONAL_3 = WELCOME_PERSONAL_3;
+	WELCOME_PERSONAL_4 = WELCOME_PERSONAL_4;
 }

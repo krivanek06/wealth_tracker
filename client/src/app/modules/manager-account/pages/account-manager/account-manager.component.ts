@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { firstValueFrom, map, Observable } from 'rxjs';
+import { TOP_LEVEL_NAV } from 'src/app/core/models';
 import { Confirmable } from 'src/app/shared/decorators';
 import {
 	AccountManagerApiService,
@@ -7,8 +9,9 @@ import {
 	PersonalAccountFacadeService,
 } from '../../../../core/api';
 import { AccountIdentificationFragment, AccountType } from '../../../../core/graphql';
+import { DASHBOARD_ROUTES_BY_TYPE } from '../../../../core/models';
+import { DialogServiceUtil } from '../../../../shared/dialogs';
 import { AccountManagerEdit, ACCOUNT_NAMES, ACCOUNT_NAME_OPTIONS } from '../../models';
-import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.util';
 
 @Component({
 	selector: 'app-account-manager',
@@ -26,7 +29,8 @@ export class AccountManagerComponent {
 	constructor(
 		private managerAccountApiService: AccountManagerApiService,
 		private personalAccountFacadeService: PersonalAccountFacadeService,
-		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService
+		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
+		private router: Router
 	) {}
 
 	ngOnInit(): void {
@@ -38,44 +42,45 @@ export class AccountManagerComponent {
 		);
 	}
 
-	async onSubmit(formData: AccountManagerEdit, type: AccountType): Promise<void> {
-		const isEditing = !!formData.id;
+	onClick(type: AccountType): void {
+		this.router.navigate([TOP_LEVEL_NAV.dashboard, DASHBOARD_ROUTES_BY_TYPE[type]]);
+	}
+
+	async onEdit(formData: AccountManagerEdit, type: AccountType): Promise<void> {
 		const accountName = formData.name;
 
-		DialogServiceUtil.showNotificationBar(`Request is sending for ${accountName}`, 'notification');
-
-		// create new personal account
-		if (!isEditing && type === AccountType.Personal) {
-			await firstValueFrom(this.personalAccountFacadeService.createPersonalAccount(accountName));
-			DialogServiceUtil.showNotificationBar(`Personal account ${accountName} has been created`, 'success');
-		}
-
-		// edit personal account
-		else if (isEditing && type === AccountType.Personal) {
-			console.log('personal account edit');
+		if (type === AccountType.Personal) {
 			await firstValueFrom(
 				this.personalAccountFacadeService.editPersonalAccount({
 					name: accountName,
 				})
 			);
-			DialogServiceUtil.showNotificationBar(`PErsonal account ${accountName} has been edited`, 'success');
-		}
-
-		// create new investment account
-		else if (!isEditing && type === AccountType.Investment) {
-			await firstValueFrom(this.investmentAccountFacadeApiService.createInvestmentAccount(accountName));
-			DialogServiceUtil.showNotificationBar(`Investment account ${accountName} has been created`, 'success');
-		}
-
-		// edit investment account
-		else if (isEditing && type === AccountType.Investment) {
+		} else if (type === AccountType.Investment) {
 			await firstValueFrom(
 				this.investmentAccountFacadeApiService.editInvestmentAccount({
 					name: accountName,
 				})
 			);
-			DialogServiceUtil.showNotificationBar(`Investment account ${accountName} has been edited`, 'success');
 		}
+
+		DialogServiceUtil.showNotificationBar(`${ACCOUNT_NAMES[type]} has been edited`, 'success');
+	}
+
+	async onCreate(type: AccountType): Promise<void> {
+		DialogServiceUtil.showNotificationBar(`Request is sending for creating an account`, 'notification');
+
+		// create new personal account
+		if (type === AccountType.Personal) {
+			await firstValueFrom(this.personalAccountFacadeService.createPersonalAccount());
+			DialogServiceUtil.showNotificationBar(`Personal account has been created`, 'success');
+		}
+
+		// create new investment account
+		else if (type === AccountType.Investment) {
+			await firstValueFrom(this.investmentAccountFacadeApiService.createInvestmentAccount());
+		}
+
+		DialogServiceUtil.showNotificationBar(`${ACCOUNT_NAMES[type]} has been created`, 'success');
 	}
 
 	@Confirmable('Please confirm before removing account type')

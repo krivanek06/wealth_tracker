@@ -50,8 +50,8 @@ export class PersonalAccountFacadeService {
 		return this.personalAccountCacheService.getPersonalAccountTagFromCache(tagId);
 	}
 
-	createPersonalAccount(name: string): Observable<PersonalAccountOverviewFragment | undefined> {
-		return this.personalAccountApiService.createPersonalAccount(name).pipe(
+	createPersonalAccount(): Observable<PersonalAccountOverviewFragment | undefined> {
+		return this.personalAccountApiService.createPersonalAccount().pipe(
 			tap((result) => {
 				if (!result) {
 					return;

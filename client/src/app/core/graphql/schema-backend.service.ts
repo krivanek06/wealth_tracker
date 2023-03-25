@@ -260,10 +260,6 @@ export type InvestmentAccountCashEditInput = {
   itemId: Scalars['String'];
 };
 
-export type InvestmentAccountCreateInput = {
-  name: Scalars['String'];
-};
-
 export type InvestmentAccountEditInput = {
   name: Scalars['String'];
 };
@@ -425,11 +421,6 @@ export type MutationChangePasswordArgs = {
 };
 
 
-export type MutationCreateInvestmentAccountArgs = {
-  input: InvestmentAccountCreateInput;
-};
-
-
 export type MutationCreateInvestmentAccountCashArgs = {
   input: InvestmentAccountCashCreateInput;
 };
@@ -437,11 +428,6 @@ export type MutationCreateInvestmentAccountCashArgs = {
 
 export type MutationCreateInvestmentAccountHoldingArgs = {
   input: InvestmentAccounHoldingCreateInput;
-};
-
-
-export type MutationCreatePersonalAccountArgs = {
-  input: PersonalAccountCreateInput;
 };
 
 
@@ -540,10 +526,6 @@ export type PersonalAccountAggregationDataOutput = {
   tag: PersonalAccountTag;
   /** Sum of values for a specific personalAccountTagId */
   value: Scalars['Float'];
-};
-
-export type PersonalAccountCreateInput = {
-  name: Scalars['String'];
 };
 
 export type PersonalAccountDailyDataCreate = {
@@ -865,9 +847,7 @@ export type GetInvestmentAccountGrowthQueryVariables = Exact<{
 
 export type GetInvestmentAccountGrowthQuery = { __typename?: 'Query', getInvestmentAccountGrowth: Array<{ __typename?: 'InvestmentAccountGrowth', invested: number, cash: number, date: string, ownedAssets: number }> };
 
-export type CreateInvestmentAccountMutationVariables = Exact<{
-  input: InvestmentAccountCreateInput;
-}>;
+export type CreateInvestmentAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CreateInvestmentAccountMutation = { __typename?: 'Mutation', createInvestmentAccount: { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType } };
@@ -953,9 +933,7 @@ export type GetPersonalAccountByUserQueryVariables = Exact<{ [key: string]: neve
 
 export type GetPersonalAccountByUserQuery = { __typename?: 'Query', getPersonalAccountByUser?: { __typename?: 'PersonalAccount', enabledBudgeting: boolean, id: string, name: string, createdAt: string, userId: string, accountType: AccountType, personalAccountTag: Array<{ __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null }>, yearlyAggregation: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } }>, weeklyAggregation: Array<{ __typename?: 'PersonalAccountWeeklyAggregationOutput', id: string, year: number, month: number, week: number, data: Array<{ __typename?: 'PersonalAccountAggregationDataOutput', value: number, entries: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } }> }> } | null };
 
-export type CreatePersonalAccountMutationVariables = Exact<{
-  name: Scalars['String'];
-}>;
+export type CreatePersonalAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CreatePersonalAccountMutation = { __typename?: 'Mutation', createPersonalAccount: { __typename?: 'PersonalAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType } };
@@ -1449,8 +1427,8 @@ export const GetInvestmentAccountGrowthDocument = gql`
     }
   }
 export const CreateInvestmentAccountDocument = gql`
-    mutation CreateInvestmentAccount($input: InvestmentAccountCreateInput!) {
-  createInvestmentAccount(input: $input) {
+    mutation CreateInvestmentAccount {
+  createInvestmentAccount {
     ...InvestmentAccountOverview
   }
 }
@@ -1667,8 +1645,8 @@ export const GetPersonalAccountByUserDocument = gql`
     }
   }
 export const CreatePersonalAccountDocument = gql`
-    mutation CreatePersonalAccount($name: String!) {
-  createPersonalAccount(input: {name: $name}) {
+    mutation CreatePersonalAccount {
+  createPersonalAccount {
     ...PersonalAccountOverview
   }
 }

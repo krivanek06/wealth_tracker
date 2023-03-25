@@ -27,6 +27,8 @@ import { AccountManagerEdit, ACCOUNT_NAMES } from '../../models';
 export class AccountManagerItemComponent implements OnInit {
 	@Output() deleteEmitter = new EventEmitter<void>();
 	@Output() editEmitter = new EventEmitter<AccountManagerEdit>();
+	@Output() clickedEmitter = new EventEmitter<void>();
+	@Output() createEmitter = new EventEmitter<void>();
 
 	@Input() set accountData(data: AccountIdentificationFragment | null | undefined) {
 		if (data) {
@@ -52,6 +54,14 @@ export class AccountManagerItemComponent implements OnInit {
 	ACCOUNT_NAMES = ACCOUNT_NAMES;
 
 	ngOnInit(): void {}
+
+	onAccountClick(): void {
+		this.clickedEmitter.emit();
+	}
+
+	onAccountCreate(): void {
+		this.createEmitter.emit();
+	}
 
 	onEditingToggle(): void {
 		if (this.account) {

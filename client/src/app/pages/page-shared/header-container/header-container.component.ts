@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { AccountManagerApiService } from '../../../core/api';
 import { AuthenticationFacadeService } from '../../../core/auth';
 import { AccountIdentificationFragment, UserFragment } from '../../../core/graphql';
-import { DASHBOARD_ROUTES, TOP_LEVEL_NAV } from '../../../core/models';
+import { DASHBOARD_ROUTES, DASHBOARD_ROUTES_BY_TYPE, TOP_LEVEL_NAV } from '../../../core/models';
 import { LoginModalComponent, UserProfileModalComponent } from '../../../modules/user-settings';
 
 @Component({
@@ -35,7 +35,7 @@ export class HeaderContainerComponent implements OnInit {
 	}
 
 	onAccountButtonClick(account: AccountIdentificationFragment) {
-		this.router.navigate([TOP_LEVEL_NAV.dashboard, account.accountType]);
+		this.router.navigate([TOP_LEVEL_NAV.dashboard, DASHBOARD_ROUTES_BY_TYPE[account.accountType]]);
 	}
 
 	onLoginClick(): void {

@@ -87,8 +87,8 @@ export class InvestmentAccountFacadeApiService {
 		);
 	}
 
-	createInvestmentAccount(name: string): Observable<FetchResult<CreateInvestmentAccountMutation>> {
-		return this.investmentAccountApiService.createInvestmentAccount(name);
+	createInvestmentAccount(): Observable<FetchResult<CreateInvestmentAccountMutation>> {
+		return this.investmentAccountApiService.createInvestmentAccount();
 	}
 
 	editInvestmentAccount(input: InvestmentAccountEditInput): Observable<FetchResult<EditInvestmentAccountMutation>> {

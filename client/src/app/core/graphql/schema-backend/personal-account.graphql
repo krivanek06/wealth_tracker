@@ -9,8 +9,8 @@ query GetPersonalAccountByUser {
 	}
 }
 
-mutation CreatePersonalAccount($name: String!) {
-	createPersonalAccount(input: { name: $name }) {
+mutation CreatePersonalAccount {
+	createPersonalAccount {
 		...PersonalAccountOverview
 	}
 }

@@ -5,12 +5,13 @@ import { SharedServiceUtil } from '../../../utils';
 import { PERSONAL_ACCOUNT_TAG_ERROR } from '../dto';
 import { PersonalAccountTag } from '../entities';
 import { PersonalAccountTagDataCreate, PersonalAccountTagDataDelete, PersonalAccountTagDataEdit } from '../inputs';
-import { PersonalAccountRepositoryService } from '../repository';
+import { PersonalAccountMonthlyDataRepositoryService, PersonalAccountRepositoryService } from '../repository';
 
 @Injectable()
 export class PersonalAccountTagService {
 	constructor(
 		private readonly personalAccountRepositoryService: PersonalAccountRepositoryService,
+		private readonly personalAccountMonthlyDataRepositoryService: PersonalAccountMonthlyDataRepositoryService,
 		private storageFilesService: StorageFilesService
 	) {}
 
@@ -99,13 +100,25 @@ export class PersonalAccountTagService {
 			throw new HttpException(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND_BY_ID, HttpStatus.NOT_FOUND);
 		}
 
-		// update all
+		// remove deleted
 		const allSavingTags = tags.filter((d) => d.id !== tagDataDelete.id);
 
-		// save new tag
+		// update remaining
 		await this.personalAccountRepositoryService.updatePersonalAccount(userId, {
 			personalAccountTag: allSavingTags,
 		});
+
+		// load all monthly data
+		const allMonthlyData = await this.personalAccountMonthlyDataRepositoryService.getMonthlyDataByAccountId(
+			personalAccount.id
+		);
+
+		// remove daily data that has the removed tagId
+		for await (const monthlyData of allMonthlyData) {
+			await this.personalAccountMonthlyDataRepositoryService.updateMonthlyData(monthlyData.id, {
+				dailyData: monthlyData.dailyData.filter((d) => d.tagId !== tagDataDelete.id),
+			});
+		}
 
 		return searchedTag;
 	}

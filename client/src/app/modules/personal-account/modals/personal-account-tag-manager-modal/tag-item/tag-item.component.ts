@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { filter, map, tap } from 'rxjs';
+import { filter, first, map, of, switchMap, tap } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../../../core/api';
 import { PersonalAccountTagFragment, TagDataType } from '../../../../../core/graphql';
 import { Confirmable } from '../../../../../shared/decorators';
@@ -81,7 +81,7 @@ export class TagItemComponent implements OnInit {
 		this.createTag();
 	}
 
-	@Confirmable('Please confirm remove the selected tag')
+	@Confirmable('Please confirm to remove the selected tag')
 	onRemove(): void {
 		const removingTagId = this.tagItemGroup.controls.tagId.value;
 		const removingTagName = this.tagItemGroup.controls.tagName.value;
@@ -91,20 +91,37 @@ export class TagItemComponent implements OnInit {
 			return;
 		}
 
-		DialogServiceUtil.showNotificationBar(`Removing tag ${removingTagName}`, 'notification');
-
 		this.personalAccountFacadeService
-			.deletePersonalAccountTag({
-				id: removingTagId,
-			})
+			.getPersonalAccountDetailsByUser()
 			.pipe(
-				tap((result) => {
-					if (!result) {
-						DialogServiceUtil.showNotificationBar('Unable to perform removing operation on tag', 'error');
-						return;
+				switchMap((account) => {
+					const tagInfo = account.yearlyAggregation.find((d) => d.tag.id === removingTagId);
+
+					// no daily data was created for a specific tag
+					if (!tagInfo) {
+						return of(true);
 					}
-					DialogServiceUtil.showNotificationBar(`Tag ${removingTagName} has been removed`, 'success');
-				})
+
+					return DialogServiceUtil.showConfirmDialogObs(`You are about to remove ${tagInfo.entries} entries`);
+				}),
+				filter((result) => !!result),
+				tap(() => DialogServiceUtil.showNotificationBar(`Removing tag ${removingTagName}`, 'notification')),
+				switchMap(() =>
+					this.personalAccountFacadeService
+						.deletePersonalAccountTag({
+							id: removingTagId,
+						})
+						.pipe(
+							tap((result) => {
+								if (!result) {
+									DialogServiceUtil.showNotificationBar('Unable to perform removing operation on tag', 'error');
+									return;
+								}
+								DialogServiceUtil.showNotificationBar(`Tag ${removingTagName} has been removed`, 'success');
+							})
+						)
+				),
+				first()
 			)
 			.subscribe();
 	}
@@ -144,7 +161,8 @@ export class TagItemComponent implements OnInit {
 						return;
 					}
 					DialogServiceUtil.showNotificationBar(`Tag has been created`, 'success');
-				})
+				}),
+				first()
 			)
 			.subscribe(() => this.removeNewTag.emit());
 	}

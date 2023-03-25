@@ -19,7 +19,11 @@ const storageFilesService = new StorageFilesService();
 const personalAccountRepo = new PersonalAccountRepositoryService(prisma);
 const personalAccountMonthlyRepo = new PersonalAccountMonthlyDataRepositoryService(prisma);
 
-const personalAccountTagService = new PersonalAccountTagService(personalAccountRepo, storageFilesService);
+const personalAccountTagService = new PersonalAccountTagService(
+	personalAccountRepo,
+	personalAccountMonthlyRepo,
+	storageFilesService
+);
 const personalAccountDailyService = new PersonalAccountDailyService(personalAccountRepo, personalAccountMonthlyRepo);
 const personalAccountMonthlyService = new PersonalAccountMonthlyService(
 	personalAccountMonthlyRepo,

@@ -148,9 +148,8 @@ export class PersonalAccountFacadeService {
 				this.personalAccountCacheService.updatePersonalAccountDetails({
 					...personalAccount,
 					personalAccountTag: personalAccount.personalAccountTag.filter((d) => d.id !== result.id),
+					yearlyAggregation: personalAccount.yearlyAggregation.filter((d) => d.tag.id !== result.id),
 				});
-
-				// TODO: update charts - remove income/expenses on specific tag
 			})
 		);
 	}

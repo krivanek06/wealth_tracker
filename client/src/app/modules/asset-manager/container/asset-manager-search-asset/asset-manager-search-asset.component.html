@@ -6,11 +6,6 @@
 
 		<!-- display options -->
 		<mat-autocomplete #auto="matAutocomplete">
-			<!-- spinner -->
-			<mat-option *ngIf="searching" class="p-4 ml-5">
-				<mat-spinner diameter="40"></mat-spinner>
-			</mat-option>
-
 			<!-- options -->
 			<mat-option *ngFor="let option of searchedResults$ | async" (onSelectionChange)="onSelect(option)">
 				<div class="flex items-center gap-2">
@@ -21,3 +16,8 @@
 		</mat-autocomplete>
 	</mat-form-field>
 </fieldset>
+
+<!-- spinner -->
+<div *ngIf="searching" class="w-full my-4">
+	<mat-spinner diameter="60" class="m-auto"></mat-spinner>
+</div>

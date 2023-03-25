@@ -15,6 +15,7 @@
 
 		<!-- period change -->
 		<div
+			*ngIf="isInvestmentAccountNonEmpty$ | async"
 			class="grid grid-cols-1 gap-4 p-4 mt-6 md:mb-10 sm:grid-cols-2 md:grid-cols-3 xl:flex xl:justify-around sm:max-xl:pl-14"
 		>
 			<app-investment-account-period-change
@@ -24,7 +25,7 @@
 		</div>
 
 		<!-- allocation charts -->
-		<div class="grid gap-4 mb-6 lg:grid-cols-2 overflow-x-clip">
+		<div *ngIf="isInvestmentAccountNonEmpty$ | async" class="grid gap-4 mb-6 lg:grid-cols-2 overflow-x-clip">
 			<!-- sector allocation chart -->
 			<app-pie-chart class="hidden scale-125 lg:block" [series]="sectorAllocationChart$ | async"></app-pie-chart>
 
@@ -36,12 +37,14 @@
 		<app-investment-account-action-buttons
 			[sectorAllocationInputSource]="sectorAllocationInputSource$ | async"
 			[formControl]="sectorFormControl"
+			[isAccountNonEmpty]="isInvestmentAccountNonEmpty$ | async"
 			(addEmitter)="onAddHolding()"
 			(showHistoryEmitter)="onShowHisotry()"
 		></app-investment-account-action-buttons>
 
 		<!-- active investments table -->
 		<app-investment-account-active-holdings-table
+			*ngIf="isInvestmentAccountNonEmpty$ | async"
 			(holdingClickedEmitter)="onAddHolding($event)"
 			[totalInvestedAmount]="totalInvestedAmount$ | async"
 			[activeHoldings]="filteredActiveHoldings$ | async"

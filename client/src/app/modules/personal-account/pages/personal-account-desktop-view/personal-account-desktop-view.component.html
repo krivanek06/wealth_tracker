@@ -50,36 +50,42 @@
 		></app-personal-account-daily-entries-filter>
 	</div>
 
-	<div class="grid items-center grid-cols-1 gap-4 md:px-8 lg:grid-cols-4">
-		<!-- table body -->
-		<div class="h-full lg:col-span-2">
-			<app-personal-account-daily-entries-table
-				(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
-				[personalAccountDailyData]="filteredDailyData$ | async"
-			></app-personal-account-daily-entries-table>
+	<ng-container *ngIf="isEntryForSelectedMonth$ | async; else noDataForTimePeriod ">
+		<div class="grid items-center grid-cols-1 gap-4 md:px-8 lg:grid-cols-4">
+			<!-- table body -->
+			<div class="h-full lg:col-span-2">
+				<app-personal-account-daily-entries-table
+					(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
+					[personalAccountDailyData]="filteredDailyData$ | async"
+				></app-personal-account-daily-entries-table>
+			</div>
+
+			<!-- spending allocation by tags -->
+			<div class="lg:col-span-2 lg:-mt-16">
+				<app-pie-chart
+					class="scale-125"
+					[series]="personalAccountDailyExpensePieChart$ | async"
+					[displayValue]="(accountFilteredState$ | async)?.total"
+				></app-pie-chart>
+			</div>
 		</div>
 
-		<!-- spending allocation by tags -->
-		<div class="lg:col-span-2 md:-mt-16">
-			<app-pie-chart
-				class="scale-125"
-				[series]="personalAccountDailyExpensePieChart$ | async"
-				[displayValue]="(accountFilteredState$ | async)?.total"
-			></app-pie-chart>
+		<!-- displayed expense by tag -->
+		<div *ngIf="accountTagAggregationForTimePeriod$ | async as accountTagAggregationForTimePeriod" class="mt-6">
+			<h2 class="space-x-2">
+				<span>Date:</span>
+				<span class="text-wt-gray-medium">{{ filterDailyDataGroup.controls.dateFilter.value | dateFormatter }}</span>
+			</h2>
+			<app-personal-account-expenses-by-tag
+				[aggregations]="accountTagAggregationForTimePeriod"
+				[disabled]="true"
+			></app-personal-account-expenses-by-tag>
 		</div>
-	</div>
+	</ng-container>
 
-	<!-- displayed expense by tag -->
-	<div *ngIf="accountTagAggregationForTimePeriod$ | async as accountTagAggregationForTimePeriod" class="mt-6">
-		<h2 class="space-x-2">
-			<span>Date:</span>
-			<span class="text-wt-gray-medium">{{ filterDailyDataGroup.controls.dateFilter.value | dateFormatter }}</span>
-		</h2>
-		<app-personal-account-expenses-by-tag
-			[aggregations]="accountTagAggregationForTimePeriod"
-			[disabled]="true"
-		></app-personal-account-expenses-by-tag>
-	</div>
+	<ng-template #noDataForTimePeriod>
+		<div class="mt-16 mb-12 text-base text-center text-wt-gray-medium">You have no data for this time period</div>
+	</ng-template>
 </ng-container>
 
 <!-- skeleton -->

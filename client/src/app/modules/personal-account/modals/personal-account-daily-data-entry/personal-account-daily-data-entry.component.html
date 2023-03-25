@@ -1,4 +1,4 @@
-<div class="text-lg text-center text-wt-primary-dark">Daily Data</div>
+<div class="mt-2 text-xl text-center text-wt-primary-dark">Daily Data</div>
 
 <form (ngSubmit)="onSave()" [formGroup]="formGroup">
 	<mat-dialog-content class="flex flex-col gap-x-4">
@@ -36,12 +36,22 @@
 		</div>
 
 		<!-- description -->
-		<app-form-mat-input-wrapper
-			controlName="description"
-			inputCaption="Add description"
-			inputType="TEXTAREA"
-			hintText="Maximum 80 characters"
-		></app-form-mat-input-wrapper>
+		<button
+			*ngIf="!showDescription"
+			mat-flat-button
+			class="mb-6 bg-wt-gray-dark text-wt-gray-light"
+			(click)="onDescriptionToggle()"
+		>
+			Add description
+		</button>
+		<ng-container *ngIf="showDescription">
+			<app-form-mat-input-wrapper
+				controlName="description"
+				inputCaption="Add description"
+				inputType="TEXTAREA"
+				hintText="Maximum 80 characters"
+			></app-form-mat-input-wrapper>
+		</ng-container>
 
 		<div>
 			<app-number-keyboard-control formControlName="value"></app-number-keyboard-control>

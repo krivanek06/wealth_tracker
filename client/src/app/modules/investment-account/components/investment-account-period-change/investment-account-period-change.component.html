@@ -1,5 +1,5 @@
-<div class="flex flex-row sm:flex-col gap-1 justify-between" [ngClass]="{'max-sm:hidden': periodChange.value === -1}">
-	<div class="text-gray-300 text-base sm:text-lg whitespace-nowrap">{{ periodChange.title }}</div>
+<div class="flex flex-row justify-between gap-1 sm:flex-col">
+	<div class="text-base text-gray-300 sm:text-lg whitespace-nowrap">{{ periodChange.title }}</div>
 	<div
 		*ngIf="periodChange.value !== -1"
 		class="text-base xs:text-lg sm:text-xl"
@@ -7,5 +7,5 @@
 		[useCurrencySign]="true"
 		[changeValues]="{change: periodChange.value, changesPercentage: periodChange.valuePrct}"
 	></div>
-	<div *ngIf="periodChange.value === -1" class="text-base sm:text-xl text-gray-500">N/A</div>
+	<div *ngIf="periodChange.value === -1" class="text-base text-gray-500 sm:text-xl">N/A</div>
 </div>

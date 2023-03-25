@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { filter, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, filter, switchMap, tap } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../../core/auth';
 import { LoginForgotPasswordInput, LoginUserInput, RegisterUserInput } from '../../../../core/graphql';
 import { environment } from './../../../../../environments/environment';
@@ -11,7 +11,7 @@ import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.u
 	selector: 'app-login-modal',
 	templateUrl: './login-modal.component.html',
 	styleUrls: ['./login-modal.component.scss'],
-	changeDetection: ChangeDetectionStrategy.OnPush,
+	//changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginModalComponent implements OnInit {
 	loginUserInputControl = new FormControl<LoginUserInput | null>(null);
@@ -19,6 +19,8 @@ export class LoginModalComponent implements OnInit {
 	forgotPasswordInputControl = new FormControl<LoginForgotPasswordInput | null>(null);
 
 	loginGoogle = `${environment.backend_url}/auth/google/login`;
+
+	loading = false;
 
 	constructor(
 		private authenticationFacadeService: AuthenticationFacadeService,
@@ -64,11 +66,16 @@ export class LoginModalComponent implements OnInit {
 		this.loginUserInputControl.valueChanges
 			.pipe(
 				filter((res): res is LoginUserInput => !!res),
+				tap(() => (this.loading = true)),
 				switchMap((res) =>
 					this.authenticationFacadeService.loginUserBasic(res).pipe(
 						tap(() => {
 							DialogServiceUtil.showNotificationBar(`You have been successfully logged in`, 'success');
 							this.dialogRef.close(true);
+						}),
+						catchError(() => {
+							this.loading = false;
+							return EMPTY;
 						})
 					)
 				)
@@ -80,11 +87,16 @@ export class LoginModalComponent implements OnInit {
 		this.registerUserInputControl.valueChanges
 			.pipe(
 				filter((res): res is RegisterUserInput => !!res),
+				tap(() => (this.loading = true)),
 				switchMap((res) =>
 					this.authenticationFacadeService.registerBasic(res).pipe(
 						tap((res) => {
 							DialogServiceUtil.showNotificationBar(`Account ${res.email} has been successfully created`, 'success');
 							this.dialogRef.close();
+						}),
+						catchError(() => {
+							this.loading = false;
+							return EMPTY;
 						})
 					)
 				)

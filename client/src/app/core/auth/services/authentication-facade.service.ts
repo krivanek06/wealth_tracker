@@ -54,8 +54,7 @@ export class AuthenticationFacadeService {
 						this.router.navigate([TOP_LEVEL_NAV.dashboard]);
 					})
 				)
-			),
-			catchError(() => EMPTY)
+			)
 		);
 	}
 
@@ -71,8 +70,7 @@ export class AuthenticationFacadeService {
 						this.router.navigate([TOP_LEVEL_NAV.dashboard]);
 					})
 				)
-			),
-			catchError(() => EMPTY)
+			)
 		);
 	}
 

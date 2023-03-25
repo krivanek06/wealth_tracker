@@ -72,7 +72,6 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	showHistoricalTransactions = false;
 
 	// error
-	insufficientCashAmountError$!: Observable<boolean>;
 	insufficientUnitsError$!: Observable<boolean>;
 	isError$!: Observable<boolean>;
 
@@ -132,15 +131,6 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	ngOnInit(): void {
 		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountByUser();
 
-		// on form change check if user has enough cash
-		this.insufficientCashAmountError$ = this.formGroup.valueChanges.pipe(
-			switchMap(() =>
-				this.investmentAccount$.pipe(
-					map((investmentAccount) => investmentAccount.currentCash < this.totalValue && this.isBuying.value)
-				)
-			)
-		);
-
 		// check if user has enough units to sell
 		this.insufficientUnitsError$ = this.formGroup.valueChanges.pipe(
 			switchMap(() =>
@@ -153,7 +143,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		);
 
 		// merge errors together
-		this.isError$ = merge(this.insufficientCashAmountError$, this.insufficientUnitsError$);
+		this.isError$ = merge(this.insufficientUnitsError$);
 
 		// on symbol pick load transaction history
 		this.transactionHistory$ = this.formSymbol.valueChanges.pipe(

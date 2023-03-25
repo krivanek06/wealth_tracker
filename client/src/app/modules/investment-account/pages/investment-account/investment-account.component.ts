@@ -66,6 +66,8 @@ export class InvestmentAccountComponent implements OnInit {
 	 */
 	filteredActiveHoldings$!: Observable<InvestmentAccountActiveHoldingOutputFragment[]>;
 
+	isInvestmentAccountNonEmpty$!: Observable<boolean>;
+
 	private investmentId!: string;
 
 	constructor(
@@ -102,6 +104,8 @@ export class InvestmentAccountComponent implements OnInit {
 		this.totalInvestedAmount$ = this.investmentAccount$.pipe(
 			map((account) => this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(account))
 		);
+
+		this.isInvestmentAccountNonEmpty$ = this.totalInvestedAmount$.pipe(map((res) => res > 0));
 
 		this.accountPeriodChange$ = combineLatest([this.investmentAccount$, this.investmentAccountGrowth$]).pipe(
 			map(([account, growth]) =>

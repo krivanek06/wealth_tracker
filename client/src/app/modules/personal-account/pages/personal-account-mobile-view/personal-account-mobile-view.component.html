@@ -7,11 +7,17 @@
 	<!-- expense chart -->
 	<div class="-mt-8">
 		<app-pie-chart
+			*ngIf="isEntryForSelectedMonth$ | async else noDataForTimePeriod"
 			class="scale-110"
 			[series]="personalAccountDailyExpensePieChart$ | async"
 			[displayValue]="(accountDisplayedState$ | async)?.total"
 		></app-pie-chart>
 	</div>
+
+	<!-- no data -->
+	<ng-template #noDataForTimePeriod>
+		<div class="mt-16 mb-12 text-base text-center text-wt-gray-medium">You have no data for this time period</div>
+	</ng-template>
 
 	<!-- settings -->
 	<div class="relative z-10 flex justify-start mb-4 -mt-4">
@@ -33,30 +39,32 @@
 	></app-personal-account-daily-entries-filter>
 
 	<!-- title & show history checkbox -->
-	<div class="mt-2 mb-6">
-		<app-personal-account-display-toggle
-			[formControl]="showHistoryFormControl"
-			[selectedTag]="(filterDailyDataGroup.controls.selectedTagIds.value[0] | getTagById)  | async"
-		></app-personal-account-display-toggle>
-	</div>
+	<ng-container *ngIf="isEntryForSelectedMonth$ | async ">
+		<div class="mt-2 mb-6">
+			<app-personal-account-display-toggle
+				[formControl]="showHistoryFormControl"
+				[selectedTag]="(filterDailyDataGroup.controls.selectedTagIds.value[0] | getTagById)  | async"
+			></app-personal-account-display-toggle>
+		</div>
 
-	<!-- tag aggregation -->
-	<ng-container *ngIf="accountTagAggregationForTimePeriod$ | async as accountTagAggregationForTimePeriod">
-		<app-personal-account-expenses-by-tag
-			*ngIf="!showHistoryFormControl.value"
-			[formControl]="filterDailyDataGroup.controls.selectedTagIds"
-			[aggregations]="accountTagAggregationForTimePeriod"
-			[multiple]="false"
-		></app-personal-account-expenses-by-tag>
-	</ng-container>
+		<!-- tag aggregation -->
+		<ng-container *ngIf="accountTagAggregationForTimePeriod$ | async as accountTagAggregationForTimePeriod">
+			<app-personal-account-expenses-by-tag
+				*ngIf="!showHistoryFormControl.value"
+				[formControl]="filterDailyDataGroup.controls.selectedTagIds"
+				[aggregations]="accountTagAggregationForTimePeriod"
+				[multiple]="false"
+			></app-personal-account-expenses-by-tag>
+		</ng-container>
 
-	<!-- historical data -->
-	<ng-container *ngIf="dailyDataAggregation$ | async as dailyDataAggregation">
-		<app-personal-account-daily-entries-table-mobile
-			*ngIf="showHistoryFormControl.value"
-			[personalAccountDailyData]="dailyDataAggregation"
-			(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
-		></app-personal-account-daily-entries-table-mobile>
+		<!-- historical data -->
+		<ng-container *ngIf="dailyDataAggregation$ | async as dailyDataAggregation">
+			<app-personal-account-daily-entries-table-mobile
+				*ngIf="showHistoryFormControl.value"
+				[personalAccountDailyData]="dailyDataAggregation"
+				(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
+			></app-personal-account-daily-entries-table-mobile>
+		</ng-container>
 	</ng-container>
 </ng-container>
 

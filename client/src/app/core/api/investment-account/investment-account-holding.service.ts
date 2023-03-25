@@ -99,16 +99,19 @@ export class InvestmentAccountHoldingService {
 					// remove cashChangeId from cashChange
 					const cashChange = account.cashChange.filter((d) => d.itemId !== result.cashChangeId);
 					// update units for active holding if exists
-					const activeHoldings = account.activeHoldings.map((d) =>
-						d.assetId === history.assetId
-							? {
-									...d,
-									units:
-										d.units +
-										(history.type === InvestmentAccountHoldingHistoryType.Buy ? -history.units : history.units),
-							  }
-							: d
-					);
+					const activeHoldings = account.activeHoldings
+						.map((d) =>
+							d.assetId === history.assetId
+								? {
+										...d,
+										units:
+											d.units +
+											(history.type === InvestmentAccountHoldingHistoryType.Buy ? -history.units : history.units),
+								  }
+								: d
+						)
+						.filter((d) => d.units !== 0);
+
 					// save update in cache
 					this.investmentAccountCacheService.updateInvestmentAccountDetails({ ...account, cashChange, activeHoldings });
 

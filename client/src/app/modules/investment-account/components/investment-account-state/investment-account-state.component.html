@@ -64,12 +64,24 @@
 	</div>
 
 	<!-- cash -->
-	<button mat-stroked-button (click)="onCashChangeClick()" class="h-14">
+	<!-- <button mat-stroked-button (click)="onCashChangeClick()" class="h-14">
 		<div class="c-wrapper min-w-[130px]">
 			<div class="c-title">Cash</div>
 			<div class="c-body">
 				<div class="c-body-value">{{ (cashAmount ) | currency }}</div>
 			</div>
 		</div>
+	</button> -->
+
+	<!-- add holding -->
+	<button
+		(click)="onAddHoldingClick()"
+		mat-button
+		type="button"
+		color="primary"
+		class="mb-2 g-button-size-lg g-button-action-primary"
+	>
+		<mat-icon>add</mat-icon>
+		Add holding
 	</button>
 </div>

@@ -2,9 +2,10 @@
 	<button
 		*ngFor="let aggregation of aggregations"
 		mat-button
+		[matTooltip]="aggregation.budgetToTimePeriod ? ('Spending on: ' + ((aggregation.totalValue / aggregation.budgetToTimePeriod) | percent) ) : ''"
 		(click)="onClick(aggregation)"
 		[ngClass]="{
-      'pointer-events-none': disabled,
+      'cursor-default': disabled,
       'c-selected-button': selectedAggregationIds | inArray: aggregation.id,
       'bg-wt-background-dark': !(selectedAggregationIds | inArray: aggregation.id)
     }"

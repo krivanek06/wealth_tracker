@@ -1,7 +1,10 @@
 <div class="text-xl text-center" [ngClass]="{'mb-6': formGroup.controls.symbol.value}">
 	<span>Operation </span>
 	<span
-		[ngClass]="{'text-wt-success-medium': formGroup.controls.isBuying.value, 'text-wt-danger-medium': !formGroup.controls.isBuying.value}"
+		[ngClass]="{
+      'text-wt-success-medium': formGroup.controls.isBuying.value,
+      'text-wt-danger-medium': !formGroup.controls.isBuying.value
+    }"
 	>
 		{{ formGroup.controls.isBuying.value ? 'Buy Asset' : 'Sell Asset' }}
 	</span>
@@ -22,75 +25,90 @@
 	>
 		Symbol name is required
 	</div>
-	<div class="mt-2 mb-5 g-error-banner" *ngIf="insufficientCashAmountError$ | async">Insufficient cash amount</div>
 	<div class="mt-2 mb-5 g-error-banner" *ngIf="insufficientUnitsError$ | async">Insufficient units to sell</div>
 </div>
 
 <form (ngSubmit)="onSave()" [formGroup]="formGroup">
-	<mat-dialog-content class="grid lg:grid-cols-2 gap-x-4 xl:gap-x-8">
-		<div>
-			<!-- date picker -->
-			<app-date-picker formControlName="date" [inputTypeDateTimePickerConfig]="datePickerConfig"></app-date-picker>
+	<mat-dialog-content>
+		<!-- historical chart -->
+		<div class="min-h-[250px]">
+			<ng-container *ngIf="assetHistoricalData$ | async as assetHistoricalData; else chartSkeleton">
+				<ng-container *ngIf="!loadingHistoricalData; else chartSkeleton">
+					<app-generic-chart [series]="[assetHistoricalData]" [heightPx]="250"></app-generic-chart>
+				</ng-container>
+			</ng-container>
 
-			<!-- transaction type -->
-			<div class="my-4">
-				<button
-					[disabled]="!data.activeHolding"
-					type="button"
-					mat-flat-button
-					[color]="formGroup.controls.isBuying.value ? 'accent' : 'warn'"
-					class="w-full"
-					(click)="onTransactionTypeChange()"
-				>
-					{{ formGroup.controls.isBuying.value ? 'Buy Asset' : 'Sell Asset' }}
-				</button>
-			</div>
-
-			<!-- asset type -->
-			<app-form-mat-input-wrapper
-				[disabled]="!!data.activeHolding"
-				[inputSource]="TransactionAssetTypeInputSource"
-				class="w-full"
-				controlName="assetType"
-				inputCaption="Select asset type"
-				inputType="SELECT"
-			></app-form-mat-input-wrapper>
-
-			<!-- search symbol -->
-			<app-asset-manager-search-asset
-				formControlName="symbol"
-				[isDisabled]="!!data.activeHolding"
-				[searchableAsset]="formGroup.controls.assetType.value"
-			></app-asset-manager-search-asset>
+			<!-- skeleton -->
+			<ng-template #chartSkeleton>
+				<div class="w-full h-[250px] g-skeleton"></div>
+			</ng-template>
 		</div>
 
-		<div>
-			<!-- cash state -->
-			<div class="c-cash-wrapper">
-				<div>
-					<span class="text-gray-400">Cash: </span>
-					<span *ngIf="investmentAccount$ | async as investmentAccount">
-						{{ investmentAccount.currentCash | currency }}
-					</span>
+		<!-- cash state -->
+		<div class="c-cash-wrapper">
+			<div>
+				<span class="text-gray-400">Cash: </span>
+				<span *ngIf="investmentAccount$ | async as investmentAccount">
+					{{ investmentAccount.currentCash | currency }}
+				</span>
+			</div>
+			<div>
+				<span class="text-gray-400">Units: </span>
+				<span> {{ units.value || 'N/A' }} </span>
+			</div>
+			<div>
+				<span class="text-gray-400">Price: </span>
+				<span *ngIf="formSymbolPrice.value as value">~ {{ value | currency}} </span>
+				<span *ngIf="!formSymbolPrice.value">N/A</span>
+			</div>
+			<div>
+				<span class="text-gray-400">Total: </span>
+				<span *ngIf="totalValue"> {{totalValue | currency }} </span>
+				<span *ngIf="!totalValue">N/A</span>
+			</div>
+		</div>
+
+		<div class="grid lg:grid-cols-2 gap-x-4 xl:gap-x-8">
+			<div>
+				<!-- date picker -->
+				<app-date-picker formControlName="date" [inputTypeDateTimePickerConfig]="datePickerConfig"></app-date-picker>
+
+				<!-- transaction type -->
+				<div class="my-4">
+					<button
+						[disabled]="!data.activeHolding"
+						type="button"
+						mat-flat-button
+						[color]="formGroup.controls.isBuying.value ? 'accent' : 'warn'"
+						class="w-full"
+						(click)="onTransactionTypeChange()"
+					>
+						{{ formGroup.controls.isBuying.value ? 'Buy Asset' : 'Sell Asset' }}
+					</button>
 				</div>
-				<div>
-					<span class="text-gray-400">Units: </span>
-					<span> {{ units.value || 'N/A' }} </span>
-				</div>
-				<div>
-					<span class="text-gray-400">Price: </span>
-					<span *ngIf="formSymbolPrice.value as value">~ {{ value | currency}} </span>
-					<span *ngIf="!formSymbolPrice.value">N/A</span>
-				</div>
-				<div>
-					<span class="text-gray-400">Total: </span>
-					<span *ngIf="totalValue"> {{totalValue | currency }} </span>
-					<span *ngIf="!totalValue">N/A</span>
-				</div>
+
+				<!-- asset type -->
+				<app-form-mat-input-wrapper
+					[disabled]="!!data.activeHolding"
+					[inputSource]="TransactionAssetTypeInputSource"
+					class="w-full"
+					controlName="assetType"
+					inputCaption="Select asset type"
+					inputType="SELECT"
+				></app-form-mat-input-wrapper>
+
+				<!-- search symbol -->
+				<app-asset-manager-search-asset
+					formControlName="symbol"
+					[isDisabled]="!!data.activeHolding"
+					[searchableAsset]="formGroup.controls.assetType.value"
+				></app-asset-manager-search-asset>
 			</div>
 
-			<!-- keyboard -->
-			<app-number-keyboard-control formControlName="units"></app-number-keyboard-control>
+			<div class="mt-10">
+				<!-- keyboard -->
+				<app-number-keyboard-control formControlName="units"></app-number-keyboard-control>
+			</div>
 		</div>
 
 		<!-- history of asset holding -->

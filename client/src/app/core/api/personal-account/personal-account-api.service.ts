@@ -58,12 +58,8 @@ export class PersonalAccountApiService {
 			.valueChanges.pipe(map((res) => res.data.getPersonalAccountByUser ?? null));
 	}
 
-	createPersonalAccount(name: string): Observable<PersonalAccountOverviewFragment | undefined> {
-		return this.createPersonalAccountGQL
-			.mutate({
-				name,
-			})
-			.pipe(map((res) => res.data?.createPersonalAccount));
+	createPersonalAccount(): Observable<PersonalAccountOverviewFragment | undefined> {
+		return this.createPersonalAccountGQL.mutate().pipe(map((res) => res.data?.createPersonalAccount));
 	}
 
 	editPersonalAccount(input: PersonalAccountEditInput): Observable<FetchResult<EditPersonalAccountMutation>> {

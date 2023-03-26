@@ -14,6 +14,10 @@ export class AuthorizationGuard extends AuthGuard('jwt') {
 		// console.log(authorization);
 
 		const data = this.validateToken(authorization);
+
+		if (!data) {
+			return false;
+		}
 		// console.log(data.id);
 
 		ctx[REQ_USER_PROPERTY] = new RequestUser({

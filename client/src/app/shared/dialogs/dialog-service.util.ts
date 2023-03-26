@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { NotificationProgressComponent } from './notification-bar/notification-bar.component';
 
@@ -54,6 +54,27 @@ export class DialogServiceUtil {
 		});
 
 		const result = (await firstValueFrom(dialogRef.afterClosed())) as boolean;
+		return result;
+	}
+
+	static showConfirmDialogObs(
+		dialogTitle: string,
+		confirmButton: string = 'Confirm',
+		showCancelButton: boolean = true
+	): Observable<boolean> {
+		if (!DialogServiceUtil.matDialog) {
+			throw new Error('DialogService.matDialog not initialized');
+		}
+
+		const dialogRef = DialogServiceUtil.matDialog.open(ConfirmDialogComponent, {
+			data: {
+				dialogTitle,
+				confirmButton,
+				showCancelButton,
+			},
+		});
+
+		const result = dialogRef.afterClosed();
 		return result;
 	}
 }

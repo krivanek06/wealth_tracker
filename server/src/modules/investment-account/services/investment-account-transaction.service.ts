@@ -20,7 +20,7 @@ export class InvestmentAccountTransactionService {
 		const account = await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 		const history = account.holdings
 			.map((d) => d.holdingHistory)
-			.reduce((a, b) => [...a, ...b])
+			.reduce((a, b) => [...a, ...b], [])
 			.map((d) => d.assetId);
 
 		return [...new Set(history)];
@@ -56,7 +56,7 @@ export class InvestmentAccountTransactionService {
 					(holding) => input.filterSymbols.length === 0 || input.filterSymbols.includes(holding.assetId)
 				)
 			)
-			.reduce((a, b) => [...a, ...b])
+			.reduce((a, b) => [...a, ...b], [])
 			.filter((d) => (input.includeBuyOperation ? true : d.type === 'SELL'));
 
 		const order = input.orderAsc ? 'asc' : 'desc';

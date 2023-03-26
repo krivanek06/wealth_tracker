@@ -12,8 +12,8 @@ query GetInvestmentAccountGrowth($input: InvestmentAccountGrowthInput!) {
 	}
 }
 
-mutation CreateInvestmentAccount($input: InvestmentAccountCreateInput!) {
-	createInvestmentAccount(input: $input) {
+mutation CreateInvestmentAccount {
+	createInvestmentAccount {
 		...InvestmentAccountOverview
 	}
 }

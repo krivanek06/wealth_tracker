@@ -5,8 +5,7 @@ import { Observable } from 'rxjs';
 import { AccountManagerApiService } from '../../../core/api';
 import { AuthenticationFacadeService } from '../../../core/auth';
 import { AccountIdentificationFragment, UserFragment } from '../../../core/graphql';
-import { TOP_LEVEL_NAV } from '../../../core/models';
-import { ManagerAccountListAccountsComponent } from '../../../modules/manager-account';
+import { DASHBOARD_ROUTES, DASHBOARD_ROUTES_BY_TYPE, TOP_LEVEL_NAV } from '../../../core/models';
 import { LoginModalComponent, UserProfileModalComponent } from '../../../modules/user-settings';
 
 @Component({
@@ -29,17 +28,14 @@ export class HeaderContainerComponent implements OnInit {
 	ngOnInit(): void {
 		this.authenticatedUser$ = this.authenticationFacadeService.getAuthenticatedUser();
 		this.availableAccounts$ = this.managerAccountApiService.getAvailableAccounts();
-
-		this.authenticatedUser$.subscribe(console.log);
 	}
 
 	onUserLogout(): void {
 		this.authenticationFacadeService.logoutUser();
-		this.router.navigate([TOP_LEVEL_NAV.welcome]);
 	}
 
 	onAccountButtonClick(account: AccountIdentificationFragment) {
-		this.router.navigate([TOP_LEVEL_NAV.dashboard, account.accountType]);
+		this.router.navigate([TOP_LEVEL_NAV.dashboard, DASHBOARD_ROUTES_BY_TYPE[account.accountType]]);
 	}
 
 	onLoginClick(): void {
@@ -62,8 +58,6 @@ export class HeaderContainerComponent implements OnInit {
 	}
 
 	onManageAccountClick(): void {
-		this.dialog.open(ManagerAccountListAccountsComponent, {
-			panelClass: ['g-mat-dialog-medium'],
-		});
+		this.router.navigate([TOP_LEVEL_NAV.dashboard, DASHBOARD_ROUTES.ACCOUNT_MANAGER]);
 	}
 }

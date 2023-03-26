@@ -21,7 +21,7 @@ export class TokenStorageService extends StorageService<LoggedUserOutputFragment
 	setAccessToken(token: LoggedUserOutputFragment | null): void {
 		this.accessToken.next(token);
 
-		if (!!token) {
+		if (token) {
 			this.saveData(token);
 		} else {
 			this.removeData();

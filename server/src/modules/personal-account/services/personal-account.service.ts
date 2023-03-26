@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AccountType } from '@prisma/client';
-import { PERSONAL_ACCOUNT_ERROR } from '../dto';
+import { PERSONAL_ACCOUNT_DEFAULT_NAME, PERSONAL_ACCOUNT_ERROR } from '../dto';
 import { PersonalAccount } from '../entities';
-import { PersonalAccountCreateInput, PersonalAccountEditInput } from '../inputs';
+import { PersonalAccountEditInput } from '../inputs';
 import { PersonalAccountRepositoryService } from '../repository';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class PersonalAccountService {
 	}
 
 	/* Mutations */
-	async createPersonalAccount({ name }: PersonalAccountCreateInput, userId: string): Promise<PersonalAccount> {
+	async createPersonalAccount(userId: string): Promise<PersonalAccount> {
 		const existingPersonalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserId(userId);
 
 		// prevent creating more than 5 personal accounts per user
@@ -25,7 +25,7 @@ export class PersonalAccountService {
 
 		// create personal account
 		const personalAccount = await this.personalAccountRepositoryService.createPersonalAccount(
-			name,
+			PERSONAL_ACCOUNT_DEFAULT_NAME,
 			userId,
 			AccountType.PERSONAL
 		);

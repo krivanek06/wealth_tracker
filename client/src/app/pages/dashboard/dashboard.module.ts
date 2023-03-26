@@ -1,7 +1,9 @@
 import { LayoutModule } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { inject, NgModule } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router, RouterModule, Routes } from '@angular/router';
 import { map } from 'rxjs';
@@ -17,7 +19,12 @@ const routes: Routes = [
 		component: DashboardComponent,
 		children: [
 			{
-				path: DASHBOARD_ROUTES.NO_ACCOUNT,
+				path: '',
+				redirectTo: DASHBOARD_ROUTES.ACCOUNT_MANAGER,
+				pathMatch: 'full',
+			},
+			{
+				path: DASHBOARD_ROUTES.ACCOUNT_MANAGER,
 				loadChildren: () =>
 					import('../../modules/manager-account/pages/account-manager/account-manager.module').then(
 						(m) => m.AccountManagerModule
@@ -38,7 +45,7 @@ const routes: Routes = [
 									return true;
 								}
 
-								router.navigate([DASHBOARD_ROUTES.NO_ACCOUNT]);
+								router.navigate([DASHBOARD_ROUTES.ACCOUNT_MANAGER]);
 								return false;
 							})
 						);
@@ -64,7 +71,7 @@ const routes: Routes = [
 									return true;
 								}
 
-								router.navigate([DASHBOARD_ROUTES.NO_ACCOUNT]);
+								router.navigate([DASHBOARD_ROUTES.ACCOUNT_MANAGER]);
 								return false;
 							})
 						);
@@ -88,6 +95,8 @@ const routes: Routes = [
 		HeaderContainerModule,
 		MatDividerModule,
 		MatTabsModule,
+		MatButtonModule,
+		MatIconModule,
 	],
 })
 export class DashboardModule {}

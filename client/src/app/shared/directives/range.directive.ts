@@ -53,9 +53,6 @@ export class RangeDirective {
 	getViewChanges(previousMin: number, min: number, previousMax: number, max: number): EmbeddedViewChange[] {
 		const viewChanges: EmbeddedViewChange[] = [];
 
-		console.log('min', previousMin, '->', min);
-		console.log('max', previousMax, '->', max);
-
 		for (let i = Math.min(previousMin, min); i < Math.max(previousMax, max); i++) {
 			const inPreviousRange = i >= previousMin && i < previousMax;
 			const inRange = i >= min && i < max;
@@ -106,8 +103,6 @@ export class RangeDirective {
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
-		console.log(changes);
-
 		const previousMin = this.getPreviousValue(changes['ngRangeMin']) ?? this.ngRangeMin;
 		const min = this.ngRangeMin;
 

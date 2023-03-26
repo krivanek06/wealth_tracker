@@ -7,3 +7,5 @@ export enum INVESTMENT_ACCOUNT_CASH_CHANGE_TYPE_IMAGES {
 	WITHDRAWAL = 'https://storage.googleapis.com/frequently_accessible_assets/investment-account/cash_withdraw.svg',
 	DEPOSIT = 'https://storage.googleapis.com/frequently_accessible_assets/investment-account/cash_deposit.svg',
 }
+
+export const INVESTMENT_ACCOUNT_DEFAULT_NAME = 'Investment Account';

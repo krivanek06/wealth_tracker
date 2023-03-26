@@ -1,4 +1,4 @@
-<div class="flex items-center justify-between p-4 md:px-10">
+<div *ngIf="!loading" class="flex items-center justify-between p-4 md:px-10">
 	<h2 class="text-lg text-wt-primary-dark">Login</h2>
 
 	<div>
@@ -10,7 +10,7 @@
 
 <!-- content -->
 <mat-dialog-content>
-	<mat-tab-group>
+	<mat-tab-group *ngIf="!loading">
 		<mat-tab label="Login">
 			<app-form-login [formControl]="loginUserInputControl"></app-form-login>
 		</mat-tab>
@@ -21,13 +21,18 @@
 			<app-form-forgot-password [formControl]="forgotPasswordInputControl"></app-form-forgot-password>
 		</mat-tab>
 	</mat-tab-group>
+
+	<!-- loading screen -->
+	<div *ngIf="loading" class="flex justify-center">
+		<mat-spinner color="primary" diameter="120"></mat-spinner>
+	</div>
 </mat-dialog-content>
 
-<div class="my-4">
+<div *ngIf="!loading" class="my-4">
 	<mat-divider></mat-divider>
 </div>
 
 <!-- social media login -->
-<mat-dialog-actions>
+<mat-dialog-actions *ngIf="!loading">
 	<a mat-flat-button [href]="loginGoogle" color="warn" class="w-full text-center">Google</a>
 </mat-dialog-actions>

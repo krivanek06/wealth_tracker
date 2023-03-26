@@ -2,10 +2,10 @@
 	<div class="text-base">
 		<ng-container *ngIf="!showHistoryFormControl">Tag aggregation</ng-container>
 		<ng-container *ngIf="showHistoryFormControl">
-			<ng-container *ngIf="selectedTag" class="space-x-1">
-				Tag:
-				<span style="color: {{selectedTag.color}}"> {{ selectedTag.name}} </span>
-			</ng-container>
+			<div *ngIf="selectedTag" class="flex items-center gap-4 text-xl">
+				<img appDefaultImg [src]="selectedTag.imageUrl" imageType="url" class="h-7 w-7" />
+				<span class="text-wt-primary-dark"> {{ selectedTag.name}} </span>
+			</div>
 			<ng-container *ngIf="!selectedTag"> Show History </ng-container>
 		</ng-container>
 	</div>

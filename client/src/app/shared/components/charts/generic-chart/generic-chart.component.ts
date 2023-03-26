@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
+import { ChartConstructor } from '../../../../core/utils';
 import { ChartType, GenericChartSeries, GenericChartSeriesPie } from '../../../models';
 
 NoDataToDisplay(Highcharts);
@@ -22,7 +23,7 @@ NoDataToDisplay(Highcharts);
 	styleUrls: ['./generic-chart.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
+export class GenericChartComponent extends ChartConstructor implements OnInit, OnChanges, OnDestroy {
 	@Output() expandEmitter: EventEmitter<any> = new EventEmitter<any>();
 
 	@Input() series!: GenericChartSeries[] | GenericChartSeriesPie[];
@@ -49,20 +50,8 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 	@Input() floatingLegend = false;
 
 	@Input() showExpandableButton = false;
-
-	Highcharts: typeof Highcharts = Highcharts;
-	chart: any;
-	updateFromInput = true;
-	chartCallback: any;
-	chartOptions: any = {}; //  : Highcharts.Options
-
 	constructor() {
-		const self = this;
-
-		this.chartCallback = (chart: any) => {
-			console.log('chartCallback', chart);
-			self.chart = chart; // new Highcharts.Chart(this.chartOptions); //chart;
-		};
+		super();
 	}
 	ngOnDestroy(): void {
 		console.log('GenericChartComponent: ngOnDestroy()');
@@ -71,7 +60,7 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 	ngOnChanges(changes: SimpleChanges): void {
 		this.initChart();
 
-		if (this.floatingLegend) {
+		if (this.floatingLegend && this.chartOptions.legend) {
 			this.chartOptions.legend.floating = true;
 			this.chartOptions.legend.layout = 'vertical';
 			this.chartOptions.legend.x = -150;
@@ -80,11 +69,20 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 			this.chartOptions.legend.verticalAlign = 'middle';
 		}
 
-		if (this.chartType === ChartType.column) {
-			this.chartOptions.xAxis.type = 'category';
-			this.chartOptions.xAxis.labels.rotation = -20;
-		} else if (this.chartType === ChartType.bar) {
-			this.chartOptions.xAxis.type = 'category';
+		if (this.chartType === ChartType.column && this.chartOptions.xAxis) {
+			this.chartOptions.xAxis = {
+				...this.chartOptions.xAxis,
+				type: 'category',
+				labels: {
+					// ...this.chartOptions.xAxis.labels,
+					rotation: -20,
+				},
+			};
+		} else if (this.chartType === ChartType.bar && this.chartOptions.xAxis) {
+			this.chartOptions.xAxis = {
+				...this.chartOptions.xAxis,
+				type: 'category',
+			};
 		} else if (this.chartType === ChartType.areaChange) {
 			this.initAreaChange();
 		}
@@ -109,33 +107,44 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 	}
 
 	private initCategories() {
-		this.chartOptions.plotOptions.series.dataLabels.enabled = false;
-		this.chartOptions.xAxis.categories = [...this.categories];
-		this.chartOptions.xAxis.type = 'category';
-		this.chartOptions.xAxis.labels.rotation = -20;
+		//this.chartOptions.plotOptions!.series!.dataLabels!. = false;
+		if (this.chartOptions.xAxis) {
+			this.chartOptions.xAxis = {
+				...this.chartOptions.xAxis,
+				categories: [...this.categories],
+				type: 'category',
+				labels: {
+					rotation: -20,
+				},
+			};
+		}
 	}
 
 	private initTimestamp() {
-		this.chartOptions.plotOptions.series.dataLabels.enabled = false;
-		this.chartOptions.xAxis.categories = this.timestamp;
-		this.chartOptions.xAxis.type = 'datetime';
-		this.chartOptions.xAxis.labels.rotation = -20;
-		/*this.chartOptions.xAxis.labels.formatter = function() {
-			return Highcharts.dateFormat('%d.%m.%Y', this.value);
-		}*/
-		this.chartOptions.xAxis.labels.format = '{value:%e %b %Y}';
+		//this.chartOptions.plotOptions.series.dataLabels.enabled = false;
+		if (this.chartOptions.xAxis) {
+			this.chartOptions.xAxis = {
+				...this.chartOptions.xAxis,
+				categories: this.timestamp.map((d) => String(d)),
+				type: 'datetime',
+				labels: {
+					rotation: -20,
+					format: '{value:%e %b %Y}',
+				},
+			};
+		}
 	}
 
 	private initChart() {
 		this.chartOptions = {
 			chart: {
-				plotBackgroundColor: null,
-				plotBorderWidth: null,
+				plotBackgroundColor: undefined,
+				plotBorderWidth: undefined,
 				plotShadow: false,
 				type: this.chartType === ChartType.areaChange ? ChartType.areaspline : this.chartType,
 				backgroundColor: 'transparent',
 				panning: {
-					enable: true,
+					enabled: true,
 				},
 				options3d: {
 					enabled: false, // this.enable3D,
@@ -154,7 +163,9 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 				},
 			},
 			yAxis: {
-				title: false,
+				title: {
+					text: '',
+				},
 				startOnTick: false,
 				endOnTick: false,
 				gridLineColor: '#66666655',
@@ -187,13 +198,15 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 			},
 			title: {
 				text: this.chartTitle,
-				align: this.chartTitlePosition,
+				align: 'left',
 				style: {
 					color: '#bababa',
 					fontSize: '13px',
 				},
 			},
-			subtitle: false,
+			subtitle: {
+				text: '',
+			},
 			scrollbar: {
 				enabled: false,
 			},
@@ -222,17 +235,17 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 				},
 			},
 			tooltip: {
-				outside: true,
 				borderWidth: 1,
-				padding: 11,
+				padding: 12,
 				backgroundColor: '#232323',
 				style: {
-					fontSize: '12px',
+					fontSize: '14px',
 					color: '#D9D8D8',
 				},
 				shared: true,
 				useHTML: true,
-				headerFormat: '<table><tr><th colspan="2">{point.key}</th></tr>',
+				xDateFormat: '%Y-%m-%d',
+				headerFormat: '<span>{point.key}</span>',
 
 				pointFormatter: function () {
 					const that = this as any;
@@ -243,11 +256,10 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 						return '';
 					}
 
-					const line1 = `<tr><td style="color: ${that.series.color}">● ${that.series.name} </td>`;
-					const line2 = `<td style="text-align: right"><b>$${that.y} USD</b></td></tr>`;
-					return `${line1} ${line2}`;
+					const line1 = `<span style="color: ${that.series.color}">● ${that.series.name}:</span>`;
+					const line2 = `<span>$${that.y} USD</b></span>`;
+					return `<div class="space-x-2">${line1} ${line2}</div>`;
 				},
-				footerFormat: '</table>',
 				valueDecimals: 2,
 			},
 			rangeSelector: {
@@ -274,11 +286,11 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 					},
 				},
 				series: {
-					headerFormat: null,
-					style: {
-						fontSize: '12px',
-						color: '#D9D8D8',
-					},
+					//headerFormat: {},
+					// style: {
+					// 	fontSize: '12px',
+					// 	color: '#D9D8D8',
+					// },
 					borderWidth: 0,
 					dataLabels: {
 						color: '#cecece',
@@ -321,11 +333,11 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 					depth: 35,
 					minSize: 90,
 					tooltip: {
-						headerFormat: null,
-						style: {
-							fontSize: '13px',
-							color: '#D9D8D8',
-						},
+						headerFormat: undefined,
+						// style: {
+						// 	fontSize: '13px',
+						// 	color: '#D9D8D8',
+						// },
 						pointFormatter: function () {
 							const that = this as any;
 							// rounded value
@@ -343,7 +355,7 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 					dataLabels: {
 						style: {
 							fontSize: '12px',
-							width: '90px',
+							width: 90,
 						},
 						format: '<span style="color: {point.color}">{point.name}</span><br>{point.percentage:.1f} %',
 						//distance: -25,
@@ -371,7 +383,7 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 					threshold: null,
 				},
 			},
-			series: [...this.series],
+			series: [...this.series] as Highcharts.SeriesOptionsType[],
 		};
 	}
 
@@ -387,11 +399,13 @@ export class GenericChartComponent implements OnInit, OnChanges, OnDestroy {
 
 		this.chartOptions = {
 			...this.chartOptions,
-			type: ChartType.areaspline,
+			chart: {
+				type: ChartType.areaspline,
+			},
 			plotOptions: {
 				...this.chartOptions.plotOptions,
 				areaspline: {
-					...this.chartOptions.plotOptions.area,
+					...this.chartOptions.plotOptions!.area,
 					lineColor: color,
 					fillColor: {
 						linearGradient: {

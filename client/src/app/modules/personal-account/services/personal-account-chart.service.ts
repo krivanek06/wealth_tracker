@@ -213,7 +213,7 @@ export class PersonalAccountChartService {
 				}
 				// merge curr into acc
 				curr.forEach((tagChartData, index) => {
-					acc[index].data = [...acc[index].data, tagChartData.data[0]];
+					(acc[index].data as number[]).push(tagChartData.data[0] as number);
 				});
 
 				return acc;

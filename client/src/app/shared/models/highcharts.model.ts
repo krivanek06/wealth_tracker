@@ -14,7 +14,7 @@ export enum ChartType {
 export interface GenericChartSeries {
 	type?: ChartType;
 	name?: string;
-	data: (number | null | undefined)[];
+	data: (number | null | undefined)[] | [Date | number, number | null | undefined][];
 	color?: string;
 }
 

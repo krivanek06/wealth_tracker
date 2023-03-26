@@ -26,6 +26,7 @@ import { InvestmentAccountFragmentExtended } from '../../../../core/models';
 import { DateServiceUtil } from '../../../../core/utils';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
 import {
+	GenericChartSeries,
 	InputTypeDateTimePickerConfig,
 	minValueValidator,
 	positiveNumberValidator,
@@ -61,6 +62,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 
 	investmentAccount$!: Observable<InvestmentAccountFragmentExtended>;
 	transactionHistory$!: Observable<InvestmentAccountTransactionOutput[]>;
+	assetHistoricalData$!: Observable<GenericChartSeries>;
 
 	// used to show loader
 	isSaving = false;
@@ -77,8 +79,12 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 
 	datePickerConfig: InputTypeDateTimePickerConfig = {
 		maxDate: new Date(),
+		minDate: new Date(2015, 0, 1),
 		dateFilter: DateServiceUtil.isNotWeekend,
 	};
+
+	private startingDateLoadingHistoricalData: Date = DateServiceUtil.subYears(new Date(), 1);
+	loadingHistoricalData = true;
 
 	get formSymbol(): FormControl {
 		return this.formGroup.controls.symbol;
@@ -140,6 +146,37 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 					)
 				)
 			)
+		);
+
+		this.assetHistoricalData$ = combineLatest([
+			this.formSymbol.valueChanges.pipe(startWith(this.formSymbol.value)),
+			this.formDate.valueChanges.pipe(startWith(this.formDate.value)),
+		]).pipe(
+			filter(([asset, date]: [AssetGeneralFragment, Date]) => !!asset && !!date),
+			tap(() => (this.loadingHistoricalData = true)),
+			switchMap(([asset, date]: [AssetGeneralFragment, Date]) =>
+				this.assetApiService
+					.getAssetHistoricalPricesStartToEnd({
+						symbol: asset.id,
+						start: DateServiceUtil.isBefore(date, this.startingDateLoadingHistoricalData)
+							? DateServiceUtil.formatDate(date)
+							: DateServiceUtil.formatDate(this.startingDateLoadingHistoricalData),
+						end: DateServiceUtil.formatDate(new Date()),
+					})
+					.pipe(
+						map((res) => {
+							const result: GenericChartSeries = {
+								data: !!res
+									? res.assetHistoricalPricesData.map((d) => [new Date(d.date).getTime(), d.close] as [number, number])
+									: [],
+								name: `Historical Price ${asset.id}`,
+							};
+
+							return result;
+						})
+					)
+			),
+			tap(() => (this.loadingHistoricalData = false))
 		);
 
 		// merge errors together

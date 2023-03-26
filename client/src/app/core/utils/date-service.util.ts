@@ -7,8 +7,10 @@ import {
 	getWeek,
 	getWeeksInMonth,
 	getYear,
+	isBefore,
 	isSameDay,
 	isWeekend,
+	subYears,
 } from 'date-fns';
 export type DateServiceUtilDateInformation = {
 	year: number;
@@ -78,4 +80,18 @@ export class DateServiceUtil {
 	static isSameDay(date1: DateInput, date2: DateInput): boolean {
 		return isSameDay(new Date(Number(date1)), new Date(Number(date2)));
 	}
+
+	static subYears(date: Date | number, amount: number): Date {
+		return subYears(date, amount);
+	}
+
+	static isBefore(date: Date | number, dateToCompare: Date | number): boolean {
+		return isBefore(date, dateToCompare);
+	}
+
+	static stFormatDateWithHours = (date: Date) => {
+		const minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+		const hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
+		return `${hours}:${minutes}, ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+	};
 }

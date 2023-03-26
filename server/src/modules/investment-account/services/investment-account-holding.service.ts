@@ -4,11 +4,7 @@ import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
 import { AssetGeneralService, AssetStockService } from '../../asset-manager';
 import { INVESTMENT_ACCOUNT_HOLDING_ERROR, INVESTMENT_ACCOUNT_HOLDING_MAX_YEARS } from '../dto';
 import { InvestmentAccount, InvestmentAccountHolding, InvestmentAccountHoldingHistory } from '../entities';
-import {
-	InvestmentAccounHoldingCreateInput,
-	InvestmentAccounHoldingHistoryDeleteInput,
-	InvestmentAccountCashCreateInput,
-} from '../inputs';
+import { InvestmentAccounHoldingCreateInput, InvestmentAccounHoldingHistoryDeleteInput } from '../inputs';
 import { InvestmentAccountActiveHoldingOutput, InvestmentAccountTransactionOutput } from '../outputs';
 import { ASSET_STOCK_SECTOR_TYPE_IMAGES } from './../../asset-manager';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
@@ -53,7 +49,7 @@ export class InvestmentAccountHoldingService {
 		}
 
 		// prevent adding future holdings
-		if (MomentServiceUtil.format(new Date()) < MomentServiceUtil.format(input.holdingInputData.date)) {
+		if (MomentServiceUtil.isBefore(new Date(), MomentServiceUtil.format(input.holdingInputData.date))) {
 			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTED_DATE_RANGE, HttpStatus.FORBIDDEN);
 		}
 
@@ -97,13 +93,6 @@ export class InvestmentAccountHoldingService {
 				input.holdingInputData.date
 			)
 		)?.close;
-
-		// save cash change -> if SELL add cash / if BUY subtract cash
-		const cashInput: InvestmentAccountCashCreateInput = {
-			type: 'ASSET_OPERATION',
-			date: input.holdingInputData.date,
-			cashValue: input.holdingInputData.units * closedValueApi * (input.type === 'SELL' ? 1 : -1),
-		};
 
 		// calculate return & returnChange if Sell operation
 		const breakEvenPrice = SharedServiceUtil.roundDec(bepHelpers.value / bepHelpers.units);

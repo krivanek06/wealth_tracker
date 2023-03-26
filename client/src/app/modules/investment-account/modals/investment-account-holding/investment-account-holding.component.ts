@@ -20,6 +20,7 @@ import {
 	InvestmentAccounHoldingCreateInput,
 	InvestmentAccountActiveHoldingOutputFragment,
 	InvestmentAccountHoldingHistoryType,
+	InvestmentAccountHoldingType,
 	InvestmentAccountTransactionOutput,
 } from '../../../../core/graphql';
 import { InvestmentAccountFragmentExtended } from '../../../../core/models';
@@ -127,10 +128,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 	ngAfterViewInit(): void {
 		// load values for selected asset
 		setTimeout(() => {
-			if (this.data.activeHolding) {
-				this.formSymbol.patchValue(this.data.activeHolding.assetGeneral);
-				this.formAssetType.patchValue(SearchableAssetEnum.AseetById);
-			}
+			this.setActiveHoldingToForm();
 		});
 	}
 
@@ -194,8 +192,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 
 		// IDK why, but keep data in ngAfterViewInit because it just works
 		if (this.data.activeHolding) {
-			this.formSymbol.patchValue(this.data.activeHolding.assetGeneral);
-			this.formAssetType.patchValue(SearchableAssetEnum.AseetById);
+			this.setActiveHoldingToForm();
 		}
 
 		// monitor symbol and date change and load price for a specific date
@@ -285,5 +282,16 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 				first()
 			)
 			.subscribe();
+	}
+
+	private setActiveHoldingToForm(): void {
+		if (this.data.activeHolding) {
+			const type =
+				this.data.activeHolding.type === InvestmentAccountHoldingType.Crypto
+					? SearchableAssetEnum.Crypto
+					: SearchableAssetEnum.AseetById;
+			this.formSymbol.patchValue(this.data.activeHolding.assetGeneral);
+			this.formAssetType.patchValue(type);
+		}
 	}
 }

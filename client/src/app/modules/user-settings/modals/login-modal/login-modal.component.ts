@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { catchError, EMPTY, filter, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, filter, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../../core/auth';
 import { LoginForgotPasswordInput, LoginUserInput, RegisterUserInput } from '../../../../core/graphql';
 import { environment } from './../../../../../environments/environment';
@@ -13,12 +13,14 @@ import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.u
 	styleUrls: ['./login-modal.component.scss'],
 	//changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginModalComponent implements OnInit {
+export class LoginModalComponent implements OnInit, OnDestroy {
 	loginUserInputControl = new FormControl<LoginUserInput | null>(null);
 	registerUserInputControl = new FormControl<RegisterUserInput | null>(null);
 	forgotPasswordInputControl = new FormControl<LoginForgotPasswordInput | null>(null);
 
 	loginGoogle = `${environment.backend_url}/auth/google/login`;
+
+	destroy$ = new Subject<void>();
 
 	loading = false;
 
@@ -26,6 +28,10 @@ export class LoginModalComponent implements OnInit {
 		private authenticationFacadeService: AuthenticationFacadeService,
 		private dialogRef: MatDialogRef<LoginModalComponent>
 	) {}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+	}
 
 	ngOnInit(): void {
 		this.watchLoginUserFormControl();
@@ -57,7 +63,8 @@ export class LoginModalComponent implements OnInit {
 							}
 						})
 					)
-				)
+				),
+				takeUntil(this.destroy$)
 			)
 			.subscribe();
 	}
@@ -78,7 +85,8 @@ export class LoginModalComponent implements OnInit {
 							return EMPTY;
 						})
 					)
-				)
+				),
+				takeUntil(this.destroy$)
 			)
 			.subscribe();
 	}
@@ -99,7 +107,8 @@ export class LoginModalComponent implements OnInit {
 							return EMPTY;
 						})
 					)
-				)
+				),
+				takeUntil(this.destroy$)
 			)
 			.subscribe();
 	}

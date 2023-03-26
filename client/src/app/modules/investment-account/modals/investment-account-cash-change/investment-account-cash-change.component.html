@@ -2,14 +2,7 @@
 	<span class="text-wt-primary-dark">{{ investmentAccount.name }}</span>
 </div>
 
-<div class="lg:grid lg:place-content-center lg:mb-8">
-	<button mat-stroked-button type="button" (click)="onCashHistoryToggle()" class="w-full lg:w-auto lg:min-w-[400px]">
-		<mat-icon>visibility</mat-icon>
-		Show Previous Transactions
-	</button>
-</div>
-
-<form (ngSubmit)="onSave()" [formGroup]="formGroup">
+<form [formGroup]="formGroup">
 	<mat-dialog-content>
 		<!-- cash state -->
 		<div *ngIf="investmentAccount$ | async as investmentAccount" class="c-cash-wrapper">
@@ -37,29 +30,14 @@
 			</div>
 		</div>
 
-		<!-- date picker -->
-		<app-date-picker formControlName="date"></app-date-picker>
-
-		<!-- cash type -->
-		<app-form-mat-input-wrapper
-			class="w-full"
-			controlName="type"
-			inputCaption="Select cash type"
-			inputType="SELECT"
-			[inputSource]="cashTypeInputSource"
-		></app-form-mat-input-wrapper>
-
 		<!-- display value -->
 		<div class="flex items-center justify-between w-full px-4 mb-8 text-xl md:px-8">
 			<span class="text-wt-gray-medium">Cash Value:</span>
-			<span class="text-white">{{(formGroup.controls.value.value ?? 0) | currency}} </span>
+			<span class="text-white">{{((investmentAccount$| async)?.currentCash) | currency}} </span>
 		</div>
 
-		<!-- keyboard -->
-		<app-number-keyboard-control formControlName="value"></app-number-keyboard-control>
-
 		<!-- history of changed cash -->
-		<div *ngIf="showCashHistory" class="mt-4 sm:pl-4 md:pr-2">
+		<div class="mt-4 sm:pl-4 md:pr-2">
 			<div class="my-4">
 				<mat-divider></mat-divider>
 			</div>
@@ -77,7 +55,6 @@
 
 			<!-- table -->
 			<app-investment-account-cash-change-item
-				(clickedEmitter)="onDelete($event)"
 				[cashChange]="cashChange$ | async | sortByKey: 'date': 'desc'  "
 			></app-investment-account-cash-change-item>
 		</div>
@@ -92,10 +69,6 @@
 	<mat-dialog-actions>
 		<div class="g-mat-dialog-actions-full">
 			<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
-			<button mat-stroked-button color="primary" type="submit" [disabled]="!formGroup.controls.value.value">
-				<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
-				Save
-			</button>
 		</div>
 	</mat-dialog-actions>
 </form>

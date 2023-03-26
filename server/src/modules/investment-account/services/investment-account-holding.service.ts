@@ -11,7 +11,6 @@ import {
 } from '../inputs';
 import { InvestmentAccountActiveHoldingOutput, InvestmentAccountTransactionOutput } from '../outputs';
 import { ASSET_STOCK_SECTOR_TYPE_IMAGES } from './../../asset-manager';
-import { InvestmentAccountCashChangeService } from './investment-account-cache-change.service';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
 @Injectable()
@@ -19,8 +18,7 @@ export class InvestmentAccountHoldingService {
 	constructor(
 		private investmentAccountRepositoryService: InvestmentAccountRepositoryService,
 		private assetStockService: AssetStockService,
-		private assetGeneralService: AssetGeneralService,
-		private investmentAccountCashChangeService: InvestmentAccountCashChangeService
+		private assetGeneralService: AssetGeneralService
 	) {}
 
 	filterOutActiveHoldings(account: InvestmentAccount): InvestmentAccountHolding[] {
@@ -107,9 +105,6 @@ export class InvestmentAccountHoldingService {
 			cashValue: input.holdingInputData.units * closedValueApi * (input.type === 'SELL' ? 1 : -1),
 		};
 
-		// save cash
-		const savedCash = await this.investmentAccountCashChangeService.createInvestmentAccountCash(cashInput, userId);
-
 		// calculate return & returnChange if Sell operation
 		const breakEvenPrice = SharedServiceUtil.roundDec(bepHelpers.value / bepHelpers.units);
 		const inputUnits = input.holdingInputData.units;
@@ -128,7 +123,6 @@ export class InvestmentAccountHoldingService {
 			createdAt: new Date(),
 			return: returnValue,
 			returnChange: returnChange,
-			cashChangeId: savedCash.itemId,
 			assetId: input.symbol,
 		};
 
@@ -209,14 +203,6 @@ export class InvestmentAccountHoldingService {
 				throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNABLE_TO_DELETE_HISTORY, HttpStatus.NOT_FOUND);
 			}
 		}
-
-		// remove cash change
-		await this.investmentAccountCashChangeService.deleteInvestmentAccountCash(
-			{
-				itemId: removedHoldingHistory.cashChangeId,
-			},
-			userId
-		);
 
 		// replace holding history for matching symbol
 		const modifiedHoldings = investmentAccount.holdings.map((d) => {

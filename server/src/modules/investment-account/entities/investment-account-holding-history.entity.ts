@@ -17,11 +17,6 @@ export class InvestmentAccountHoldingHistory implements InvestmentAccountHolding
 	})
 	assetId: string;
 
-	@Field(() => String, {
-		description: 'InvestmentAccountCashChange.ID if holding history affected cash change',
-	})
-	cashChangeId: string;
-
 	@Field(() => String)
 	date: string;
 

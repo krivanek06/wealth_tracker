@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, forwardRef, Input } from '@angular/
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ProgressItemComponent } from '../../../../shared/components';
 import { DefaultImgDirective, RangeDirective } from '../../../../shared/directives';
 import { InArrayPipe } from '../../../../shared/pipes';
@@ -19,6 +20,7 @@ import { PersonalAccountTagAggregation } from '../../models';
 		ProgressItemComponent,
 		InArrayPipe,
 		RangeDirective,
+		MatTooltipModule,
 	],
 	templateUrl: './personal-account-expenses-by-tag.component.html',
 	styleUrls: ['./personal-account-expenses-by-tag.component.scss'],
@@ -42,6 +44,10 @@ export class PersonalAccountExpensesByTagComponent implements ControlValueAccess
 	onTouched = () => {};
 
 	onClick(aggregations: PersonalAccountTagAggregation) {
+		if (this.disabled) {
+			return;
+		}
+
 		if (!this.multiple) {
 			this.selectedAggregationIds = [aggregations.id];
 			this.onChange(this.selectedAggregationIds);

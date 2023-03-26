@@ -87,6 +87,8 @@ export class InvestmentAccountCashChangeComponent implements OnInit {
 			type: this.formGroup.controls.type.value,
 		};
 
+		DialogServiceUtil.showNotificationBar(`Saving data`, 'notification');
+
 		this.investmentAccountFacadeApiService
 			.createInvestmentAccountCash(input)
 			.pipe(

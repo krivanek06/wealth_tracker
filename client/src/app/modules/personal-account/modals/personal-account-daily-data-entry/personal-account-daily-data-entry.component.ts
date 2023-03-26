@@ -32,6 +32,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	// booleans to show spinner
 	isSaving = false;
 	isRemoving = false;
+	showDescription = false;
 
 	readonly formGroup = new FormGroup({
 		tagId: new FormControl<string | null>(null, { validators: [requiredValidator] }),
@@ -58,6 +59,10 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		}
 
 		this.displayTagsInputSource$ = this.personalAccountDataService.getAvailableTagInputSourceWrapper();
+	}
+
+	onDescriptionToggle(): void {
+		this.showDescription = !this.showDescription;
 	}
 
 	onRemove(): void {

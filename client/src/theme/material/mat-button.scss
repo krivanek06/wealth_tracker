@@ -40,3 +40,9 @@ button[mat-stroked-button] {
 	min-width: 220px !important;
 	min-height: 50px !important;
 }
+
+.g-button-action-primary {
+	color: white !important;
+	border: 2px solid var(--primary-dark) !important;
+	background: var(--background-medium) !important;
+}

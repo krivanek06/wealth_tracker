@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormMatInputWrapperModule } from '../../../../shared/components';
+import { DefaultImgDirective } from '../../../../shared/directives';
 import { ChangePasswordFormComponent } from './change-password-form/change-password-form.component';
 import { UserProfileInfoComponent } from './user-profile-info/user-profile-info.component';
 import { UserProfileModalComponent } from './user-profile-modal.component';
@@ -24,6 +25,7 @@ import { UserProfileModalComponent } from './user-profile-modal.component';
 		FormMatInputWrapperModule,
 		MatTooltipModule,
 		MatListModule,
+		DefaultImgDirective,
 	],
 	exports: [UserProfileModalComponent],
 })

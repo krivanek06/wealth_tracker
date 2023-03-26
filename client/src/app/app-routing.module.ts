@@ -25,7 +25,7 @@ const routes: Routes = [
 			},
 			{
 				path: '**',
-				redirectTo: '',
+				redirectTo: TOP_LEVEL_NAV.dashboard,
 			},
 		],
 	},

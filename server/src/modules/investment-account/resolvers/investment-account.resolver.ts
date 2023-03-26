@@ -3,7 +3,7 @@ import { Float, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql';
 import { InvestmentAccount } from '../entities';
-import { InvestmentAccountCreateInput, InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
+import { InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
 import { InvestmentAccountActiveHoldingOutput, InvestmentAccountGrowth } from '../outputs';
 import { InvestmentAccountHoldingService, InvestmentAccountService } from '../services';
 
@@ -39,11 +39,8 @@ export class InvestmentAccountResolver {
 	/* Mutation */
 
 	@Mutation(() => InvestmentAccount)
-	createInvestmentAccount(
-		@ReqUser() authUser: RequestUser,
-		@Input() input: InvestmentAccountCreateInput
-	): Promise<InvestmentAccount> {
-		return this.investmentAccountService.createInvestmentAccount(input, authUser.id);
+	createInvestmentAccount(@ReqUser() authUser: RequestUser): Promise<InvestmentAccount> {
+		return this.investmentAccountService.createInvestmentAccount(authUser.id);
 	}
 
 	@Mutation(() => InvestmentAccount)

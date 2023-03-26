@@ -1,1 +1,20 @@
-<p>account-manager works!</p>
+<section class="w-full md:w-8/12 mx-auto pt-[15%]">
+	<!-- existing accounts -->
+	<div *ngFor="let account of availableAccounts$ | async" class="mb-8">
+		<app-account-manager-item
+			(editEmitter)="onEdit($event, account.accountType)"
+			(deleteEmitter)="onDelete(account.accountType)"
+			(clickedEmitter)="onClick(account.accountType)"
+			[accountData]="account"
+			[accountType]="account.accountType"
+		></app-account-manager-item>
+	</div>
+
+	<!-- not created accounts -->
+	<div *ngFor="let accountType of creatingAccounts$ | async" class="mb-12">
+		<app-account-manager-item
+			(createEmitter)="onCreate(accountType)"
+			[accountType]="accountType"
+		></app-account-manager-item>
+	</div>
+</section>

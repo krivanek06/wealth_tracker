@@ -26,6 +26,7 @@ export class InvestmentAccountActionButtonsComponent implements OnInit, ControlV
 	@Output() showHistoryEmitter = new EventEmitter<void>();
 
 	@Input() sectorAllocationInputSource?: InputSource[] | null;
+	@Input() isAccountNonEmpty?: boolean | null;
 
 	formGroup = new FormGroup({
 		selectedSector: new FormControl<string | null>(null),

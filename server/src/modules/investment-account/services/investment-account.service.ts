@@ -3,8 +3,9 @@ import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
 import { AssetGeneralService } from '../../asset-manager';
 import { INVESTMENT_ACCOUNT_ERROR, INVESTMENT_ACCOUNT_MAX } from '../dto';
 import { InvestmentAccount, InvestmentAccountCashChange } from '../entities';
-import { InvestmentAccountCreateInput, InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
+import { InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
 import { InvestmentAccountGrowth } from '../outputs';
+import { INVESTMENT_ACCOUNT_DEFAULT_NAME } from './../dto/investment-accont-constants.dto';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
 @Injectable()
@@ -155,7 +156,7 @@ export class InvestmentAccountService {
 		return nonZeroResult;
 	}
 
-	async createInvestmentAccount(input: InvestmentAccountCreateInput, userId: string): Promise<InvestmentAccount> {
+	async createInvestmentAccount(userId: string): Promise<InvestmentAccount> {
 		const investmentAccountCount = await this.investmentAccountRepositoryService.countInvestmentAccounts(userId);
 
 		// prevent creating more than 5 investment accounts per user
@@ -164,7 +165,10 @@ export class InvestmentAccountService {
 		}
 
 		// create investment account
-		const investmentAccount = await this.investmentAccountRepositoryService.createInvestmentAccount(input.name, userId);
+		const investmentAccount = await this.investmentAccountRepositoryService.createInvestmentAccount(
+			INVESTMENT_ACCOUNT_DEFAULT_NAME,
+			userId
+		);
 
 		return investmentAccount;
 	}

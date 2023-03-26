@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, forwardRef, OnInit } from '@angular
 import { FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { LoginUserInput } from '../../../../../core/graphql';
 import { emailValidator, maxLengthValidator, requiredValidator } from '../../../../../shared/models';
+import { environment } from './../../../../../../environments/environment';
 
 @Component({
 	selector: 'app-form-login',
@@ -25,6 +26,8 @@ export class FormLoginComponent implements OnInit {
 		password: new FormControl('', { validators: [requiredValidator, maxLengthValidator(25)], nonNullable: true }),
 	});
 
+	isProduction = environment.production;
+
 	onChange: (value: LoginUserInput) => void = () => {};
 	onTouched = () => {};
 
@@ -45,6 +48,16 @@ export class FormLoginComponent implements OnInit {
 		};
 
 		this.onChange(result);
+	}
+
+	onDevelopmentLogin(): void {
+		const testUser = 'judge67@gmail.com';
+		const testPassword = 'qwer1234';
+
+		this.formGroup.setValue({
+			email: testUser,
+			password: testPassword,
+		});
 	}
 
 	writeValue(obj: LoginUserInput): void {}

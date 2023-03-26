@@ -45,9 +45,13 @@ export class AssetManagerSearchAssetComponent implements OnInit, ControlValueAcc
 	ngOnInit(): void {
 		// load symbol data from API
 		this.searchedResults$ = this.formControl.valueChanges.pipe(
+			tap((words) => {
+				if (words && words.length > 0) {
+					this.searching = true;
+				}
+			}),
 			distinctUntilChanged(),
 			debounceTime(400),
-			tap((value) => (this.searching = true)),
 			switchMap((value) => (!value ? of([]) : this.getSearchEndpoint(value).pipe(tap(() => (this.searching = false)))))
 		);
 	}

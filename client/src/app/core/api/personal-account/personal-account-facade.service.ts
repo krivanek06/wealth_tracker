@@ -50,8 +50,8 @@ export class PersonalAccountFacadeService {
 		return this.personalAccountCacheService.getPersonalAccountTagFromCache(tagId);
 	}
 
-	createPersonalAccount(name: string): Observable<PersonalAccountOverviewFragment | undefined> {
-		return this.personalAccountApiService.createPersonalAccount(name).pipe(
+	createPersonalAccount(): Observable<PersonalAccountOverviewFragment | undefined> {
+		return this.personalAccountApiService.createPersonalAccount().pipe(
 			tap((result) => {
 				if (!result) {
 					return;
@@ -148,9 +148,8 @@ export class PersonalAccountFacadeService {
 				this.personalAccountCacheService.updatePersonalAccountDetails({
 					...personalAccount,
 					personalAccountTag: personalAccount.personalAccountTag.filter((d) => d.id !== result.id),
+					yearlyAggregation: personalAccount.yearlyAggregation.filter((d) => d.tag.id !== result.id),
 				});
-
-				// TODO: update charts - remove income/expenses on specific tag
 			})
 		);
 	}

@@ -67,7 +67,14 @@ export class PerceptageIncreaseDirective implements OnInit {
 	 * @param changesPercentage - changed prct between the current and compared to item
 	 */
 	private createElement(change: number | null, changesPercentage: number | null, hideValue = false): void {
+		// create elements
+		const wrapper = this.vr.element.nativeElement;
+
 		if (!changesPercentage && !change) {
+			const element = this.rederer2.createElement('span');
+			const text = this.rederer2.createText('N/A');
+			this.rederer2.appendChild(element, text);
+			this.rederer2.appendChild(wrapper, element);
 			return;
 		}
 
@@ -76,9 +83,6 @@ export class PerceptageIncreaseDirective implements OnInit {
 			(!!change && change > 0) || (!!changesPercentage && changesPercentage > 0)
 				? 'text-wt-success-medium'
 				: 'text-wt-danger-medium';
-
-		// create elements
-		const wrapper = this.vr.element.nativeElement;
 
 		// add scss classes
 		this.rederer2.addClass(wrapper, 'flex');
@@ -143,7 +147,7 @@ export class PerceptageIncreaseDirective implements OnInit {
 			// additional classes
 			this.changesSpanClasses.forEach((c) => this.rederer2.addClass(changeSpan, c));
 
-			// shwow on DOM
+			// show on DOM
 			this.rederer2.appendChild(changeSpan, changeText);
 
 			this.rederer2.appendChild(wrapper, changeSpan);

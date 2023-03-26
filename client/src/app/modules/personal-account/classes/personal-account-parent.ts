@@ -68,6 +68,11 @@ export abstract class PersonalAccountParent {
 	accountTagAggregationForTimePeriod$!: Observable<PersonalAccountTagAggregation[]>;
 
 	/**
+	 * True if at least one entry exists for the selected month
+	 */
+	isEntryForSelectedMonth$!: Observable<boolean>;
+
+	/**
 	 * form used to filter daily data
 	 */
 	today = DateServiceUtil.getDetailsInformationFromDate(new Date());
@@ -113,7 +118,7 @@ export abstract class PersonalAccountParent {
 
 		// filter out expense tags to show them to the user
 		this.yearlyExpenseTags$ = this.personalAccountDetails$.pipe(
-			map((account) => account.yearlyAggregation.filter((d) => d.tag.type === TagDataType.Expense)),
+			map((account) => account.yearlyAggregation.filter((d) => d.tag.type === TagDataType.Expense && d.value > 0)),
 			map((expenseTags) => this.personalAccountDataService.createValuePresentItemFromTag(expenseTags))
 		);
 
@@ -160,6 +165,10 @@ export abstract class PersonalAccountParent {
 			)
 		);
 
+		this.isEntryForSelectedMonth$ = combineLatest([totalDailyDataForTimePeriod$, this.dateSource$]).pipe(
+			map(([dailyData, dateSource]) => dateSource !== NO_DATE_SELECTED && dailyData.length > 0)
+		);
+
 		this.accountFilteredState$ = totalDailyDataForTimePeriod$.pipe(
 			map((dailyData) => this.personalAccountChartService.getAccountStateByDailyData(dailyData))
 		);
@@ -204,8 +213,6 @@ export abstract class PersonalAccountParent {
 						: this.personalAccountDataService.getPersonalAccountTagAggregationByDailyData(result, dateFilter)
 			)
 		);
-
-		this.accountTagAggregationForTimePeriod$.subscribe((d) => console.log('watch me', d));
 	}
 
 	onDailyEntryClick(editingDailyData: PersonalAccountDailyDataOutputFragment | null): void {

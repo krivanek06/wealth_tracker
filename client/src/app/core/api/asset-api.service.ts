@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import {
 	AssetGeneralFragment,
 	AssetGeneralHistoricalPrices,
@@ -45,7 +45,7 @@ export class AssetApiService {
 
 	getAssetHistoricalPricesStartToEnd(
 		input: AssetGeneralHistoricalPricesInput
-	): Observable<AssetGeneralHistoricalPrices> {
+	): Observable<AssetGeneralHistoricalPrices | null> {
 		return this.getAssetHistoricalPricesStartToEndGQL
 			.fetch(
 				{
@@ -55,7 +55,10 @@ export class AssetApiService {
 					fetchPolicy: 'network-only',
 				}
 			)
-			.pipe(map((res) => res.data.getAssetHistoricalPricesStartToEnd));
+			.pipe(
+				map((res) => res.data.getAssetHistoricalPricesStartToEnd),
+				catchError(() => of(null))
+			);
 	}
 
 	getAssetGeneralHistoricalPricesDataOnDate(

@@ -7,7 +7,12 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DatePickerComponent, FormMatInputWrapperModule, NumberKeyboardComponent } from '../../../../shared/components';
+import {
+	DatePickerComponent,
+	FormMatInputWrapperModule,
+	GenericChartModule,
+	NumberKeyboardComponent,
+} from '../../../../shared/components';
 import { NotificationBarModule } from '../../../../shared/dialogs';
 import { DefaultImgDirective, PerceptageIncreaseDirective } from '../../../../shared/directives';
 import { LargeNumberFormatterPipe, SortByKeyPipe } from '../../../../shared/pipes';
@@ -35,6 +40,7 @@ import { InvestmentAccountHoldingComponent } from './investment-account-holding.
 		PerceptageIncreaseDirective,
 		DatePickerComponent,
 		NumberKeyboardComponent,
+		GenericChartModule,
 	],
 })
 export class InvestmentAccountHoldingModule {}

@@ -17,6 +17,7 @@ import { InvestmentAccountCalculatorService } from '../../services';
 })
 export class InvestmentAccountStateComponent implements OnInit {
 	@Output() cashChangeClickEmitter = new EventEmitter<void>();
+	@Output() addHoldingClickEmitter = new EventEmitter<void>();
 	@Input() set investmentAccount(account: InvestmentAccountFragmentExtended | null) {
 		if (!account) {
 			return;
@@ -56,5 +57,9 @@ export class InvestmentAccountStateComponent implements OnInit {
 
 	onCashChangeClick(): void {
 		this.cashChangeClickEmitter.emit();
+	}
+
+	onAddHoldingClick(): void {
+		this.addHoldingClickEmitter.emit();
 	}
 }

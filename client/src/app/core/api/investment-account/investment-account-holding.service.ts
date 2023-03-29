@@ -83,7 +83,6 @@ export class InvestmentAccountHoldingService {
 					deleteInvestmentAccountHolding: {
 						__typename: 'InvestmentAccountHoldingHistory',
 						date: history.date,
-						cashChangeId: history.cashChangeId,
 						itemId: history.itemId,
 						type: history.type,
 						units: history.units,
@@ -96,8 +95,6 @@ export class InvestmentAccountHoldingService {
 					const result = data?.deleteInvestmentAccountHolding as InvestmentAccountHoldingHistoryFragment;
 					const account = this.investmentAccountCacheService.getInvestmentAccountDetails();
 
-					// remove cashChangeId from cashChange
-					const cashChange = account.cashChange.filter((d) => d.itemId !== result.cashChangeId);
 					// update units for active holding if exists
 					const activeHoldings = account.activeHoldings
 						.map((d) =>
@@ -113,7 +110,7 @@ export class InvestmentAccountHoldingService {
 						.filter((d) => d.units !== 0);
 
 					// save update in cache
-					this.investmentAccountCacheService.updateInvestmentAccountDetails({ ...account, cashChange, activeHoldings });
+					this.investmentAccountCacheService.updateInvestmentAccountDetails({ ...account, activeHoldings });
 
 					// update transaction history
 					const cachedTransactionHistory = this.investmentAccountCacheService.getTransactionHistory();

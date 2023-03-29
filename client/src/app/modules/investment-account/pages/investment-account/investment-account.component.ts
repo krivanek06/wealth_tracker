@@ -105,7 +105,7 @@ export class InvestmentAccountComponent implements OnInit {
 			map((account) => this.investmentAccountCalculatorService.getInvestmentAccountByIdTotalInvestedAmount(account))
 		);
 
-		this.isInvestmentAccountNonEmpty$ = this.totalInvestedAmount$.pipe(map((res) => res > 0));
+		this.isInvestmentAccountNonEmpty$ = this.totalInvestedAmount$.pipe(map((res) => res !== 0));
 
 		this.accountPeriodChange$ = combineLatest([this.investmentAccount$, this.investmentAccountGrowth$]).pipe(
 			map(([account, growth]) =>

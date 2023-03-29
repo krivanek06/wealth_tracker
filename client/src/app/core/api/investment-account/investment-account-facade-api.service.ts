@@ -2,25 +2,19 @@ import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
 import { filter, map, Observable } from 'rxjs';
 import {
-	CreateInvestmentAccountCashMutation,
 	CreateInvestmentAccountHoldingMutation,
 	CreateInvestmentAccountMutation,
-	DeleteInvestmentAccountCashMutation,
 	DeleteInvestmentAccountHoldingMutation,
 	DeleteInvestmentAccountMutation,
 	EditInvestmentAccountMutation,
 	InvestmentAccounHoldingCreateInput,
-	InvestmentAccountCashChangeFragment,
 	InvestmentAccountCashChangeType,
-	InvestmentAccountCashCreateInput,
-	InvestmentAccountCashDeleteInput,
 	InvestmentAccountEditInput,
 	InvestmentAccountGrowth,
 	InvestmentAccountTransactionOutput,
 } from '../../graphql';
 import { InvestmentAccountFragmentExtended } from '../../models/investment-account.model';
 import { InvestmentAccountApiService } from './investment-account-api.service';
-import { InvestmentAccountCashApiService } from './investment-account-cash-api.service';
 import { InvestmentAccountHoldingService } from './investment-account-holding.service';
 
 @Injectable({
@@ -28,7 +22,6 @@ import { InvestmentAccountHoldingService } from './investment-account-holding.se
 })
 export class InvestmentAccountFacadeApiService {
 	constructor(
-		private investmentAccountCashApiService: InvestmentAccountCashApiService,
 		private investmentAccountApiService: InvestmentAccountApiService,
 		private investmentAccountHoldingService: InvestmentAccountHoldingService
 	) {}
@@ -121,18 +114,5 @@ export class InvestmentAccountFacadeApiService {
 		history: InvestmentAccountTransactionOutput
 	): Observable<FetchResult<DeleteInvestmentAccountHoldingMutation>> {
 		return this.investmentAccountHoldingService.deleteInvestmentAccountHolding(history);
-	}
-
-	createInvestmentAccountCash(
-		input: InvestmentAccountCashCreateInput
-	): Observable<FetchResult<CreateInvestmentAccountCashMutation>> {
-		return this.investmentAccountCashApiService.createInvestmentAccountCash(input);
-	}
-
-	deleteInvestmentAccountCash(
-		input: InvestmentAccountCashDeleteInput,
-		removingItem: InvestmentAccountCashChangeFragment
-	): Observable<FetchResult<DeleteInvestmentAccountCashMutation>> {
-		return this.investmentAccountCashApiService.deleteInvestmentAccountCash(input, removingItem);
 	}
 }

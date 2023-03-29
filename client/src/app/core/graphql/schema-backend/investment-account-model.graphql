@@ -6,7 +6,6 @@ fragment InvestmentAccountHoldingHistory on InvestmentAccountHoldingHistory {
 	type
 	return
 	returnChange
-	cashChangeId
 }
 
 fragment InvestmentAccountCashChange on InvestmentAccountCashChange {
@@ -71,7 +70,6 @@ fragment InvestmentAccountGrowth on InvestmentAccountGrowth {
 fragment InvestmentAccountTransactionOutput on InvestmentAccountTransactionOutput {
 	itemId
 	assetId
-	cashChangeId
 	date
 	createdAt
 	units

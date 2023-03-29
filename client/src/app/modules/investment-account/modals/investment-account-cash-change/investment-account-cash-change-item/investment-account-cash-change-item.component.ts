@@ -1,13 +1,4 @@
-import {
-	ChangeDetectionStrategy,
-	Component,
-	EventEmitter,
-	Input,
-	OnInit,
-	Output,
-	TrackByFunction,
-	ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, TrackByFunction, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { InvestmentAccountCashChangeFragment, InvestmentAccountCashChangeType } from '../../../../../core/graphql';
@@ -20,8 +11,6 @@ import { customMemoize } from '../../../../../shared/decoratos';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvestmentAccountCashChangeItemComponent implements OnInit {
-	@Output() clickedEmitter = new EventEmitter<InvestmentAccountCashChangeFragment>();
-
 	@Input() set cashChange(activeHoldingsData: InvestmentAccountCashChangeFragment[]) {
 		const data = (activeHoldingsData ?? []).filter((d) => d.type !== InvestmentAccountCashChangeType.AssetOperation);
 		this.dataSource = new MatTableDataSource(data);
@@ -51,9 +40,5 @@ export class InvestmentAccountCashChangeItemComponent implements OnInit {
 			return 'Asset';
 		}
 		return type.toLowerCase();
-	}
-
-	onRemove(item: InvestmentAccountCashChangeFragment) {
-		this.clickedEmitter.emit(item);
 	}
 }

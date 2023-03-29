@@ -90,8 +90,6 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 			.filter((d) => d.ownedAssets !== 0)
 			.map((d) => [Date.parse(d.date), d.ownedAssets]);
 
-		console.log({ cash, invested, ownedAssets });
-
 		return { balance, cash, invested, ownedAssets };
 	}
 
@@ -212,10 +210,10 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 					const name = that.series.name.toLowerCase();
 					const isCurrency = ['cash', 'invested'].includes(name);
 
-					const displayTextName = isCurrency ? `Portfolio ${name}` : `${that.series.name}`;
+					const displayTextName = isCurrency ? `${name}` : `${that.series.name}`;
 					const displayTextValue = isCurrency ? `$${value}` : value;
 
-					return `<p><span style="color: ${that.series.color}; font-weight: bold">● ${displayTextName}: </span><span>${displayTextValue}</span></p><br/>`;
+					return `<p><span style="color: ${that.series.color}; font-weight: bold" class="capitalize">● ${displayTextName}: </span><span>${displayTextValue}</span></p><br/>`;
 				},
 			},
 			plotOptions: {
@@ -255,57 +253,57 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 							y2: 1,
 						},
 						stops: [
-							[0, '#07b9b9'],
-							[1, 'transparent'],
-						],
-					},
-					name: 'Balance',
-					data: balance,
-				},
-				{
-					color: '#6b00fa',
-					type: 'area',
-					yAxis: 0,
-					opacity: 1,
-					zIndex: 2,
-					visible: !isMobileView,
-					fillColor: {
-						linearGradient: {
-							x1: 1,
-							y1: 0,
-							x2: 0,
-							y2: 1,
-						},
-						stops: [
-							[0, '#7666fa'],
+							[0, '#12aaaa'],
 							[1, 'transparent'],
 						],
 					},
 					name: 'Invested',
 					data: invested,
 				},
-				{
-					color: '#f24f18',
-					type: 'area',
-					visible: !isMobileView,
-					opacity: 0.6,
-					yAxis: 1,
-					zIndex: 1,
-					name: 'Cash',
-					data: cash,
-					fillColor: {
-						linearGradient: {
-							x1: 1,
-							y1: 0,
-							x2: 0,
-							y2: 1,
-						},
-						stops: [
-							[0, '#f24f18'],
-							[1, 'transparent'],
-						],
-					},
-				},
+				// {
+				// 	color: '#6b00fa',
+				// 	type: 'area',
+				// 	yAxis: 0,
+				// 	opacity: 1,
+				// 	zIndex: 2,
+				// 	visible: !isMobileView,
+				// 	fillColor: {
+				// 		linearGradient: {
+				// 			x1: 1,
+				// 			y1: 0,
+				// 			x2: 0,
+				// 			y2: 1,
+				// 		},
+				// 		stops: [
+				// 			[0, '#7666fa'],
+				// 			[1, 'transparent'],
+				// 		],
+				// 	},
+				// 	name: 'Invested',
+				// 	data: invested,
+				// },
+				// {
+				// 	color: '#f24f18',
+				// 	type: 'area',
+				// 	visible: !isMobileView,
+				// 	opacity: 0.6,
+				// 	yAxis: 1,
+				// 	zIndex: 1,
+				// 	name: 'Cash',
+				// 	data: cash,
+				// 	fillColor: {
+				// 		linearGradient: {
+				// 			x1: 1,
+				// 			y1: 0,
+				// 			x2: 0,
+				// 			y2: 1,
+				// 		},
+				// 		stops: [
+				// 			[0, '#f24f18'],
+				// 			[1, 'transparent'],
+				// 		],
+				// 	},
+				// },
 			],
 		};
 	}

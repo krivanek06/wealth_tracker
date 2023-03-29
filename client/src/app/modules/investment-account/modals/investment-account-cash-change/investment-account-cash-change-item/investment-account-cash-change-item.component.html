@@ -32,11 +32,7 @@
 	<tr
 		mat-row
 		*matRowDef="let row; columns: displayedColumns"
-		appNotificationProgress
-		notificationProgressMessage="Removing daily data"
-		notificationMessage="Removing data"
 		[ngClass]="{'g-table-disabled-row': row.type === InvestmentAccountCashChangeType.AssetOperation}"
-		(notificationSuccessEmitter)="onRemove(row)"
 	></tr>
 
 	<!-- Row shown when there is no matching data. -->

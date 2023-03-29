@@ -203,9 +203,6 @@ type InvestmentAccountHoldingHistory {
     type         InvestmentAccountHoldingHistoryType
     return       Float?
     returnChange Float?
-
-    // InvestmentAccountCashChange.ID change cash amount based on the BUY/SELL operation
-    cashChangeId String
 }
 
 enum InvestmentAccountHoldingHistoryType {

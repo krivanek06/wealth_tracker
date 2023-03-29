@@ -31,27 +31,19 @@
 <form (ngSubmit)="onSave()" [formGroup]="formGroup">
 	<mat-dialog-content>
 		<!-- historical chart -->
-		<div class="min-h-[250px]">
-			<ng-container *ngIf="assetHistoricalData$ | async as assetHistoricalData; else chartSkeleton">
-				<ng-container *ngIf="!loadingHistoricalData; else chartSkeleton">
-					<app-generic-chart [series]="[assetHistoricalData]" [heightPx]="250"></app-generic-chart>
-				</ng-container>
-			</ng-container>
+		<ng-container *ngIf="assetHistoricalData$ | async as assetHistoricalData; else chartSkeleton">
+			<div *ngIf="!loadingHistoricalData; else chartSkeleton" class="min-h-[250px]">
+				<app-generic-chart [series]="[assetHistoricalData]" [heightPx]="250"></app-generic-chart>
+			</div>
+		</ng-container>
 
-			<!-- skeleton -->
-			<ng-template #chartSkeleton>
-				<div class="w-full h-[250px] g-skeleton"></div>
-			</ng-template>
-		</div>
+		<!-- skeleton -->
+		<ng-template #chartSkeleton>
+			<div *ngIf="formSymbol.value" class="w-full h-[250px] g-skeleton"></div>
+		</ng-template>
 
 		<!-- cash state -->
 		<div class="c-cash-wrapper">
-			<div>
-				<span class="text-gray-400">Cash: </span>
-				<span *ngIf="investmentAccount$ | async as investmentAccount">
-					{{ investmentAccount.currentCash | currency }}
-				</span>
-			</div>
 			<div>
 				<span class="text-gray-400">Units: </span>
 				<span> {{ units.value || 'N/A' }} </span>

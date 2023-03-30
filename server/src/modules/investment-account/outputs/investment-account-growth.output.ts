@@ -7,8 +7,8 @@ export class InvestmentAccountGrowth {
 	})
 	invested: number;
 
-	@Field(() => String)
-	date: string;
+	@Field(() => Float)
+	date: number;
 
 	@Field(() => Float)
 	ownedAssets: number;

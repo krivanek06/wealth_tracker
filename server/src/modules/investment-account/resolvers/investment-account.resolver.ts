@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Float, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthorizationGuard, RequestUser, ReqUser } from '../../../auth';
 import { Input } from '../../../graphql';
+import { ChartSeries } from '../../../shared/dto';
 import { InvestmentAccount } from '../entities';
 import { InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
 import { InvestmentAccountActiveHoldingOutput, InvestmentAccountGrowth } from '../outputs';
@@ -34,6 +35,17 @@ export class InvestmentAccountResolver {
 		@Input() input: InvestmentAccountGrowthInput
 	): Promise<InvestmentAccountGrowth[]> {
 		return this.investmentAccountService.getInvestmentAccountGrowth(input, authUser.id);
+	}
+
+	@Query(() => [ChartSeries], {
+		description: 'Returns the investment account history growth, based on the input values',
+		defaultValue: [],
+	})
+	getInvestmentAccountGrowthAssets(
+		@ReqUser() authUser: RequestUser,
+		@Input() input: InvestmentAccountGrowthInput
+	): Promise<ChartSeries[]> {
+		return this.investmentAccountService.getInvestmentAccountGrowthAssets(input, authUser.id);
 	}
 
 	/* Mutation */

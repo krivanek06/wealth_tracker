@@ -5,6 +5,7 @@ import {
 	format,
 	getDay,
 	getMonth,
+	getTime,
 	getWeek,
 	getYear,
 	isBefore,
@@ -67,6 +68,10 @@ export class MomentServiceUtil {
 
 	static isWeekend(date: DateInput): boolean {
 		return isWeekend(new Date(date));
+	}
+
+	static getTime(date: DateInput): number {
+		return getTime(new Date(date));
 	}
 
 	/**

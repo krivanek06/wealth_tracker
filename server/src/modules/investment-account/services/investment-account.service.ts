@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
+import { ChartSeries } from '../../../shared/dto';
+import { MomentServiceUtil } from '../../../utils';
 import { AssetGeneralService } from '../../asset-manager';
 import { INVESTMENT_ACCOUNT_ERROR, INVESTMENT_ACCOUNT_MAX } from '../dto';
 import { InvestmentAccount, InvestmentAccountCashChange } from '../entities';
@@ -29,16 +30,11 @@ export class InvestmentAccountService {
 	}
 
 	/**
-	 * Returns the investment account history growth, based
-	 * on the input values
+	 * Returns the investment account history growth for each asset
 	 *
 	 * @param userId
-	 * @param input
 	 */
-	async getInvestmentAccountGrowth(
-		input: InvestmentAccountGrowthInput,
-		userId: string
-	): Promise<InvestmentAccountGrowth[]> {
+	async getInvestmentAccountGrowthAssets(input: InvestmentAccountGrowthInput, userId: string): Promise<ChartSeries[]> {
 		// load investment account
 		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 
@@ -62,70 +58,81 @@ export class InvestmentAccountService {
 
 		// create investment growth chart by each asset - check if asset was owned d.holdingHistory[N].unit that date
 		// investedGrowth -> array of {date, calculation} - where calculation is the reduced total invested amount on that date
-		const investedGrowth = historicalPrices
-			.map((d) => {
-				const holdingHistory = filteredHoldings.find((h) => h.assetId === d.id).holdingHistory ?? [];
-				let holdingIndex = -1; // increase holdingCurrentIndex if holdingHistory[holdingCurrentIndex].date is same as price.date
-				let unitsAccumulated = holdingHistory[holdingIndex]?.units ?? 0; // keep track of units by BUY/SELL operation
+		const investedGrowth = historicalPrices.map((d) => {
+			const holdingHistory = filteredHoldings.find((h) => h.assetId === d.id).holdingHistory ?? [];
+			let holdingIndex = -1; // increase holdingCurrentIndex if holdingHistory[holdingCurrentIndex].date is same as price.date
+			let unitsAccumulated = holdingHistory[holdingIndex]?.units ?? 0; // keep track of units by BUY/SELL operation
 
-				// store asset.units * price.close
-				const assetGrowthCalculation = d.assetHistoricalPricesData.map((price) => {
-					if (price.date === holdingHistory[holdingIndex + 1]?.date) {
-						holdingIndex += 1;
-						const tmp = holdingHistory[holdingIndex];
-						unitsAccumulated += tmp.type === 'BUY' ? tmp.units : -tmp.units;
-					}
+			// store asset.units * price.close
+			const assetGrowthCalculation = d.assetHistoricalPricesData.map((price) => {
+				if (price.date === holdingHistory[holdingIndex + 1]?.date) {
+					holdingIndex += 1;
+					const tmp = holdingHistory[holdingIndex];
+					unitsAccumulated += tmp.type === 'BUY' ? tmp.units : -tmp.units;
+				}
 
-					return { date: price.date, calculation: unitsAccumulated * price.close };
-				});
-				return assetGrowthCalculation;
-			})
-			.reduce((acc, curr) => {
-				// each data in { curr: { date: string; calculation: number }[]} add to the 'acc' array
-				curr.forEach((dataElement) => {
-					// accumulated each assetGrowthCalculation into one investment growht number[] array
-					const elementIndex = acc.findIndex((el) => el.date === dataElement.date);
+				return [MomentServiceUtil.getTime(price.date), unitsAccumulated * price.close] as [number, number];
+			});
 
-					// if elementIndex exists, add value to it
-					if (elementIndex > -1) {
-						acc[elementIndex].calc += dataElement.calculation;
-						acc[elementIndex].ownedAssets += 1;
-						return;
-					}
-
-					// data is not yet in the array
-					if (acc.length === 0 || dataElement.date < acc[0].date) {
-						acc = [{ date: dataElement.date, calc: dataElement.calculation, ownedAssets: 1 }, ...acc]; // append element to the start
-					} else if (dataElement.date > acc[acc.length - 1].date) {
-						acc = [...acc, { date: dataElement.date, calc: dataElement.calculation, ownedAssets: 1 }]; // append element to the end
-					} else {
-						// append somewhere middle, find first larger date
-						const appendIndex = acc.findIndex((d) => dataElement.date < d.date);
-						acc.splice(appendIndex, 0, { date: dataElement.date, calc: dataElement.calculation, ownedAssets: 1 });
-					}
-				});
-
-				return acc;
-			}, [] as { date: string; calc: number; ownedAssets: number }[]);
-
-		// select soonest date to generate date range for chart data
-		const soonestDate = investedGrowth[0]?.date;
-
-		const result = MomentServiceUtil.getDates(soonestDate, yesterDay).map((date) => {
-			const formattedDate = MomentServiceUtil.format(date);
-			const growth = investedGrowth.find((d) => d.date === formattedDate);
-			const invested = growth?.calc ?? 0;
-			const ownedAssets = growth?.ownedAssets ?? 0;
-
-			const data: InvestmentAccountGrowth = {
-				invested: SharedServiceUtil.roundDec(invested),
-				ownedAssets,
-				date: formattedDate,
+			const result: ChartSeries = {
+				name: d.id,
+				data: assetGrowthCalculation,
 			};
-			return data;
+
+			return result;
 		});
 
-		return result;
+		return investedGrowth;
+	}
+
+	/**
+	 * Returns the investment account history growth, based
+	 * on the input values
+	 *
+	 * @param userId
+	 * @param input
+	 */
+	async getInvestmentAccountGrowth(
+		input: InvestmentAccountGrowthInput,
+		userId: string
+	): Promise<InvestmentAccountGrowth[]> {
+		const investedGrowthAssets = await this.getInvestmentAccountGrowthAssets(input, userId);
+
+		// create investment growth chart by each asset - check if asset was owned d.holdingHistory[N].unit that date
+		// investedGrowth -> array of {date, calculation} - where calculation is the reduced total invested amount on that date
+		const investedGrowth = investedGrowthAssets.reduce((acc, curr) => {
+			// each data in { curr: { date: string; calculation: number }[]} add to the 'acc' array
+			curr.data.forEach((dataElement) => {
+				const calculation = dataElement[1];
+				const date = MomentServiceUtil.getTime(dataElement[0]);
+
+				// accumulated each assetGrowthCalculation into one investment growht number[] array
+				const elementIndex = acc.findIndex((el) => el.date === date);
+
+				// if elementIndex exists, add value to it
+				if (elementIndex > -1) {
+					acc[elementIndex].invested += calculation;
+					acc[elementIndex].ownedAssets += 1;
+					return;
+				}
+
+				if (acc.length === 0 || date < acc[0].date) {
+					// data is not yet in the array
+					acc = [{ date: date, invested: calculation, ownedAssets: 1 }, ...acc]; // append element to the start
+				} else if (date > acc[acc.length - 1].date) {
+					// data in array
+					acc = [...acc, { date: date, invested: calculation, ownedAssets: 1 }]; // append element to the end
+				} else {
+					// append somewhere middle, find first larger date
+					const appendIndex = acc.findIndex((d) => date < d.date);
+					acc.splice(appendIndex, 0, { date: date, invested: calculation, ownedAssets: 1 });
+				}
+			});
+
+			return acc;
+		}, [] as InvestmentAccountGrowth[]);
+
+		return investedGrowth;
 	}
 
 	async createInvestmentAccount(userId: string): Promise<InvestmentAccount> {

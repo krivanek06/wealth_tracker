@@ -8,9 +8,9 @@ import {
 	InvestmentAccountActionButtonsComponent,
 	InvestmentAccountActiveHoldingsTableModule,
 	InvestmentAccountPeriodChangeModule,
-	InvestmentAccountPortfolioGrowthChartComponent,
 	InvestmentAccountStateComponent,
 } from '../../components';
+import { InvestmentAccountPortfolioGrowthComponent } from '../../containers';
 import {
 	InvestmentAccountCashChangeModule,
 	InvestmentAccountHoldingModule,
@@ -31,7 +31,6 @@ const routes: Routes = [
 		CommonModule,
 		InvestmentAccountActiveHoldingsTableModule,
 		InvestmentAccountStateComponent,
-		InvestmentAccountPortfolioGrowthChartComponent,
 		ReactiveFormsModule,
 		InvestmentAccountCashChangeModule,
 		InvestmentAccountTransactionsModule,
@@ -41,6 +40,7 @@ const routes: Routes = [
 		RangeDirective,
 		InvestmentAccountActionButtonsComponent,
 		PieChartComponent,
+		InvestmentAccountPortfolioGrowthComponent,
 	],
 	exports: [InvestmentAccountComponent],
 })

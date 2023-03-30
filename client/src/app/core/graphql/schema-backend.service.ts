@@ -158,7 +158,7 @@ export type HoldingInputData = {
   /** Date when we added this holding to our investment account */
   date: Scalars['String'];
   /** How many units of this symbol user has */
-  units: Scalars['Int'];
+  units: Scalars['Float'];
 };
 
 export type InvestmentAccounHoldingCreateInput = {
@@ -246,7 +246,6 @@ export type InvestmentAccountEditInput = {
 
 export type InvestmentAccountGrowth = {
   __typename?: 'InvestmentAccountGrowth';
-  cash: Scalars['Float'];
   date: Scalars['String'];
   /** Accumulation of all invested assets in that specific date */
   invested: Scalars['Float'];
@@ -789,7 +788,7 @@ export type InvestmentAccountActiveHoldingOutputFragment = { __typename?: 'Inves
 
 export type InvestmentAccountDetailsFragment = { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType, cashChange: Array<{ __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string, imageUrl: string }>, activeHoldings: Array<{ __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, sectorImageUrl?: string | null, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } }> };
 
-export type InvestmentAccountGrowthFragment = { __typename?: 'InvestmentAccountGrowth', invested: number, cash: number, date: string, ownedAssets: number };
+export type InvestmentAccountGrowthFragment = { __typename?: 'InvestmentAccountGrowth', invested: number, date: string, ownedAssets: number };
 
 export type InvestmentAccountTransactionOutputFragment = { __typename?: 'InvestmentAccountTransactionOutput', itemId: string, assetId: string, date: string, createdAt: any, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null, holdingType: InvestmentAccountHoldingType, sector: string };
 
@@ -803,7 +802,7 @@ export type GetInvestmentAccountGrowthQueryVariables = Exact<{
 }>;
 
 
-export type GetInvestmentAccountGrowthQuery = { __typename?: 'Query', getInvestmentAccountGrowth: Array<{ __typename?: 'InvestmentAccountGrowth', invested: number, cash: number, date: string, ownedAssets: number }> };
+export type GetInvestmentAccountGrowthQuery = { __typename?: 'Query', getInvestmentAccountGrowth: Array<{ __typename?: 'InvestmentAccountGrowth', invested: number, date: string, ownedAssets: number }> };
 
 export type CreateInvestmentAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1105,7 +1104,6 @@ ${InvestmentAccountActiveHoldingOutputFragmentDoc}`;
 export const InvestmentAccountGrowthFragmentDoc = gql`
     fragment InvestmentAccountGrowth on InvestmentAccountGrowth {
   invested
-  cash
   date
   ownedAssets
 }

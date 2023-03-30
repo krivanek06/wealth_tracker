@@ -170,10 +170,9 @@ export class InvestmentAccountCalculatorService {
 			if (!timeDiff) {
 				return { title: period.name, value: -1, valuePrct: -1 } as InvestmentAccountPeriodChange;
 			}
-			const timeDiffValue = timeDiff.cash + timeDiff.invested;
 
-			const value = todayBalance - timeDiffValue;
-			const valuePrct = (todayBalance - timeDiffValue) / timeDiffValue;
+			const value = todayBalance - timeDiff.invested;
+			const valuePrct = (todayBalance - timeDiff.invested) / timeDiff.invested;
 
 			return { title: period.name, value, valuePrct } as InvestmentAccountPeriodChange;
 		});

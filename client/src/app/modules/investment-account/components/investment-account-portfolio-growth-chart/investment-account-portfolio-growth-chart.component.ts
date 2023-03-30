@@ -61,17 +61,10 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 	}
 
 	private getChartData(data: InvestmentAccountGrowth[]): {
-		balance: number[][];
-		cash: number[][];
 		invested: number[][];
 		ownedAssets: number[][];
 	} {
-		const cash = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.cash]);
 		const invested = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.invested]);
-
-		const balance = data
-			.filter((d) => d.invested !== 0)
-			.map((point) => [Date.parse(point.date), point.cash + point.invested]);
 
 		// create points where owned symbol changed
 		const ownedAssets = data
@@ -90,11 +83,11 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 			.filter((d) => d.ownedAssets !== 0)
 			.map((d) => [Date.parse(d.date), d.ownedAssets]);
 
-		return { balance, cash, invested, ownedAssets };
+		return { invested, ownedAssets };
 	}
 
 	private initChart(data: InvestmentAccountGrowth[], isMobileView: boolean) {
-		const { invested, cash, balance } = this.getChartData(data);
+		const { invested } = this.getChartData(data);
 
 		this.chartOptions = {
 			chart: {
@@ -157,8 +150,10 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 			title: {
 				text: '',
 				align: 'left',
+				y: 15,
+				floating: true,
 				style: {
-					color: '#bababa',
+					color: '#8e8e8e',
 					fontSize: '13px',
 				},
 			},
@@ -170,7 +165,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 				enabled: false,
 			},
 			legend: {
-				enabled: true,
+				enabled: false,
 				//floating: true,
 				verticalAlign: 'top',
 				align: 'right',

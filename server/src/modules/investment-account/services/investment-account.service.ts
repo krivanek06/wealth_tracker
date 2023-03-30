@@ -42,12 +42,12 @@ export class InvestmentAccountService {
 		// load investment account
 		const investmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountByUserIdStrict(userId);
 
-		// symbolIds filter out by sectors
 		const filteredHoldings = investmentAccount.holdings
+			// symbolIds filter out by sectors
 			.filter((d) => (input.sectors.length === 0 ? true : input.sectors.includes(d.sector)))
 			// just in case to not get index overflow
 			.filter((d) => d.holdingHistory.length > 0)
-			// check if date is not today - otherwise we get an error
+			// check if date is not today - otherwise we get an error loading historical prices
 			.filter((d) => !MomentServiceUtil.isToday(d.holdingHistory[0].date));
 
 		const yesterDay = MomentServiceUtil.format(MomentServiceUtil.subDays(new Date(), 1));
@@ -65,12 +65,12 @@ export class InvestmentAccountService {
 		const investedGrowth = historicalPrices
 			.map((d) => {
 				const holdingHistory = filteredHoldings.find((h) => h.assetId === d.id).holdingHistory ?? [];
-				let holdingIndex = 0; // increase holdingCurrentIndex if holdingHistory[holdingCurrentIndex].date is same as price.date
+				let holdingIndex = -1; // increase holdingCurrentIndex if holdingHistory[holdingCurrentIndex].date is same as price.date
 				let unitsAccumulated = holdingHistory[holdingIndex]?.units ?? 0; // keep track of units by BUY/SELL operation
 
 				// store asset.units * price.close
 				const assetGrowthCalculation = d.assetHistoricalPricesData.map((price) => {
-					if (price.date >= holdingHistory[holdingIndex + 1]?.date) {
+					if (price.date === holdingHistory[holdingIndex + 1]?.date) {
 						holdingIndex += 1;
 						const tmp = holdingHistory[holdingIndex];
 						unitsAccumulated += tmp.type === 'BUY' ? tmp.units : -tmp.units;
@@ -108,29 +108,8 @@ export class InvestmentAccountService {
 				return acc;
 			}, [] as { date: string; calc: number; ownedAssets: number }[]);
 
-		const cashGrowth = MomentServiceUtil.getDates(investmentAccount.cashChange[0]?.date, yesterDay).reduce(
-			(acc, date) => {
-				// YYYY-MM-DD
-				const formattedDate = MomentServiceUtil.format(date);
-				// check if there is new cash entry -> can be multiple entries per day - multiple asset operations, etc.
-				const existingCashEntries = investmentAccount.cashChange.filter((d) => d.date === formattedDate);
-				// calculate cash value per date
-				const cashPerDate = this.getCurrentCashByAccount(existingCashEntries);
-				// create difference of new and previous entry
-				const currentCash = (acc[acc.length - 1]?.calculation ?? 0) + cashPerDate;
-
-				const data = {
-					date: formattedDate,
-					calculation: currentCash,
-				};
-
-				return [...acc, data];
-			},
-			[] as { date: string; calculation: number }[]
-		);
-
 		// select soonest date to generate date range for chart data
-		const soonestDate = cashGrowth[0]?.date < investedGrowth[0]?.date ? cashGrowth[0]?.date : investedGrowth[0]?.date;
+		const soonestDate = investedGrowth[0]?.date;
 
 		const result = MomentServiceUtil.getDates(soonestDate, yesterDay).map((date) => {
 			const formattedDate = MomentServiceUtil.format(date);
@@ -138,22 +117,15 @@ export class InvestmentAccountService {
 			const invested = growth?.calc ?? 0;
 			const ownedAssets = growth?.ownedAssets ?? 0;
 
-			const cash = cashGrowth.find((d) => d.date === formattedDate)?.calculation ?? 0;
-
 			const data: InvestmentAccountGrowth = {
 				invested: SharedServiceUtil.roundDec(invested),
-				cash: SharedServiceUtil.roundDec(cash),
 				ownedAssets,
 				date: formattedDate,
 			};
 			return data;
 		});
 
-		// filter out if cash and investment is 0
-		// happens because there is a holyday data, but we create custom range by MomentServiceUtil.getDates(soonestDate, new Date())
-		const nonZeroResult = result.filter((d) => d.cash + d.invested !== 0);
-
-		return nonZeroResult;
+		return result;
 	}
 
 	async createInvestmentAccount(userId: string): Promise<InvestmentAccount> {
@@ -161,7 +133,7 @@ export class InvestmentAccountService {
 
 		// prevent creating more than 5 investment accounts per user
 		if (investmentAccountCount >= INVESTMENT_ACCOUNT_MAX) {
-			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_ALLOWED_TO_CTEATE, HttpStatus.FORBIDDEN);
+			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_ALLOWED_TO_CREATE, HttpStatus.FORBIDDEN);
 		}
 
 		// create investment account

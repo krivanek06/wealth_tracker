@@ -68,8 +68,6 @@ export class InvestmentAccountComponent implements OnInit {
 
 	isInvestmentAccountNonEmpty$!: Observable<boolean>;
 
-	private investmentId!: string;
-
 	constructor(
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
 		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
@@ -116,9 +114,6 @@ export class InvestmentAccountComponent implements OnInit {
 
 	onCashChangeClick(): void {
 		this.dialog.open(InvestmentAccountCashChangeComponent, {
-			data: {
-				investmentId: this.investmentId,
-			},
 			panelClass: ['g-mat-dialog-small'],
 		});
 	}
@@ -126,7 +121,6 @@ export class InvestmentAccountComponent implements OnInit {
 	onAddHolding(activeHolding?: InvestmentAccountActiveHoldingOutputFragment): void {
 		this.dialog.open(InvestmentAccountHoldingComponent, {
 			data: {
-				investmentId: this.investmentId,
 				activeHolding: activeHolding,
 			},
 			panelClass: ['g-mat-dialog-big'],
@@ -135,9 +129,6 @@ export class InvestmentAccountComponent implements OnInit {
 
 	onShowHisotry(): void {
 		this.dialog.open(InvestmentAccountTransactionsComponent, {
-			data: {
-				investmentId: this.investmentId,
-			},
 			panelClass: ['g-mat-dialog-big'],
 			minHeight: '50vh',
 		});

@@ -25,11 +25,11 @@ export class InvestmentAccountPortfolioGrowthComponent implements OnInit {
 
 	displayFullChart = false;
 
-	private sliceStart = -300;
+	readonly sliceStart = 300;
 	constructor(private dialog: MatDialog) {}
 
 	ngOnInit(): void {
-		this.displayedInvestmentAccountGrowth = this.investmentAccountGrowth.slice(this.sliceStart);
+		this.displayedInvestmentAccountGrowth = this.investmentAccountGrowth.slice(-this.sliceStart);
 	}
 
 	onAssetShowClick(): void {

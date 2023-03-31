@@ -15,8 +15,9 @@ export class InvestmentAccountPortfolioGrowthActionComponent {
 	@Output() assetShowClickEmitter = new EventEmitter<void>();
 	@Output() fullChartShowClickEmitter = new EventEmitter<void>();
 
-	@Input() startDate!: string;
-	@Input() endDate!: string;
+	@Input() showFullChartButton!: boolean;
+	@Input() startDate!: number;
+	@Input() endDate!: number;
 
 	onAssetShowClick() {
 		this.assetShowClickEmitter.emit();

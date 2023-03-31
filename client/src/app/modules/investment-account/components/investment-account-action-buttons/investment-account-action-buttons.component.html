@@ -1,7 +1,7 @@
 <div class="justify-between c-wrapper md:px-4">
 	<div [formGroup]="formGroup" class="order-2 md:order-1">
 		<!-- sector filter -->
-		<div *ngIf="isAccountNonEmpty" class="md:min-w-[350px]">
+		<div class="md:min-w-[350px]">
 			<app-form-mat-input-wrapper
 				[inputSource]="sectorAllocationInputSource"
 				class="w-full"
@@ -27,7 +27,6 @@
 
 		<!-- show transactions -->
 		<button
-			*ngIf="isAccountNonEmpty"
 			(click)="onShowHistoryClick()"
 			mat-stroked-button
 			type="button"

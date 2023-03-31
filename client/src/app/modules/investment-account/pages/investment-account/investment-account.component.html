@@ -1,22 +1,22 @@
 <!-- account state -->
 <ng-container *ngIf="investmentAccount$ | async as investmentAccount; else pageSkeleton">
-	<ng-container *ngIf="investmentAccountGrowth$ | async as investmentAccountGrowth; else pageSkeleton">
-		<div class="w-full px-2 mx-auto mb-4 md:w-10/12">
-			<app-investment-account-state
-				(cashChangeClickEmitter)="onCashChangeClick()"
-				(addHoldingClickEmitter)="onAddHolding()"
-				[investmentAccount]="investmentAccount"
-			></app-investment-account-state>
-		</div>
+	<div class="w-full px-2 mx-auto mb-4 md:w-10/12">
+		<app-investment-account-state
+			(cashChangeClickEmitter)="onCashChangeClick()"
+			(addHoldingClickEmitter)="onAddHolding()"
+			[investmentAccount]="investmentAccount"
+		></app-investment-account-state>
+	</div>
 
+	<ng-container>
 		<!-- portfolio change chart -->
 		<app-investment-account-portfolio-growth
+			*ngIf="investmentAccountGrowth$ | async as investmentAccountGrowth; else portfolioChartSkeleton"
 			[investmentAccountGrowth]="investmentAccountGrowth"
 		></app-investment-account-portfolio-growth>
 
 		<!-- period change -->
 		<div
-			*ngIf="isInvestmentAccountNonEmpty$ | async"
 			class="grid grid-cols-1 gap-4 p-4 mt-6 md:mb-10 sm:grid-cols-2 md:grid-cols-3 xl:flex xl:justify-around sm:max-xl:pl-14"
 		>
 			<app-investment-account-period-change
@@ -26,7 +26,7 @@
 		</div>
 
 		<!-- allocation charts -->
-		<div *ngIf="isInvestmentAccountNonEmpty$ | async" class="grid gap-4 mb-6 lg:grid-cols-2 overflow-x-clip">
+		<div class="grid gap-4 mb-6 lg:grid-cols-2 overflow-x-clip">
 			<!-- sector allocation chart -->
 			<app-pie-chart class="hidden scale-125 lg:block" [series]="sectorAllocationChart$ | async"></app-pie-chart>
 
@@ -38,14 +38,12 @@
 		<app-investment-account-action-buttons
 			[sectorAllocationInputSource]="sectorAllocationInputSource$ | async"
 			[formControl]="sectorFormControl"
-			[isAccountNonEmpty]="isInvestmentAccountNonEmpty$ | async"
 			(addEmitter)="onAddHolding()"
 			(showHistoryEmitter)="onShowHisotry()"
 		></app-investment-account-action-buttons>
 
 		<!-- active investments table -->
 		<app-investment-account-active-holdings-table
-			*ngIf="isInvestmentAccountNonEmpty$ | async"
 			(holdingClickedEmitter)="onAddHolding($event)"
 			[totalInvestedAmount]="totalInvestedAmount$ | async"
 			[activeHoldings]="filteredActiveHoldings$ | async"
@@ -53,6 +51,12 @@
 	</ng-container>
 </ng-container>
 
+<!-- skeleton -->
 <ng-template #pageSkeleton>
 	<app-investment-account-skeleton></app-investment-account-skeleton>
+</ng-template>
+
+<!-- portfolio chart skeleton -->
+<ng-template #portfolioChartSkeleton>
+	<div class="h-[550px] g-skeleton"></div>
 </ng-template>

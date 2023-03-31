@@ -123,7 +123,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		private assetApiService: AssetApiService,
 		private dialogRef: MatDialogRef<InvestmentAccountHoldingComponent>,
 		@Inject(MAT_DIALOG_DATA)
-		public data: { investmentId: string; activeHolding?: InvestmentAccountActiveHoldingOutputFragment }
+		public data: { activeHolding?: InvestmentAccountActiveHoldingOutputFragment }
 	) {}
 	ngAfterViewInit(): void {
 		// load values for selected asset
@@ -146,6 +146,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 			)
 		);
 
+		// loading historical data
 		this.assetHistoricalData$ = combineLatest([
 			this.formSymbol.valueChanges.pipe(startWith(this.formSymbol.value)),
 			this.formDate.valueChanges.pipe(startWith(this.formDate.value)),

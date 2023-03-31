@@ -1,5 +1,7 @@
-<div class="mt-3 -mb-3">
+<div class="mt-3 mb-1">
 	<app-investment-account-portfolio-growth-action
+		*ngIf="displayedInvestmentAccountGrowth.length > 1"
+		[showFullChartButton]="displayedInvestmentAccountGrowth.length > sliceStart"
 		[startDate]="investmentAccountGrowth[0].date"
 		[endDate]="investmentAccountGrowth[investmentAccountGrowth.length - 1].date"
 		(assetShowClickEmitter)="onAssetShowClick()"

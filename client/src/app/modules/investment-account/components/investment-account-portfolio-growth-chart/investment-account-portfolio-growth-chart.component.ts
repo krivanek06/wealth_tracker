@@ -64,7 +64,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 		invested: number[][];
 		ownedAssets: number[][];
 	} {
-		const invested = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.invested]);
+		const invested = data.map((point) => [point.date, point.invested]);
 
 		// create points where owned symbol changed
 		const ownedAssets = data
@@ -80,8 +80,8 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 
 				return [...acc, curr];
 			}, [] as InvestmentAccountGrowth[])
-			.filter((d) => d.ownedAssets !== 0)
-			.map((d) => [Date.parse(d.date), d.ownedAssets]);
+			//.filter((d) => d.ownedAssets !== 0)
+			.map((d) => [d.date, d.ownedAssets]);
 
 		return { invested, ownedAssets };
 	}
@@ -202,11 +202,12 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 				pointFormatter: function () {
 					const that = this as any;
 					const value = GeneralFunctionUtil.formatLargeNumber(that.y);
+
 					const name = that.series.name.toLowerCase();
 					const isCurrency = ['cash', 'invested'].includes(name);
 
 					const displayTextName = isCurrency ? `${name}` : `${that.series.name}`;
-					const displayTextValue = isCurrency ? `$${value}` : value;
+					const displayTextValue = that.y === 0 ? '$0' : isCurrency ? `$${value}` : value;
 
 					return `<p><span style="color: ${that.series.color}; font-weight: bold" class="capitalize">● ${displayTextName}: </span><span>${displayTextValue}</span></p><br/>`;
 				},
@@ -255,50 +256,6 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 					name: 'Invested',
 					data: invested,
 				},
-				// {
-				// 	color: '#6b00fa',
-				// 	type: 'area',
-				// 	yAxis: 0,
-				// 	opacity: 1,
-				// 	zIndex: 2,
-				// 	visible: !isMobileView,
-				// 	fillColor: {
-				// 		linearGradient: {
-				// 			x1: 1,
-				// 			y1: 0,
-				// 			x2: 0,
-				// 			y2: 1,
-				// 		},
-				// 		stops: [
-				// 			[0, '#7666fa'],
-				// 			[1, 'transparent'],
-				// 		],
-				// 	},
-				// 	name: 'Invested',
-				// 	data: invested,
-				// },
-				// {
-				// 	color: '#f24f18',
-				// 	type: 'area',
-				// 	visible: !isMobileView,
-				// 	opacity: 0.6,
-				// 	yAxis: 1,
-				// 	zIndex: 1,
-				// 	name: 'Cash',
-				// 	data: cash,
-				// 	fillColor: {
-				// 		linearGradient: {
-				// 			x1: 1,
-				// 			y1: 0,
-				// 			x2: 0,
-				// 			y2: 1,
-				// 		},
-				// 		stops: [
-				// 			[0, '#f24f18'],
-				// 			[1, 'transparent'],
-				// 		],
-				// 	},
-				// },
 			],
 		};
 	}

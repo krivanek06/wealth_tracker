@@ -60,14 +60,15 @@ export class InvestmentAccountService {
 		// investedGrowth -> array of {date, calculation} - where calculation is the reduced total invested amount on that date
 		const investedGrowth = historicalPrices.map((d) => {
 			const holdingHistory = filteredHoldings.find((h) => h.assetId === d.id).holdingHistory ?? [];
-			let holdingIndex = -1; // increase holdingCurrentIndex if holdingHistory[holdingCurrentIndex].date is same as price.date
-			let unitsAccumulated = holdingHistory[holdingIndex]?.units ?? 0; // keep track of units by BUY/SELL operation
+			let holdingIndex = 0; // increase holdingCurrentIndex if holdingHistory[holdingCurrentIndex].date is same as price.date
+			let unitsAccumulated = 0; // keep track of units by BUY/SELL operation
 
 			// store asset.units * price.close
 			const assetGrowthCalculation = d.assetHistoricalPricesData.map((price) => {
-				if (price.date === holdingHistory[holdingIndex + 1]?.date) {
-					holdingIndex += 1;
+				// can be multiple entries for the same date
+				while (price.date === holdingHistory[holdingIndex]?.date) {
 					const tmp = holdingHistory[holdingIndex];
+					holdingIndex += 1;
 					unitsAccumulated += tmp.type === 'BUY' ? tmp.units : -tmp.units;
 				}
 
@@ -112,7 +113,7 @@ export class InvestmentAccountService {
 				// if elementIndex exists, add value to it
 				if (elementIndex > -1) {
 					acc[elementIndex].invested += calculation;
-					acc[elementIndex].ownedAssets += 1;
+					acc[elementIndex].ownedAssets += calculation > 0 ? 1 : 0;
 					return;
 				}
 
@@ -121,11 +122,11 @@ export class InvestmentAccountService {
 					acc = [{ date: date, invested: calculation, ownedAssets: 1 }, ...acc]; // append element to the start
 				} else if (date > acc[acc.length - 1].date) {
 					// data in array
-					acc = [...acc, { date: date, invested: calculation, ownedAssets: 1 }]; // append element to the end
+					acc = [...acc, { date: date, invested: calculation, ownedAssets: calculation > 0 ? 1 : 0 }]; // append element to the end
 				} else {
 					// append somewhere middle, find first larger date
 					const appendIndex = acc.findIndex((d) => date < d.date);
-					acc.splice(appendIndex, 0, { date: date, invested: calculation, ownedAssets: 1 });
+					acc.splice(appendIndex, 0, { date: date, invested: calculation, ownedAssets: 0 });
 				}
 			});
 

@@ -45,12 +45,17 @@ export class InvestmentAccountApiService {
 
 	getInvestmentAccountGrowth(): Observable<InvestmentAccountGrowth[]> {
 		return this.getInvestmentAccountGrowthGQL
-			.watch({
-				input: {
-					sectors: [],
+			.fetch(
+				{
+					input: {
+						sectors: [],
+					},
 				},
-			})
-			.valueChanges.pipe(map((res) => res.data.getInvestmentAccountGrowth));
+				{
+					fetchPolicy: 'network-only',
+				}
+			)
+			.pipe(map((res) => res.data.getInvestmentAccountGrowth));
 	}
 
 	getTransactionHistory(): Observable<InvestmentAccountTransactionOutput[]> {

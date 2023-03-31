@@ -6,6 +6,7 @@ import {
 	InvestmentAccountPortfolioGrowthActionComponent,
 	InvestmentAccountPortfolioGrowthChartComponent,
 } from '../../components';
+import { InvestmentAccountGrowthAssetsComponent } from '../../modals';
 
 @Component({
 	selector: 'app-investment-account-portfolio-growth',
@@ -14,6 +15,7 @@ import {
 		CommonModule,
 		InvestmentAccountPortfolioGrowthActionComponent,
 		InvestmentAccountPortfolioGrowthChartComponent,
+		InvestmentAccountGrowthAssetsComponent,
 	],
 	templateUrl: './investment-account-portfolio-growth.component.html',
 	styleUrls: ['./investment-account-portfolio-growth.component.scss'],
@@ -33,13 +35,9 @@ export class InvestmentAccountPortfolioGrowthComponent implements OnInit {
 	}
 
 	onAssetShowClick(): void {
-		// this.dialog.open(InvestmentAccountAssetComponent, {
-		// 	data: {
-		// 		investmentId: this.investmentId,
-		// 	},
-		// 	panelClass: ['g-mat-dialog-big'],
-		// 	minHeight: '50vh',
-		// });
+		this.dialog.open(InvestmentAccountGrowthAssetsComponent, {
+			panelClass: ['g-mat-dialog-big'],
+		});
 	}
 
 	onFullChartToggle(): void {

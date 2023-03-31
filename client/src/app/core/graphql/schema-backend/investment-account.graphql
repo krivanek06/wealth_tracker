@@ -12,6 +12,12 @@ query GetInvestmentAccountGrowth($input: InvestmentAccountGrowthInput!) {
 	}
 }
 
+query getInvestmentAccountGrowthAssets {
+	getInvestmentAccountGrowthAssets(input: {}) {
+		...ChartSeries
+	}
+}
+
 mutation CreateInvestmentAccount {
 	createInvestmentAccount {
 		...InvestmentAccountOverview

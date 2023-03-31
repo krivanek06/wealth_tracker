@@ -791,6 +791,8 @@ export type GetAssetGeneralHistoricalPricesDataOnDateQueryVariables = Exact<{
 
 export type GetAssetGeneralHistoricalPricesDataOnDateQuery = { __typename?: 'Query', getAssetGeneralHistoricalPricesDataOnDate: { __typename?: 'AssetGeneralHistoricalPricesData', date: string, close: number } };
 
+export type ChartSeriesFragment = { __typename?: 'ChartSeries', name: string, data: Array<Array<number>> };
+
 export type InvestmentAccountHoldingHistoryFragment = { __typename?: 'InvestmentAccountHoldingHistory', itemId: string, date: string, units: number, unitValue: number, type: InvestmentAccountHoldingHistoryType, return?: number | null, returnChange?: number | null };
 
 export type InvestmentAccountCashChangeFragment = { __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string, imageUrl: string };
@@ -818,6 +820,11 @@ export type GetInvestmentAccountGrowthQueryVariables = Exact<{
 
 
 export type GetInvestmentAccountGrowthQuery = { __typename?: 'Query', getInvestmentAccountGrowth: Array<{ __typename?: 'InvestmentAccountGrowth', invested: number, date: number, ownedAssets: number }> };
+
+export type GetInvestmentAccountGrowthAssetsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetInvestmentAccountGrowthAssetsQuery = { __typename?: 'Query', getInvestmentAccountGrowthAssets: Array<{ __typename?: 'ChartSeries', name: string, data: Array<Array<number>> }> };
 
 export type CreateInvestmentAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1012,6 +1019,12 @@ export const AssetGeneralHistoricalPricesFragmentDoc = gql`
   }
 }
     ${AssetGeneralHistoricalPricesDataFragmentDoc}`;
+export const ChartSeriesFragmentDoc = gql`
+    fragment ChartSeries on ChartSeries {
+  name
+  data
+}
+    `;
 export const InvestmentAccountHoldingHistoryFragmentDoc = gql`
     fragment InvestmentAccountHoldingHistory on InvestmentAccountHoldingHistory {
   itemId
@@ -1369,6 +1382,24 @@ export const GetInvestmentAccountGrowthDocument = gql`
   })
   export class GetInvestmentAccountGrowthGQL extends Apollo.Query<GetInvestmentAccountGrowthQuery, GetInvestmentAccountGrowthQueryVariables> {
     override document = GetInvestmentAccountGrowthDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetInvestmentAccountGrowthAssetsDocument = gql`
+    query getInvestmentAccountGrowthAssets {
+  getInvestmentAccountGrowthAssets(input: {}) {
+    ...ChartSeries
+  }
+}
+    ${ChartSeriesFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetInvestmentAccountGrowthAssetsGQL extends Apollo.Query<GetInvestmentAccountGrowthAssetsQuery, GetInvestmentAccountGrowthAssetsQueryVariables> {
+    override document = GetInvestmentAccountGrowthAssetsDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -1,1 +1,24 @@
-<p>investment-account-growth-assets works!</p>
+<h2 class="text-xl text-wt-primary-dark text-center">Growth Asset Chart</h2>
+
+<mat-dialog-content>
+	<highcharts-chart
+		*ngIf="displayChart; else showSkeleton"
+		[Highcharts]="Highcharts"
+		[options]="chartOptions"
+		[callbackFunction]="chartCallback"
+		style="width: 100%; display: block"
+		[style.height.px]="550"
+	>
+	</highcharts-chart>
+
+	<!-- skeleton -->
+	<ng-template #showSkeleton>
+		<div class="h-[550px] g-skeleton"></div>
+	</ng-template>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+	<div class="g-mat-dialog-actions-end">
+		<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
+	</div>
+</mat-dialog-actions>

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
 import { filter, map, Observable } from 'rxjs';
 import {
+	ChartSeriesFragment,
 	CreateInvestmentAccountHoldingMutation,
 	CreateInvestmentAccountMutation,
 	DeleteInvestmentAccountHoldingMutation,
@@ -94,6 +95,10 @@ export class InvestmentAccountFacadeApiService {
 
 	getInvestmentAccountGrowth(): Observable<InvestmentAccountGrowth[]> {
 		return this.investmentAccountApiService.getInvestmentAccountGrowth();
+	}
+
+	getInvestmentAccountGrowthAssets(): Observable<ChartSeriesFragment[]> {
+		return this.investmentAccountApiService.getInvestmentAccountGrowthAssets();
 	}
 
 	getTransactionHistory(): Observable<InvestmentAccountTransactionOutput[]> {

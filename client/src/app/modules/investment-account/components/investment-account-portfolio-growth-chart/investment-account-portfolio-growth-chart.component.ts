@@ -138,7 +138,6 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 				visible: true,
 				crosshair: true,
 				type: 'datetime',
-				// categories: data.map((d) => d.date),
 				labels: {
 					rotation: -20,
 					style: {
@@ -204,12 +203,9 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 					const value = GeneralFunctionUtil.formatLargeNumber(that.y);
 
 					const name = that.series.name.toLowerCase();
-					const isCurrency = ['cash', 'invested'].includes(name);
+					const displayTextValue = that.y === 0 ? '$0' : `$${value}`;
 
-					const displayTextName = isCurrency ? `${name}` : `${that.series.name}`;
-					const displayTextValue = that.y === 0 ? '$0' : isCurrency ? `$${value}` : value;
-
-					return `<p><span style="color: ${that.series.color}; font-weight: bold" class="capitalize">● ${displayTextName}: </span><span>${displayTextValue}</span></p><br/>`;
+					return `<p><span style="color: ${that.series.color}; font-weight: bold" class="capitalize">● ${name}: </span><span>${displayTextValue}</span></p><br/>`;
 				},
 			},
 			plotOptions: {

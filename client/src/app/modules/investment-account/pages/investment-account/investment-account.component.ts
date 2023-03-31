@@ -93,7 +93,6 @@ export class InvestmentAccountComponent implements OnInit {
 				)
 			)
 		);
-		this.investmentAccountGrowth$.subscribe((res) => console.log(res));
 
 		this.filteredActiveHoldings$ = combineLatest([
 			this.investmentAccount$,

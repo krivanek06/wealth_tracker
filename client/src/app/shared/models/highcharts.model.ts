@@ -33,3 +33,21 @@ export interface GenericChartSeriesData {
 	color?: string;
 	custom?: any;
 }
+
+export const ChartGenericColors = [
+	'#7712aa',
+	'#126baa',
+	'#12aaaa',
+	'#12aa6b',
+	'#38aa12',
+	'#122baa',
+	'#3812aa',
+	'#77aa12',
+	'#17d4d4',
+	'#095555',
+	'#aa6d12',
+] as const;
+
+export const getChartGenericColor = (index: number) => {
+	return ChartGenericColors[index % ChartGenericColors.length];
+};

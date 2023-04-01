@@ -39,17 +39,15 @@ export class InvestmentAccountHoldingService {
 					const account = this.investmentAccountCacheService.getInvestmentAccountDetails();
 					const holdingIndex = account.activeHoldings.findIndex((d) => d.assetId === holdingOutput.assetId);
 
-					// if sell I may reduce or completely sell every holding
 					if (input.type === InvestmentAccountHoldingHistoryType.Sell) {
+						// if sell I may reduce or completely sell every holding
 						const activeHoldings =
 							holdingOutput.units !== 0
 								? account.activeHoldings.map((d) => (d.assetId === holdingOutput.assetId ? holdingOutput : d))
 								: account.activeHoldings.filter((d) => d.id !== holdingOutput.id);
 						this.investmentAccountCacheService.updateInvestmentAccountDetails({ ...account, activeHoldings });
-					}
-
-					// if buy then symbol may or may not be in my active holdings
-					else if (input.type === InvestmentAccountHoldingHistoryType.Buy) {
+					} else {
+						// if buy then symbol may or may not be in my active holdings
 						const activeHoldings =
 							holdingIndex > -1
 								? account.activeHoldings.map((d) => (d.assetId === holdingOutput.assetId ? holdingOutput : d))
@@ -78,19 +76,6 @@ export class InvestmentAccountHoldingService {
 				},
 			},
 			{
-				optimisticResponse: {
-					__typename: 'Mutation',
-					deleteInvestmentAccountHolding: {
-						__typename: 'InvestmentAccountHoldingHistory',
-						date: history.date,
-						itemId: history.itemId,
-						type: history.type,
-						units: history.units,
-						unitValue: history.unitValue,
-						return: history.return,
-						returnChange: history.returnChange,
-					},
-				},
 				update: (store: DataProxy, { data }) => {
 					const result = data?.deleteInvestmentAccountHolding as InvestmentAccountHoldingHistoryFragment;
 					const account = this.investmentAccountCacheService.getInvestmentAccountDetails();

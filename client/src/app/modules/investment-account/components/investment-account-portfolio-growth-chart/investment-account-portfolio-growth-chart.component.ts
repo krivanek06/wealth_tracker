@@ -43,6 +43,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 
 	ngOnChanges(changes: SimpleChanges): void {
 		if (changes?.['investmentAccountGrowth']?.currentValue) {
+			console.log('Changing growth chart', this.investmentAccountGrowth);
 			const isDesktop = this.breakpointObserver.isMatched(LAYOUT_SM);
 			this.initChart(this.investmentAccountGrowth ?? [], !isDesktop);
 		}

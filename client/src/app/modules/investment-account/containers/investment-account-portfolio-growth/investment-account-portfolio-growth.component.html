@@ -2,8 +2,8 @@
 	<app-investment-account-portfolio-growth-action
 		*ngIf="displayedInvestmentAccountGrowth.length > 1"
 		[showFullChartButton]="displayedInvestmentAccountGrowth.length > sliceStart"
-		[startDate]="investmentAccountGrowth[0].date"
-		[endDate]="investmentAccountGrowth[investmentAccountGrowth.length - 1].date"
+		[startDate]="displayedInvestmentAccountGrowth[0].date"
+		[endDate]="displayedInvestmentAccountGrowth[displayedInvestmentAccountGrowth.length - 1].date"
 		(assetShowClickEmitter)="onAssetShowClick()"
 		(fullChartShowClickEmitter)="onFullChartToggle()"
 	></app-investment-account-portfolio-growth-action>

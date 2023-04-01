@@ -14,7 +14,7 @@ import {
 	InvestmentAccountGrowth,
 	InvestmentAccountTransactionOutput,
 } from '../../graphql';
-import { InvestmentAccountFragmentExtended } from '../../models/investment-account.model';
+import { InvestmentAccountFragmentExtended } from '../../models';
 import { InvestmentAccountApiService } from './investment-account-api.service';
 import { InvestmentAccountHoldingService } from './investment-account-holding.service';
 

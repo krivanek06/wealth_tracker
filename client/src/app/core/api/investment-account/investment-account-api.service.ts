@@ -4,6 +4,7 @@ import { Apollo } from 'apollo-angular';
 import { map, Observable } from 'rxjs';
 import {
 	AccountType,
+	ChartSeriesFragment,
 	CreateInvestmentAccountGQL,
 	CreateInvestmentAccountMutation,
 	DeleteInvestmentAccountGQL,
@@ -11,6 +12,7 @@ import {
 	EditInvestmentAccountGQL,
 	EditInvestmentAccountMutation,
 	GetInvestmentAccountByUserGQL,
+	GetInvestmentAccountGrowthAssetsGQL,
 	GetInvestmentAccountGrowthGQL,
 	GetTransactionHistoryGQL,
 	GetTransactionSymbolsGQL,
@@ -28,6 +30,7 @@ export class InvestmentAccountApiService {
 	constructor(
 		private getInvestmentAccountByUserGQL: GetInvestmentAccountByUserGQL,
 		private getInvestmentAccountGrowthGQL: GetInvestmentAccountGrowthGQL,
+		private getInvestmentAccountGrowthAssetsGQL: GetInvestmentAccountGrowthAssetsGQL,
 		private createInvestmentAccountGQL: CreateInvestmentAccountGQL,
 		private editInvestmentAccountGQL: EditInvestmentAccountGQL,
 		private deleteInvestmentAccountGQL: DeleteInvestmentAccountGQL,
@@ -45,12 +48,29 @@ export class InvestmentAccountApiService {
 
 	getInvestmentAccountGrowth(): Observable<InvestmentAccountGrowth[]> {
 		return this.getInvestmentAccountGrowthGQL
-			.watch({
-				input: {
-					sectors: [],
+			.fetch(
+				{
+					input: {
+						sectors: [],
+					},
 				},
-			})
-			.valueChanges.pipe(map((res) => res.data.getInvestmentAccountGrowth));
+				{
+					fetchPolicy: 'network-only',
+				}
+			)
+			.pipe(map((res) => res.data.getInvestmentAccountGrowth));
+	}
+
+	// TODO: once holding added/removed -> make this invalid
+	getInvestmentAccountGrowthAssets(): Observable<ChartSeriesFragment[]> {
+		return this.getInvestmentAccountGrowthAssetsGQL
+			.fetch(
+				{},
+				{
+					fetchPolicy: 'network-only',
+				}
+			)
+			.pipe(map((res) => res.data.getInvestmentAccountGrowthAssets ?? []));
 	}
 
 	getTransactionHistory(): Observable<InvestmentAccountTransactionOutput[]> {

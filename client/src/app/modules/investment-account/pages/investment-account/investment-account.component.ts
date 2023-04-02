@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, map, Observable, startWith } from 'rxjs';
+import { combineLatest, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { InvestmentAccountFragmentExtended } from '../../../../core/models';
 
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
@@ -68,7 +68,7 @@ export class InvestmentAccountComponent implements OnInit {
 
 	isInvestmentAccountNonEmpty$!: Observable<boolean>;
 
-	private investmentId!: string;
+	loadingPortfolioGrowth = true;
 
 	constructor(
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
@@ -79,7 +79,21 @@ export class InvestmentAccountComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.investmentAccount$ = this.investmentAccountFacadeApiService.getInvestmentAccountByUser();
-		this.investmentAccountGrowth$ = this.investmentAccountFacadeApiService.getInvestmentAccountGrowth();
+		this.investmentAccountGrowth$ = this.investmentAccount$.pipe(
+			tap(() => {
+				console.log('loading growth');
+				this.loadingPortfolioGrowth = true;
+			}),
+			switchMap(() =>
+				this.investmentAccountFacadeApiService.getInvestmentAccountGrowth().pipe(
+					tap(() => {
+						console.log('done loading growth');
+						this.loadingPortfolioGrowth = false;
+					})
+				)
+			)
+		);
+
 		this.filteredActiveHoldings$ = combineLatest([
 			this.investmentAccount$,
 			this.sectorFormControl.valueChanges.pipe(startWith(this.sectorFormControl.value)),
@@ -116,9 +130,6 @@ export class InvestmentAccountComponent implements OnInit {
 
 	onCashChangeClick(): void {
 		this.dialog.open(InvestmentAccountCashChangeComponent, {
-			data: {
-				investmentId: this.investmentId,
-			},
 			panelClass: ['g-mat-dialog-small'],
 		});
 	}
@@ -126,7 +137,6 @@ export class InvestmentAccountComponent implements OnInit {
 	onAddHolding(activeHolding?: InvestmentAccountActiveHoldingOutputFragment): void {
 		this.dialog.open(InvestmentAccountHoldingComponent, {
 			data: {
-				investmentId: this.investmentId,
 				activeHolding: activeHolding,
 			},
 			panelClass: ['g-mat-dialog-big'],
@@ -135,9 +145,6 @@ export class InvestmentAccountComponent implements OnInit {
 
 	onShowHisotry(): void {
 		this.dialog.open(InvestmentAccountTransactionsComponent, {
-			data: {
-				investmentId: this.investmentId,
-			},
 			panelClass: ['g-mat-dialog-big'],
 			minHeight: '50vh',
 		});

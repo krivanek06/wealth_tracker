@@ -61,17 +61,10 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 	}
 
 	private getChartData(data: InvestmentAccountGrowth[]): {
-		balance: number[][];
-		cash: number[][];
 		invested: number[][];
 		ownedAssets: number[][];
 	} {
-		const cash = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.cash]);
-		const invested = data.filter((d) => d.invested !== 0).map((point) => [Date.parse(point.date), point.invested]);
-
-		const balance = data
-			.filter((d) => d.invested !== 0)
-			.map((point) => [Date.parse(point.date), point.cash + point.invested]);
+		const invested = data.map((point) => [point.date, point.invested]);
 
 		// create points where owned symbol changed
 		const ownedAssets = data
@@ -87,14 +80,14 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 
 				return [...acc, curr];
 			}, [] as InvestmentAccountGrowth[])
-			.filter((d) => d.ownedAssets !== 0)
-			.map((d) => [Date.parse(d.date), d.ownedAssets]);
+			//.filter((d) => d.ownedAssets !== 0)
+			.map((d) => [d.date, d.ownedAssets]);
 
-		return { balance, cash, invested, ownedAssets };
+		return { invested, ownedAssets };
 	}
 
 	private initChart(data: InvestmentAccountGrowth[], isMobileView: boolean) {
-		const { invested, cash, balance } = this.getChartData(data);
+		const { invested } = this.getChartData(data);
 
 		this.chartOptions = {
 			chart: {
@@ -145,7 +138,6 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 				visible: true,
 				crosshair: true,
 				type: 'datetime',
-				// categories: data.map((d) => d.date),
 				labels: {
 					rotation: -20,
 					style: {
@@ -157,8 +149,10 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 			title: {
 				text: '',
 				align: 'left',
+				y: 15,
+				floating: true,
 				style: {
-					color: '#bababa',
+					color: '#8e8e8e',
 					fontSize: '13px',
 				},
 			},
@@ -170,7 +164,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 				enabled: false,
 			},
 			legend: {
-				enabled: true,
+				enabled: false,
 				//floating: true,
 				verticalAlign: 'top',
 				align: 'right',
@@ -207,13 +201,11 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 				pointFormatter: function () {
 					const that = this as any;
 					const value = GeneralFunctionUtil.formatLargeNumber(that.y);
+
 					const name = that.series.name.toLowerCase();
-					const isCurrency = ['cash', 'invested'].includes(name);
+					const displayTextValue = that.y === 0 ? '$0' : `$${value}`;
 
-					const displayTextName = isCurrency ? `${name}` : `${that.series.name}`;
-					const displayTextValue = isCurrency ? `$${value}` : value;
-
-					return `<p><span style="color: ${that.series.color}; font-weight: bold" class="capitalize">● ${displayTextName}: </span><span>${displayTextValue}</span></p><br/>`;
+					return `<p><span style="color: ${that.series.color}; font-weight: bold" class="capitalize">● ${name}: </span><span>${displayTextValue}</span></p><br/>`;
 				},
 			},
 			plotOptions: {
@@ -260,50 +252,6 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 					name: 'Invested',
 					data: invested,
 				},
-				// {
-				// 	color: '#6b00fa',
-				// 	type: 'area',
-				// 	yAxis: 0,
-				// 	opacity: 1,
-				// 	zIndex: 2,
-				// 	visible: !isMobileView,
-				// 	fillColor: {
-				// 		linearGradient: {
-				// 			x1: 1,
-				// 			y1: 0,
-				// 			x2: 0,
-				// 			y2: 1,
-				// 		},
-				// 		stops: [
-				// 			[0, '#7666fa'],
-				// 			[1, 'transparent'],
-				// 		],
-				// 	},
-				// 	name: 'Invested',
-				// 	data: invested,
-				// },
-				// {
-				// 	color: '#f24f18',
-				// 	type: 'area',
-				// 	visible: !isMobileView,
-				// 	opacity: 0.6,
-				// 	yAxis: 1,
-				// 	zIndex: 1,
-				// 	name: 'Cash',
-				// 	data: cash,
-				// 	fillColor: {
-				// 		linearGradient: {
-				// 			x1: 1,
-				// 			y1: 0,
-				// 			x2: 0,
-				// 			y2: 1,
-				// 		},
-				// 		stops: [
-				// 			[0, '#f24f18'],
-				// 			[1, 'transparent'],
-				// 		],
-				// 	},
-				// },
 			],
 		};
 	}

@@ -13,3 +13,18 @@ mat-chip {
 .mat-mdc-standard-chip:not(.mdc-evolution-chip--selected) .mdc-evolution-chip__action--primary:before {
 	border: transparent !important;
 }
+
+mat-chip-option > span > button,
+mat-chip > .mat-ripple {
+	border: 2px solid var(--primary-dark) !important;
+	color: var(--primary-dark) !important;
+}
+
+mat-chip-option,
+mat-chip {
+	background-color: transparent !important;
+	cursor: pointer !important;
+}
+.mat-mdc-chip-selected {
+	background-color: var(--background-light) !important;
+}

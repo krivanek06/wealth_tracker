@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
@@ -12,8 +12,10 @@ import {
 	Observable,
 	startWith,
 	switchMap,
+	takeUntil,
 	tap,
 } from 'rxjs';
+import { componentDestroyed } from 'src/app/core/operators';
 import { AssetApiService, InvestmentAccountFacadeApiService } from '../../../../core/api';
 import {
 	AssetGeneralFragment,
@@ -42,7 +44,7 @@ import { TransactionAssetTypeInputSource } from '../../models';
 	styleUrls: ['./investment-account-holding.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit {
+export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit, OnDestroy {
 	formGroup = new FormGroup({
 		isBuying: new FormControl<boolean>(true, {
 			validators: [requiredValidator],
@@ -123,8 +125,9 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 		private assetApiService: AssetApiService,
 		private dialogRef: MatDialogRef<InvestmentAccountHoldingComponent>,
 		@Inject(MAT_DIALOG_DATA)
-		public data: { investmentId: string; activeHolding?: InvestmentAccountActiveHoldingOutputFragment }
+		public data: { activeHolding?: InvestmentAccountActiveHoldingOutputFragment }
 	) {}
+	ngOnDestroy(): void {}
 	ngAfterViewInit(): void {
 		// load values for selected asset
 		setTimeout(() => {
@@ -146,6 +149,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 			)
 		);
 
+		// loading historical data
 		this.assetHistoricalData$ = combineLatest([
 			this.formSymbol.valueChanges.pipe(startWith(this.formSymbol.value)),
 			this.formDate.valueChanges.pipe(startWith(this.formDate.value)),
@@ -206,7 +210,8 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit 
 					this.assetApiService
 						.getAssetGeneralHistoricalPricesDataOnDate(asset.id, DateServiceUtil.formatDate(date))
 						.pipe(map((res) => res.close))
-				)
+				),
+				takeUntil(componentDestroyed(this))
 			)
 			.subscribe((assetPrice) => {
 				console.log(assetPrice);

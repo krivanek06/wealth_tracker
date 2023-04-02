@@ -37,7 +37,7 @@ export interface GenericChartSeriesData {
 export const ChartGenericColors = [
 	'#7712aa',
 	'#126baa',
-	'#12aaaa',
+	'#12beaa',
 	'#12aa6b',
 	'#38aa12',
 	'#122baa',

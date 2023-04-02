@@ -64,7 +64,12 @@ export class InvestmentAccountApiService {
 	// TODO: once holding added/removed -> make this invalid
 	getInvestmentAccountGrowthAssets(): Observable<ChartSeriesFragment[]> {
 		return this.getInvestmentAccountGrowthAssetsGQL
-			.fetch()
+			.fetch(
+				{},
+				{
+					fetchPolicy: 'network-only',
+				}
+			)
 			.pipe(map((res) => res.data.getInvestmentAccountGrowthAssets ?? []));
 	}
 

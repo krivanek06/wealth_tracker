@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { InvestmentAccountGrowth } from '../../../../core/graphql';
 import {
@@ -21,7 +21,7 @@ import { InvestmentAccountGrowthAssetsComponent } from '../../modals';
 	styleUrls: ['./investment-account-portfolio-growth.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InvestmentAccountPortfolioGrowthComponent {
+export class InvestmentAccountPortfolioGrowthComponent implements OnInit {
 	@Input() set investmentAccountGrowth(data: InvestmentAccountGrowth[]) {
 		this._investmentAccountGrowth = data;
 		this.displayedInvestmentAccountGrowth = data.slice(-this.sliceStart);
@@ -33,6 +33,8 @@ export class InvestmentAccountPortfolioGrowthComponent {
 	private _investmentAccountGrowth: InvestmentAccountGrowth[] = [];
 	readonly sliceStart = 300;
 	constructor(private dialog: MatDialog) {}
+
+	ngOnInit(): void {}
 
 	onAssetShowClick(): void {
 		this.dialog.open(InvestmentAccountGrowthAssetsComponent, {

@@ -1,20 +1,32 @@
 import { Injectable } from '@angular/core';
+import { map, Observable } from 'rxjs';
 import {
 	InvestmentAccountActiveHoldingOutputFragment,
 	InvestmentAccountDetailsFragment,
 	InvestmentAccountGrowth,
 } from '../../../core/graphql';
-import { DateServiceUtil } from '../../../core/utils';
+import { DateServiceUtil, GeneralFunctionUtil } from '../../../core/utils';
 import { createGenericChartSeriesPie } from '../../../shared/functions';
 import { GenericChartSeriesPie, ValuePresentItem } from '../../../shared/models';
 import { DailyInvestmentChange, InvestmentAccountPeriodChange, PeriodChangeDate, SectorAllocation } from '../models';
+import { InvestmentAccountFacadeApiService } from './../../../core/api/investment-account/investment-account-facade-api.service';
 import { InputSource, NONE_INPUT_SOURCE } from './../../../shared/models/forms.model';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class InvestmentAccountCalculatorService {
-	constructor() {}
+	constructor(private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService) {}
+
+	getAvailableTransactionSymbolsInputSource(): Observable<InputSource[]> {
+		return this.investmentAccountFacadeApiService.getAvailableTransactionSymbols().pipe(
+			map((symbols) =>
+				symbols.map((d) => {
+					return { caption: d, value: d, image: GeneralFunctionUtil.getAssetUrl(d) } as InputSource;
+				})
+			)
+		);
+	}
 
 	/**
 	 *

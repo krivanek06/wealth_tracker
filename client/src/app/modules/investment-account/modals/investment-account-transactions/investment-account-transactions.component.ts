@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { map, Observable, tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import { InvestmentAccountTransactionOutput } from '../../../../core/graphql';
-import { GeneralFunctionUtil } from '../../../../core/utils';
 import { InputSource } from '../../../../shared/models';
+import { InvestmentAccountCalculatorService } from '../../services';
 import { DialogServiceUtil } from './../../../../shared/dialogs';
 
 // TODO - virtual scrolling if many transactions
@@ -31,18 +31,12 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 
 	constructor(
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
+		private investmentAccountCalculatorService: InvestmentAccountCalculatorService,
 		private dialogRef: MatDialogRef<InvestmentAccountTransactionsComponent>
 	) {}
 
 	ngOnInit(): void {
-		this.symbolInputSource$ = this.investmentAccountFacadeApiService.getAvailableTransactionSymbols().pipe(
-			map((symbols) =>
-				symbols.map((d) => {
-					return { caption: d, value: d, image: GeneralFunctionUtil.getAssetUrl(d) } as InputSource;
-				})
-			)
-		);
-
+		this.symbolInputSource$ = this.investmentAccountCalculatorService.getAvailableTransactionSymbolsInputSource();
 		this.transactionHistory$ = this.investmentAccountFacadeApiService.getTransactionHistory();
 	}
 

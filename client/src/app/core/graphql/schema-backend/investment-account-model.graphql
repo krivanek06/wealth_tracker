@@ -62,7 +62,6 @@ fragment InvestmentAccountDetails on InvestmentAccount {
 
 fragment InvestmentAccountGrowth on InvestmentAccountGrowth {
 	invested
-	cash
 	date
 	ownedAssets
 }

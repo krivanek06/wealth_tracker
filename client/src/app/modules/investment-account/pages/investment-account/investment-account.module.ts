@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterModule, Routes } from '@angular/router';
 import { PieChartComponent } from '../../../../shared/components';
 import { RangeDirective } from '../../../../shared/directives';
@@ -8,9 +10,9 @@ import {
 	InvestmentAccountActionButtonsComponent,
 	InvestmentAccountActiveHoldingsTableModule,
 	InvestmentAccountPeriodChangeModule,
-	InvestmentAccountPortfolioGrowthChartComponent,
 	InvestmentAccountStateComponent,
 } from '../../components';
+import { InvestmentAccountPortfolioGrowthComponent } from '../../containers';
 import {
 	InvestmentAccountCashChangeModule,
 	InvestmentAccountHoldingModule,
@@ -31,7 +33,6 @@ const routes: Routes = [
 		CommonModule,
 		InvestmentAccountActiveHoldingsTableModule,
 		InvestmentAccountStateComponent,
-		InvestmentAccountPortfolioGrowthChartComponent,
 		ReactiveFormsModule,
 		InvestmentAccountCashChangeModule,
 		InvestmentAccountTransactionsModule,
@@ -41,6 +42,9 @@ const routes: Routes = [
 		RangeDirective,
 		InvestmentAccountActionButtonsComponent,
 		PieChartComponent,
+		InvestmentAccountPortfolioGrowthComponent,
+		MatButtonModule,
+		MatIconModule,
 	],
 	exports: [InvestmentAccountComponent],
 })

@@ -1,0 +1,16 @@
+<div class="flex flex-row items-center justify-between px-3">
+	<span class="text-wt-gray-medium"
+		>{{ 'Invested: ' + (startDate | date: 'MMM d, y') + ' - ' + (endDate | date: 'MMM d, y') }}</span
+	>
+
+	<!-- action buttons -->
+	<div class="items-center gap-4 md:flex">
+		<button mat-flat-button color="primary" (click)="onAssetShowClick()">
+			<mat-icon>open_in_new</mat-icon>
+			Show Asset Chart
+		</button>
+		<button *ngIf="showFullChartButton" mat-stroked-button color="primary" (click)="onFullChartShow()">
+			Toggle Full Chart
+		</button>
+	</div>
+</div>

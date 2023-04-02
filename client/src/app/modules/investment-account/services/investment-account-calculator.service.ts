@@ -1,20 +1,32 @@
 import { Injectable } from '@angular/core';
+import { map, Observable } from 'rxjs';
 import {
 	InvestmentAccountActiveHoldingOutputFragment,
 	InvestmentAccountDetailsFragment,
 	InvestmentAccountGrowth,
 } from '../../../core/graphql';
-import { DateServiceUtil } from '../../../core/utils';
+import { DateServiceUtil, GeneralFunctionUtil } from '../../../core/utils';
 import { createGenericChartSeriesPie } from '../../../shared/functions';
 import { GenericChartSeriesPie, ValuePresentItem } from '../../../shared/models';
 import { DailyInvestmentChange, InvestmentAccountPeriodChange, PeriodChangeDate, SectorAllocation } from '../models';
+import { InvestmentAccountFacadeApiService } from './../../../core/api/investment-account/investment-account-facade-api.service';
 import { InputSource, NONE_INPUT_SOURCE } from './../../../shared/models/forms.model';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class InvestmentAccountCalculatorService {
-	constructor() {}
+	constructor(private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService) {}
+
+	getAvailableTransactionSymbolsInputSource(): Observable<InputSource[]> {
+		return this.investmentAccountFacadeApiService.getAvailableTransactionSymbols().pipe(
+			map((symbols) =>
+				symbols.map((d) => {
+					return { caption: d, value: d, image: GeneralFunctionUtil.getAssetUrl(d) } as InputSource;
+				})
+			)
+		);
+	}
 
 	/**
 	 *
@@ -170,10 +182,9 @@ export class InvestmentAccountCalculatorService {
 			if (!timeDiff) {
 				return { title: period.name, value: -1, valuePrct: -1 } as InvestmentAccountPeriodChange;
 			}
-			const timeDiffValue = timeDiff.cash + timeDiff.invested;
 
-			const value = todayBalance - timeDiffValue;
-			const valuePrct = (todayBalance - timeDiffValue) / timeDiffValue;
+			const value = todayBalance - timeDiff.invested;
+			const valuePrct = (todayBalance - timeDiff.invested) / timeDiff.invested;
 
 			return { title: period.name, value, valuePrct } as InvestmentAccountPeriodChange;
 		});

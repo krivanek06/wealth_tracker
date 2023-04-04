@@ -107,7 +107,12 @@ export class InvestmentAccountService {
 				const calculation = dataElement[1];
 				const date = MomentServiceUtil.getTime(dataElement[0]);
 
-				// accumulated each assetGrowthCalculation into one investment growht number[] array
+				// ignore weekends
+				if (MomentServiceUtil.isWeekend(date)) {
+					return;
+				}
+
+				// accumulated each assetGrowthCalculation into one investment growth number[] array
 				const elementIndex = acc.findIndex((el) => el.date === date);
 
 				// if elementIndex exists, add value to it

@@ -127,6 +127,16 @@ $light-primary: mat.define-palette($custom-primary);
 $light-accent: mat.define-palette($custom-success);
 $light-warn: mat.define-palette($custom-warn);
 
+/*
+	$font-weight: 400,
+	$font-size: 1rem,
+	$line-height: 1,
+	$letter-spacing: normal,
+*/
+$custom-typography: mat.define-typography-config(
+	$font-family: 'Poppins, sans-serif',
+);
+
 // define theme
 $mat-theming-light: mat.define-light-theme(
 	(
@@ -135,16 +145,10 @@ $mat-theming-light: mat.define-light-theme(
 			accent: $light-accent,
 			warn: $light-warn,
 		),
+		typography: $custom-typography,
 	)
 );
 
-$custom-typography: mat.define-typography-level(
-	$font-family: Pippins,
-	$font-weight: 400,
-	$font-size: 1rem,
-	$line-height: 1,
-	$letter-spacing: normal,
-);
-
 @include mat.core();
+@include mat.typography-hierarchy($custom-typography);
 @include mat.all-component-themes($mat-theming-light);

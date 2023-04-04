@@ -2,17 +2,17 @@
 	display: block;
 
 	.c-wrapper {
-		@apply flex flex-row items-center max-md:text-center max-md:justify-between md:flex-col;
+		@apply flex flex-row items-center max-lg:text-center max-lg:justify-between lg:flex-col;
 
 		.c-title {
-			@apply text-wt-gray-dark text-base;
+			@apply text-wt-gray-dark text-base capitalize;
 		}
 
 		.c-body {
 			@apply flex gap-2 items-center;
 
 			.c-body-value {
-				@apply text-lg md:text-2xl text-wt-gray-light;
+				@apply text-lg lg:text-2xl text-wt-gray-light;
 			}
 		}
 	}

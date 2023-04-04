@@ -175,6 +175,7 @@ export class InvestmentAccountCalculatorService {
 		// calculate today ballance from active symbols
 		const todayBalance = activeHoldings.reduce((acc, curr) => acc + curr.units * curr.assetGeneral.assetQuote.price, 0);
 
+		// map period change data based on accountGrowthData
 		const result = PeriodChangeDate.map((period) => {
 			const timeDiff = reveresData.find(
 				(d) => DateServiceUtil.differenceInBusinessDays(today, d.date) >= period.value - 1

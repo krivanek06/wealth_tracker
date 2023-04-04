@@ -172,6 +172,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit,
 									? res.assetHistoricalPricesData.map((d) => [new Date(d.date).getTime(), d.close] as [number, number])
 									: [],
 								name: `Historical Price ${asset.id}`,
+								color: '#12aaaa',
 							};
 
 							return result;

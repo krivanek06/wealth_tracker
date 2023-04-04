@@ -26,8 +26,6 @@ export class InvestmentAccountStateComponent implements OnInit {
 		this.currentInvestedAmout =
 			this.investmentAccountCalculatorService.getInvestmentAccountByIdCurrentInvestedAmout(account);
 
-		this.cashAmount = account.currentCash;
-
 		this.dailyInvestmentChange = this.investmentAccountCalculatorService.getDailyInvestmentChange(account);
 
 		this.totalInvestedAmount =
@@ -43,8 +41,6 @@ export class InvestmentAccountStateComponent implements OnInit {
 	 * Current state of investments -> holding.price * units
 	 */
 	currentInvestedAmout!: number;
-
-	cashAmount!: number;
 
 	/**
 	 * Daily sum and percentage change for investment account

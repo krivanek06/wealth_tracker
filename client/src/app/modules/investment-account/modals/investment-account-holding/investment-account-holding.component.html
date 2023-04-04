@@ -11,7 +11,9 @@
 </div>
 
 <div *ngIf="formGroup.controls.symbol.value" class="flex items-center justify-between px-2 lg:mb-4">
-	<div class="text-lg">Owned units: {{ this.data.activeHolding?.units ?? 0 }}</div>
+	<div class="text-xl">
+		<span class="text-wt-primary-dark">Owned units: </span>{{ this.data.activeHolding?.units ?? 0 }}
+	</div>
 	<button mat-stroked-button type="button" (click)="onTransactionShow()" class="w-full lg:w-auto g-button-size-lg">
 		<mat-icon>visibility</mat-icon>
 		Show Previous Transactions

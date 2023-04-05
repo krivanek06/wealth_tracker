@@ -172,7 +172,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			date: combinedDate.toString(),
 			value: Number(valueValue),
 			tagId: tagValue,
-			description: description,
+			description: description ?? '',
 		};
 
 		return dailyEntry;

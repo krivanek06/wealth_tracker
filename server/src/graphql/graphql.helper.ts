@@ -12,10 +12,10 @@ export class GraphQLHelper {
 			fieldResolverEnhancers: ['filters'],
 			cache: 'bounded',
 			autoSchemaFile: true,
-			cors: {
-				credentials: true,
-				origin: true,
-			},
+			// cors: {
+			// 	credentials: true,
+			// 	origin: true,
+			// },
 			subscriptions: {
 				'subscriptions-transport-ws': {
 					onConnect: (context: any) => {

@@ -3,7 +3,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 //import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import * as jwt from 'jsonwebtoken';
-import { RequestUser, RequestUserInt, REQ_USER_PROPERTY } from '../authentication.dto';
+import { REQ_USER_PROPERTY, RequestUser, RequestUserInt } from '../authentication.dto';
 
 @Injectable()
 export class AuthorizationGuard extends AuthGuard('jwt') {
@@ -45,7 +45,7 @@ export class AuthorizationGuard extends AuthGuard('jwt') {
 
 		try {
 			const token = auth.split(' ')[1];
-			const decoded = jwt.decode(token); // this.jwtService.decode(token); //
+			const decoded = jwt.decode(token);
 			return decoded as RequestUserInt;
 		} catch (err) {
 			console.log(err);

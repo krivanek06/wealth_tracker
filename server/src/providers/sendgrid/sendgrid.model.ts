@@ -1,7 +1,8 @@
 import SendGrid from '@sendgrid/mail';
+import { SENDGRID_EMAIL_ADDRESS } from '../../environments';
 
 export class MailConstructor {
-	static readonly senderEmail: string = process.env.SENDGRID_EMAIL_ADDRESS;
+	static readonly senderEmail: string = SENDGRID_EMAIL_ADDRESS;
 
 	static changedPasswordEmail(email: string, password: string): SendGrid.MailDataRequired {
 		const mail = {

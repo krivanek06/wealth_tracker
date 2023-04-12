@@ -24,6 +24,12 @@ async function bootstrap() {
 	);
 	app.use(passport.initialize());
 	app.use(passport.session());
-	await app.listen(3000);
+
+	// check if the port is set in the environment variables
+	const port = process.env.PORT ?? 8080;
+
+	await app.listen(port, () => {
+		console.log(`Server running on port ${port}`);
+	});
 }
 bootstrap();

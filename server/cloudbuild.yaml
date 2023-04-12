@@ -1,0 +1,28 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/wealth-tracker-364707/spend_mindful_graphql ', './server']
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/wealth-tracker-364707/spend_mindful_graphql ']
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      [
+        'run',
+        'deploy',
+        'spend-mindful-graphql',
+        '--image',
+        'gcr.io/wealth-tracker-364707/spend_mindful_graphql ',
+        '--region',
+        'europe-central2',
+        '--platform',
+        'managed',
+        '--port',
+        '8080',
+        '--max-instances',
+        '1',
+      ]
+images:
+  - gcr.io/wealth-tracker-364707/spend_mindful_graphql

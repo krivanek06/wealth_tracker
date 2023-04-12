@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthenticationType, User as UserClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { Profile } from 'passport-google-oauth20';
+import { JWT_SECRET } from '../environments';
 import { PrismaService } from '../prisma';
 import { MailConstructor, SendGridService } from '../providers/sendgrid';
 import { RequestUser } from './authentication.dto';
@@ -133,7 +134,7 @@ export class AuthenticationService {
 
 	private generateJwt(userClient: RequestUser): string {
 		return this.jwtService.sign(userClient, {
-			secret: process.env.JWT_SECRET,
+			secret: JWT_SECRET,
 		});
 	}
 

@@ -1,6 +1,7 @@
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { IncomingMessage } from 'http';
 import { Profile } from 'passport-google-oauth20';
+import { LOGIN_REDIRECT } from '../environments';
 import { AuthenticationService } from './authentication.service';
 import { AuthenticationGoogleGuard } from './guards';
 import { AUTHENTICATION_PROVIDERS } from './inputs';
@@ -24,6 +25,6 @@ export class AuthenticationController {
 			provider: AUTHENTICATION_PROVIDERS.GOOGLE,
 		});
 		const userOutput = this.authenticationService.prepareLoggedUserOutput(user);
-		res.redirect(`${process.env.LOGIN_REDIRECT}?accessToken=${userOutput.accessToken}`);
+		res.redirect(`${LOGIN_REDIRECT}?accessToken=${userOutput.accessToken}`);
 	}
 }

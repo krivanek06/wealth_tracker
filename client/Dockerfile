@@ -1,7 +1,5 @@
 FROM node:16 as build
 
-# -alpine3.16
-
 WORKDIR /app
 COPY ./package*.json ./
 

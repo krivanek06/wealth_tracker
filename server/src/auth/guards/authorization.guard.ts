@@ -1,11 +1,16 @@
 import { ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+//import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import * as jwt from 'jsonwebtoken';
-import { RequestUser, RequestUserInt, REQ_USER_PROPERTY } from '../authentication.dto';
+import { REQ_USER_PROPERTY, RequestUser, RequestUserInt } from '../authentication.dto';
 
 @Injectable()
 export class AuthorizationGuard extends AuthGuard('jwt') {
+	// constructor(private readonly jwtService: JwtService) {
+	// 	super();
+	// }
+
 	canActivate(context: ExecutionContext): boolean | Promise<boolean> {
 		const ctx = GqlExecutionContext.create(context).getContext();
 		// console.log('ctx', ctx.req?.headers);
@@ -37,11 +42,13 @@ export class AuthorizationGuard extends AuthGuard('jwt') {
 		if (auth.split(' ')[0] !== 'Bearer') {
 			throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
 		}
+
 		try {
 			const token = auth.split(' ')[1];
 			const decoded = jwt.decode(token);
 			return decoded as RequestUserInt;
 		} catch (err) {
+			console.log(err);
 			throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
 		}
 	}

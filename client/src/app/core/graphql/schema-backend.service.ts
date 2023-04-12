@@ -109,7 +109,7 @@ export type AssetGeneralQuote = {
 };
 
 export type AssetGeneralSearchInput = {
-  isCrypto?: InputMaybe<Scalars['Boolean']>;
+  isCrypto?: Scalars['Boolean'];
   symbolPrefix: Scalars['String'];
 };
 
@@ -312,13 +312,13 @@ export enum InvestmentAccountHoldingType {
 
 export type InvestmentAccountTransactionInput = {
   /** Include symbols IDs for filtering, if empty, show all */
-  filterSymbols?: InputMaybe<Array<Scalars['String']>>;
+  filterSymbols?: Array<Scalars['String']>;
   /** Put false if only SELL operation to get */
-  includeBuyOperation?: InputMaybe<Scalars['Boolean']>;
-  offset?: InputMaybe<Scalars['Int']>;
+  includeBuyOperation?: Scalars['Boolean'];
+  offset?: Scalars['Int'];
   /** Put false to order DESC */
-  orderAsc?: InputMaybe<Scalars['Boolean']>;
-  orderType?: InputMaybe<InvestmentAccountTransactionInputOrderType>;
+  orderAsc?: Scalars['Boolean'];
+  orderType?: InvestmentAccountTransactionInputOrderType;
 };
 
 export enum InvestmentAccountTransactionInputOrderType {
@@ -497,7 +497,7 @@ export type PersonalAccountDailyDataCreate = {
   /** Date (past, current, future) to which assign this entry. Timezone difference for current date */
   date: Scalars['String'];
   /** Description to daily data */
-  description?: InputMaybe<Scalars['String']>;
+  description?: Scalars['String'];
   /** Which tag to associate this entry */
   tagId: Scalars['String'];
   /** How much value (amount) shall be added to the account */
@@ -592,7 +592,7 @@ export type PersonalAccountTag = {
 };
 
 export type PersonalAccountTagDataCreate = {
-  budgetMonthly?: InputMaybe<Scalars['Float']>;
+  budgetMonthly: Scalars['Float'];
   color: Scalars['String'];
   imageUrl: Scalars['String'];
   name: Scalars['String'];
@@ -605,7 +605,7 @@ export type PersonalAccountTagDataDelete = {
 };
 
 export type PersonalAccountTagDataEdit = {
-  budgetMonthly?: InputMaybe<Scalars['Float']>;
+  budgetMonthly: Scalars['Float'];
   color: Scalars['String'];
   id: Scalars['String'];
   imageUrl: Scalars['String'];

@@ -1,4 +1,4 @@
-FROM node:14 AS builder
+FROM node:16 AS builder
 
 # Create app directory
 WORKDIR /app
@@ -7,29 +7,30 @@ WORKDIR /app
 COPY package*.json ./
 
 # generated prisma files
-COPY prisma ./prisma/
-
-# COPY ENV variable
-COPY .env ./
-
-# COPY
-COPY . .
+COPY src/prisma ./prisma/
 
 # Install app dependencies
 RUN yarn install
 
+# COPY
+COPY ./ ./
+
 # Run prisma 
 RUN npx prisma generate
 
-
-
+# Build app
 RUN yarn run build
 
-FROM node:14
+# Set Environment Variable
+ENV NODE_ENV production
+ENV PORT 8080
+
+FROM node:16
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
 
-EXPOSE 3000
-CMD [ "yarn", "run", "start:prod" ]
+EXPOSE 8080
+
+CMD [ "yarn", "run", "start:docker" ]

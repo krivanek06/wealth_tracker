@@ -1,6 +1,6 @@
 import { DownloadResponse, Storage } from '@google-cloud/storage';
 import { Injectable } from '@nestjs/common';
-import { GOOGLE_BUCKET, GOOGLE_STORAGE_SERVICE_ACCOUNT } from './../../environments/keys';
+import { GOOGLE_BUCKET, GOOGLE_STORAGE_SERVICE_ACCOUNT } from '../../environments';
 import { StorageFile } from './storage-files.model';
 
 @Injectable()

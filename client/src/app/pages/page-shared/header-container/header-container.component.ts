@@ -6,7 +6,7 @@ import { AccountManagerApiService } from '../../../core/api';
 import { AuthenticationFacadeService } from '../../../core/auth';
 import { AccountIdentificationFragment, UserFragment } from '../../../core/graphql';
 import { DASHBOARD_ROUTES, DASHBOARD_ROUTES_BY_TYPE, TOP_LEVEL_NAV } from '../../../core/models';
-import { LoginModalComponent, UserProfileModalComponent } from '../../../modules/user-settings';
+import { AboutComponent, LoginModalComponent, UserProfileModalComponent } from '../../../modules/user-settings';
 
 @Component({
 	selector: 'app-header-container',
@@ -53,6 +53,12 @@ export class HeaderContainerComponent implements OnInit {
 
 	onUserProfile(): void {
 		this.dialog.open(UserProfileModalComponent, {
+			panelClass: ['g-mat-dialog-medium'],
+		});
+	}
+
+	onAboutProjectClick(): void {
+		this.dialog.open(AboutComponent, {
 			panelClass: ['g-mat-dialog-medium'],
 		});
 	}

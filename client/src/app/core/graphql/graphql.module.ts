@@ -64,7 +64,6 @@ const basicContext = setContext((_, { headers }) => {
 	return {
 		headers: {
 			...headers,
-			Accept: 'charset=utf-8',
 			authorization: `Bearer ${token}`,
 			'Content-Type': 'application/json', // Will break other content types (file upload)
 		},

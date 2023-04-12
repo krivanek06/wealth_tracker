@@ -1,6 +1,6 @@
 datasource db {
     provider = "mongodb"
-    url      = env("DATABASE_URL")
+    url      = "mongodb+srv://krivanek:MMkkll1122@serverlessinstance0-tes.752cf.mongodb.net/wealth-tracker-test?retryWrites=true&w=majority"
 }
 
 generator client {

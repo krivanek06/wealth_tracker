@@ -12,10 +12,10 @@ export class GraphQLHelper {
 			fieldResolverEnhancers: ['filters'],
 			cache: 'bounded',
 			autoSchemaFile: true,
-			cors: {
-				credentials: true,
-				origin: true,
-			},
+			// cors: {
+			// 	credentials: true,
+			// 	origin: true,
+			// },
 			subscriptions: {
 				'subscriptions-transport-ws': {
 					onConnect: (context: any) => {
@@ -72,8 +72,8 @@ export class GraphQLHelper {
 
 	static getStatusAndMessage(error: unknown): { statusCode: HttpStatus; message: string } {
 		console.log(error);
-		const statusCode = error?.['extensions']?.['exception']?.['status'];
-		const message = error?.['extensions']?.['exception']?.['message'];
+		const statusCode = error?.['extensions']?.['code'];
+		const message = error?.['message'];
 
 		if (!statusCode || statusCode === 500) {
 			return { statusCode: HttpStatus.INTERNAL_SERVER_ERROR, message: INTERNAL_SERVER_ERROR_MESSAGE };

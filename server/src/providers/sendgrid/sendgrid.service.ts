@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import SendGrid from '@sendgrid/mail';
+import { SENDGRID_API_KEY } from '../../environments';
 
 @Injectable()
 export class SendGridService {
-	private readonly senderEmail: string = process.env.SENDGRID_EMAIL_ADDRESS;
-
 	constructor() {
-		SendGrid.setApiKey(process.env.SENDGRID_API_KEY);
+		SendGrid.setApiKey(SENDGRID_API_KEY);
 	}
 
 	async send(mail: SendGrid.MailDataRequired) {

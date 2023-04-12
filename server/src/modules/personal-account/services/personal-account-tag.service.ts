@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { GOOGLE_BUCKET_TAG_IMAGES } from '../../../environments/keys';
+import { GOOGLE_BUCKET_TAG_IMAGES } from '../../../environments';
 import { StorageFilesService } from '../../../providers';
 import { SharedServiceUtil } from '../../../utils';
 import { PERSONAL_ACCOUNT_TAG_ERROR } from '../dto';

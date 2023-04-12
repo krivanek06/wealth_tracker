@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
+import { FINANCIAL_MODELING_API_KEY } from './../../environments';
 import { LodashServiceUtil, MomentServiceUtil } from './../../utils';
 import {
 	FMAssetHistoricalPricesLine,
@@ -14,7 +15,7 @@ import { FINANCIAL_MODELING_ERROR } from './financial-modeling-error-messages.dt
 
 @Injectable()
 export class FinancialModelingAPIService {
-	private readonly apiKey = process.env.FINANCIAL_MODELING_API_KEY;
+	private readonly apiKey = FINANCIAL_MODELING_API_KEY;
 	private readonly endpointV3 = 'https://financialmodelingprep.com/api/v3';
 	private readonly endpointImage = 'https://financialmodelingprep.com/image-stock';
 

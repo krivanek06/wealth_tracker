@@ -3,24 +3,26 @@ steps:
     args:
       - build
       - '-t'
-      - '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
+      - 'gcr.io/wealth-tracker-364707/spend-mindful-client'
       - .
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
+      - 'gcr.io/wealth-tracker-364707/spend-mindful-client'
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     args:
       - run
       - deploy
-      - $_SERVICE_NAME
+      - 'spend-mindful-client'
       - '--image'
-      - '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
+      - 'gcr.io/wealth-tracker-364707/spend-mindful-client'
       - '--region'
-      - $_DEPLOY_REGION
+      - 'europe-central2'
       - '--platform'
-      - $_PLATFORM
+      - 'managed'
+      - '--max-instances'
+      - '1'
     entrypoint: gcloud
 timeout: 1200s
 images:
-  - '$_AR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
+  - 'gcr.io/wealth-tracker-364707/spend-mindful-client'

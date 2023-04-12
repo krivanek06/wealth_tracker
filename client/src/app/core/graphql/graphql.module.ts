@@ -1,12 +1,10 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { ApolloClientOptions, ApolloLink, InMemoryCache, split } from '@apollo/client/core';
+import { ApolloClientOptions, ApolloLink, InMemoryCache } from '@apollo/client/core';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
-import { WebSocketLink } from '@apollo/client/link/ws';
-import { getMainDefinition } from '@apollo/client/utilities';
-import { ApolloModule, APOLLO_OPTIONS } from 'apollo-angular';
+import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { environment } from '../../../environments/environment';
 import { DialogServiceUtil } from '../../shared/dialogs';
@@ -80,38 +78,32 @@ export function createDefaultApollo(httpLink: HttpLink): ApolloClientOptions<any
 	});
 
 	// add token to WS connections
-	const ws = new WebSocketLink({
-		uri: environment.custom_graphql_backend_ws,
-		options: {
-			reconnect: true,
-			connectionParams: {
-				authorization: `Bearer ${getToken()}`,
-			},
-		},
-
-		// createClient({
-		//   url: environment.custom_graphql_backend_ws,
-		//   connectionParams: {
-		//     authorization: `Bearer ${getToken()}`,
-		//   },
-	});
+	// const ws = new WebSocketLink({
+	// 	uri: environment.custom_graphql_backend_ws,
+	// 	options: {
+	// 		reconnect: true,
+	// 		connectionParams: {
+	// 			authorization: `Bearer ${getToken()}`,
+	// 		},
+	// 	},
+	// });
 
 	// depending on what kind of operation is being sent
-	const link = split(
-		// split based on operation type
-		({ query }) => {
-			const { kind, operation } = getMainDefinition(query) as any;
-			return kind === 'OperationDefinition' && operation === 'subscription';
-		},
-		ws,
-		http
-	);
+	// const link = split(
+	// 	// split based on operation type
+	// 	({ query }) => {
+	// 		const { kind, operation } = getMainDefinition(query) as any;
+	// 		return kind === 'OperationDefinition' && operation === 'subscription';
+	// 	},
+	// 	http,
+	//   ws,
+	// );
 
 	const config: ApolloClientOptions<any> = {
 		connectToDevTools: !environment.production,
 		assumeImmutableResults: true,
 		cache,
-		link: ApolloLink.from([basicContext, errorLink, link]),
+		link: ApolloLink.from([basicContext, errorLink, http]),
 		defaultOptions: {
 			watchQuery: {
 				errorPolicy: 'all',

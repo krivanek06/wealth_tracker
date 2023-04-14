@@ -13,7 +13,11 @@
 			}
 		}
 
-		@screen sm {
+		@screen md {
+			width: 300px;
+		}
+
+		@screen lg {
 			width: auto;
 			max-width: 180px;
 			//max-width: 140px;

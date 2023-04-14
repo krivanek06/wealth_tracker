@@ -7,13 +7,13 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
-import { combineLatest, distinctUntilChanged, map, Observable, startWith, takeUntil, tap } from 'rxjs';
+import { Observable, combineLatest, distinctUntilChanged, map, startWith, takeUntil, tap } from 'rxjs';
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import { componentDestroyed } from '../../../../core/operators';
 import { ChartConstructor, GeneralFunctionUtil } from '../../../../core/utils';
 import { FormMatInputWrapperModule } from '../../../../shared/components';
 import { DefaultImgDirective } from '../../../../shared/directives';
-import { getChartGenericColor, InputSource } from '../../../../shared/models';
+import { InputSource, getChartGenericColor } from '../../../../shared/models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
 NoDataToDisplay(Highcharts);
@@ -66,12 +66,9 @@ export class InvestmentAccountGrowthAssetsComponent extends ChartConstructor imp
 		this.symbolInputSource$ = this.investmentAccountCalculatorService.getAvailableTransactionSymbolsInputSource();
 	}
 
-	onToggleSymbols(sources: InputSource[]): void {
+	onToggleSymbols(): void {
 		if (this.symbolsControl.value.length > 0) {
 			this.symbolsControl.patchValue([]);
-		} else {
-			const values = sources.map((d) => d.value as string);
-			this.symbolsControl.patchValue(values);
 		}
 	}
 

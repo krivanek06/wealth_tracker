@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { WELCOME_INVESTMENT_1, WELCOME_INVESTMENT_2, WELCOME_INVESTMENT_3 } from '../../models/links.model';
+import {
+	WELCOME_INVESTMENT_1,
+	WELCOME_INVESTMENT_2,
+	WELCOME_INVESTMENT_3,
+	WELCOME_INVESTMENT_4,
+} from '../../models/links.model';
 
 @Component({
 	selector: 'app-welcome-investment-account',
@@ -14,4 +19,5 @@ export class WelcomeInvestmentAccountComponent {
 	WELCOME_INVESTMENT_1 = WELCOME_INVESTMENT_1;
 	WELCOME_INVESTMENT_2 = WELCOME_INVESTMENT_2;
 	WELCOME_INVESTMENT_3 = WELCOME_INVESTMENT_3;
+	WELCOME_INVESTMENT_4 = WELCOME_INVESTMENT_4;
 }

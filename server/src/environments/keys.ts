@@ -5,7 +5,7 @@ const PROD_DATABASE_URL =
 	'mongodb+srv://krivanek:MMkkll1122@serverlessinstance0-tes.752cf.mongodb.net/wealth-tracker-test?retryWrites=true&w=majority';
 
 // Login
-const PROD_LOGIN_REDIRECT = 'https://spend-mindful-client-6bhi5d4fdq-ew.a.run.app/dashboard';
+const PROD_LOGIN_REDIRECT = 'https://spendmindful.com/dashboard';
 
 // Google OAuth
 const PROD_GOOGLE_CALLBACK = 'https://spend-mindful-graphql-6bhi5d4fdq-ew.a.run.app/auth/google/callback';

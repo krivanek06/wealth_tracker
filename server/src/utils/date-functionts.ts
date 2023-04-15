@@ -15,6 +15,7 @@ import {
 	subDays,
 	subHours,
 } from 'date-fns';
+import { STOCK_MARKET_CLOSED_DATES } from '../shared/dto';
 export type DateServiceUtilDateInformations = {
 	year: number;
 	month: number;
@@ -72,6 +73,20 @@ export class MomentServiceUtil {
 
 	static getTime(date: DateInput): number {
 		return getTime(new Date(date));
+	}
+
+	static isHoliday(date: DateInput): boolean {
+		const formattedDate = new Date(date);
+
+		// check if it's a holiday when the market is closed
+		for (let i = 0; i < STOCK_MARKET_CLOSED_DATES.length; i++) {
+			const month = getMonth(formattedDate);
+			const day = getDay(formattedDate);
+			if (month === getMonth(STOCK_MARKET_CLOSED_DATES[i]) && day === getDay(STOCK_MARKET_CLOSED_DATES[i])) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

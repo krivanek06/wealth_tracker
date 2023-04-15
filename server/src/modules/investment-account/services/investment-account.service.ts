@@ -104,11 +104,16 @@ export class InvestmentAccountService {
 		const investedGrowth = investedGrowthAssets.reduce((acc, curr) => {
 			// each data in { curr: { date: string; calculation: number }[]} add to the 'acc' array
 			curr.data.forEach((dataElement) => {
-				const calculation = dataElement[1];
-				const date = MomentServiceUtil.getTime(dataElement[0]);
+				const calculation = dataElement[1]; // dataElement[1] is value
+				const date = MomentServiceUtil.getTime(dataElement[0]); // dataElement[0] is the date
 
 				// ignore weekends
 				if (MomentServiceUtil.isWeekend(date)) {
+					return;
+				}
+
+				// check if holiday
+				if (MomentServiceUtil.isHoliday(date)) {
 					return;
 				}
 

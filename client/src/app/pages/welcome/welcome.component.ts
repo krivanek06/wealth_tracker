@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { AuthenticationFacadeService } from '../../core/auth';
 
 @Component({
 	selector: 'app-welcome',
@@ -6,4 +7,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 	styleUrls: ['./welcome.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WelcomeComponent {}
+export class WelcomeComponent implements OnInit {
+	constructor(private authenticationFacadeService: AuthenticationFacadeService) {}
+
+	ngOnInit(): void {
+		console.log('Welcome page ngOnInit');
+		this.authenticationFacadeService.resetData();
+	}
+}

@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { NgModule, inject } from '@angular/core';
+import { ActivatedRouteSnapshot, Router, RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
-import { VerifyAuthentication } from './core/guards';
+import { AuthenticationFacadeService } from './core/auth';
 import { TOP_LEVEL_NAV } from './core/models';
 
 const routes: Routes = [
@@ -16,11 +16,70 @@ const routes: Routes = [
 			},
 			{
 				path: TOP_LEVEL_NAV.dashboard,
-				canActivate: [VerifyAuthentication],
+				canActivate: [
+					(route: ActivatedRouteSnapshot) => {
+						const authenticationFacadeService = inject(AuthenticationFacadeService);
+						const router = inject(Router);
+
+						// token is in local storage
+						const tokenLocalStorage = authenticationFacadeService.getTokenFromLocalStorage();
+
+						// save token
+						if (tokenLocalStorage) {
+							console.log('dashboard', tokenLocalStorage);
+							authenticationFacadeService.setAccessToken(tokenLocalStorage);
+							return true;
+						}
+
+						// get token from query param
+						const accessToken = route.queryParamMap.get('accessToken');
+						console.log('client got token', accessToken);
+
+						if (!accessToken) {
+							router.navigate([TOP_LEVEL_NAV.welcome]);
+							return false;
+						}
+
+						// save token
+						authenticationFacadeService.setAccessToken({
+							__typename: 'LoggedUserOutput',
+							accessToken,
+						});
+
+						// Remove query params
+						router.navigate([], {
+							queryParams: {
+								accessToken: null,
+							},
+							queryParamsHandling: 'merge',
+						});
+
+						return true;
+					},
+				],
 				loadChildren: () => import('./pages/dashboard/dashboard.module').then((m) => m.DashboardModule),
 			},
 			{
 				path: TOP_LEVEL_NAV.welcome,
+				canActivate: [
+					() => {
+						const authenticationFacadeService = inject(AuthenticationFacadeService);
+						const router = inject(Router);
+
+						const tokenLocalStorage = authenticationFacadeService.getTokenFromLocalStorage();
+
+						// save token - don't go to welcome page
+						if (tokenLocalStorage) {
+							console.log('welcome', tokenLocalStorage);
+							authenticationFacadeService.setAccessToken(tokenLocalStorage);
+							router.navigate([TOP_LEVEL_NAV.dashboard]);
+							return false;
+						}
+
+						// go to welcome page
+						return true;
+					},
+				],
 				loadChildren: () => import('./pages/welcome/welcome.module').then((m) => m.WelcomeModule),
 			},
 			{

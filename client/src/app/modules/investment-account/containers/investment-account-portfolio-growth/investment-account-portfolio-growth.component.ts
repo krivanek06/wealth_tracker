@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { InvestmentAccountGrowth } from '../../../../core/graphql';
 import {
@@ -22,17 +22,17 @@ import { InvestmentAccountGrowthAssetsComponent } from '../../modals';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvestmentAccountPortfolioGrowthComponent implements OnInit {
-	@Input() set investmentAccountGrowth(data: InvestmentAccountGrowth[]) {
-		this._investmentAccountGrowth = data;
-		this.displayedInvestmentAccountGrowth = data.slice(-this.sliceStart);
-	}
+	@Input() investmentAccountGrowth!: InvestmentAccountGrowth[];
 	displayedInvestmentAccountGrowth: InvestmentAccountGrowth[] = [];
-
 	displayFullChart = false;
 
-	private _investmentAccountGrowth: InvestmentAccountGrowth[] = [];
-	readonly sliceStart = 300;
+	readonly sliceStart = 250;
 	constructor(private dialog: MatDialog) {}
+	ngOnChanges(changes: SimpleChanges): void {
+		if (changes?.['investmentAccountGrowth']?.currentValue) {
+			this.displayedInvestmentAccountGrowth = this.investmentAccountGrowth.slice(-this.sliceStart);
+		}
+	}
 
 	ngOnInit(): void {}
 
@@ -46,9 +46,9 @@ export class InvestmentAccountPortfolioGrowthComponent implements OnInit {
 		this.displayFullChart = !this.displayFullChart;
 
 		if (this.displayFullChart) {
-			this.displayedInvestmentAccountGrowth = this._investmentAccountGrowth;
+			this.displayedInvestmentAccountGrowth = this.investmentAccountGrowth;
 		} else {
-			this.displayedInvestmentAccountGrowth = this._investmentAccountGrowth.slice(this.sliceStart);
+			this.displayedInvestmentAccountGrowth = this.investmentAccountGrowth.slice(-this.sliceStart);
 		}
 	}
 }

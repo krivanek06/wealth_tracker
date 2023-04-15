@@ -50,18 +50,19 @@
 				[ngClass]="{'text-base':  !!aggregation.lastDataEntryDate, 'text-lg':  !aggregation.lastDataEntryDate}"
 			>
 				<span style="color: {{aggregation.color}}" class="text-lg">{{ aggregation.name }}</span>
-				<span class="text-gray-400">({{ aggregation.totalEntries }})</span>
+				<!-- <span class="text-gray-400">({{ aggregation.totalEntries }})</span> -->
 			</div>
-			<span *ngIf="aggregation.lastDataEntryDate " class="text-gray-400">
+			<!-- <span *ngIf="aggregation.lastDataEntryDate " class="text-gray-400">
 				Last: {{ aggregation.lastDataEntryDate | date: 'MMM. d' }}
-			</span>
+			</span> -->
+			<span class="text-wt-gray-medium"> Total Entries: {{ aggregation.totalEntries }} </span>
 		</div>
 
 		<div class="text-end min-w-[100px]" [ngClass]="{'mt-3': !aggregation.budgetToTimePeriod}">
 			<!-- total spending and budget -->
 			<div class="flex flex-col">
 				<span class="text-xl text-white"> {{ aggregation.totalValue | currency }} </span>
-				<span *ngIf="aggregation.budgetToTimePeriod && !aggregation.isWeeklyView" class="text-gray-400">
+				<span *ngIf="aggregation.budgetToTimePeriod && !aggregation.isWeeklyView" class="text-wt-gray-medium">
 					{{ aggregation.budgetToTimePeriod | currency }}
 				</span>
 			</div>

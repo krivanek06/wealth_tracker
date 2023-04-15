@@ -14,3 +14,5 @@ export const WELCOME_INVESTMENT_2 =
 	'https://storage.googleapis.com/frequently_accessible_assets/general-images/welcome_investment_2.png';
 export const WELCOME_INVESTMENT_3 =
 	'https://storage.googleapis.com/frequently_accessible_assets/general-images/welcome_investment_3.png';
+export const WELCOME_INVESTMENT_4 =
+	'https://storage.googleapis.com/frequently_accessible_assets/general-images/welcome_investment_4.png';

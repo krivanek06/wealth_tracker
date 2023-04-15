@@ -1,6 +1,6 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { HttpStatus } from '@nestjs/common';
-import { ApolloError } from 'apollo-server-fastify';
+import { ApolloError } from 'apollo-server-express';
 
 export const INTERNAL_SERVER_ERROR_MESSAGE = 'Oops, something went wrong';
 

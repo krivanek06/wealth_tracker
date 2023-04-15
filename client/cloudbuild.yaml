@@ -17,7 +17,7 @@ steps:
       - '--image'
       - 'gcr.io/wealth-tracker-364707/spend-mindful-client'
       - '--region'
-      - 'europe-central2'
+      - 'europe-west1'
       - '--platform'
       - 'managed'
       - '--max-instances'

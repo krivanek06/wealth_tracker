@@ -1,10 +1,9 @@
 <h2 class="text-xl text-center text-wt-primary-dark">Growth Asset Chart</h2>
 
 <!-- show all -->
-<div *ngIf="symbolInputSource$ | async as symbolInputSource" class="flex justify-end mb-2">
-	<button mat-stroked-button type="button" (click)="onToggleSymbols(symbolInputSource)">
-		<ng-container *ngIf="symbolsControl.value.length === 0">Show All</ng-container>
-		<ng-container *ngIf="symbolsControl.value.length > 0">Hide All</ng-container>
+<div class="flex justify-end mb-2">
+	<button *ngIf="symbolsControl.value.length > 0" mat-stroked-button type="button" (click)="onToggleSymbols()">
+		<ng-container>Hide All</ng-container>
 	</button>
 </div>
 

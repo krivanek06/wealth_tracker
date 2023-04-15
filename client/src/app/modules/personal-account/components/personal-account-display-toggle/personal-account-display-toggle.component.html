@@ -1,16 +1,17 @@
-<div class="flex items-center justify-between mb-4">
-	<div class="text-base">
-		<ng-container *ngIf="!showHistoryFormControl">Tag aggregation</ng-container>
-		<ng-container *ngIf="showHistoryFormControl">
-			<div *ngIf="selectedTag" class="flex items-center gap-4 text-xl">
-				<img appDefaultImg [src]="selectedTag.imageUrl" imageType="url" class="h-7 w-7" />
-				<span class="text-wt-primary-dark"> {{ selectedTag.name}} </span>
-			</div>
-			<ng-container *ngIf="!selectedTag"> Show History </ng-container>
-		</ng-container>
-	</div>
-
-	<button mat-stroked-button [color]="showHistoryFormControl ? 'warn' : 'primary' " (click)="onDisplayClick()">
-		{{ showHistoryFormControl ? 'Displayed History' : 'Displayed Aggregation' }}
+<div class="flex justify-end mb-4">
+	<button
+		class="min-w-[200px]"
+		mat-stroked-button
+		[color]="showHistoryFormControl ? 'warn' : 'primary' "
+		(click)="onDisplayClick()"
+	>
+		{{ showHistoryFormControl ? 'History' : 'Aggregation' }}
 	</button>
+</div>
+
+<div *ngIf="selectedTag" class="mb-4">
+	<div class="flex items-center gap-4 text-xl">
+		<img appDefaultImg [src]="selectedTag.imageUrl" imageType="url" class="h-7 w-7" />
+		<span class="text-wt-primary-dark"> {{ selectedTag.name}} </span>
+	</div>
 </div>

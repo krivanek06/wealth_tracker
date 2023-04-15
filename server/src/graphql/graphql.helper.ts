@@ -1,6 +1,6 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { HttpStatus } from '@nestjs/common';
-import { ApolloError } from 'apollo-server-fastify';
+import { ApolloError } from 'apollo-server-express';
 
 export const INTERNAL_SERVER_ERROR_MESSAGE = 'Oops, something went wrong';
 
@@ -17,16 +17,16 @@ export class GraphQLHelper {
 			// 	origin: true,
 			// },
 			subscriptions: {
-				'subscriptions-transport-ws': {
-					onConnect: (context: any) => {
-						const authorization = context?.authorization;
-						return {
-							req: {
-								headers: { authorization: authorization },
-							},
-						};
-					},
-				},
+				// 'subscriptions-transport-ws': {
+				// 	onConnect: (context: any) => {
+				// 		const authorization = context?.authorization;
+				// 		return {
+				// 			req: {
+				// 				headers: { authorization: authorization },
+				// 			},
+				// 		};
+				// 	},
+				// },
 				'graphql-ws': {
 					onConnect: (context: any) => {
 						const { connectionParams, extra } = context;

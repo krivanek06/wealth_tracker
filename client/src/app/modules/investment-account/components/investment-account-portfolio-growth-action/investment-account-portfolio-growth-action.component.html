@@ -1,7 +1,7 @@
-<div class="flex flex-row items-center justify-between px-3">
-	<span class="text-wt-gray-medium"
-		>{{ 'Invested: ' + (startDate | date: 'MMM d, y') + ' - ' + (endDate | date: 'MMM d, y') }}</span
-	>
+<div class="flex flex-row items-center justify-end px-3 sm:justify-between">
+	<span class="hidden text-wt-gray-medium sm:block">
+		{{ 'Invested: ' + (startDate | date: 'MMM d, y') + ' - ' + (endDate | date: 'MMM d, y') }}
+	</span>
 
 	<!-- action buttons -->
 	<div class="items-center gap-4 md:flex">

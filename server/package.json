@@ -48,7 +48,6 @@
 		"@types/lodash": "^4.14.192",
 		"@types/uuid": "^9.0.1",
 		"apollo-server-express": "^3.10.2",
-		"apollo-server-fastify": "^3.10.2",
 		"bcrypt": "^5.1.0",
 		"class-validator": "^0.14.0",
 		"date-fns": "^2.29.3",

@@ -17,16 +17,16 @@ export class GraphQLHelper {
 			// 	origin: true,
 			// },
 			subscriptions: {
-				'subscriptions-transport-ws': {
-					onConnect: (context: any) => {
-						const authorization = context?.authorization;
-						return {
-							req: {
-								headers: { authorization: authorization },
-							},
-						};
-					},
-				},
+				// 'subscriptions-transport-ws': {
+				// 	onConnect: (context: any) => {
+				// 		const authorization = context?.authorization;
+				// 		return {
+				// 			req: {
+				// 				headers: { authorization: authorization },
+				// 			},
+				// 		};
+				// 	},
+				// },
 				'graphql-ws': {
 					onConnect: (context: any) => {
 						const { connectionParams, extra } = context;

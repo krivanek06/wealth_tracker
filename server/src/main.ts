@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 // import * as session from 'express-session';
 import session from 'express-session';
 import passport from 'passport';
+import { PORT } from './environments';
 //import * as passport from 'passport';
 
 async function bootstrap() {
@@ -26,7 +27,7 @@ async function bootstrap() {
 	app.use(passport.session());
 
 	// check if the port is set in the environment variables
-	const port = process.env.PORT ?? 8080;
+	const port = PORT;
 
 	await app.listen(port, () => {
 		console.log(`Server running on port ${port}`);

@@ -86,30 +86,6 @@
 				</mat-select>
 			</ng-template>
 
-			<!-- date picker -->
-			<ng-container *ngSwitchCase="'DATEPICKER'">
-				<div class="flex items-center relative -top-[12px]">
-					<input
-						[min]="inputTypeDateTimePickerConfig?.minDate"
-						[max]="inputTypeDateTimePickerConfig?.maxDate"
-						matInput
-						[matDatepicker]="datePicker"
-						[matDatepickerFilter]="inputTypeDateTimePickerConfig?.dateFilter ?? defaultDateFilter"
-						[formControl]="formInputControl"
-					/>
-					<mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
-					<mat-datepicker #datePicker></mat-datepicker>
-				</div>
-			</ng-container>
-
-			<!-- time picker -->
-			<ng-container *ngSwitchCase="'TIMEPICKER'">
-				<div class="flex items-center relative -top-[4px]">
-					<input matTimepicker #timePicker="matTimepicker" [formControl]="formInputControl" />
-					<mat-icon matSuffix (click)="timePicker.showDialog()">access_time</mat-icon>
-				</div>
-			</ng-container>
-
 			<!-- number -->
 			<ng-container *ngSwitchCase="'NUMBER'">
 				<input

@@ -1,20 +1,21 @@
-<div class="text-xl text-center" [ngClass]="{'mb-6': formGroup.controls.symbol.value}">
-	<span>Operation </span>
-	<span
-		[ngClass]="{
-      'text-wt-success-medium': formGroup.controls.isBuying.value,
-      'text-wt-danger-medium': !formGroup.controls.isBuying.value
-    }"
+<div
+	*ngIf="formGroup.controls.symbol.value"
+	class="flex flex-col items-center justify-between gap-2 px-2 md:flex-row lg:mb-4"
+>
+	<!-- transaction type -->
+	<button
+		[disabled]="!data.activeHolding"
+		type="button"
+		mat-flat-button
+		[color]="formGroup.controls.isBuying.value ? 'accent' : 'warn'"
+		class="w-full md:w-auto g-button-size-lg"
+		(click)="onTransactionTypeChange()"
 	>
 		{{ formGroup.controls.isBuying.value ? 'Buy Asset' : 'Sell Asset' }}
-	</span>
-</div>
+	</button>
 
-<div *ngIf="formGroup.controls.symbol.value" class="flex items-center justify-between px-2 lg:mb-4">
-	<div class="text-xl">
-		<span class="text-wt-primary-dark">Owned units: </span>{{ this.data.activeHolding?.units ?? 0 }}
-	</div>
-	<button mat-stroked-button type="button" (click)="onTransactionShow()" class="w-full lg:w-auto g-button-size-lg">
+	<!-- history -->
+	<button mat-stroked-button type="button" (click)="onTransactionShow()" class="w-full md:w-auto g-button-size-lg">
 		<mat-icon>visibility</mat-icon>
 		Show Previous Transactions
 	</button>
@@ -35,29 +36,52 @@
 	<mat-dialog-content>
 		<!-- historical chart -->
 		<ng-container *ngIf="assetHistoricalData$ | async as assetHistoricalData; else chartSkeleton">
-			<div *ngIf="!loadingHistoricalData; else chartSkeleton" class="min-h-[250px]">
-				<app-generic-chart [series]="[assetHistoricalData]" [heightPx]="250"></app-generic-chart>
+			<div *ngIf="!loadingHistoricalData; else chartSkeleton" class="min-h-[300px]">
+				<app-generic-chart [series]="[assetHistoricalData]" [heightPx]="300"></app-generic-chart>
 			</div>
 		</ng-container>
 
 		<!-- skeleton -->
 		<ng-template #chartSkeleton>
-			<div *ngIf="formSymbol.value" class="w-full h-[250px] g-skeleton"></div>
+			<div *ngIf="formSymbol.value" class="w-full h-[300px] g-skeleton"></div>
 		</ng-template>
 
 		<!-- cash state -->
 		<div class="c-cash-wrapper">
+			<div class="text-xl">
+				<span class="text-wt-primary-dark">Owned units: </span>
+				<span>{{ this.data.activeHolding?.units ?? 0 }}</span>
+			</div>
+
 			<div>
-				<span class="text-gray-400">Units: </span>
+				<span
+					[ngClass]="{
+          'text-wt-success-medium': formGroup.controls.isBuying.value,
+          'text-wt-danger-medium': !formGroup.controls.isBuying.value
+        }"
+					>Units:
+				</span>
 				<span> {{ units.value || 'N/A' }} </span>
 			</div>
 			<div>
-				<span class="text-gray-400">Price: </span>
+				<span
+					[ngClass]="{
+          'text-wt-success-medium': formGroup.controls.isBuying.value,
+          'text-wt-danger-medium': !formGroup.controls.isBuying.value
+        }"
+					>Price:
+				</span>
 				<span *ngIf="formSymbolPrice.value as value">~ {{ value | currency}} </span>
 				<span *ngIf="!formSymbolPrice.value">N/A</span>
 			</div>
 			<div>
-				<span class="text-gray-400">Total: </span>
+				<span
+					[ngClass]="{
+          'text-wt-success-medium': formGroup.controls.isBuying.value,
+          'text-wt-danger-medium': !formGroup.controls.isBuying.value
+        }"
+					>Total:
+				</span>
 				<span *ngIf="totalValue"> {{totalValue | currency }} </span>
 				<span *ngIf="!totalValue">N/A</span>
 			</div>
@@ -67,20 +91,6 @@
 			<div>
 				<!-- date picker -->
 				<app-date-picker formControlName="date" [inputTypeDateTimePickerConfig]="datePickerConfig"></app-date-picker>
-
-				<!-- transaction type -->
-				<div class="my-4">
-					<button
-						[disabled]="!data.activeHolding"
-						type="button"
-						mat-flat-button
-						[color]="formGroup.controls.isBuying.value ? 'accent' : 'warn'"
-						class="w-full"
-						(click)="onTransactionTypeChange()"
-					>
-						{{ formGroup.controls.isBuying.value ? 'Buy Asset' : 'Sell Asset' }}
-					</button>
-				</div>
 
 				<!-- asset type -->
 				<app-form-mat-input-wrapper
@@ -100,7 +110,7 @@
 				></app-asset-manager-search-asset>
 			</div>
 
-			<div class="mt-10">
+			<div class="mt-6">
 				<!-- keyboard -->
 				<app-number-keyboard-control formControlName="units"></app-number-keyboard-control>
 			</div>
@@ -138,7 +148,12 @@
 	<mat-dialog-actions>
 		<div class="g-mat-dialog-actions-full">
 			<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
-			<button mat-stroked-button color="primary" type="submit" [disabled]="isError$ | async">
+			<button
+				mat-stroked-button
+				type="submit"
+				[disabled]="isError$ | async"
+				[color]="formGroup.controls.isBuying.value ? 'accent' : 'warn'"
+			>
 				<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
 				Save
 			</button>

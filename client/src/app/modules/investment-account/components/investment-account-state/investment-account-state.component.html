@@ -44,30 +44,13 @@
 		</div>
 	</div>
 
-	<!-- return in prct -->
-	<!-- <div class="c-wrapper">
-		<div class="c-title">Invested daily +/-</div>
-		<div class="c-body">
-			<div
-				class="c-body-value"
-				appPerceptageIncrease
-				[changeValues]="{changesPercentage: dailyInvestmentChange.dailyChangesPercentage}"
-			></div>
-			<div
-				appPerceptageIncrease
-				[useCurrencySign]="true"
-				[changeValues]="{change: dailyInvestmentChange.dailyChange}"
-			></div>
-		</div>
-	</div> -->
-
 	<!-- add holding -->
 	<button
 		(click)="onAddHoldingClick()"
 		mat-button
 		type="button"
 		color="primary"
-		class="mb-2 max-lg:mx-auto g-button-size-lg g-button-action-primary sm:max-lg:col-span-2 max-lg:w-10/12"
+		class="hidden mb-2 max-lg:mx-auto g-button-size-lg g-button-action-primary sm:max-lg:col-span-2 max-lg:w-10/12 xl:block"
 	>
 		<mat-icon>add</mat-icon>
 		Add holding

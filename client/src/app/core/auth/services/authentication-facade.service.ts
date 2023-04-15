@@ -11,7 +11,7 @@ import {
 	RegisterUserInput,
 	UserFragment,
 } from '../../graphql';
-import { TOP_LEVEL_NAV } from '../../models';
+import { STORAGE_ACCESS_TOKEN, TOP_LEVEL_NAV } from '../../models';
 import { TokenStorageService } from './token-storage.service';
 
 @Injectable({
@@ -34,8 +34,6 @@ export class AuthenticationFacadeService {
 		this.tokenStorageService.setAccessToken(null);
 		// logout
 		this.router.navigate([TOP_LEVEL_NAV.welcome]);
-		// clear graphql cache
-		this.apollo.client.resetStore();
 	}
 
 	setAccessToken(token: LoggedUserOutputFragment | null): void {
@@ -43,6 +41,8 @@ export class AuthenticationFacadeService {
 	}
 
 	loginUserBasic(input: LoginUserInput): Observable<UserFragment> {
+		//this.resetData();
+
 		return this.authenticationApiService.loginUserBasic(input).pipe(
 			map((res) => res.data?.loginBasic as LoggedUserOutputFragment),
 			tap((res) => {
@@ -59,6 +59,8 @@ export class AuthenticationFacadeService {
 	}
 
 	registerBasic(input: RegisterUserInput): Observable<UserFragment> {
+		//this.resetData();
+
 		return this.authenticationApiService.registerBasic(input).pipe(
 			map((res) => res.data?.registerBasic as LoggedUserOutputFragment),
 			tap((res) => {
@@ -86,5 +88,26 @@ export class AuthenticationFacadeService {
 			map((res) => !!res.data?.changePassword),
 			catchError(() => EMPTY)
 		);
+	}
+
+	getTokenFromLocalStorage(): LoggedUserOutputFragment | null {
+		const token = localStorage.getItem(STORAGE_ACCESS_TOKEN);
+		if (token) {
+			try {
+				const parsed = JSON.parse(token) as LoggedUserOutputFragment;
+				return parsed;
+			} catch (err) {
+				return null;
+			}
+		}
+
+		return null;
+	}
+
+	resetData(): void {
+		// clear graphql cache
+		this.apollo.client.resetStore();
+		// remove token from local storage
+		this.tokenStorageService.setAccessToken(null);
 	}
 }

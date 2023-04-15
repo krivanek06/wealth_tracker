@@ -55,11 +55,11 @@ export class PersonalAccountApiService {
 	getPersonalAccountDetails(): Observable<PersonalAccountDetailsFragment | null> {
 		return this.getPersonalAccountByUserGQL
 			.watch()
-			.valueChanges.pipe(map((res) => res.data.getPersonalAccountByUser ?? null));
+			.valueChanges.pipe(map((res) => res.data?.getPersonalAccountByUser ?? null));
 	}
 
-	createPersonalAccount(): Observable<PersonalAccountOverviewFragment | undefined> {
-		return this.createPersonalAccountGQL.mutate().pipe(map((res) => res.data?.createPersonalAccount));
+	createPersonalAccount(): Observable<PersonalAccountOverviewFragment | null> {
+		return this.createPersonalAccountGQL.mutate().pipe(map((res) => res.data?.createPersonalAccount ?? null));
 	}
 
 	editPersonalAccount(input: PersonalAccountEditInput): Observable<FetchResult<EditPersonalAccountMutation>> {
@@ -107,7 +107,7 @@ export class PersonalAccountApiService {
 			.watch({
 				input,
 			})
-			.valueChanges.pipe(map((res) => res.data.getPersonalAccountDailyData));
+			.valueChanges.pipe(map((res) => res.data?.getPersonalAccountDailyData ?? []));
 	}
 
 	getPersonalAccountAvailableTagImages(): Observable<string[]> {

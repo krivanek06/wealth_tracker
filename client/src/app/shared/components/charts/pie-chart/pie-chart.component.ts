@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnChanges, ViewChild } from '@angular/core';
-import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { ChartConstructor } from '../../../../core/utils';
 import { ChartType, GenericChartSeriesPie } from '../../../models';
 
 @Component({
@@ -12,26 +12,15 @@ import { ChartType, GenericChartSeriesPie } from '../../../models';
 	styleUrls: ['./pie-chart.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PieChartComponent implements OnChanges {
+export class PieChartComponent extends ChartConstructor implements OnChanges {
 	@Input() displayValue?: number | null;
 
 	@Input() series?: GenericChartSeriesPie | null;
 
 	@ViewChild('chartRef') chartRef!: any;
 
-	Highcharts: typeof Highcharts = Highcharts;
-	chart: any;
-	updateFromInput = true;
-	chartCallback: any;
-	chartOptions: Highcharts.Options = {};
-
 	constructor() {
-		const self = this;
-
-		this.chartCallback = (chart: any) => {
-			console.log('chartCallback', chart);
-			self.chart = chart;
-		};
+		super();
 	}
 
 	ngOnChanges(): void {

@@ -2,8 +2,8 @@
 	<!-- header -->
 	<app-header-container> </app-header-container>
 
-	<ng-container *ngIf="availableAccounts$ | async as accounts">
-		<!-- dashboard navigation -->
+	<!-- navigation -->
+	<ng-container *ngIf="availableAccounts$ | async as accounts; else showNavSkeleton">
 		<div class="justify-end hidden my-4 sm:flex">
 			<nav mat-tab-nav-bar dynamicHeight [tabPanel]="tabPanel">
 				<a
@@ -20,6 +20,13 @@
 			</nav>
 		</div>
 	</ng-container>
+
+	<!-- navigation skeleton -->
+	<ng-template #showNavSkeleton>
+		<div class="justify-end hidden mt-4 sm:flex gap-x-8">
+			<div *ngRange="2" class="w-[200px] h-10 g-skeleton"></div>
+		</div>
+	</ng-template>
 
 	<div class="max-sm:py-4">
 		<mat-divider class="sm:hidden"></mat-divider>

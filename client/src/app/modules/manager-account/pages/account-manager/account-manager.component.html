@@ -1,6 +1,9 @@
-<section class="w-full md:w-8/12 mx-auto pt-[15%]">
+<section
+	*ngIf="availableAccounts$ | async as availableAccounts; else showSkeleton"
+	class="w-full md:w-8/12 mx-auto pt-[15%]"
+>
 	<!-- existing accounts -->
-	<div *ngFor="let account of availableAccounts$ | async" class="mb-8">
+	<div *ngFor="let account of availableAccounts" class="mb-12">
 		<app-account-manager-item
 			(editEmitter)="onEdit($event, account.accountType)"
 			(deleteEmitter)="onDelete(account.accountType)"
@@ -18,3 +21,8 @@
 		></app-account-manager-item>
 	</div>
 </section>
+
+<!-- skeleton -->
+<ng-template #showSkeleton>
+	<app-account-manager-skeleton></app-account-manager-skeleton>
+</ng-template>

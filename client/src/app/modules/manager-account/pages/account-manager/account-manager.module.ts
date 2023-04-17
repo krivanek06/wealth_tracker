@@ -3,7 +3,9 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule, Routes } from '@angular/router';
+import { RangeDirective } from '../../../../shared/directives';
 import { AccountManagerItemComponent } from '../../components';
+import { AccountManagerSkeletonComponent } from './account-manager-skeleton/account-manager-skeleton.component';
 import { AccountManagerComponent } from './account-manager.component';
 
 const routes: Routes = [
@@ -14,7 +16,14 @@ const routes: Routes = [
 ];
 
 @NgModule({
-	declarations: [AccountManagerComponent],
-	imports: [CommonModule, MatIconModule, MatButtonModule, RouterModule.forChild(routes), AccountManagerItemComponent],
+	declarations: [AccountManagerComponent, AccountManagerSkeletonComponent],
+	imports: [
+		CommonModule,
+		MatIconModule,
+		MatButtonModule,
+		RouterModule.forChild(routes),
+		AccountManagerItemComponent,
+		RangeDirective,
+	],
 })
 export class AccountManagerModule {}

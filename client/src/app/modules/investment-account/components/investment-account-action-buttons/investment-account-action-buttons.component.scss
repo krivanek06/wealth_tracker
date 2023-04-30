@@ -1,15 +1,3 @@
 :host {
 	display: block;
-
-	.c-wrapper {
-		@apply flex flex-col items-center md:flex-row gap-2;
-
-		& > * {
-			@apply w-full;
-
-			@screen md {
-				@apply w-auto;
-			}
-		}
-	}
 }

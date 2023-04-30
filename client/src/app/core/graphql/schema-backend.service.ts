@@ -170,6 +170,8 @@ export type HoldingInputData = {
 };
 
 export type InvestmentAccounHoldingCreateInput = {
+  /** User can add custom total value of this holding and not load from API */
+  customTotalValue?: InputMaybe<Scalars['Float']>;
   holdingInputData: HoldingInputData;
   isCrypto: Scalars['Boolean'];
   /** Symbol ID */

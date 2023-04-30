@@ -3,6 +3,7 @@
 
 	.mat-column-symbol {
 		width: auto;
+		overflow: visible;
 
 		@screen md {
 			width: 220px;
@@ -18,7 +19,11 @@
 	}
 
 	.mat-column-total {
-		width: 140px;
+		width: 180px;
+
+		@screen md {
+			width: 140px;
+		}
 	}
 
 	.mat-column-value {

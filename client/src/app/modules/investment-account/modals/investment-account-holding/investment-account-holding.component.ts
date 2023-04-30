@@ -237,7 +237,6 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit,
 				takeUntil(componentDestroyed(this))
 			)
 			.subscribe((assetPrice) => {
-				console.log(assetPrice);
 				this.formSymbolPrice.patchValue(assetPrice);
 			});
 	}

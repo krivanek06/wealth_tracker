@@ -86,13 +86,15 @@ export class InvestmentAccountHoldingService {
 			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.SELL_ERROR_NO_HOLDING, HttpStatus.FORBIDDEN);
 		}
 
-		// load symbol value on holdingInputData.date
-		const closedValueApi = (
-			await this.assetGeneralService.getAssetGeneralHistoricalPricesDataOnDate(
-				input.symbol,
-				input.holdingInputData.date
-			)
-		)?.close;
+		// load symbol value on holdingInputData.date if user did not provide customTotalValue
+		const closedValueApi = !input.customTotalValue
+			? (
+					await this.assetGeneralService.getAssetGeneralHistoricalPricesDataOnDate(
+						input.symbol,
+						input.holdingInputData.date
+					)
+			  )?.close
+			: input.customTotalValue / input.holdingInputData.units;
 
 		// calculate return & returnChange if Sell operation
 		const breakEvenPrice = SharedServiceUtil.roundDec(bepHelpers.value / bepHelpers.units);

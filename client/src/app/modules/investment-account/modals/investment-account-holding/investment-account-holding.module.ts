@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,9 +20,10 @@ import { LargeNumberFormatterPipe, SortByKeyPipe } from '../../../../shared/pipe
 import { AssetManagerSearchAssetModule } from '../../../asset-manager';
 import { HoldingHistoryItemComponent } from './holding-history-item/holding-history-item.component';
 import { InvestmentAccountHoldingComponent } from './investment-account-holding.component';
+import { RecordStateComponent } from './record-state/record-state.component';
 
 @NgModule({
-	declarations: [InvestmentAccountHoldingComponent, HoldingHistoryItemComponent],
+	declarations: [InvestmentAccountHoldingComponent, HoldingHistoryItemComponent, RecordStateComponent],
 	imports: [
 		CommonModule,
 		MatDialogModule,
@@ -41,6 +43,7 @@ import { InvestmentAccountHoldingComponent } from './investment-account-holding.
 		DatePickerComponent,
 		NumberKeyboardComponent,
 		GenericChartModule,
+		MatCheckboxModule,
 	],
 })
 export class InvestmentAccountHoldingModule {}

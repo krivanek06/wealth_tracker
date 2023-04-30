@@ -104,7 +104,7 @@ export class StylePaginatorDirective implements OnInit, OnChanges, AfterViewInit
 		// display buttons
 		for (let index = currentIndex; index <= currentIndex + this.showTotalPages; index++) {
 			// do not render more than max page buttons
-			if (index < maxPages) {
+			if (maxPages > 1 && index < maxPages) {
 				this.ren.insertBefore(actionContainer, this.createButton(index, this.matPag.pageIndex), nextPageNode);
 			}
 		}

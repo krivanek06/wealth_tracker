@@ -23,17 +23,24 @@
 <!-- total value -->
 <div class="flex flex-col items-end leading-6">
 	<div class="flex flex-col items-center gap-x-2 sm:flex-row">
-		<span class="text-base text-wt-gray-light">{{ history.units * history.unitValue | currency}}</span>
+		<span
+			class="text-base"
+			[ngClass]="{
+      'text-wt-danger-medium': history.type === InvestmentAccountHoldingHistoryType.Sell,
+      'text-wt-success-medium': history.type === InvestmentAccountHoldingHistoryType.Buy
+    }"
+			>{{ history.units * history.unitValue | currency}}</span
+		>
 
 		<!-- SELL operation -->
-		<div
+		<!-- <div
 			*ngIf="history.returnChange"
 			appPerceptageIncrease
 			[useCurrencySign]="true"
 			[changeValues]="{
               changesPercentage: history.returnChange
           }"
-		></div>
+		></div> -->
 	</div>
 
 	<!-- BUY operation -->

@@ -1,15 +1,15 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
+	EMPTY,
+	Observable,
 	catchError,
 	combineLatest,
-	EMPTY,
 	filter,
 	first,
 	map,
 	merge,
-	Observable,
 	startWith,
 	switchMap,
 	takeUntil,
@@ -37,6 +37,7 @@ import {
 } from '../../../../shared/models';
 import { SearchableAssetEnum } from '../../../asset-manager/models';
 import { TransactionAssetTypeInputSource } from '../../models';
+import { ActionButtonPressEnum } from './account-holding-modal.model';
 
 @Component({
 	selector: 'app-investment-account-holding',
@@ -60,6 +61,8 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit,
 			validators: [requiredValidator, positiveNumberValidator, minValueValidator(1)],
 			nonNullable: true,
 		}),
+		customTotalValue: new FormControl<string>(''),
+		allowCustomTotalValue: new FormControl<boolean>(false, { nonNullable: true }),
 		date: new FormControl<Date>(new Date(), { validators: [requiredValidator], nonNullable: true }),
 	});
 
@@ -89,6 +92,8 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit,
 	private startingDateLoadingHistoricalData: Date = DateServiceUtil.subYears(new Date(), 1);
 	loadingHistoricalData = true;
 
+	recordingActionButtonPressEnum = ActionButtonPressEnum.UNITS;
+
 	get formSymbol(): FormControl {
 		return this.formGroup.controls.symbol;
 	}
@@ -113,11 +118,26 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit,
 		return this.formGroup.controls.units;
 	}
 
-	get totalValue(): number {
-		if (!this.formGroup.controls.symbol.value) {
+	get allowCustomTotalValue(): FormControl {
+		return this.formGroup.controls.allowCustomTotalValue;
+	}
+
+	get calculatedTotalValue(): number {
+		if (!this.formSymbolPrice.value) {
 			return 0;
 		}
 		return this.formSymbolPrice.value * Number(this.units.value);
+	}
+
+	get isCustomTotalValue(): boolean {
+		return this.recordingActionButtonPressEnum === ActionButtonPressEnum.TOTAL_VALUE;
+	}
+
+	get keyBoardFormControl(): FormControl {
+		if (this.isCustomTotalValue) {
+			return this.formGroup.controls.customTotalValue;
+		}
+		return this.formGroup.controls.units;
 	}
 
 	constructor(
@@ -127,7 +147,9 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit,
 		@Inject(MAT_DIALOG_DATA)
 		public data: { activeHolding?: InvestmentAccountActiveHoldingOutputFragment }
 	) {}
+
 	ngOnDestroy(): void {}
+
 	ngAfterViewInit(): void {
 		// load values for selected asset
 		setTimeout(() => {
@@ -215,7 +237,6 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit,
 				takeUntil(componentDestroyed(this))
 			)
 			.subscribe((assetPrice) => {
-				console.log(assetPrice);
 				this.formSymbolPrice.patchValue(assetPrice);
 			});
 	}
@@ -223,6 +244,10 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit,
 	onTransactionTypeChange(): void {
 		const value = this.formGroup.controls.isBuying.value;
 		this.formGroup.controls.isBuying.patchValue(!value);
+	}
+
+	onRecordStateAction(type: ActionButtonPressEnum): void {
+		this.recordingActionButtonPressEnum = type;
 	}
 
 	onTransactionShow(): void {
@@ -249,6 +274,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit,
 				date: DateServiceUtil.formatDate(controls.date.value),
 				units: Number(controls.units.value),
 			},
+			customTotalValue: controls.allowCustomTotalValue.value ? Number(controls.customTotalValue.value) : null,
 		};
 
 		// notify user

@@ -38,6 +38,12 @@ export class InvestmentAccounHoldingCreateInput {
 
 	@Field(() => HoldingInputData)
 	holdingInputData: HoldingInputData;
+
+	@Field(() => Float, {
+		description: 'User can add custom total value of this holding and not load from API',
+		nullable: true,
+	})
+	customTotalValue?: number;
 }
 
 // ----------- Delete ------------

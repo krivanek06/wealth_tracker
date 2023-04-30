@@ -1,3 +1,5 @@
+<div class="text-xl text-center text-gray-200">Modal to modify active holdings</div>
+
 <div
 	*ngIf="formGroup.controls.symbol.value"
 	class="flex flex-col items-center justify-between gap-2 px-2 md:flex-row lg:mb-4"
@@ -46,46 +48,28 @@
 			<div *ngIf="formSymbol.value" class="w-full h-[300px] g-skeleton"></div>
 		</ng-template>
 
-		<!-- cash state -->
-		<div class="c-cash-wrapper">
-			<div class="text-xl">
-				<span class="text-wt-primary-dark">Owned units: </span>
-				<span>{{ this.data.activeHolding?.units ?? 0 }}</span>
-			</div>
-
-			<div>
-				<span
-					[ngClass]="{
-          'text-wt-success-medium': formGroup.controls.isBuying.value,
-          'text-wt-danger-medium': !formGroup.controls.isBuying.value
-        }"
-					>Units:
-				</span>
-				<span> {{ units.value || 'N/A' }} </span>
-			</div>
-			<div>
-				<span
-					[ngClass]="{
-          'text-wt-success-medium': formGroup.controls.isBuying.value,
-          'text-wt-danger-medium': !formGroup.controls.isBuying.value
-        }"
-					>Price:
-				</span>
-				<span *ngIf="formSymbolPrice.value as value">~ {{ value | currency}} </span>
-				<span *ngIf="!formSymbolPrice.value">N/A</span>
-			</div>
-			<div>
-				<span
-					[ngClass]="{
-          'text-wt-success-medium': formGroup.controls.isBuying.value,
-          'text-wt-danger-medium': !formGroup.controls.isBuying.value
-        }"
-					>Total:
-				</span>
-				<span *ngIf="totalValue"> {{totalValue | currency }} </span>
-				<span *ngIf="!totalValue">N/A</span>
-			</div>
+		<!-- checkbox for custom total value -->
+		<div class="flex justify-end mt-4">
+			<mat-checkbox matTooltip="Allow more manual customization" [formControl]="allowCustomTotalValue">
+				Allow Custom Total Value
+			</mat-checkbox>
 		</div>
+
+		<div *ngIf="allowCustomTotalValue.value" class="p-4 text-lg text-center text-gray-800 bg-gray-400 rounded-lg">
+			Using `Allow Custom Total Value` you can manually set how many units you bought/sold and what was the total price
+		</div>
+
+		<!-- record state -->
+		<app-record-state
+			(actionButtonPressEmitter)="onRecordStateAction($event)"
+			[allowCustomization]="allowCustomTotalValue.value"
+			[totalValue]="allowCustomTotalValue.value ? formGroup.controls.customTotalValue.value : calculatedTotalValue"
+			[ownedUnitsShow]="!!data.activeHolding"
+			[ownedUnits]="data.activeHolding?.units"
+			[value]="formSymbolPrice.value"
+			[units]="units.value"
+			[isBuying]="formGroup.controls.isBuying.value"
+		></app-record-state>
 
 		<div class="grid lg:grid-cols-2 gap-x-4 xl:gap-x-8">
 			<div>
@@ -112,15 +96,15 @@
 
 			<div class="mt-6">
 				<!-- keyboard -->
-				<app-number-keyboard-control formControlName="units"></app-number-keyboard-control>
+				<app-number-keyboard-control [formControl]="keyBoardFormControl"></app-number-keyboard-control>
 			</div>
 		</div>
 
 		<!-- history of asset holding -->
 		<ng-container *ngIf="transactionHistory$ | async as transactionHistory">
 			<div *ngIf="showHistoricalTransactions" class="min-h-[300px] sm:pl-4 md:pr-2 lg:col-span-2 mt-4">
-				<div class="mb-2 text-base text-center text-wt-danger-medium">Historical data</div>
-				<div class="text-xs text-center text-wt-gray-dark">Hold to remove</div>
+				<div class="mb-2 text-lg text-center text-wt-danger-medium">Historical data</div>
+				<div class="text-sm text-center text-wt-gray-dark">Hold to remove</div>
 				<div class="pt-3">
 					<div *ngFor="let history of transactionHistory | sortByKey: 'date': 'desc'">
 						<button

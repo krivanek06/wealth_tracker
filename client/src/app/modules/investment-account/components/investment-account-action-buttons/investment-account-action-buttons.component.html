@@ -1,10 +1,10 @@
-<div class="justify-between c-wrapper md:px-4">
-	<div [formGroup]="formGroup" class="order-2 md:order-1">
+<div class="flex flex-col items-center justify-between gap-2 mb-2 lg:flex-row md:px-4">
+	<div [formGroup]="formGroup" class="order-2 w-full lg:w-auto md:order-1">
 		<!-- sector filter -->
-		<div class="md:min-w-[350px]">
+		<div class="w-full lg:w-auto md:min-w-[350px]">
 			<app-form-mat-input-wrapper
 				[inputSource]="sectorAllocationInputSource"
-				class="w-full"
+				class="w-full lg:w-auto"
 				controlName="selectedSector"
 				inputCaption="Select sector"
 				inputType="SELECT"
@@ -12,14 +12,14 @@
 		</div>
 	</div>
 
-	<div class="order-1 c-wrapper md:order-2">
+	<div class="flex flex-col items-center order-1 w-full gap-2 lg:w-auto sm:flex-row md:order-2">
 		<!-- add holding -->
 		<button
 			(click)="onAddClick()"
 			mat-button
 			type="button"
 			color="primary"
-			class="mb-2 g-button-size-lg g-button-action-primary"
+			class="w-full mb-2 lg:w-auto g-button-size-lg g-button-action-primary"
 		>
 			<mat-icon>add</mat-icon>
 			Add holding
@@ -30,7 +30,7 @@
 			(click)="onShowHistoryClick()"
 			mat-stroked-button
 			type="button"
-			class="mb-2 text-wt-gray-medium g-button-size-lg"
+			class="w-full mb-2 lg:w-auto text-wt-gray-medium g-button-size-lg"
 		>
 			<mat-icon>visibility</mat-icon>
 			Show transactions

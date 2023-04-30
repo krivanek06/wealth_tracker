@@ -48,7 +48,7 @@ export class InvestmentAccountTransactionTableComponent implements OnInit, After
 
 	dataSource!: MatTableDataSource<InvestmentAccountTransactionOutput>;
 
-	displayedColumns: string[] = ['symbol', 'order', 'return', 'value', 'total', 'date'];
+	displayedColumns: string[] = ['symbol', 'order', 'value', 'total', 'date']; // 'return',
 
 	InvestmentAccountHoldingHistoryType = InvestmentAccountHoldingHistoryType;
 

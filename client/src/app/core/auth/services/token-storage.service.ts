@@ -18,6 +18,10 @@ export class TokenStorageService extends StorageService<LoggedUserOutputFragment
 		return this.accessToken.asObservable();
 	}
 
+	getTokenFromLocalStorage(): LoggedUserOutputFragment | null {
+		return this.getData();
+	}
+
 	setAccessToken(token: LoggedUserOutputFragment | null): void {
 		this.accessToken.next(token);
 

@@ -8,6 +8,7 @@ import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { environment } from '../../../environments/environment';
 import { DialogServiceUtil } from '../../shared/dialogs';
+import { STORAGE_ACCESS_TOKEN } from '../models';
 import { LoggedUserOutputFragment } from './schema-backend.service';
 
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
@@ -42,7 +43,7 @@ const errorLink = onError(({ graphQLErrors, networkError, response }) => {
 });
 
 const getToken = (): string | null => {
-	const token = localStorage.getItem('ACCESS_TOKEN');
+	const token = localStorage.getItem(STORAGE_ACCESS_TOKEN);
 	if (!token) {
 		return null;
 	}

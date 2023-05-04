@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
-import * as Highcharts from 'highcharts/highstock';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 import { ChartConstructor } from '../../../../../core/utils';
 import { GenericChartSeries } from '../../../../../shared/models';

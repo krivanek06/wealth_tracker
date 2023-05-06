@@ -28,6 +28,5 @@ const routes: Routes = [
 		WelcomeInvestmentAccountComponent,
 		WelcomePersonalAccountComponent,
 	],
-	exports: [WelcomeComponent],
 })
 export class WelcomeModule {}

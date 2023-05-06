@@ -9,7 +9,7 @@ import { RangeDirective } from '../../../../shared/directives';
 import {
 	InvestmentAccountActionButtonsComponent,
 	InvestmentAccountActiveHoldingsTableModule,
-	InvestmentAccountPeriodChangeModule,
+	InvestmentAccountPeriodChangeComponent,
 	InvestmentAccountStateComponent,
 } from '../../components';
 import { InvestmentAccountPortfolioGrowthComponent } from '../../containers';
@@ -37,7 +37,7 @@ const routes: Routes = [
 		InvestmentAccountCashChangeModule,
 		InvestmentAccountTransactionsModule,
 		InvestmentAccountHoldingModule,
-		InvestmentAccountPeriodChangeModule,
+		InvestmentAccountPeriodChangeComponent,
 		RouterModule.forChild(routes),
 		RangeDirective,
 		InvestmentAccountActionButtonsComponent,

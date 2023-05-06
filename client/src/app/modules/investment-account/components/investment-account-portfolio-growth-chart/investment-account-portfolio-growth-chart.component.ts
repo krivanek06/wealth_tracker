@@ -1,3 +1,4 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import {
 	ChangeDetectionStrategy,
@@ -8,15 +9,11 @@ import {
 	OnInit,
 	SimpleChanges,
 } from '@angular/core';
-import { LAYOUT_SM } from './../../../../shared/models/layout.model';
-// import * as Highcharts from 'highcharts';
-import { BreakpointObserver } from '@angular/cdk/layout';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { map, startWith } from 'rxjs';
 import { InvestmentAccountGrowth } from '../../../../core/graphql';
 import { ChartConstructor, GeneralFunctionUtil } from '../../../../core/utils';
-
-//NoDataToDisplay(Highcharts);
+import { LAYOUT_SM } from './../../../../shared/models/layout.model';
 
 @Component({
 	selector: 'app-investment-account-portfolio-growth-chart',

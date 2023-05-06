@@ -15,7 +15,7 @@ import {
 	PersonalAccountAccountStateComponent,
 	PersonalAccountActionButtonsComponent,
 	PersonalAccountDailyEntriesFilterComponent,
-	PersonalAccountDailyEntriesTableModule,
+	PersonalAccountDailyEntriesTableComponent,
 	PersonalAccountExpensesByTagComponent,
 	PersonalAccountTagSpendingChartComponent,
 } from '../../components';
@@ -33,7 +33,7 @@ import { PersonalAccountDesktopViewSkeletonComponent } from './personal-account-
 		ScrollWrapperModule,
 		PersonalAccountTagSpendingChartComponent,
 		ReactiveFormsModule,
-		PersonalAccountDailyEntriesTableModule,
+		PersonalAccountDailyEntriesTableComponent,
 		MatButtonModule,
 		MatIconModule,
 		PersonalAccountDailyDataEntryModule,

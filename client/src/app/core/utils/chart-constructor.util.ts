@@ -1,4 +1,5 @@
 import Highcharts from 'highcharts';
+import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 
 export abstract class ChartConstructor {
 	Highcharts: typeof Highcharts = Highcharts;
@@ -15,5 +16,8 @@ export abstract class ChartConstructor {
 
 	chartOptions: Highcharts.Options = {};
 
-	constructor() {}
+	constructor() {
+		// used in constructor to avoid SSR error
+		NoDataToDisplay(Highcharts);
+	}
 }

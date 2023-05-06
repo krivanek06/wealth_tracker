@@ -24,7 +24,11 @@ export class WelcomeHeroComponent implements OnInit {
 	ngOnInit(): void {
 		// SEO metadata
 		this.title.setTitle('Spend Mindful');
-		this.meta.addTag({ name: 'description', content: this.description });
+		this.meta.addTags([
+			{ name: 'description', content: this.description },
+			{ name: 'author', content: 'Eduard Krivanek' },
+			{ name: 'keywords', content: 'Financial tracking application' },
+		]);
 	}
 
 	onLogin() {

@@ -14,7 +14,7 @@ import { DialogServiceModule } from './shared/dialogs';
 @NgModule({
 	declarations: [AppComponent],
 	imports: [
-		BrowserModule,
+		BrowserModule.withServerTransition({ appId: 'serverApp' }),
 		AppRoutingModule,
 		BrowserAnimationsModule,
 		MatSnackBarModule,

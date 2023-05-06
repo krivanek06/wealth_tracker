@@ -9,12 +9,12 @@ import {
 	Output,
 	SimpleChanges,
 } from '@angular/core';
-import * as Highcharts from 'highcharts';
-import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
+import Highcharts from 'highcharts';
+//import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 import { ChartConstructor } from '../../../../core/utils';
 import { ChartType, GenericChartSeries, GenericChartSeriesPie } from '../../../models';
 
-NoDataToDisplay(Highcharts);
+//NoDataToDisplay(Highcharts);
 // highcharts3D(Highcharts);
 
 @Component({

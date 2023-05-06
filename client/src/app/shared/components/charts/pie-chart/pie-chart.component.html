@@ -1,5 +1,6 @@
 <highcharts-chart
 	#chartRef
+	*ngIf="isHighcharts"
 	[Highcharts]="Highcharts"
 	[options]="chartOptions"
 	[callbackFunction]="chartCallback"

@@ -3,18 +3,18 @@ import { IsEmail, MaxLength, MinLength } from 'class-validator';
 
 @InputType()
 export class RegisterUserInput {
-	@Field()
+	@Field(() => String)
 	@MinLength(6)
 	@MaxLength(100)
 	@IsEmail()
 	email: string;
 
-	@Field()
+	@Field(() => String)
 	@MinLength(6)
 	@MaxLength(40)
 	password: string;
 
-	@Field()
+	@Field(() => String)
 	@MinLength(6)
 	@MaxLength(40)
 	passwordRepeat: string;

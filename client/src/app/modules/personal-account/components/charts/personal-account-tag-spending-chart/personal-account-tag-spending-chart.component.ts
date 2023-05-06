@@ -2,11 +2,8 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
-import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 import { ChartConstructor } from '../../../../../core/utils';
 import { GenericChartSeries } from '../../../../../shared/models';
-
-NoDataToDisplay(Highcharts);
 
 @Component({
 	selector: 'app-personal-account-tag-spending-chart',

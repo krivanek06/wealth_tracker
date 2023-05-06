@@ -1,5 +1,5 @@
 import { NgModule, inject } from '@angular/core';
-import { ActivatedRouteSnapshot, Router, RouterModule, Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, PreloadAllModules, Router, RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { TokenStorageService } from './core/auth';
 import { TOP_LEVEL_NAV } from './core/models';
@@ -59,7 +59,6 @@ const routes: Routes = [
 					},
 				],
 				loadChildren: () => import('./pages/dashboard/dashboard.module').then((m) => m.DashboardModule),
-				//component: DashboardModule,
 			},
 			{
 				path: TOP_LEVEL_NAV.welcome,
@@ -97,7 +96,7 @@ const routes: Routes = [
 		WelcomeModule,
 		RouterModule.forRoot(routes, {
 			initialNavigation: 'enabledBlocking',
-			//	preloadingStrategy: PreloadAllModules, // <-- Big NO NO
+			preloadingStrategy: PreloadAllModules,
 		}),
 	],
 	exports: [RouterModule],

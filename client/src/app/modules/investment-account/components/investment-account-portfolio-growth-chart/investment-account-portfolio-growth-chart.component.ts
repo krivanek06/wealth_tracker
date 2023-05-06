@@ -1,4 +1,3 @@
-import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import {
 	ChangeDetectionStrategy,
@@ -9,14 +8,15 @@ import {
 	OnInit,
 	SimpleChanges,
 } from '@angular/core';
-import Highcharts from 'highcharts';
+import { LAYOUT_SM } from './../../../../shared/models/layout.model';
+// import * as Highcharts from 'highcharts';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { HighchartsChartModule } from 'highcharts-angular';
-import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
+import { map, startWith } from 'rxjs';
 import { InvestmentAccountGrowth } from '../../../../core/graphql';
 import { ChartConstructor, GeneralFunctionUtil } from '../../../../core/utils';
-import { LAYOUT_SM } from '../../../../shared/models';
 
-NoDataToDisplay(Highcharts);
+//NoDataToDisplay(Highcharts);
 
 @Component({
 	selector: 'app-investment-account-portfolio-growth-chart',
@@ -50,15 +50,20 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 	}
 
 	ngOnInit(): void {
-		this.breakpointObserver.observe(LAYOUT_SM).subscribe((match) => {
-			if (this.chart && this.investmentAccountGrowth) {
-				this.initChart(this.investmentAccountGrowth, !match.matches);
-				this.chart?.redraw();
-
-				// use change detection otherwise does not redraw
-				this.cd.detectChanges();
-			}
-		});
+		this.breakpointObserver
+			.observe(LAYOUT_SM)
+			.pipe(
+				map((result) => result.matches),
+				startWith(true)
+			)
+			.subscribe((match) => {
+				if (this.chart && this.investmentAccountGrowth) {
+					this.initChart(this.investmentAccountGrowth, !match);
+					this.chart?.redraw();
+					// use change detection otherwise does not redraw
+					this.cd.detectChanges();
+				}
+			});
 	}
 
 	private getChartData(data: InvestmentAccountGrowth[]): {

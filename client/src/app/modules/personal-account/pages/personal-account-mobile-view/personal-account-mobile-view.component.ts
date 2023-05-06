@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { combineLatest, map, Observable } from 'rxjs';
+import { Observable, combineLatest, map } from 'rxjs';
 import {
 	FormMatInputWrapperModule,
 	PieChartComponent,
@@ -16,7 +16,7 @@ import {
 	PersonalAccountAccountStateComponent,
 	PersonalAccountActionButtonsComponent,
 	PersonalAccountDailyEntriesFilterComponent,
-	PersonalAccountDailyEntriesTableModule,
+	PersonalAccountDailyEntriesTableComponent,
 	PersonalAccountDisplayToggleComponent,
 	PersonalAccountExpensesByTagComponent,
 	PersonalAccountOverviewChartMobileComponent,
@@ -36,7 +36,7 @@ import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-m
 		FormMatInputWrapperModule,
 		ReactiveFormsModule,
 		PersonalAccountOverviewChartMobileComponent,
-		PersonalAccountDailyEntriesTableModule,
+		PersonalAccountDailyEntriesTableComponent,
 		MatCheckboxModule,
 		MatDividerModule,
 		PersonalAccountExpensesByTagComponent,

@@ -11,7 +11,6 @@ export class WelcomeComponent implements OnInit {
 	constructor(private authenticationFacadeService: AuthenticationFacadeService) {}
 
 	ngOnInit(): void {
-		console.log('Welcome page ngOnInit');
 		this.authenticationFacadeService.resetData();
 	}
 }

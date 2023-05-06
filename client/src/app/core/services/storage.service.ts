@@ -35,6 +35,10 @@ export abstract class StorageService<T> {
 	}
 
 	removeData() {
+		if (this.platform.isServer) {
+			return;
+		}
+
 		localStorage.removeItem(this.storageKey);
 	}
 }

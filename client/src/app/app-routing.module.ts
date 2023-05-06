@@ -1,5 +1,5 @@
 import { NgModule, inject } from '@angular/core';
-import { ActivatedRouteSnapshot, PreloadAllModules, Router, RouterModule, Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { TokenStorageService } from './core/auth';
 import { TOP_LEVEL_NAV } from './core/models';
@@ -97,7 +97,7 @@ const routes: Routes = [
 		WelcomeModule,
 		RouterModule.forRoot(routes, {
 			initialNavigation: 'enabledBlocking',
-			preloadingStrategy: PreloadAllModules,
+			//	preloadingStrategy: PreloadAllModules, // <-- Big NO NO
 		}),
 	],
 	exports: [RouterModule],

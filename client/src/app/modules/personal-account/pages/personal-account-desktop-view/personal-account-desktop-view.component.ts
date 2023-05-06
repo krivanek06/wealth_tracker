@@ -5,7 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import {
 	FormMatInputWrapperModule,
-	GenericChartModule,
 	PieChartComponent,
 	ScrollWrapperModule,
 	ValuePresentationButtonControlComponent,
@@ -20,9 +19,8 @@ import {
 	PersonalAccountExpensesByTagComponent,
 	PersonalAccountTagSpendingChartComponent,
 } from '../../components';
-import { PersonalAccountDailyDataEntryModule } from '../../modals';
+import { PersonalAccountDailyDataEntryModule, PersonalAccountTagManagerModalModule } from '../../modals';
 import { DateFormatterPipe } from '../../pipes';
-import { PersonalAccountTagManagerModalModule } from './../../modals';
 import { PersonalAccountDesktopViewSkeletonComponent } from './personal-account-desktop-view-skeleton/personal-account-desktop-view-skeleton.component';
 
 @Component({
@@ -30,7 +28,6 @@ import { PersonalAccountDesktopViewSkeletonComponent } from './personal-account-
 	standalone: true,
 	imports: [
 		CommonModule,
-		GenericChartModule,
 		PersonalAccountDesktopViewSkeletonComponent,
 		ValuePresentationButtonControlComponent,
 		ScrollWrapperModule,

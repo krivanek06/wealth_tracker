@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { Meta, Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { TOP_LEVEL_NAV } from '../../../../core/models';
 import { LoginModalComponent } from '../../../user-settings/modals';
@@ -14,8 +15,17 @@ import { LoginModalComponent } from '../../../user-settings/modals';
 	styleUrls: ['./welcome-hero.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WelcomeHeroComponent {
-	constructor(private dialog: MatDialog, private router: Router) {}
+export class WelcomeHeroComponent implements OnInit {
+	description =
+		'Helping people to gain better control of their finances by creating an oversight of their cash flow from one place';
+
+	constructor(private dialog: MatDialog, private router: Router, private title: Title, private meta: Meta) {}
+
+	ngOnInit(): void {
+		// SEO metadata
+		this.title.setTitle('Spend Mindful');
+		this.meta.addTag({ name: 'description', content: this.description });
+	}
 
 	onLogin() {
 		this.dialog

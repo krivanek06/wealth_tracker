@@ -9,6 +9,7 @@
 </button>
 
 <highcharts-chart
+	*ngIf="isHighcharts"
 	[Highcharts]="Highcharts"
 	[options]="chartOptions"
 	[callbackFunction]="chartCallback"

@@ -23,7 +23,7 @@
 </mat-chip-listbox>
 
 <!-- chart -->
-<mat-dialog-content>
+<mat-dialog-content *ngIf="isHighcharts">
 	<highcharts-chart
 		*ngIf="displayChart; else showSkeleton"
 		[Highcharts]="Highcharts"

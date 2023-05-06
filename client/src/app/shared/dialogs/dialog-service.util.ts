@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { NotificationProgressComponent } from './notification-bar/notification-bar.component';
 
@@ -21,7 +21,8 @@ export class DialogServiceUtil {
 		duration: number = 4000
 	): void {
 		if (!DialogServiceUtil.snackBar) {
-			throw new Error('DialogService.snackBar not initialized');
+			console.warn('DialogService.snackBar not initialized');
+			return;
 		}
 
 		DialogServiceUtil.snackBar.openFromComponent(NotificationProgressComponent, {
@@ -42,7 +43,8 @@ export class DialogServiceUtil {
 		showCancelButton: boolean = true
 	): Promise<boolean> {
 		if (!DialogServiceUtil.matDialog) {
-			throw new Error('DialogService.matDialog not initialized');
+			console.warn('DialogService.matDialog not initialized');
+			return false;
 		}
 
 		const dialogRef = DialogServiceUtil.matDialog.open(ConfirmDialogComponent, {
@@ -63,7 +65,8 @@ export class DialogServiceUtil {
 		showCancelButton: boolean = true
 	): Observable<boolean> {
 		if (!DialogServiceUtil.matDialog) {
-			throw new Error('DialogService.matDialog not initialized');
+			console.warn('DialogService.matDialog not initialized');
+			return of(false);
 		}
 
 		const dialogRef = DialogServiceUtil.matDialog.open(ConfirmDialogComponent, {

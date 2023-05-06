@@ -10,7 +10,7 @@
 			<mat-option *ngFor="let option of searchedResults$ | async" (onSelectionChange)="onSelect(option)">
 				<div class="flex items-center gap-2">
 					<img appDefaultImg [src]="option?.symbolImageURL" alt="Asset image" class="h-[30px] w-[30px]" />
-					<div class="c-company-name">{{ option.name }}</div>
+					<div class="text-ellipsis whitespace-nowrap overflow-hidden">{{ option.name }}</div>
 				</div>
 			</mat-option>
 		</mat-autocomplete>

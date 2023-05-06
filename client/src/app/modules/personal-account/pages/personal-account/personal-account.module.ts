@@ -20,6 +20,5 @@ const routes: Routes = [
 		PersonalAccountMobileViewComponent,
 		RouterModule.forChild(routes),
 	],
-	exports: [PersonalAccountComponent],
 })
 export class PersonalAccountModule {}

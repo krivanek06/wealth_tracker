@@ -4,9 +4,8 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import * as Highcharts from 'highcharts';
+import Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
-import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 import { Observable, combineLatest, distinctUntilChanged, map, startWith, takeUntil, tap } from 'rxjs';
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import { componentDestroyed } from '../../../../core/operators';
@@ -15,8 +14,6 @@ import { FormMatInputWrapperModule } from '../../../../shared/components';
 import { DefaultImgDirective } from '../../../../shared/directives';
 import { InputSource, getChartGenericColor } from '../../../../shared/models';
 import { InvestmentAccountCalculatorService } from '../../services';
-
-NoDataToDisplay(Highcharts);
 
 @Component({
 	selector: 'app-investment-account-growth-assets',

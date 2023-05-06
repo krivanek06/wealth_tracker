@@ -15,14 +15,7 @@
 
 	<!-- expense chart -->
 	<div class="p-8">
-		<app-generic-chart
-			*ngIf="chartData"
-			chartTitlePosition="center"
-			[chartType]="ChartType.pie"
-			[heightPx]="325"
-			[showDataLabel]="false"
-			[series]="[chartData]"
-		></app-generic-chart>
+		<app-pie-chart *ngIf="chartData" chartTitlePosition="center" [series]="chartData"></app-pie-chart>
 	</div>
 
 	<!-- balance -->

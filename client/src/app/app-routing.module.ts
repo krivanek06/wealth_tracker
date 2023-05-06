@@ -1,8 +1,9 @@
 import { NgModule, inject } from '@angular/core';
-import { ActivatedRouteSnapshot, Router, RouterModule, Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, PreloadAllModules, Router, RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
-import { AuthenticationFacadeService } from './core/auth';
+import { TokenStorageService } from './core/auth';
 import { TOP_LEVEL_NAV } from './core/models';
+import { WelcomeModule } from './pages/welcome/welcome.module';
 
 const routes: Routes = [
 	{
@@ -18,16 +19,16 @@ const routes: Routes = [
 				path: TOP_LEVEL_NAV.dashboard,
 				canActivate: [
 					(route: ActivatedRouteSnapshot) => {
-						const authenticationFacadeService = inject(AuthenticationFacadeService);
+						const tokenStorageService = inject(TokenStorageService);
 						const router = inject(Router);
 
 						// token is in local storage
-						const tokenLocalStorage = authenticationFacadeService.getTokenFromLocalStorage();
+						const tokenLocalStorage = tokenStorageService.getTokenFromLocalStorage();
 
 						// save token
 						if (tokenLocalStorage) {
 							console.log('dashboard', tokenLocalStorage);
-							authenticationFacadeService.setAccessToken(tokenLocalStorage);
+							tokenStorageService.setAccessToken(tokenLocalStorage);
 							return true;
 						}
 
@@ -41,7 +42,7 @@ const routes: Routes = [
 						}
 
 						// save token
-						authenticationFacadeService.setAccessToken({
+						tokenStorageService.setAccessToken({
 							__typename: 'LoggedUserOutput',
 							accessToken,
 						});
@@ -63,15 +64,15 @@ const routes: Routes = [
 				path: TOP_LEVEL_NAV.welcome,
 				canActivate: [
 					() => {
-						const authenticationFacadeService = inject(AuthenticationFacadeService);
+						const tokenStorageService = inject(TokenStorageService);
 						const router = inject(Router);
 
-						const tokenLocalStorage = authenticationFacadeService.getTokenFromLocalStorage();
+						const tokenLocalStorage = tokenStorageService.getTokenFromLocalStorage();
 
 						// save token - don't go to welcome page
 						if (tokenLocalStorage) {
 							console.log('welcome', tokenLocalStorage);
-							authenticationFacadeService.setAccessToken(tokenLocalStorage);
+							tokenStorageService.setAccessToken(tokenLocalStorage);
 							router.navigate([TOP_LEVEL_NAV.dashboard]);
 							return false;
 						}
@@ -91,7 +92,13 @@ const routes: Routes = [
 ];
 
 @NgModule({
-	imports: [RouterModule.forRoot(routes)],
+	imports: [
+		WelcomeModule,
+		RouterModule.forRoot(routes, {
+			initialNavigation: 'enabledBlocking',
+			preloadingStrategy: PreloadAllModules,
+		}),
+	],
 	exports: [RouterModule],
 })
 export class AppRoutingModule {}

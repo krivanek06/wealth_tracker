@@ -8,6 +8,8 @@ import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { environment } from '../../../environments/environment';
 import { DialogServiceUtil } from '../../shared/dialogs';
+import { STORAGE_ACCESS_TOKEN } from '../models';
+import { PlatformService } from '../services/platform.service';
 import { LoggedUserOutputFragment } from './schema-backend.service';
 
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
@@ -41,8 +43,14 @@ const errorLink = onError(({ graphQLErrors, networkError, response }) => {
 	}
 });
 
-const getToken = (): string | null => {
-	const token = localStorage.getItem('ACCESS_TOKEN');
+const getToken = (platform: PlatformService): string | null => {
+	// console.log('getToken', platform, platform.isServer);
+
+	if (platform.isServer) {
+		return null;
+	}
+
+	const token = localStorage.getItem(STORAGE_ACCESS_TOKEN);
 	if (!token) {
 		return null;
 	}
@@ -56,19 +64,20 @@ const getToken = (): string | null => {
 	}
 };
 
-const basicContext = setContext((_, { headers }) => {
-	const token = getToken();
+const basicContext = (platform: PlatformService) =>
+	setContext((_, { headers }) => {
+		const token = getToken(platform);
 
-	return {
-		headers: {
-			...headers,
-			authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json', // Will break other content types (file upload)
-		},
-	};
-});
+		return {
+			headers: {
+				...headers,
+				authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json', // Will break other content types (file upload)
+			},
+		};
+	});
 
-export function createDefaultApollo(httpLink: HttpLink): ApolloClientOptions<any> {
+export function createDefaultApollo(httpLink: HttpLink, platform: PlatformService): ApolloClientOptions<any> {
 	const cache = new InMemoryCache({});
 
 	// create http with persisten queries
@@ -102,8 +111,9 @@ export function createDefaultApollo(httpLink: HttpLink): ApolloClientOptions<any
 	const config: ApolloClientOptions<any> = {
 		connectToDevTools: !environment.production,
 		assumeImmutableResults: true,
+		ssrMode: true,
 		cache,
-		link: ApolloLink.from([basicContext, errorLink, http]),
+		link: ApolloLink.from([basicContext(platform), errorLink, http]),
 		defaultOptions: {
 			watchQuery: {
 				errorPolicy: 'all',
@@ -120,7 +130,7 @@ export function createDefaultApollo(httpLink: HttpLink): ApolloClientOptions<any
 		{
 			provide: APOLLO_OPTIONS,
 			useFactory: createDefaultApollo,
-			deps: [HttpLink],
+			deps: [HttpLink, PlatformService],
 		},
 	],
 })

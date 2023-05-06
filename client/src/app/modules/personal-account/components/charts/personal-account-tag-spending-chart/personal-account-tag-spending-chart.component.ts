@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import * as Highcharts from 'highcharts';
+import Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 import { ChartConstructor } from '../../../../../core/utils';
@@ -11,22 +11,24 @@ NoDataToDisplay(Highcharts);
 @Component({
 	selector: 'app-personal-account-tag-spending-chart',
 	template: `
-		<highcharts-chart
-			*ngIf="accountOverviewChartData; else skeletonLoading"
-			[Highcharts]="Highcharts"
-			[options]="chartOptions"
-			[callbackFunction]="chartCallback"
-			[(update)]="updateFromInput"
-			[oneToOne]="true"
-			style="width: 100%; display: block"
-			[style.height.px]="heightPx"
-		>
-		</highcharts-chart>
+		<ng-container *ngIf="isHighcharts">
+			<highcharts-chart
+				*ngIf="accountOverviewChartData; else skeletonLoading"
+				[Highcharts]="Highcharts"
+				[options]="chartOptions"
+				[callbackFunction]="chartCallback"
+				[(update)]="updateFromInput"
+				[oneToOne]="true"
+				style="width: 100%; display: block"
+				[style.height.px]="heightPx"
+			>
+			</highcharts-chart>
 
-		<!-- skeleton loading -->
-		<ng-template #skeletonLoading>
-			<div class="w-full g-skeleton" [style.height.px]="heightPx"></div>
-		</ng-template>
+			<!-- skeleton loading -->
+			<ng-template #skeletonLoading>
+				<div class="w-full g-skeleton" [style.height.px]="heightPx"></div>
+			</ng-template>
+		</ng-container>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	standalone: true,

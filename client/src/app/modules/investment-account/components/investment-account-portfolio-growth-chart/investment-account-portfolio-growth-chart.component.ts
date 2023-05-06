@@ -9,7 +9,7 @@ import {
 	OnInit,
 	SimpleChanges,
 } from '@angular/core';
-import * as Highcharts from 'highcharts';
+import Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 import { InvestmentAccountGrowth } from '../../../../core/graphql';
@@ -22,6 +22,7 @@ NoDataToDisplay(Highcharts);
 	selector: 'app-investment-account-portfolio-growth-chart',
 	template: `
 		<highcharts-chart
+			*ngIf="isHighcharts"
 			[Highcharts]="Highcharts"
 			[options]="chartOptions"
 			[callbackFunction]="chartCallback"

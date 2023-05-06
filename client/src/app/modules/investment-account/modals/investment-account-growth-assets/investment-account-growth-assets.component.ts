@@ -4,7 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import * as Highcharts from 'highcharts';
+import Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 import { Observable, combineLatest, distinctUntilChanged, map, startWith, takeUntil, tap } from 'rxjs';

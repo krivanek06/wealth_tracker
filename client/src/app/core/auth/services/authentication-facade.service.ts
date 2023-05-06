@@ -11,7 +11,7 @@ import {
 	RegisterUserInput,
 	UserFragment,
 } from '../../graphql';
-import { STORAGE_ACCESS_TOKEN, TOP_LEVEL_NAV } from '../../models';
+import { TOP_LEVEL_NAV } from '../../models';
 import { TokenStorageService } from './token-storage.service';
 
 @Injectable({
@@ -88,20 +88,6 @@ export class AuthenticationFacadeService {
 			map((res) => !!res.data?.changePassword),
 			catchError(() => EMPTY)
 		);
-	}
-
-	getTokenFromLocalStorage(): LoggedUserOutputFragment | null {
-		const token = localStorage.getItem(STORAGE_ACCESS_TOKEN);
-		if (token) {
-			try {
-				const parsed = JSON.parse(token) as LoggedUserOutputFragment;
-				return parsed;
-			} catch (err) {
-				return null;
-			}
-		}
-
-		return null;
 	}
 
 	resetData(): void {

@@ -7,7 +7,7 @@ RUN yarn global add @angular/cli@latest
 RUN yarn install
 
 COPY ./ ./
-RUN yarn run build
+RUN yarn run build:ssr
 
 FROM nginx:1.23.0-alpine
 EXPOSE 8080

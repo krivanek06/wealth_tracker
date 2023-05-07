@@ -9,7 +9,14 @@ RUN yarn install
 COPY ./ ./
 RUN yarn run build:ssr
 
-FROM nginx:1.23.0-alpine
-EXPOSE 8080
+FROM nginx:1.23.0-alpine AS client-browser
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /app/dist/client /usr/share/nginx/html
+COPY --from=build /app/dist/client/browser /usr/share/nginx/html
+
+FROM node:16 AS ssr-server
+COPY --from=build /app/dist /app/dist/
+COPY ./package.json /app/package.json
+
+EXPOSE 8080
+
+CMD yarn run serve:ssr

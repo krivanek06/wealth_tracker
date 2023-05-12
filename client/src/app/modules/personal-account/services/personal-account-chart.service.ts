@@ -85,7 +85,7 @@ export class PersonalAccountChartService {
 	getChartCategories(data: PersonalAccountDetailsFragment, aggregation: 'week' | 'month' = 'week'): string[] {
 		const categories = data.weeklyAggregation.map((d) => {
 			const monthName = DateServiceUtil.formatDate(new Date(d.year, d.month), 'LLL');
-			return `Week: ${d.week}, ${monthName}`;
+			return `Week: ${d.week}, ${monthName}, ${d.year}`;
 		});
 		return categories;
 	}

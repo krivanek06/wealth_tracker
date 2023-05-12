@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { ChartConstructor } from '../../../../../core/utils';
 import { GenericChartSeries } from '../../../../../shared/models';
-
 @Component({
 	selector: 'app-personal-account-account-growth-chart',
 	template: `
@@ -71,6 +71,11 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 				visible: true,
 				dataLabels: {
 					enabled: index === 0,
+					formatter: function () {
+						const that = this as any;
+						// format data label number to 2 decimals
+						return Highcharts.numberFormat(that.y, 2);
+					},
 				},
 				stack: index === 0 ? '' : index == 1 ? 'Income' : 'Expense',
 				yAxis: index,

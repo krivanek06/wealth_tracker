@@ -27,13 +27,12 @@ const routes: Routes = [
 
 						// save token
 						if (tokenLocalStorage) {
-							console.log('dashboard', tokenLocalStorage);
 							tokenStorageService.setAccessToken(tokenLocalStorage);
 							return true;
 						}
 
 						// get token from query param
-						const accessToken = route.queryParamMap.get('accessToken');
+						const accessToken = route.queryParams?.['accessToken'];
 						console.log('client got token', accessToken);
 
 						if (!accessToken) {
@@ -48,7 +47,7 @@ const routes: Routes = [
 						});
 
 						// Remove query params
-						router.navigate([], {
+						router.navigate([TOP_LEVEL_NAV.dashboard], {
 							queryParams: {
 								accessToken: null,
 							},

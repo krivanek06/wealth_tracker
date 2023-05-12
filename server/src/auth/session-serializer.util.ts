@@ -16,13 +16,18 @@ export class SessionSerializer extends PassportSerializer {
 	}
 
 	async deserializeUser(payload: any, done: VerifyCallback) {
-		const user = await this.prismaService.user.findUnique({
-			where: {
-				id: payload.id,
-			},
-		});
-		console.log('Deserialize User');
-		console.log(user);
-		return user ? done(null, user) : done(null, null);
+		try {
+			const user = await this.prismaService.user.findUnique({
+				where: {
+					id: payload.id,
+				},
+			});
+			console.log('Deserialize User');
+			console.log(user);
+			return user ? done(null, user) : done(null, null);
+		} catch (e) {
+			console.log(e);
+			return null;
+		}
 	}
 }

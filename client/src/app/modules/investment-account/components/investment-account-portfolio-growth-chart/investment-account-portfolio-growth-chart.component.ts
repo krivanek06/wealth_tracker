@@ -13,7 +13,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { map, startWith } from 'rxjs';
 import { InvestmentAccountGrowth } from '../../../../core/graphql';
 import { ChartConstructor, GeneralFunctionUtil } from '../../../../core/utils';
-import { LAYOUT_SM } from './../../../../shared/models/layout.model';
+import { LAYOUT_SM } from './../../../../shared/models';
 
 @Component({
 	selector: 'app-investment-account-portfolio-growth-chart',

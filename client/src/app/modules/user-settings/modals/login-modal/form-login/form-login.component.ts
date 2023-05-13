@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, forwardRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { LoginUserInput } from '../../../../../core/graphql';
+import { TEST_USER_EMAIL, TEST_USER_PASSWORD } from '../../../../../core/models';
 import { emailValidator, maxLengthValidator, requiredValidator } from '../../../../../shared/models';
 import { environment } from './../../../../../../environments/environment';
 
@@ -51,12 +52,9 @@ export class FormLoginComponent implements OnInit {
 	}
 
 	onDevelopmentLogin(): void {
-		const testUser = 'judge67@gmail.com';
-		const testPassword = 'qwer1234';
-
 		this.formGroup.setValue({
-			email: testUser,
-			password: testPassword,
+			email: TEST_USER_EMAIL,
+			password: TEST_USER_PASSWORD,
 		});
 	}
 

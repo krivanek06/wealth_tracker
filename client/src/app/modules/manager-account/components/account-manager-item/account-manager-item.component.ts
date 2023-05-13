@@ -7,7 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AccountIdentificationFragment, AccountType } from '../../../../core/graphql';
 import { FormMatInputWrapperModule } from '../../../../shared/components';
 import { maxLengthValidator, minLengthValidator, requiredValidator } from '../../../../shared/models';
-import { AccountManagerEdit, ACCOUNT_NAMES } from '../../models';
+import { ACCOUNT_NAMES, AccountManagerEdit } from '../../models';
 
 @Component({
 	selector: 'app-account-manager-item',

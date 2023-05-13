@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { FetchResult } from '@apollo/client/core';
+import { Apollo } from 'apollo-angular';
 import { map, Observable } from 'rxjs';
 import {
 	ChangePasswordGQL,
 	ChangePasswordInput,
 	ChangePasswordMutation,
+	GetAuthenticatedUserDocument,
 	GetAuthenticatedUserGQL,
+	GetAuthenticatedUserQuery,
 	LoginForgotPasswordInput,
 	LoginUserBasicGQL,
 	LoginUserBasicMutation,
@@ -27,8 +30,21 @@ export class AuthenticationApiService {
 		private registerBasicGQL: RegisterBasicGQL,
 		private resetPasswordGQL: ResetPasswordGQL,
 		private changePasswordGQL: ChangePasswordGQL,
-		private getAuthenticatedUserGQL: GetAuthenticatedUserGQL
+		private getAuthenticatedUserGQL: GetAuthenticatedUserGQL,
+		private apollo: Apollo
 	) {}
+
+	get authenticatedUser(): UserFragment {
+		const query = this.apollo.client.readQuery<GetAuthenticatedUserQuery>({
+			query: GetAuthenticatedUserDocument,
+		});
+
+		if (!query || !query.getAuthenticatedUser) {
+			throw new Error('No authenticated user found');
+		}
+
+		return query.getAuthenticatedUser;
+	}
 
 	getAuthenticatedUser(): Observable<UserFragment> {
 		return this.getAuthenticatedUserGQL.watch().valueChanges.pipe(map((res) => res.data.getAuthenticatedUser));

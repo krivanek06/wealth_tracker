@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { firstValueFrom, map, Observable } from 'rxjs';
+import { Observable, firstValueFrom, map } from 'rxjs';
 import { TOP_LEVEL_NAV } from 'src/app/core/models';
 import { Confirmable } from 'src/app/shared/decorators';
 import {
@@ -11,7 +11,8 @@ import {
 import { AccountIdentificationFragment, AccountType } from '../../../../core/graphql';
 import { DASHBOARD_ROUTES_BY_TYPE } from '../../../../core/models';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
-import { AccountManagerEdit, ACCOUNT_NAMES, ACCOUNT_NAME_OPTIONS } from '../../models';
+import { ACCOUNT_NAMES, ACCOUNT_NAME_OPTIONS, AccountManagerEdit } from '../../models';
+import { AuthenticationFacadeService } from './../../../../core/auth';
 
 @Component({
 	selector: 'app-account-manager',
@@ -30,6 +31,7 @@ export class AccountManagerComponent {
 		private managerAccountApiService: AccountManagerApiService,
 		private personalAccountFacadeService: PersonalAccountFacadeService,
 		private investmentAccountFacadeApiService: InvestmentAccountFacadeApiService,
+		private authenticationFacadeService: AuthenticationFacadeService,
 		private router: Router
 	) {}
 
@@ -85,6 +87,11 @@ export class AccountManagerComponent {
 
 	@Confirmable('Please confirm before removing account type')
 	async onDelete(accountType: AccountType): Promise<void> {
+		if (this.authenticationFacadeService.isAuthenticatedUserTestAccount()) {
+			DialogServiceUtil.showNotificationBar('Test User Authenticated - disabled removing account', 'error');
+			return;
+		}
+
 		if (accountType === AccountType.Personal) {
 			await firstValueFrom(this.personalAccountFacadeService.deletePersonalAccount());
 		} else if (accountType === AccountType.Investment) {

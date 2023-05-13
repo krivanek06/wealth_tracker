@@ -11,7 +11,7 @@ import {
 	RegisterUserInput,
 	UserFragment,
 } from '../../graphql';
-import { TOP_LEVEL_NAV } from '../../models';
+import { TEST_USER_EMAIL, TOP_LEVEL_NAV } from '../../models';
 import { TokenStorageService } from './token-storage.service';
 
 @Injectable({
@@ -27,6 +27,10 @@ export class AuthenticationFacadeService {
 
 	getAuthenticatedUser(): Observable<UserFragment | null> {
 		return this.authenticationApiService.getAuthenticatedUser();
+	}
+
+	isAuthenticatedUserTestAccount(): boolean {
+		return this.authenticationApiService.authenticatedUser.email === TEST_USER_EMAIL;
 	}
 
 	async logoutUser(): Promise<void> {

@@ -60,8 +60,9 @@ export class PersonalAccountTagSpendingChartComponent extends ChartConstructor i
 			return;
 		}
 
+		const filteredNames = ['Total', 'Income', 'Expense Entries'];
 		this.chartOptions.series = [...this.accountOverviewChartData, ...this.expenseTagsChartData]
-			.filter((d) => d.name !== 'Total' && d.name !== 'Income')
+			.filter((d) => !filteredNames.includes(d.name ?? ''))
 			.map((d, index) => {
 				return {
 					name: d.name,
@@ -172,7 +173,7 @@ export class PersonalAccountTagSpendingChartComponent extends ChartConstructor i
 				padding: 12,
 				backgroundColor: '#232323',
 				style: {
-					fontSize: '14px',
+					fontSize: '15px',
 					color: '#D9D8D8',
 				},
 				shared: true,
@@ -190,14 +191,13 @@ export class PersonalAccountTagSpendingChartComponent extends ChartConstructor i
 
 					// add divider for better formatting
 					const addDivider = that.series.name === 'Expense' || that.series.name === 'Total';
-					const valueColor = 'var(--gray-light)';
 					const valueRounded = Math.round(value * 100) / 100;
 
 					const line = `
             <tr>
               <td style="color: ${that.series.color}; line-height: 26px">● ${that.series.name} </td>
               <td style="text-align: right">
-                <span style="color: ${valueColor}">$${valueRounded}</span>
+                <span style="color: var(--gray-light)">$${valueRounded}</span>
                 <span style="color: var(--gray-medium); ">USD</span>
               </td>
             </tr>
@@ -233,8 +233,8 @@ export class PersonalAccountTagSpendingChartComponent extends ChartConstructor i
 					borderWidth: 0,
 					dataLabels: {
 						color: '#cecece',
-						enabled: false,
-						format: undefined,
+						enabled: true,
+						format: '{point.y:,.2f}',
 					},
 					enableMouseTracking: true,
 				},

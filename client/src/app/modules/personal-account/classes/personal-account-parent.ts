@@ -1,7 +1,7 @@
 import { Directive, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { combineLatest, map, merge, Observable, of, reduce, startWith, switchMap, tap } from 'rxjs';
+import { Observable, combineLatest, map, merge, of, reduce, startWith, switchMap, tap } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../core/api';
 import {
 	AccountIdentification,
@@ -211,7 +211,8 @@ export abstract class PersonalAccountParent {
 								details.yearlyAggregation
 						  )
 						: this.personalAccountDataService.getPersonalAccountTagAggregationByDailyData(result, dateFilter)
-			)
+			),
+			map((result) => result.filter((d) => d.type === TagDataType.Expense).sort((a, b) => b.totalValue - a.totalValue))
 		);
 	}
 

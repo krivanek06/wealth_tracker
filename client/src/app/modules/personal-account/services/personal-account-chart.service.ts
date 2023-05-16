@@ -95,7 +95,7 @@ export class PersonalAccountChartService {
 	 * Aggregation use historical data, tomorrow is calculated from today's 'total'
 	 *
 	 * @param data aggregation from personal account
-	 * @param aggregation type of aggreation
+	 * @param aggregation type of aggregation
 	 * @returns GenericChartSeries data type
 	 */
 	getAccountGrowthChartData(
@@ -140,17 +140,23 @@ export class PersonalAccountChartService {
 		data: PersonalAccountDetailsFragment,
 		aggregation: 'week' | 'month' = 'week',
 		activeTagIds: string[] = []
-	): [GenericChartSeries, GenericChartSeries] {
+	): [GenericChartSeries, GenericChartSeries, GenericChartSeries] {
 		// reduce data
-		const income: number[] = data.weeklyAggregation.map((d) =>
+		const income = data.weeklyAggregation.map((d) =>
 			d.data.filter((d) => d.tag.type === TagDataType.Income).reduce((acc, curr) => acc + curr.value, 0)
 		);
-		const expense: number[] = data.weeklyAggregation.map((d) =>
-			d.data
-				.filter(
-					(d) => d.tag.type === TagDataType.Expense && (activeTagIds.length === 0 || activeTagIds.includes(d.tag.id))
-				)
-				.reduce((acc, curr) => acc + curr.value, 0)
+
+		const filteredExpenseTags = data.weeklyAggregation.map((d) =>
+			d.data.filter(
+				(d) => d.tag.type === TagDataType.Expense && (activeTagIds.length === 0 || activeTagIds.includes(d.tag.id))
+			)
+		);
+
+		const expense = filteredExpenseTags.map((expenseTags) => expenseTags.reduce((acc, curr) => acc + curr.value, 0));
+
+		// aggregated total entries for each tag on a time period
+		const expenseEntries = filteredExpenseTags.map((expenseTags) =>
+			expenseTags.reduce((acc, curr) => acc + curr.entries, 0)
 		);
 
 		// create format
@@ -166,8 +172,14 @@ export class PersonalAccountChartService {
 			type: ChartType.line,
 			color: TagColors.expense,
 		};
+		const expenseEntriesSeries: GenericChartSeries = {
+			name: 'Expense Entries',
+			data: expenseEntries,
+			type: ChartType.line,
+			color: TagColors.expenseTags,
+		};
 
-		return [incomeSeries, expenseSeries];
+		return [incomeSeries, expenseSeries, expenseEntriesSeries];
 	}
 
 	/**

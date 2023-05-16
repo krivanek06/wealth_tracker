@@ -63,7 +63,7 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 		this.chartOptions.series = [...this.accountOverviewChartData].map((d, index) => {
 			return {
 				name: d.name,
-				type: d.name === 'Total' ? 'area' : 'column',
+				type: d.name === 'Total' ? 'area' : d.name === 'Expense Entries' ? 'line' : 'column',
 				color: d.name === 'Total' ? 'var(--primary-dark)' : d.color,
 				data: d.data,
 				opacity: index === 0 ? 0.75 : 1,
@@ -71,11 +71,11 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 				visible: true,
 				dataLabels: {
 					enabled: index === 0,
-					formatter: function () {
-						const that = this as any;
-						// format data label number to 2 decimals
-						return Highcharts.numberFormat(that.y, 2);
-					},
+					// formatter: function () {
+					// 	const that = this as any;
+					// 	// format data label number to 2 decimals
+					// 	return Highcharts.numberFormat(that.y, 2);
+					// },
 				},
 				stack: index === 0 ? '' : index == 1 ? 'Income' : 'Expense',
 				yAxis: index,
@@ -137,6 +137,20 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 					minorGridLineWidth: 0,
 					visible: false,
 				},
+				{
+					title: {
+						text: '',
+					},
+					startOnTick: false,
+					endOnTick: false,
+					gridLineColor: '#66666655',
+					opposite: true,
+					gridLineWidth: 1,
+					minorTickInterval: 'auto',
+					tickPixelInterval: 40,
+					minorGridLineWidth: 0,
+					visible: true,
+				},
 			],
 			xAxis: {
 				visible: true,
@@ -173,34 +187,35 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 				padding: 12,
 				backgroundColor: '#232323',
 				style: {
-					fontSize: '14px',
+					fontSize: '16px',
 					color: '#D9D8D8',
 				},
 				shared: true,
 				useHTML: true,
 
-				// pointFormatter: function () {
-				// 	const that = this as any;
-				// 	const value = that.y;
+				pointFormatter: function () {
+					const that = this as any;
+					const value = that.y;
 
-				// 	console.log(this);
+					// do not show 0 value in tooltip
+					if (value === 0) {
+						return '';
+					}
 
-				// 	// do not show 0 value in tooltip
-				// 	if (value === 0) {
-				// 		return '';
-				// 	}
+					const valueRounded = Math.round(value * 100) / 100;
 
-				// 	const valueColor = '#b2b2b2'; // that.series.name === 'Expense' || that.series.name === 'Income' ? that.series.color :
+					const line = `
+				    <div>
+				      <span style="color: ${that.series.color}; line-height: 26px">● ${that.series.name} </span>
+				      <span style="text-align: right">
+                <span style="color: var(--gray-light); ">$${valueRounded}</span>
+                <span style="color: var(--gray-medium); ">USD</span>
+              </span>
+				    </div>
+				  `;
 
-				// 	const line = `
-				//     <div>
-				//       <span style="color: ${that.series.color}; line-height: 26px">● ${that.series.name} </span>
-				//       <span style="text-align: right"><b style="color: ${valueColor}">$${that.y}</b> USD</span>
-				//     </div>
-				//   `;
-
-				// 	return line;
-				// },
+					return line;
+				},
 				//pointFormat: '<span style="color:{point.color};">{point.name}asds</span>: <b>{point.y}</b><br/>',
 				valueDecimals: 2,
 			},
@@ -235,8 +250,8 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 					borderWidth: 0,
 					dataLabels: {
 						color: '#cecece',
-						enabled: false,
-						format: undefined,
+						enabled: true,
+						format: '{point.y:,.2f}',
 					},
 					enableMouseTracking: true,
 				},

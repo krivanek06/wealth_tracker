@@ -136,7 +136,6 @@ export class PersonalAccountDataService {
 	getPersonalAccountTagAggregationByAggregationData(
 		data: PersonalAccountAggregationDataOutput[]
 	): PersonalAccountTagAggregation[] {
-		console.log('eeeee', data);
 		const result = data.reduce((acc, curr) => {
 			const key = curr.tag.id;
 			const selectedTag: PersonalAccountTagAggregation = acc[key];

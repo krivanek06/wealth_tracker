@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HeaderContainerModule } from '../page-shared';
@@ -27,6 +28,7 @@ const routes: Routes = [
 		WelcomeAboutComponent,
 		WelcomeInvestmentAccountComponent,
 		WelcomePersonalAccountComponent,
+		HttpClientModule,
 	],
 })
 export class WelcomeModule {}

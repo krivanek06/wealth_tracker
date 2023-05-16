@@ -32,11 +32,11 @@
 		></app-form-mat-input-wrapper>
 
 		<!-- action buttons -->
-		<div class="flex items-center -mt-4 gap-x-3">
-			<button color="accent" mat-icon-button type="submit" class="border border-solid" matTooltip="Save Changes">
+		<div class="c-button-wrapper">
+			<button color="accent" mat-icon-button type="submit" matTooltip="Save Changes">
 				<mat-icon>check</mat-icon>
 			</button>
-			<button mat-icon-button type="button" (click)="onEditingToggle()" class="border border-solid" matTooltip="Cancel">
+			<button mat-icon-button type="button" (click)="onEditingToggle()" matTooltip="Cancel">
 				<mat-icon>close</mat-icon>
 			</button>
 			<button
@@ -45,7 +45,6 @@
 				mat-icon-button
 				type="button"
 				(click)="onDelete()"
-				class="border border-solid"
 				matTooltip="Delete Account"
 			>
 				<mat-icon>delete</mat-icon>

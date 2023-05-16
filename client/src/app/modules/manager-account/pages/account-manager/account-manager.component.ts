@@ -50,6 +50,7 @@ export class AccountManagerComponent {
 
 	async onEdit(formData: AccountManagerEdit, type: AccountType): Promise<void> {
 		const accountName = formData.name;
+		DialogServiceUtil.showNotificationBar(`${ACCOUNT_NAMES[type]}: editing account`, 'notification');
 
 		if (type === AccountType.Personal) {
 			await firstValueFrom(
@@ -65,7 +66,7 @@ export class AccountManagerComponent {
 			);
 		}
 
-		DialogServiceUtil.showNotificationBar(`${ACCOUNT_NAMES[type]} has been edited`, 'success');
+		DialogServiceUtil.showNotificationBar(`${ACCOUNT_NAMES[type]}: has been edited`, 'success');
 	}
 
 	async onCreate(type: AccountType): Promise<void> {

@@ -3,7 +3,6 @@ import { FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { LoginUserInput } from '../../../../../core/graphql';
 import { TEST_USER_EMAIL, TEST_USER_PASSWORD } from '../../../../../core/models';
 import { emailValidator, maxLengthValidator, requiredValidator } from '../../../../../shared/models';
-import { environment } from './../../../../../../environments/environment';
 
 @Component({
 	selector: 'app-form-login',
@@ -26,8 +25,6 @@ export class FormLoginComponent implements OnInit {
 		}),
 		password: new FormControl('', { validators: [requiredValidator, maxLengthValidator(25)], nonNullable: true }),
 	});
-
-	isProduction = environment.production;
 
 	onChange: (value: LoginUserInput) => void = () => {};
 	onTouched = () => {};
@@ -52,10 +49,12 @@ export class FormLoginComponent implements OnInit {
 	}
 
 	onDevelopmentLogin(): void {
-		this.formGroup.setValue({
+		const result: LoginUserInput = {
 			email: TEST_USER_EMAIL,
 			password: TEST_USER_PASSWORD,
-		});
+		};
+
+		this.onChange(result);
 	}
 
 	writeValue(obj: LoginUserInput): void {}

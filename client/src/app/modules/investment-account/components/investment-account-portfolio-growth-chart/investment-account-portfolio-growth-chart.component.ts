@@ -196,7 +196,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 				backgroundColor: '#232323',
 				xDateFormat: '%A, %b %e, %Y',
 				style: {
-					fontSize: '15px',
+					fontSize: '16px',
 					color: '#D9D8D8',
 				},
 				shared: true,

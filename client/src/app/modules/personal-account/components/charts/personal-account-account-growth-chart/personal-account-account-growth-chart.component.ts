@@ -203,13 +203,14 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 					}
 
 					const valueRounded = Math.round(value * 100) / 100;
+					const sign = that.series.name === 'Expense Entries' ? '' : '$';
 
 					const line = `
 				    <div>
 				      <span style="color: ${that.series.color}; line-height: 26px">● ${that.series.name} </span>
 				      <span style="text-align: right">
-                <span style="color: var(--gray-light); ">$${valueRounded}</span>
-                <span style="color: var(--gray-medium); ">USD</span>
+                <span style="color: var(--gray-light); ">${sign}${valueRounded}</span>
+                <span style="color: var(--gray-medium); ">${sign ? 'USD' : ''}</span>
               </span>
 				    </div>
 				  `;

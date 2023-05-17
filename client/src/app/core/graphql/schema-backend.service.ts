@@ -727,6 +727,7 @@ export enum TagDataType {
 
 export type User = {
   __typename?: 'User';
+  accountType: UserAccountType;
   authentication: UserAuthentication;
   createdAt: Scalars['String'];
   email: Scalars['String'];
@@ -737,6 +738,12 @@ export type User = {
   personalAccountId?: Maybe<Scalars['String']>;
   username: Scalars['String'];
 };
+
+export enum UserAccountType {
+  Admin = 'ADMIN',
+  Nomral = 'NOMRAL',
+  Test = 'TEST'
+}
 
 export type UserAuthentication = {
   __typename?: 'UserAuthentication';
@@ -959,7 +966,7 @@ export type EditPersonalAccountDailyEntryMutationVariables = Exact<{
 
 export type EditPersonalAccountDailyEntryMutation = { __typename?: 'Mutation', editPersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyDataEditOutput', originalDailyData: { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, description?: string | null, monthlyDataId: string, personalAccountId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } }, modifiedDailyData: { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, description?: string | null, monthlyDataId: string, personalAccountId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } } } };
 
-export type UserFragment = { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string, authentication: { __typename?: 'UserAuthentication', authenticationType: AuthenticationType } };
+export type UserFragment = { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string, accountType: UserAccountType, authentication: { __typename?: 'UserAuthentication', authenticationType: AuthenticationType } };
 
 export type LoggedUserOutputFragment = { __typename?: 'LoggedUserOutput', accessToken: string };
 
@@ -994,7 +1001,7 @@ export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: 
 export type GetAuthenticatedUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAuthenticatedUserQuery = { __typename?: 'Query', getAuthenticatedUser: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string, authentication: { __typename?: 'UserAuthentication', authenticationType: AuthenticationType } } };
+export type GetAuthenticatedUserQuery = { __typename?: 'Query', getAuthenticatedUser: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string, accountType: UserAccountType, authentication: { __typename?: 'UserAuthentication', authenticationType: AuthenticationType } } };
 
 export const AccountIdentificationFragmentDoc = gql`
     fragment AccountIdentification on AccountIdentification {
@@ -1235,6 +1242,7 @@ export const UserFragmentDoc = gql`
   username
   email
   lastSingInDate
+  accountType
   authentication {
     authenticationType
   }

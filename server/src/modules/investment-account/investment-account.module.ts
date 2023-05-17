@@ -30,6 +30,12 @@ import {
 		InvestmentAccountTransactionService,
 		InvestmentAccountTransactionResolver,
 	],
-	exports: [InvestmentAccountResolver, InvestmentAccountHoldingResolver, InvestmentAccountCashChangeResolver],
+	exports: [
+		InvestmentAccountResolver,
+		InvestmentAccountHoldingResolver,
+		InvestmentAccountCashChangeResolver,
+		InvestmentAccountService,
+		InvestmentAccountHoldingService,
+	],
 })
 export class InvestmentAccountModule {}

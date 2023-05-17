@@ -658,6 +658,8 @@ export type Query = {
   /** All asset symbols that were ever inside holdings, some transaction were made by them */
   getTransactionSymbols: Array<Scalars['String']>;
   healthCheck: Scalars['String'];
+  /** Init user account with dummy data for a specific user */
+  initUserAccountWithDummyData: Scalars['Boolean'];
   /** Search asset based on symbol name */
   searchAssetBySymbol: Array<AssetGeneral>;
   /** Search asset based on symbol identification AAPL, BTC */
@@ -702,6 +704,11 @@ export type QueryGetPersonalAccountDailyDataArgs = {
 
 export type QueryGetTransactionHistoryArgs = {
   input: InvestmentAccountTransactionInput;
+};
+
+
+export type QueryInitUserAccountWithDummyDataArgs = {
+  input: Scalars['String'];
 };
 
 

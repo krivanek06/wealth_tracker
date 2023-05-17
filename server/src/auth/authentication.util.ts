@@ -1,6 +1,6 @@
 import { ExecutionContext, InternalServerErrorException } from '@nestjs/common';
 import { User as UserClient } from '@prisma/client';
-import { RequestUser, REQ_USER_PROPERTY } from './authentication.dto';
+import { REQ_USER_PROPERTY, RequestUser } from './authentication.dto';
 
 export class AuthenticationUtil {
 	static getRequestUserFromContext(executionContext: ExecutionContext): RequestUser {
@@ -21,6 +21,7 @@ export class AuthenticationUtil {
 			id: userClient.id,
 			email: userClient.email,
 			username: userClient.username,
+			role: userClient.accountType,
 		};
 	}
 }

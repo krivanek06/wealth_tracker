@@ -9,6 +9,7 @@ export interface RequestUserInt {
 	id: string;
 	username: string;
 	email: string;
+	role: string;
 }
 
 export class RequestUser {
@@ -21,9 +22,13 @@ export class RequestUser {
 	@IsString()
 	email: string;
 
-	constructor(data: { id: string; username: string; email: string }) {
+	@IsString()
+	role: string;
+
+	constructor(data: RequestUserInt) {
 		this.id = data.id;
 		this.username = data.username;
 		this.email = data.email;
+		this.role = data.role;
 	}
 }

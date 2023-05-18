@@ -32,7 +32,7 @@ module.exports = {
 				'wt-danger-medium': 'var(--danger-medium)',
 
 				/* gray */
-				'wt-gray-dark-2': 'vat(--gray-dark-2)',
+				'wt-gray-dark-2': 'var(--gray-dark-2)',
 				'wt-gray-dark': 'var(--gray-dark)',
 				'wt-gray-medium': 'var(--gray-medium)',
 				'wt-gray-light': 'var(--gray-light)',

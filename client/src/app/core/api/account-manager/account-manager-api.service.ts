@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { AccountIdentificationFragment, GetAvailableAccountsGQL } from '../../graphql';
+import { AccountIdentificationFragment, AccountType, GetAvailableAccountsGQL } from '../../graphql';
 import { AccountManagerRoutes, DASHBOARD_ROUTES_BY_TYPE } from '../../models';
 
 @Injectable({
@@ -10,7 +10,13 @@ export class AccountManagerApiService {
 	constructor(private getAvailableAccountsGQL: GetAvailableAccountsGQL) {}
 
 	getAvailableAccounts(): Observable<AccountIdentificationFragment[]> {
-		return this.getAvailableAccountsGQL.watch().valueChanges.pipe(map((d) => d.data.getAvailableAccounts));
+		return this.getAvailableAccountsGQL
+			.watch()
+			.valueChanges.pipe(
+				map((d) =>
+					d.data.getAvailableAccounts.slice().sort((a, b) => (a.accountType === AccountType.Personal ? -1 : 1))
+				)
+			);
 	}
 
 	getAvailableAccountRoutes(): Observable<AccountManagerRoutes[]> {

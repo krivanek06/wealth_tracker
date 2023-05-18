@@ -28,6 +28,7 @@
 		<!-- account overview chart -->
 		<div *ngIf="!expandedChart || expandedChart === ChartExpand.EXPENSE">
 			<app-expander
+				class="hidden 2xl:block"
 				(onExpendClickEmitter)="onExpandChartClick(ChartExpand.EXPENSE)"
 				[isExpanded]=" expandedChart === ChartExpand.EXPENSE"
 			></app-expander>
@@ -43,6 +44,7 @@
 		<!-- expense chart -->
 		<div *ngIf="!expandedChart || expandedChart === ChartExpand.GROWTH">
 			<app-expander
+				class="hidden 2xl:block"
 				(onExpendClickEmitter)="onExpandChartClick(ChartExpand.GROWTH)"
 				[isExpanded]=" expandedChart === ChartExpand.GROWTH"
 				classes="-mb-8 pr-6"

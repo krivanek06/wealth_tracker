@@ -10,14 +10,15 @@ import { DialogServiceUtil } from './shared/dialogs';
 export class AppComponent implements OnInit {
 	constructor(dialogServiceUtil: DialogServiceUtil, private swUpdate: SwUpdate) {}
 
-	ngOnInit(): void {
-		// this.checkServiceWorkerUpdate();
+	ngOnInit() {
+		this.checkServiceWorkerUpdate();
 	}
 
 	private checkServiceWorkerUpdate() {
 		if (this.swUpdate.isEnabled) {
-			this.swUpdate.versionUpdates.subscribe(() => {
-				if (confirm('New version available. Load New Version?')) {
+			this.swUpdate.versionUpdates.subscribe(async () => {
+				if (await DialogServiceUtil.showConfirmDialog('New version is available. Load New Version?')) {
+					console.log('reloading');
 					window.location.reload();
 				}
 			});

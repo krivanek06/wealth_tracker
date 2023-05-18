@@ -38,6 +38,8 @@ import {
 		PersonalAccountMonthlyResolver,
 		PersonalAccountDailyResolver,
 		PersonalAccountTagResolver,
+		PersonalAccountService,
+		PersonalAccountDailyService,
 	],
 })
 export class PersonalAccountModule {}

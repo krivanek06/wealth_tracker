@@ -63,8 +63,8 @@ export class MomentServiceUtil {
 
 	static isBefore(date: DateInput, dateToCompare: DateInput): boolean {
 		const firstDate = new Date(date);
-		const secondate = new Date(dateToCompare);
-		return isBefore(firstDate, secondate);
+		const secondDate = new Date(dateToCompare);
+		return isBefore(firstDate, secondDate);
 	}
 
 	static isWeekend(date: DateInput): boolean {
@@ -87,6 +87,39 @@ export class MomentServiceUtil {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 *
+	 * @param days
+	 * @returns [startDate, endDate]
+	 */
+	static getDateRangeByDayDiff(days: number): [Date, Date] {
+		const today = new Date();
+		const startDate = startOfDay(subDays(today, days));
+		const endDate = startOfDay(today);
+
+		return [startDate, endDate];
+	}
+
+	static randomWorkingDayInPast(): Date {
+		// pick a past day
+		const randomDay = Math.floor(Math.random() * 165) + 300;
+		const pastDay = subDays(new Date(), randomDay);
+
+		// get random 30 days
+		const days = Array.from({ length: 30 }, (_, i) => i + 1);
+		const dates = days
+			.map((additionalDays) => startOfDay(subDays(pastDay, additionalDays)))
+			.filter((d) => !isWeekend(d) && !this.isHoliday(d));
+
+		// if no working day found, try again
+		if (dates.length === 0) {
+			return this.randomWorkingDayInPast();
+		}
+
+		// return random working day
+		return dates[0];
 	}
 
 	/**

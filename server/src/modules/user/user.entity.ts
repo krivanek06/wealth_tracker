@@ -1,8 +1,17 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { AuthenticationType, User as UserClient, UserAuthentication as UserAuthenticationClient } from '@prisma/client';
+import {
+	AuthenticationType,
+	UserAccountType,
+	UserAuthentication as UserAuthenticationClient,
+	User as UserClient,
+} from '@prisma/client';
 
 registerEnumType(AuthenticationType, {
 	name: 'AuthenticationType',
+});
+
+registerEnumType(UserAccountType, {
+	name: 'UserAccountType',
 });
 
 @ObjectType()
@@ -47,4 +56,7 @@ export class User implements UserClient {
 		nullable: true,
 	})
 	investmentAccountId: string | null;
+
+	@Field(() => UserAccountType)
+	accountType: UserAccountType;
 }

@@ -8,7 +8,7 @@ import {
 	InvestmentAccountFacadeApiService,
 	PersonalAccountFacadeService,
 } from '../../../../core/api';
-import { AccountIdentificationFragment, AccountType } from '../../../../core/graphql';
+import { AccountIdentificationFragment, AccountType, UserAccountType, UserFragment } from '../../../../core/graphql';
 import { DASHBOARD_ROUTES_BY_TYPE } from '../../../../core/models';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
 import { ACCOUNT_NAMES, ACCOUNT_NAME_OPTIONS, AccountManagerEdit } from '../../models';
@@ -21,11 +21,13 @@ import { AuthenticationFacadeService } from './../../../../core/auth';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountManagerComponent {
-	availableAccounts$!: Observable<AccountIdentificationFragment[]>;
+	authenticatedUser$!: Observable<UserFragment>;
 
+	availableAccounts$!: Observable<AccountIdentificationFragment[]>;
 	creatingAccounts$!: Observable<AccountType[]>;
 
 	ACCOUNT_NAMES = ACCOUNT_NAMES;
+	UserAccountType = UserAccountType;
 
 	constructor(
 		private managerAccountApiService: AccountManagerApiService,
@@ -36,6 +38,7 @@ export class AccountManagerComponent {
 	) {}
 
 	ngOnInit(): void {
+		this.authenticatedUser$ = this.authenticationFacadeService.getAuthenticatedUser();
 		this.availableAccounts$ = this.managerAccountApiService.getAvailableAccounts();
 
 		this.creatingAccounts$ = this.availableAccounts$.pipe(

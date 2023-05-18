@@ -9,9 +9,10 @@ import {
 	LoginForgotPasswordInput,
 	LoginUserInput,
 	RegisterUserInput,
+	UserAccountType,
 	UserFragment,
 } from '../../graphql';
-import { TEST_USER_EMAIL, TOP_LEVEL_NAV } from '../../models';
+import { TOP_LEVEL_NAV } from '../../models';
 import { TokenStorageService } from './token-storage.service';
 
 @Injectable({
@@ -25,12 +26,12 @@ export class AuthenticationFacadeService {
 		private router: Router
 	) {}
 
-	getAuthenticatedUser(): Observable<UserFragment | null> {
+	getAuthenticatedUser(): Observable<UserFragment> {
 		return this.authenticationApiService.getAuthenticatedUser();
 	}
 
 	isAuthenticatedUserTestAccount(): boolean {
-		return this.authenticationApiService.authenticatedUser.email === TEST_USER_EMAIL;
+		return this.authenticationApiService.authenticatedUser.accountType === UserAccountType.Test;
 	}
 
 	async logoutUser(): Promise<void> {

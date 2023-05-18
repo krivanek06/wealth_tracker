@@ -19,14 +19,7 @@
 	<button mat-stroked-button color="primary" class="w-full" type="submit">Login</button>
 
 	<!-- development -->
-	<button
-		*ngIf="!isProduction"
-		mat-stroked-button
-		color="accent"
-		class="w-full"
-		type="button"
-		(click)="onDevelopmentLogin()"
-	>
-		Development
+	<button mat-stroked-button color="accent" class="w-full" type="button" (click)="onDevelopmentLogin()">
+		Demo Login
 	</button>
 </form>

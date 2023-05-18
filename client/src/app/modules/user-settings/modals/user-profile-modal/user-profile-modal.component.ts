@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { filter, Observable, switchMap, tap } from 'rxjs';
+import { Observable, filter, switchMap, tap } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../../core/auth';
 import { AuthenticationType, ChangePasswordInput, UserFragment } from '../../../../core/graphql';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
@@ -19,7 +19,7 @@ enum PROFILE_COMPONENTS {
 })
 export class UserProfileModalComponent implements OnInit {
 	passwordChangeControl = new FormControl<ChangePasswordInput | null>(null);
-	authenticatedUser$!: Observable<UserFragment | null>;
+	authenticatedUser$!: Observable<UserFragment>;
 
 	PROFILE_COMPONENTS = PROFILE_COMPONENTS;
 	AuthenticationType = AuthenticationType;

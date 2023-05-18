@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ChartSeries } from '../../../shared/dto';
 import { MomentServiceUtil } from '../../../utils';
 import { AssetGeneralService } from '../../asset-manager';
-import { INVESTMENT_ACCOUNT_ERROR, INVESTMENT_ACCOUNT_MAX } from '../dto';
+import { INVESTMENT_ACCOUNT_ERROR } from '../dto';
 import { InvestmentAccount, InvestmentAccountCashChange } from '../entities';
 import { InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
 import { InvestmentAccountGrowth } from '../outputs';
@@ -147,10 +147,12 @@ export class InvestmentAccountService {
 	}
 
 	async createInvestmentAccount(userId: string): Promise<InvestmentAccount> {
-		const investmentAccountCount = await this.investmentAccountRepositoryService.countInvestmentAccounts(userId);
+		const existingInvestmentAccount = await this.investmentAccountRepositoryService.getInvestmentAccountByUserId(
+			userId
+		);
 
-		// prevent creating more than 5 investment accounts per user
-		if (investmentAccountCount >= INVESTMENT_ACCOUNT_MAX) {
+		// prevent creating more than 1 investment accounts per user
+		if (existingInvestmentAccount) {
 			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_ALLOWED_TO_CREATE, HttpStatus.FORBIDDEN);
 		}
 

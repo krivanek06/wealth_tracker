@@ -8,12 +8,13 @@ generator client {
 }
 
 model User {
-    id             String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt      DateTime @default(now())
+    id             String          @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt      DateTime        @default(now())
     imageUrl       String?
-    username       String   @unique
-    email          String   @unique
-    lastSingInDate DateTime @default(now())
+    username       String          @unique
+    email          String          @unique
+    lastSingInDate DateTime        @default(now())
+    accountType    UserAccountType @default(NORMAL)
 
     // how user created his account
     authentication UserAuthentication
@@ -43,6 +44,12 @@ type UserAuthentication {
 enum AuthenticationType {
     BASIC_AUTH
     GOOGLE
+}
+
+enum UserAccountType {
+    TEST
+    ADMIN
+    NORMAL
 }
 
 // ---------------- Personal account ------------------

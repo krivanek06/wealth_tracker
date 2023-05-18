@@ -5,6 +5,7 @@ fragment User on User {
 	username
 	email
 	lastSingInDate
+	accountType
 	authentication {
 		authenticationType
 	}

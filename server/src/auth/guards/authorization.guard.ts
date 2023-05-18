@@ -29,6 +29,7 @@ export class AuthorizationGuard extends AuthGuard('jwt') {
 			id: data.id,
 			username: data.username,
 			email: data.email,
+			role: data.role,
 		});
 
 		return true;

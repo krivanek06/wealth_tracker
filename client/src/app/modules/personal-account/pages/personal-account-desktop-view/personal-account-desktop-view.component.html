@@ -24,21 +24,36 @@
 		></app-value-presentation-button-control>
 	</app-scroll-wrapper>
 
-	<div class="grid gap-4 2xl:grid-cols-2">
+	<div class="grid gap-4" [ngClass]="{'2xl:grid-cols-2': !expandedChart, '2xl:grid-cols-1': !!expandedChart}">
 		<!-- account overview chart -->
-		<app-personal-account-tag-spending-chart
-			[accountOverviewChartData]="accountOverviewChartData$ | async"
-			[expenseTagsChartData]="totalExpenseTagsChartData$ | async"
-			[categories]="categories$ | async"
-			[heightPx]="525"
-		></app-personal-account-tag-spending-chart>
+		<div *ngIf="!expandedChart || expandedChart === ChartExpand.EXPENSE">
+			<app-expander
+				(onExpendClickEmitter)="onExpandChartClick(ChartExpand.EXPENSE)"
+				[isExpanded]=" expandedChart === ChartExpand.EXPENSE"
+			></app-expander>
+			<app-personal-account-tag-spending-chart
+				#dataChart
+				[accountOverviewChartData]="accountOverviewChartData$ | async"
+				[expenseTagsChartData]="totalExpenseTagsChartData$ | async"
+				[categories]="categories$ | async"
+				[heightPx]="525"
+			></app-personal-account-tag-spending-chart>
+		</div>
 
 		<!-- expense chart -->
-		<app-personal-account-account-growth-chart
-			[accountOverviewChartData]="accountOverviewChartData$ | async"
-			[categories]="categories$ | async"
-			[heightPx]="525"
-		></app-personal-account-account-growth-chart>
+		<div *ngIf="!expandedChart || expandedChart === ChartExpand.GROWTH">
+			<app-expander
+				(onExpendClickEmitter)="onExpandChartClick(ChartExpand.GROWTH)"
+				[isExpanded]=" expandedChart === ChartExpand.GROWTH"
+				classes="-mb-8 pr-6"
+			></app-expander>
+			<app-personal-account-account-growth-chart
+				#dataChart
+				[accountOverviewChartData]="accountOverviewChartData$ | async"
+				[categories]="categories$ | async"
+				[heightPx]="525"
+			></app-personal-account-account-growth-chart>
+		</div>
 	</div>
 
 	<!-- date filter control -->

@@ -8,6 +8,7 @@ export class AppController {
 	 */
 	@Get('/start')
 	applicationStart(): boolean {
+		console.log('Application started');
 		return true;
 	}
 }

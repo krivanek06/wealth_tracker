@@ -1,4 +1,4 @@
-import { Directive, inject } from '@angular/core';
+import { ChangeDetectorRef, Directive, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, combineLatest, map, merge, of, reduce, startWith, switchMap, tap } from 'rxjs';
@@ -89,6 +89,7 @@ export abstract class PersonalAccountParent {
 	personalAccountChartService = inject(PersonalAccountChartService);
 	personalAccountDataService = inject(PersonalAccountDataService);
 	dialog = inject(MatDialog);
+	cd = inject(ChangeDetectorRef);
 
 	ChartType = ChartType;
 

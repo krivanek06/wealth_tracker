@@ -392,6 +392,8 @@ export type Mutation = {
   editPersonalAccount: PersonalAccount;
   editPersonalAccountDailyEntry: PersonalAccountDailyDataEditOutput;
   editPersonalAccountTag: PersonalAccountTag;
+  /** Init user account with dummy data for a specific user */
+  initUserAccountWithDummyData: Scalars['Boolean'];
   loginBasic: LoggedUserOutput;
   registerBasic: LoggedUserOutput;
   resetPassword: Scalars['Boolean'];
@@ -450,6 +452,11 @@ export type MutationEditPersonalAccountDailyEntryArgs = {
 
 export type MutationEditPersonalAccountTagArgs = {
   input: PersonalAccountTagDataEdit;
+};
+
+
+export type MutationInitUserAccountWithDummyDataArgs = {
+  input: Scalars['String'];
 };
 
 
@@ -658,8 +665,6 @@ export type Query = {
   /** All asset symbols that were ever inside holdings, some transaction were made by them */
   getTransactionSymbols: Array<Scalars['String']>;
   healthCheck: Scalars['String'];
-  /** Init user account with dummy data for a specific user */
-  initUserAccountWithDummyData: Scalars['Boolean'];
   /** Search asset based on symbol name */
   searchAssetBySymbol: Array<AssetGeneral>;
   /** Search asset based on symbol identification AAPL, BTC */
@@ -707,11 +712,6 @@ export type QueryGetTransactionHistoryArgs = {
 };
 
 
-export type QueryInitUserAccountWithDummyDataArgs = {
-  input: Scalars['String'];
-};
-
-
 export type QuerySearchAssetBySymbolArgs = {
   input: Scalars['String'];
 };
@@ -748,7 +748,7 @@ export type User = {
 
 export enum UserAccountType {
   Admin = 'ADMIN',
-  Nomral = 'NOMRAL',
+  Normal = 'NORMAL',
   Test = 'TEST'
 }
 

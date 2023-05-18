@@ -1,7 +1,16 @@
 <section
 	*ngIf="availableAccounts$ | async as availableAccounts; else showSkeleton"
-	class="w-full md:w-8/12 mx-auto pt-[15%]"
+	class="w-full md:w-8/12 mx-auto pt-[12%]"
 >
+	<ng-container *ngIf="authenticatedUser$ | async as authenticatedUser">
+		<div
+			*ngIf="authenticatedUser.accountType === UserAccountType.Test"
+			class="p-4 mb-10 text-xl text-center bg-gray-600 rounded-lg"
+		>
+			You are logged with a testing account, your data won't be persisted for a long period of time
+		</div>
+	</ng-container>
+
 	<!-- existing accounts -->
 	<div *ngFor="let account of availableAccounts" class="mb-12">
 		<app-account-manager-item

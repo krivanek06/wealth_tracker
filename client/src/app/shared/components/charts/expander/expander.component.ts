@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 	imports: [CommonModule, MatButtonModule, MatIconModule],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	template: `
-		<div class="flex justify-end" [ngClass]="classes">
+		<div class="flex justify-end relative z-10" [ngClass]="classes">
 			<button (click)="onExpendClick()" type="button" mat-stroked-button [color]="isExpanded ? 'warn' : 'primary'">
 				<mat-icon class="mr-2">open_in_full</mat-icon>
 				<span *ngIf="!isExpanded">Expand</span>

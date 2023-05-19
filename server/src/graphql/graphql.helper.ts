@@ -72,13 +72,14 @@ export class GraphQLHelper {
 
 	static getStatusAndMessage(error: unknown): { statusCode: HttpStatus; message: string } {
 		console.log(error);
-		const statusCode = error?.['extensions']?.['code'];
+		const statusCode = error?.['extensions']?.['exception']?.['code'] ?? error?.['extensions']?.['code'] ?? 500;
+		const statusCodeFormatted = Number(statusCode);
 		const message = error?.['message'];
 
-		if (!statusCode || statusCode === 500) {
+		if (statusCodeFormatted === 500) {
 			return { statusCode: HttpStatus.INTERNAL_SERVER_ERROR, message: INTERNAL_SERVER_ERROR_MESSAGE };
 		}
 
-		return { statusCode, message };
+		return { statusCode: statusCodeFormatted, message };
 	}
 }

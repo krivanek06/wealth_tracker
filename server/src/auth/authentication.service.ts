@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthenticationType, User as UserClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
@@ -6,6 +6,7 @@ import { Profile } from 'passport-google-oauth20';
 import { JWT_SECRET } from '../environments';
 import { PrismaService } from '../prisma';
 import { MailConstructor, SendGridService } from '../providers/sendgrid';
+import { CustomGraphQlError } from './../graphql/graphql.error';
 import { RequestUser } from './authentication.dto';
 import { AuthenticationUtil } from './authentication.util';
 import {
@@ -28,7 +29,7 @@ export class AuthenticationService {
 	async changePassword(changePasswordInput: ChangePasswordInput, authUser: RequestUser): Promise<boolean> {
 		// check if passwords match
 		if (changePasswordInput.password !== changePasswordInput.passwordRepeat) {
-			throw new HttpException('Passwords do not match', HttpStatus.FORBIDDEN);
+			throw new CustomGraphQlError('Passwords do not match', HttpStatus.FORBIDDEN);
 		}
 
 		return this.changeUserPassword(authUser.email, changePasswordInput.password);
@@ -47,13 +48,13 @@ export class AuthenticationService {
 	async registerBasic({ email, password, passwordRepeat }: RegisterUserInput): Promise<UserClient> {
 		// check if passwords match
 		if (password !== passwordRepeat) {
-			throw new HttpException('Passwords do not match', HttpStatus.FORBIDDEN);
+			throw new CustomGraphQlError('Passwords do not match', HttpStatus.FORBIDDEN);
 		}
 
 		// if user email exists throw error
 		const isUser = await this.getUserByEmail(email);
 		if (isUser) {
-			throw new HttpException(`Email ${email} is already being used`, HttpStatus.FORBIDDEN);
+			throw new CustomGraphQlError(`Email ${email} is already being used`, HttpStatus.FORBIDDEN);
 		}
 
 		// get data
@@ -82,13 +83,13 @@ export class AuthenticationService {
 
 		// if not exists - throw error
 		if (!user) {
-			throw new HttpException(`Email or password is invalid`, HttpStatus.FORBIDDEN);
+			throw new CustomGraphQlError(`Email or password is invalid`, HttpStatus.FORBIDDEN);
 		}
 
 		// compare passwords
 		const isPasswordMatch = await this.comparePasswords(password, user.authentication.password);
 		if (!isPasswordMatch) {
-			throw new HttpException(`Email or password is invalid`, HttpStatus.FORBIDDEN);
+			throw new CustomGraphQlError(`Email or password is invalid`, HttpStatus.FORBIDDEN);
 		}
 
 		// update login time in DB
@@ -144,11 +145,14 @@ export class AuthenticationService {
 
 		// if not exists - throw error
 		if (!user) {
-			throw new HttpException(`Email does not exists`, HttpStatus.FORBIDDEN);
+			throw new CustomGraphQlError(`Email does not exists`, HttpStatus.FORBIDDEN);
 		}
 
 		if (user.authentication.authenticationType !== 'BASIC_AUTH') {
-			throw new HttpException(`Unable to reset password is not basic authentication is used`, HttpStatus.FORBIDDEN);
+			throw new CustomGraphQlError(
+				`Unable to reset password is not basic authentication is used`,
+				HttpStatus.FORBIDDEN
+			);
 		}
 
 		const randomPassword = newPassword ?? Math.random().toString(36).slice(-8); //  0.123456 -> "0.4fzyo82mvyr" -> "yo82mvyr"

@@ -1,5 +1,6 @@
-import { ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ExecutionContext, HttpStatus, Injectable } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { CustomGraphQlError } from './../../graphql/graphql.error';
 //import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import * as jwt from 'jsonwebtoken';
@@ -37,11 +38,11 @@ export class AuthorizationGuard extends AuthGuard('jwt') {
 
 	validateToken(auth: string): RequestUserInt {
 		if (!auth) {
-			throw new HttpException('Header information not found in the request', HttpStatus.BAD_GATEWAY);
+			throw new CustomGraphQlError('Header information not found in the request', HttpStatus.BAD_GATEWAY);
 		}
 
 		if (auth.split(' ')[0] !== 'Bearer') {
-			throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+			throw new CustomGraphQlError('Invalid token', HttpStatus.UNAUTHORIZED);
 		}
 
 		try {
@@ -50,7 +51,7 @@ export class AuthorizationGuard extends AuthGuard('jwt') {
 			return decoded as RequestUserInt;
 		} catch (err) {
 			console.log(err);
-			throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+			throw new CustomGraphQlError('Invalid token', HttpStatus.UNAUTHORIZED);
 		}
 	}
 }

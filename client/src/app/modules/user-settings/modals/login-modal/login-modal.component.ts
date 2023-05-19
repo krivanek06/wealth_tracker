@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { catchError, EMPTY, filter, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { EMPTY, Subject, catchError, filter, switchMap, takeUntil, tap } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../../core/auth';
 import { LoginForgotPasswordInput, LoginUserInput, RegisterUserInput } from '../../../../core/graphql';
 import { environment } from './../../../../../environments/environment';
@@ -37,6 +37,10 @@ export class LoginModalComponent implements OnInit, OnDestroy {
 		this.watchLoginUserFormControl();
 		this.watchRegisterUserFormControl();
 		this.watchForgotPasswordFormControl();
+	}
+
+	toggleLoading(): void {
+		this.loading = !this.loading;
 	}
 
 	private watchForgotPasswordFormControl(): void {

@@ -34,5 +34,5 @@
 
 <!-- social media login -->
 <mat-dialog-actions *ngIf="!loading">
-	<a mat-flat-button [href]="loginGoogle" color="warn" class="w-full text-center">Google</a>
+	<a mat-flat-button [href]="loginGoogle" (click)="toggleLoading()" color="warn" class="w-full text-center">Google</a>
 </mat-dialog-actions>

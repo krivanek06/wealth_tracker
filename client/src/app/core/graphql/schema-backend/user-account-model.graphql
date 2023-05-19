@@ -9,6 +9,9 @@ fragment User on User {
 	authentication {
 		authenticationType
 	}
+	isAuthBasic
+	isAccountTest
+	isAccountAdmin
 }
 
 fragment LoggedUserOutput on LoggedUserOutput {

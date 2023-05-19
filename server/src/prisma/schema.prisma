@@ -63,7 +63,7 @@ model PersonalAccount {
 
     // 1 - 1 relationship with user
     userId String @unique @db.ObjectId
-    user   User   @relation(fields: [userId], references: [id])
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     // 1 - N relationship with PersonalAccountTag
     personalAccountTag PersonalAccountTag[]
@@ -164,7 +164,7 @@ model InvestmentAccount {
 
     // 1 - 1 relationship with user
     userId String @unique @db.ObjectId
-    user   User   @relation(fields: [userId], references: [id])
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     // whole history of changed cash on hand
     cashChange InvestmentAccountCashChange[]

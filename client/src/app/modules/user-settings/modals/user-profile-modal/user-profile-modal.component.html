@@ -5,7 +5,7 @@
 <!-- content -->
 <mat-dialog-content>
 	<div *ngIf="authenticatedUser$ | async as authenticatedUser" class="grid gap-x-8 gap-y-3 lg:grid-cols-3">
-		<div class="order-last md:pl-8 lg:col-span-2 lg:order-first" [ngSwitch]="selectedComponent">
+		<div class="order-last md:pl-8 lg:col-span-2 lg:order-first" [ngSwitch]="selectedComponent$ | async">
 			<!-- user profile -->
 			<app-user-profile-info
 				*ngSwitchCase="PROFILE_COMPONENTS.USER_INFO"
@@ -17,6 +17,11 @@
 				*ngSwitchCase="PROFILE_COMPONENTS.CHANGE_PASSWORD"
 				[formControl]="passwordChangeControl"
 			></app-change-password-form>
+
+			<!-- loader -->
+			<div *ngSwitchCase="PROFILE_COMPONENTS.LOADER" class="grid h-full p-8 place-content-center">
+				<mat-spinner diameter="100"></mat-spinner>
+			</div>
 		</div>
 
 		<!-- action buttons -->
@@ -24,17 +29,30 @@
 			<!-- my info -->
 			<button mat-stroked-button color="primary" (click)="onComponentChange(PROFILE_COMPONENTS.USER_INFO)">
 				<mat-icon>person</mat-icon>
-				My info
+				My Info
 			</button>
+
 			<!-- change password -->
 			<button
-				*ngIf="authenticatedUser.authentication.authenticationType === AuthenticationType.BasicAuth "
+				*ngIf="authenticatedUser.isAuthBasic && !authenticatedUser.isAccountTest"
 				(click)="onComponentChange(PROFILE_COMPONENTS.CHANGE_PASSWORD)"
 				mat-stroked-button
 				color="accent"
 			>
 				<mat-icon>key</mat-icon>
-				Change password
+				Change Password
+			</button>
+
+			<!-- remove account -->
+			<button
+				*ngIf="!authenticatedUser.isAccountTest"
+				(click)="onRemoveAccount()"
+				mat-stroked-button
+				color="warn"
+				matTooltip="Your account will be completely removed"
+			>
+				<mat-icon>delete_forever</mat-icon>
+				Remove Account
 			</button>
 		</div>
 	</div>

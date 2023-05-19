@@ -1,14 +1,18 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Observable, filter, switchMap, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, filter, switchMap, tap } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../../core/auth';
-import { AuthenticationType, ChangePasswordInput, UserFragment } from '../../../../core/graphql';
+import { ChangePasswordInput, UserFragment } from '../../../../core/graphql';
+import { TOP_LEVEL_NAV } from '../../../../core/models';
+import { Confirmable } from '../../../../shared/decorators';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
 
 enum PROFILE_COMPONENTS {
 	USER_INFO,
 	CHANGE_PASSWORD,
+	LOADER,
 }
 
 @Component({
@@ -22,12 +26,12 @@ export class UserProfileModalComponent implements OnInit {
 	authenticatedUser$!: Observable<UserFragment>;
 
 	PROFILE_COMPONENTS = PROFILE_COMPONENTS;
-	AuthenticationType = AuthenticationType;
-	selectedComponent: PROFILE_COMPONENTS = PROFILE_COMPONENTS.USER_INFO;
+	selectedComponent$ = new BehaviorSubject<PROFILE_COMPONENTS>(PROFILE_COMPONENTS.USER_INFO);
 
 	constructor(
 		private dialogRef: MatDialogRef<UserProfileModalComponent>,
-		private authenticationFacadeService: AuthenticationFacadeService
+		private authenticationFacadeService: AuthenticationFacadeService,
+		private router: Router
 	) {}
 
 	ngOnInit(): void {
@@ -37,7 +41,26 @@ export class UserProfileModalComponent implements OnInit {
 	}
 
 	onComponentChange(component: PROFILE_COMPONENTS): void {
-		this.selectedComponent = component;
+		this.selectedComponent$.next(component);
+	}
+
+	@Confirmable('Please confirm removing your account')
+	onRemoveAccount(): void {
+		DialogServiceUtil.showNotificationBar('Account removal starting', 'notification');
+		this.onComponentChange(PROFILE_COMPONENTS.LOADER);
+
+		// init remove account
+		this.authenticationFacadeService.removeAccount().subscribe(() => {
+			this.authenticationFacadeService.setAccessToken(null);
+			this.router.navigate([TOP_LEVEL_NAV.welcome]);
+			this.dialogRef.close();
+
+			// using timeout to hide an error message from BE, not sure why it is happening
+			// TODO investigate
+			setTimeout(() => {
+				DialogServiceUtil.showNotificationBar('Account has been removed', 'success');
+			}, 50);
+		});
 	}
 
 	private watchPasswordChange(): void {

@@ -396,6 +396,7 @@ export type Mutation = {
   initUserAccountWithDummyData: Scalars['Boolean'];
   loginBasic: LoggedUserOutput;
   registerBasic: LoggedUserOutput;
+  removeAccount?: Maybe<User>;
   resetPassword: Scalars['Boolean'];
 };
 
@@ -741,6 +742,9 @@ export type User = {
   id: Scalars['String'];
   imageUrl?: Maybe<Scalars['String']>;
   investmentAccountId?: Maybe<Scalars['String']>;
+  isAccountAdmin: Scalars['Boolean'];
+  isAccountTest: Scalars['Boolean'];
+  isAuthBasic: Scalars['Boolean'];
   lastSingInDate: Scalars['String'];
   personalAccountId?: Maybe<Scalars['String']>;
   username: Scalars['String'];
@@ -973,7 +977,7 @@ export type EditPersonalAccountDailyEntryMutationVariables = Exact<{
 
 export type EditPersonalAccountDailyEntryMutation = { __typename?: 'Mutation', editPersonalAccountDailyEntry: { __typename?: 'PersonalAccountDailyDataEditOutput', originalDailyData: { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, description?: string | null, monthlyDataId: string, personalAccountId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } }, modifiedDailyData: { __typename?: 'PersonalAccountDailyDataOutput', id: string, value: number, date: string, tagId: string, description?: string | null, monthlyDataId: string, personalAccountId: string, week: number, tag: { __typename?: 'PersonalAccountTag', id: string, createdAt: string, name: string, type: TagDataType, color: string, imageUrl: string, budgetMonthly?: number | null } } } };
 
-export type UserFragment = { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string, accountType: UserAccountType, authentication: { __typename?: 'UserAuthentication', authenticationType: AuthenticationType } };
+export type UserFragment = { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string, accountType: UserAccountType, isAuthBasic: boolean, isAccountTest: boolean, isAccountAdmin: boolean, authentication: { __typename?: 'UserAuthentication', authenticationType: AuthenticationType } };
 
 export type LoggedUserOutputFragment = { __typename?: 'LoggedUserOutput', accessToken: string };
 
@@ -1008,7 +1012,12 @@ export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: 
 export type GetAuthenticatedUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAuthenticatedUserQuery = { __typename?: 'Query', getAuthenticatedUser: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string, accountType: UserAccountType, authentication: { __typename?: 'UserAuthentication', authenticationType: AuthenticationType } } };
+export type GetAuthenticatedUserQuery = { __typename?: 'Query', getAuthenticatedUser: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string, accountType: UserAccountType, isAuthBasic: boolean, isAccountTest: boolean, isAccountAdmin: boolean, authentication: { __typename?: 'UserAuthentication', authenticationType: AuthenticationType } } };
+
+export type RemoveAccountMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RemoveAccountMutation = { __typename?: 'Mutation', removeAccount?: { __typename?: 'User', id: string, createdAt: string, imageUrl?: string | null, username: string, email: string, lastSingInDate: string, accountType: UserAccountType, isAuthBasic: boolean, isAccountTest: boolean, isAccountAdmin: boolean, authentication: { __typename?: 'UserAuthentication', authenticationType: AuthenticationType } } | null };
 
 export const AccountIdentificationFragmentDoc = gql`
     fragment AccountIdentification on AccountIdentification {
@@ -1253,6 +1262,9 @@ export const UserFragmentDoc = gql`
   authentication {
     authenticationType
   }
+  isAuthBasic
+  isAccountTest
+  isAccountAdmin
 }
     `;
 export const LoggedUserOutputFragmentDoc = gql`
@@ -1852,6 +1864,24 @@ export const GetAuthenticatedUserDocument = gql`
   })
   export class GetAuthenticatedUserGQL extends Apollo.Query<GetAuthenticatedUserQuery, GetAuthenticatedUserQueryVariables> {
     override document = GetAuthenticatedUserDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const RemoveAccountDocument = gql`
+    mutation RemoveAccount {
+  removeAccount {
+    ...User
+  }
+}
+    ${UserFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RemoveAccountGQL extends Apollo.Mutation<RemoveAccountMutation, RemoveAccountMutationVariables> {
+    override document = RemoveAccountDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

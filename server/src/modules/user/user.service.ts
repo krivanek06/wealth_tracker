@@ -13,4 +13,17 @@ export class UserService {
 			},
 		});
 	}
+
+	removeAccount(userId: string): Promise<User | null> {
+		try {
+			return this.prisma.user.delete({
+				where: {
+					id: userId,
+				},
+			});
+		} catch (error) {
+			console.log(error);
+			return null;
+		}
+	}
 }

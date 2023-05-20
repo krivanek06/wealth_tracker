@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Meta, Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { environment } from '../../../../../environments/environment';
 import { TOP_LEVEL_NAV } from '../../../../core/models';
 import { LoginModalComponent } from '../../../user-settings/modals';
 
@@ -16,6 +17,7 @@ import { LoginModalComponent } from '../../../user-settings/modals';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WelcomeHeroComponent implements OnInit {
+	version = environment.version;
 	description =
 		'Helping people to gain better control of their wealth by having an oversight of their finances from one place';
 

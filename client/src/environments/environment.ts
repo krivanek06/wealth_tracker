@@ -4,6 +4,7 @@
 
 export const environment = {
 	production: false,
+	version: '1.0.0',
 
 	backend_url: 'http://localhost:3000',
 	custom_graphql_backend_url: 'http://localhost:3000/graphql',

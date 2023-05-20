@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { environment } from '../../../environments/environment';
 import { AuthenticationFacadeService } from '../../core/auth';
+import { environment } from './../../../environments/environment';
 
 @Component({
 	selector: 'app-welcome',

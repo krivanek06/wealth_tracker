@@ -12,8 +12,10 @@ export class AppComponent implements OnInit {
 	constructor(dialogServiceUtil: DialogServiceUtil, private swUpdate: SwUpdate, private appRef: ApplicationRef) {}
 
 	ngOnInit() {
-		this.updateWatcher();
-		this.checkServiceWorkerUpdate();
+		if (this.swUpdate.isEnabled) {
+			this.updateWatcher();
+			this.checkServiceWorkerUpdate();
+		}
 	}
 
 	private checkServiceWorkerUpdate() {

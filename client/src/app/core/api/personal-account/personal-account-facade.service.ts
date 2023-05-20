@@ -14,7 +14,6 @@ import {
 	PersonalAccountOverviewFragment,
 	PersonalAccountTag,
 	PersonalAccountTagDataCreate,
-	PersonalAccountTagDataDelete,
 	PersonalAccountTagDataEdit,
 	PersonalAccountTagFragment,
 	TagDataType,
@@ -135,23 +134,8 @@ export class PersonalAccountFacadeService {
 		return this.personalAccountApiService.editPersonalAccountTag(input);
 	}
 
-	deletePersonalAccountTag(input: PersonalAccountTagDataDelete): Observable<PersonalAccountTagFragment | null> {
-		return this.personalAccountApiService.deletePersonalAccountTag(input).pipe(
-			tap((result) => {
-				if (!result) {
-					return;
-				}
-
-				const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails();
-
-				// remove tag from array in personal account
-				this.personalAccountCacheService.updatePersonalAccountDetails({
-					...personalAccount,
-					personalAccountTag: personalAccount.personalAccountTag.filter((d) => d.id !== result.id),
-					yearlyAggregation: personalAccount.yearlyAggregation.filter((d) => d.tag.id !== result.id),
-				});
-			})
-		);
+	deletePersonalAccountTag(removingTag: PersonalAccountTagFragment): Observable<PersonalAccountTagFragment | null> {
+		return this.personalAccountApiService.deletePersonalAccountTag(removingTag);
 	}
 
 	createPersonalAccountDailyEntry(

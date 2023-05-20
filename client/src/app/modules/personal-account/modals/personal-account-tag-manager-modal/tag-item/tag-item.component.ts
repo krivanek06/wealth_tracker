@@ -28,12 +28,15 @@ export class TagItemComponent implements OnInit {
 	 */
 	@Input() tagType!: TagDataType;
 
+	private _tag!: PersonalAccountTagFragment;
+
 	@Input() set tag(data: PersonalAccountTagFragment) {
 		this.tagItemGroup.controls.tagId.patchValue(data.id);
 		this.tagItemGroup.controls.tagName.patchValue(data.name);
 		this.tagItemGroup.controls.color.patchValue(data.color);
 		this.tagItemGroup.controls.icon.patchValue(data.imageUrl);
 		this.tagItemGroup.controls.budget.patchValue(data.budgetMonthly ?? 0);
+		this._tag = data;
 	}
 
 	tagItemGroup = new FormGroup({
@@ -95,6 +98,7 @@ export class TagItemComponent implements OnInit {
 			.getPersonalAccountDetailsByUser()
 			.pipe(
 				switchMap((account) => {
+					// find in yearly aggregation the tag that is being removed
 					const tagInfo = account.yearlyAggregation.find((d) => d.tag.id === removingTagId);
 
 					// no daily data was created for a specific tag
@@ -102,24 +106,21 @@ export class TagItemComponent implements OnInit {
 						return of(true);
 					}
 
+					// ask for confirmation to remove the tag
 					return DialogServiceUtil.showConfirmDialogObs(`You are about to remove ${tagInfo.entries} entries`);
 				}),
 				filter((result) => !!result),
 				tap(() => DialogServiceUtil.showNotificationBar(`Removing tag ${removingTagName}`, 'notification')),
 				switchMap(() =>
-					this.personalAccountFacadeService
-						.deletePersonalAccountTag({
-							id: removingTagId,
+					this.personalAccountFacadeService.deletePersonalAccountTag(this._tag).pipe(
+						tap((result) => {
+							if (!result) {
+								DialogServiceUtil.showNotificationBar('Unable to perform removing operation on tag', 'error');
+								return;
+							}
+							DialogServiceUtil.showNotificationBar(`Tag ${removingTagName} has been removed`, 'success');
 						})
-						.pipe(
-							tap((result) => {
-								if (!result) {
-									DialogServiceUtil.showNotificationBar('Unable to perform removing operation on tag', 'error');
-									return;
-								}
-								DialogServiceUtil.showNotificationBar(`Tag ${removingTagName} has been removed`, 'success');
-							})
-						)
+					)
 				),
 				first()
 			)

@@ -96,6 +96,8 @@ export class AccountManagerComponent {
 			return;
 		}
 
+		DialogServiceUtil.showNotificationBar(`Init Deleting ${ACCOUNT_NAMES[accountType]}`, 'notification');
+
 		if (accountType === AccountType.Personal) {
 			await firstValueFrom(this.personalAccountFacadeService.deletePersonalAccount());
 		} else if (accountType === AccountType.Investment) {

@@ -1,9 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { AccountType } from '@prisma/client';
 import { PERSONAL_ACCOUNT_DEFAULT_NAME, PERSONAL_ACCOUNT_ERROR } from '../dto';
 import { PersonalAccount } from '../entities';
 import { PersonalAccountEditInput } from '../inputs';
 import { PersonalAccountRepositoryService } from '../repository';
+import { CustomGraphQlError } from './../../../graphql/graphql.error';
 
 @Injectable()
 export class PersonalAccountService {
@@ -18,9 +19,9 @@ export class PersonalAccountService {
 	async createPersonalAccount(userId: string): Promise<PersonalAccount> {
 		const existingPersonalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserId(userId);
 
-		// prevent creating more than 5 personal accounts per user
+		// prevent creating more than 1 personal accounts per user
 		if (existingPersonalAccount) {
-			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_ALLOWED_TO_CREATE, HttpStatus.FORBIDDEN);
+			throw new CustomGraphQlError(PERSONAL_ACCOUNT_ERROR.NOT_ALLOWED_TO_CREATE, HttpStatus.FORBIDDEN);
 		}
 
 		// create personal account
@@ -38,7 +39,7 @@ export class PersonalAccountService {
 
 		// no account found to be deleted
 		if (!existingPersonalAccount) {
-			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new CustomGraphQlError(PERSONAL_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		return this.personalAccountRepositoryService.updatePersonalAccount(userId, { name });
@@ -49,7 +50,7 @@ export class PersonalAccountService {
 
 		// no account found to be deleted
 		if (!existingPersonalAccount) {
-			throw new HttpException(PERSONAL_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new CustomGraphQlError(PERSONAL_ACCOUNT_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		return this.personalAccountRepositoryService.deletePersonalAccount(userId);

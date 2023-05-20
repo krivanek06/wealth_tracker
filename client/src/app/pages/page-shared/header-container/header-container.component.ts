@@ -31,7 +31,8 @@ export class HeaderContainerComponent implements OnInit {
 	}
 
 	onUserLogout(): void {
-		this.authenticationFacadeService.logoutUser();
+		this.authenticationFacadeService.setAccessToken(null);
+		this.router.navigate([TOP_LEVEL_NAV.welcome]);
 	}
 
 	onAccountButtonClick(account: AccountIdentificationFragment) {

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InvestmentAccountCashChangeType } from '@prisma/client';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
 import { INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR, INVESTMENT_ACCOUNT_CASH_CHANGE_TYPE_IMAGES } from '../dto';
@@ -8,6 +8,7 @@ import {
 	InvestmentAccountCashDeleteInput,
 	InvestmentAccountCashEditInput,
 } from '../inputs';
+import { CustomGraphQlError } from './../../../graphql/graphql.error';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
 @Injectable()
@@ -55,7 +56,7 @@ export class InvestmentAccountCashChangeService {
 		const editedChange = editedCashChanges.find((d) => d.itemId === input.itemId);
 
 		if (!editedChange) {
-			throw new HttpException(INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new CustomGraphQlError(INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR.NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		// modify in DB

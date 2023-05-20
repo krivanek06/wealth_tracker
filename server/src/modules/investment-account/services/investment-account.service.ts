@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { ChartSeries } from '../../../shared/dto';
 import { MomentServiceUtil } from '../../../utils';
 import { AssetGeneralService } from '../../asset-manager';
@@ -6,6 +6,7 @@ import { INVESTMENT_ACCOUNT_ERROR } from '../dto';
 import { InvestmentAccount, InvestmentAccountCashChange } from '../entities';
 import { InvestmentAccountEditInput, InvestmentAccountGrowthInput } from '../inputs';
 import { InvestmentAccountGrowth } from '../outputs';
+import { CustomGraphQlError } from './../../../graphql/graphql.error';
 import { INVESTMENT_ACCOUNT_DEFAULT_NAME } from './../dto/investment-accont-constants.dto';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
@@ -153,7 +154,7 @@ export class InvestmentAccountService {
 
 		// prevent creating more than 1 investment accounts per user
 		if (existingInvestmentAccount) {
-			throw new HttpException(INVESTMENT_ACCOUNT_ERROR.NOT_ALLOWED_TO_CREATE, HttpStatus.FORBIDDEN);
+			throw new CustomGraphQlError(INVESTMENT_ACCOUNT_ERROR.NOT_ALLOWED_TO_CREATE, HttpStatus.FORBIDDEN);
 		}
 
 		// create investment account

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { GOOGLE_BUCKET_TAG_IMAGES } from '../../../environments';
 import { StorageFilesService } from '../../../providers';
 import { SharedServiceUtil } from '../../../utils';
@@ -6,6 +6,7 @@ import { PERSONAL_ACCOUNT_TAG_ERROR } from '../dto';
 import { PersonalAccountTag } from '../entities';
 import { PersonalAccountTagDataCreate, PersonalAccountTagDataDelete, PersonalAccountTagDataEdit } from '../inputs';
 import { PersonalAccountMonthlyDataRepositoryService, PersonalAccountRepositoryService } from '../repository';
+import { CustomGraphQlError } from './../../../graphql/graphql.error';
 
 @Injectable()
 export class PersonalAccountTagService {
@@ -62,7 +63,7 @@ export class PersonalAccountTagService {
 
 		// not found
 		if (!searchedTag) {
-			throw new HttpException(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND_BY_ID, HttpStatus.NOT_FOUND);
+			throw new CustomGraphQlError(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND_BY_ID, HttpStatus.NOT_FOUND);
 		}
 
 		// create a modified one
@@ -97,7 +98,7 @@ export class PersonalAccountTagService {
 
 		// not found
 		if (!searchedTag) {
-			throw new HttpException(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND_BY_ID, HttpStatus.NOT_FOUND);
+			throw new CustomGraphQlError(PERSONAL_ACCOUNT_TAG_ERROR.NOT_FOUND_BY_ID, HttpStatus.NOT_FOUND);
 		}
 
 		// remove deleted

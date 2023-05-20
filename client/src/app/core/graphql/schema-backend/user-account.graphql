@@ -23,3 +23,9 @@ query GetAuthenticatedUser {
 		...User
 	}
 }
+
+mutation RemoveAccount {
+	removeAccount {
+		...User
+	}
+}

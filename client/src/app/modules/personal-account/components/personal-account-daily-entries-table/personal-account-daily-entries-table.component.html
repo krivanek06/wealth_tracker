@@ -10,7 +10,10 @@
 				<!-- tag data -->
 				<div class="flex flex-col">
 					<div class="flex items-center gap-4">
-						<div style="color: {{row.tag.color}}" class="text-base">{{ row.tag.name }}</div>
+						<div style="border-color: {{row.tag.color}}" class="pr-2 text-base border-b-2 text-wt-gray-light">
+							<span style="color: {{row.tag.color}}">●</span>
+							{{ row.tag.name }}
+						</div>
 						<!-- description -->
 						<mat-icon *ngIf="row.description" [matTooltip]="row.description" class="text-wt-gray-medium">
 							description
@@ -19,8 +22,7 @@
 
 					<!-- date -->
 					<div>
-						<span class="text-wt-gray-light">{{ row.date | date: 'MMMM d.' }}</span> |
-						<span> {{ row.date | date: 'EEEE' }}</span> |
+						<span>{{ row.date | date: 'MMMM d.' }}</span> | <span> {{ row.date | date: 'EEEE' }}</span> |
 						<span>Week {{row.week}}.</span>
 					</div>
 				</div>

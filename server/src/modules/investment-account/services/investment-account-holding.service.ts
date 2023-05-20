@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InvestmentAccountHoldingHistoryType, InvestmentAccountHoldingType } from '@prisma/client';
 import { MomentServiceUtil, SharedServiceUtil } from '../../../utils';
 import { AssetGeneralService, AssetStockService } from '../../asset-manager';
@@ -6,6 +6,7 @@ import { INVESTMENT_ACCOUNT_HOLDING_ERROR, INVESTMENT_ACCOUNT_HOLDING_MAX_YEARS 
 import { InvestmentAccount, InvestmentAccountHolding, InvestmentAccountHoldingHistory } from '../entities';
 import { InvestmentAccounHoldingCreateInput, InvestmentAccounHoldingHistoryDeleteInput } from '../inputs';
 import { InvestmentAccountActiveHoldingOutput, InvestmentAccountTransactionOutput } from '../outputs';
+import { CustomGraphQlError } from './../../../graphql/graphql.error';
 import { ASSET_STOCK_SECTOR_TYPE_IMAGES } from './../../asset-manager';
 import { InvestmentAccountRepositoryService } from './investment-account-repository.service';
 
@@ -40,17 +41,17 @@ export class InvestmentAccountHoldingService {
 	): Promise<{ holding: InvestmentAccountHolding; transaction: InvestmentAccountTransactionOutput }> {
 		// do not allow selecting weekend for date
 		if (MomentServiceUtil.isWeekend(input.holdingInputData.date)) {
-			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.IS_WEEKEND, HttpStatus.BAD_REQUEST);
+			throw new CustomGraphQlError(INVESTMENT_ACCOUNT_HOLDING_ERROR.IS_WEEKEND, HttpStatus.BAD_REQUEST);
 		}
 
 		// negative units
 		if (input.holdingInputData.units < 0) {
-			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.MIN_UNIT_VALUE, HttpStatus.BAD_REQUEST);
+			throw new CustomGraphQlError(INVESTMENT_ACCOUNT_HOLDING_ERROR.MIN_UNIT_VALUE, HttpStatus.BAD_REQUEST);
 		}
 
 		// prevent adding future holdings
 		if (MomentServiceUtil.isBefore(new Date(), MomentServiceUtil.format(input.holdingInputData.date))) {
-			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTED_DATE_RANGE, HttpStatus.FORBIDDEN);
+			throw new CustomGraphQlError(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTED_DATE_RANGE, HttpStatus.FORBIDDEN);
 		}
 
 		// get year data form input and today
@@ -59,7 +60,7 @@ export class InvestmentAccountHoldingService {
 
 		// prevent loading more than N year of asset data or future data - just in case
 		if (todayYear - inputYear > INVESTMENT_ACCOUNT_HOLDING_MAX_YEARS) {
-			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTED_DATE_RANGE, HttpStatus.FORBIDDEN);
+			throw new CustomGraphQlError(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNSUPPORTED_DATE_RANGE, HttpStatus.FORBIDDEN);
 		}
 
 		// load investment account to which we want to create the holding
@@ -83,7 +84,7 @@ export class InvestmentAccountHoldingService {
 
 		// first entry cannot be sell
 		if (input.type === 'SELL' && bepHelpers.units < input.holdingInputData.units) {
-			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.SELL_ERROR_NO_HOLDING, HttpStatus.FORBIDDEN);
+			throw new CustomGraphQlError(INVESTMENT_ACCOUNT_HOLDING_ERROR.SELL_ERROR_NO_HOLDING, HttpStatus.FORBIDDEN);
 		}
 
 		// load symbol value on holdingInputData.date if user did not provide customTotalValue
@@ -162,7 +163,7 @@ export class InvestmentAccountHoldingService {
 
 		// should not happen what we don't have a holding when removing a history
 		if (existingHoldingIndex === -1) {
-			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+			throw new CustomGraphQlError(INVESTMENT_ACCOUNT_HOLDING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
 		}
 
 		const symbolHoldingHistory = investmentAccount.holdings[existingHoldingIndex].holdingHistory;
@@ -170,7 +171,7 @@ export class InvestmentAccountHoldingService {
 
 		// trying to remove unexisting holdingHistory
 		if (removedHoldingHistoryIndex === -1) {
-			throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+			throw new CustomGraphQlError(INVESTMENT_ACCOUNT_HOLDING_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
 		}
 		// holdingHistory that will be removed
 		const removedHoldingHistory = symbolHoldingHistory[removedHoldingHistoryIndex];
@@ -191,7 +192,7 @@ export class InvestmentAccountHoldingService {
 
 			// if removing BUY operation units if less than next SELL operation, throw error
 			if (currentUnits - removedHoldingHistory.units < nextSellHoldingHistory.units) {
-				throw new HttpException(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNABLE_TO_DELETE_HISTORY, HttpStatus.NOT_FOUND);
+				throw new CustomGraphQlError(INVESTMENT_ACCOUNT_HOLDING_ERROR.UNABLE_TO_DELETE_HISTORY, HttpStatus.NOT_FOUND);
 			}
 		}
 

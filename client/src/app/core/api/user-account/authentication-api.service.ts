@@ -16,6 +16,8 @@ import {
 	RegisterBasicGQL,
 	RegisterBasicMutation,
 	RegisterUserInput,
+	RemoveAccountGQL,
+	RemoveAccountMutation,
 	ResetPasswordGQL,
 	ResetPasswordMutation,
 	UserFragment,
@@ -31,6 +33,7 @@ export class AuthenticationApiService {
 		private resetPasswordGQL: ResetPasswordGQL,
 		private changePasswordGQL: ChangePasswordGQL,
 		private getAuthenticatedUserGQL: GetAuthenticatedUserGQL,
+		private removeAccountGQL: RemoveAccountGQL,
 		private apollo: Apollo
 	) {}
 
@@ -72,5 +75,9 @@ export class AuthenticationApiService {
 		return this.changePasswordGQL.mutate({
 			input,
 		});
+	}
+
+	removeAccount(): Observable<FetchResult<RemoveAccountMutation>> {
+		return this.removeAccountGQL.mutate();
 	}
 }

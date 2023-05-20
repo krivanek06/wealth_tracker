@@ -4,11 +4,14 @@ import { catchError, map, Observable, of } from 'rxjs';
 import {
 	CreatePersonalAccountDailyEntryGQL,
 	CreatePersonalAccountGQL,
+	CreatePersonalAccountTagGQL,
 	DeletePersonalAccountDailyEntryGQL,
 	DeletePersonalAccountGQL,
+	DeletePersonalAccountTagGQL,
 	EditPersonalAccountDailyEntryGQL,
 	EditPersonalAccountGQL,
 	EditPersonalAccountMutation,
+	EditPersonalAccountTagGQL,
 	GetPersonalAccountAvailableTagImagesGQL,
 	GetPersonalAccountByUserGQL,
 	GetPersonalAccountDailyDataGQL,
@@ -21,16 +24,11 @@ import {
 	PersonalAccountDetailsFragment,
 	PersonalAccountEditInput,
 	PersonalAccountOverviewFragment,
-} from '../../graphql';
-import {
-	CreatePersonalAccountTagGQL,
-	DeletePersonalAccountTagGQL,
-	EditPersonalAccountTagGQL,
 	PersonalAccountTagDataCreate,
-	PersonalAccountTagDataDelete,
 	PersonalAccountTagDataEdit,
 	PersonalAccountTagFragment,
-} from './../../graphql/schema-backend.service';
+} from '../../graphql';
+import { PersonalAccountCacheService } from './personal-account-cache.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -48,10 +46,10 @@ export class PersonalAccountApiService {
 		private getPersonalAccountAvailableTagImagesGQL: GetPersonalAccountAvailableTagImagesGQL,
 		private createPersonalAccountTagGQL: CreatePersonalAccountTagGQL,
 		private editPersonalAccountTagGQL: EditPersonalAccountTagGQL,
-		private deletePersonalAccountTagGQL: DeletePersonalAccountTagGQL
+		private deletePersonalAccountTagGQL: DeletePersonalAccountTagGQL,
+		private personalAccountCacheService: PersonalAccountCacheService
 	) {}
 
-	// TODO: does this work if I have no account and I create one ???
 	getPersonalAccountDetails(): Observable<PersonalAccountDetailsFragment | null> {
 		return this.getPersonalAccountByUserGQL
 			.watch()
@@ -138,11 +136,46 @@ export class PersonalAccountApiService {
 			);
 	}
 
-	deletePersonalAccountTag(input: PersonalAccountTagDataDelete): Observable<PersonalAccountTagFragment | null> {
+	deletePersonalAccountTag(removingTag: PersonalAccountTagFragment): Observable<PersonalAccountTagFragment | null> {
 		return this.deletePersonalAccountTagGQL
-			.mutate({
-				input,
-			})
+			.mutate(
+				{
+					input: {
+						id: removingTag.id,
+					},
+				},
+				{
+					optimisticResponse: {
+						__typename: 'Mutation',
+						deletePersonalAccountTag: {
+							__typename: 'PersonalAccountTag',
+							id: removingTag.id,
+							color: removingTag.color,
+							imageUrl: removingTag.imageUrl,
+							createdAt: removingTag.createdAt,
+							name: removingTag.name,
+							type: removingTag.type,
+							budgetMonthly: removingTag.budgetMonthly,
+						},
+					},
+					update: (cache, { data }) => {
+						const result = data?.deletePersonalAccountTag;
+						console.log('cache', result);
+						if (!result) {
+							return;
+						}
+
+						const personalAccount = this.personalAccountCacheService.getPersonalAccountDetails();
+
+						// remove tag from array in personal account
+						this.personalAccountCacheService.updatePersonalAccountDetails({
+							...personalAccount,
+							personalAccountTag: personalAccount.personalAccountTag.filter((d) => d.id !== result.id),
+							yearlyAggregation: personalAccount.yearlyAggregation.filter((d) => d.tag.id !== result.id),
+						});
+					},
+				}
+			)
 			.pipe(
 				map((res) => res.data?.deletePersonalAccountTag ?? null),
 				catchError(() => of(null))

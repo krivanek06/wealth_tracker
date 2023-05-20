@@ -17,7 +17,7 @@ import { LoginModalComponent } from '../../../user-settings/modals';
 })
 export class WelcomeHeroComponent implements OnInit {
 	description =
-		'Helping people to gain better control of their finances by creating an oversight of their cash flow from one place';
+		'Helping people to gain better control of their wealth by having an oversight of their finances from one place';
 
 	constructor(private dialog: MatDialog, private router: Router, private title: Title, private meta: Meta) {}
 

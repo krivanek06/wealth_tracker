@@ -1,11 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { catchError, EMPTY, filter, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { EMPTY, Subject, catchError, filter, switchMap, takeUntil, tap } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../../core/auth';
 import { LoginForgotPasswordInput, LoginUserInput, RegisterUserInput } from '../../../../core/graphql';
+import { TOP_LEVEL_NAV } from '../../../../core/models';
 import { environment } from './../../../../../environments/environment';
-import { DialogServiceUtil } from './../../../../shared/dialogs/dialog-service.util';
+import { DialogServiceUtil } from './../../../../shared/dialogs';
 
 @Component({
 	selector: 'app-login-modal',
@@ -26,7 +28,8 @@ export class LoginModalComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private authenticationFacadeService: AuthenticationFacadeService,
-		private dialogRef: MatDialogRef<LoginModalComponent>
+		private dialogRef: MatDialogRef<LoginModalComponent>,
+		private router: Router
 	) {}
 
 	ngOnDestroy(): void {
@@ -37,6 +40,10 @@ export class LoginModalComponent implements OnInit, OnDestroy {
 		this.watchLoginUserFormControl();
 		this.watchRegisterUserFormControl();
 		this.watchForgotPasswordFormControl();
+	}
+
+	toggleLoading(): void {
+		this.loading = !this.loading;
 	}
 
 	private watchForgotPasswordFormControl(): void {
@@ -79,6 +86,7 @@ export class LoginModalComponent implements OnInit, OnDestroy {
 						tap(() => {
 							DialogServiceUtil.showNotificationBar(`You have been successfully logged in`, 'success');
 							this.dialogRef.close(true);
+							this.router.navigate([TOP_LEVEL_NAV.dashboard]);
 						}),
 						catchError(() => {
 							this.loading = false;
@@ -101,6 +109,7 @@ export class LoginModalComponent implements OnInit, OnDestroy {
 						tap((res) => {
 							DialogServiceUtil.showNotificationBar(`Account ${res.email} has been successfully created`, 'success');
 							this.dialogRef.close();
+							this.router.navigate([TOP_LEVEL_NAV.dashboard]);
 						}),
 						catchError(() => {
 							this.loading = false;

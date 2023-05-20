@@ -23,6 +23,6 @@ steps:
       - '--max-instances'
       - '1'
     entrypoint: gcloud
-timeout: 1200s
+timeout: 2400s
 images:
   - 'gcr.io/wealth-tracker-364707/spend-mindful-client'

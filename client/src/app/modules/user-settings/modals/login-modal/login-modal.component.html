@@ -9,8 +9,8 @@
 </div>
 
 <!-- content -->
-<mat-dialog-content>
-	<mat-tab-group *ngIf="!loading">
+<mat-dialog-content *ngIf="!loading; else loader">
+	<mat-tab-group>
 		<mat-tab label="Login">
 			<app-form-login [formControl]="loginUserInputControl"></app-form-login>
 		</mat-tab>
@@ -22,17 +22,36 @@
 		</mat-tab>
 	</mat-tab-group>
 
-	<!-- loading screen -->
-	<div *ngIf="loading" class="flex justify-center">
-		<mat-spinner color="primary" diameter="120"></mat-spinner>
+	<div class="my-4">
+		<mat-divider></mat-divider>
 	</div>
+
+	<!-- social media login -->
+	<h2 class="text-lg text-wt-primary-dark">Social Media Login</h2>
+	<mat-dialog-actions>
+		<a
+			mat-flat-button
+			[href]="loginGoogle"
+			(click)="toggleLoading()"
+			color="warn"
+			class="w-full text-center rounded-lg"
+		>
+			Google
+		</a>
+	</mat-dialog-actions>
+
+	<div class="my-4">
+		<mat-divider></mat-divider>
+	</div>
+
+	<!-- development -->
+	<h2 class="text-lg text-wt-primary-dark">Demo Account Login</h2>
+	<button mat-stroked-button color="accent" class="w-full" type="button" (click)="onDemoLogin()">Demo Login</button>
 </mat-dialog-content>
 
-<div *ngIf="!loading" class="my-4">
-	<mat-divider></mat-divider>
-</div>
-
-<!-- social media login -->
-<mat-dialog-actions *ngIf="!loading">
-	<a mat-flat-button [href]="loginGoogle" (click)="toggleLoading()" color="warn" class="w-full text-center">Google</a>
-</mat-dialog-actions>
+<!-- loader -->
+<ng-template #loader>
+	<div class="flex justify-center">
+		<mat-spinner color="primary" diameter="120"></mat-spinner>
+	</div>
+</ng-template>

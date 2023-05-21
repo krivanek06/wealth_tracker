@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { EMPTY, Subject, catchError, filter, switchMap, takeUntil, tap } from 'rxjs';
 import { AuthenticationFacadeService } from '../../../../core/auth';
 import { LoginForgotPasswordInput, LoginUserInput, RegisterUserInput } from '../../../../core/graphql';
-import { TOP_LEVEL_NAV } from '../../../../core/models';
+import { TEST_USER_EMAIL, TEST_USER_PASSWORD, TOP_LEVEL_NAV } from '../../../../core/models';
 import { environment } from './../../../../../environments/environment';
 import { DialogServiceUtil } from './../../../../shared/dialogs';
 
@@ -44,6 +44,13 @@ export class LoginModalComponent implements OnInit, OnDestroy {
 
 	toggleLoading(): void {
 		this.loading = !this.loading;
+	}
+
+	onDemoLogin(): void {
+		this.loginUserInputControl.patchValue({
+			email: TEST_USER_EMAIL,
+			password: TEST_USER_PASSWORD,
+		});
 	}
 
 	private watchForgotPasswordFormControl(): void {

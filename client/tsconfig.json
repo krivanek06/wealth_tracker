@@ -27,6 +27,7 @@
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
+    "entryModule": "./src/app/app.server.module#AppServerModule",
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,

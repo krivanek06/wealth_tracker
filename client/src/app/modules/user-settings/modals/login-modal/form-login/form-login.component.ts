@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, forwardRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { LoginUserInput } from '../../../../../core/graphql';
-import { TEST_USER_EMAIL, TEST_USER_PASSWORD } from '../../../../../core/models';
 import { emailValidator, maxLengthValidator, requiredValidator } from '../../../../../shared/models';
 
 @Component({
@@ -43,15 +42,6 @@ export class FormLoginComponent implements OnInit {
 		const result: LoginUserInput = {
 			email: this.formGroup.controls.email.value,
 			password: this.formGroup.controls.password.value,
-		};
-
-		this.onChange(result);
-	}
-
-	onDevelopmentLogin(): void {
-		const result: LoginUserInput = {
-			email: TEST_USER_EMAIL,
-			password: TEST_USER_PASSWORD,
 		};
 
 		this.onChange(result);

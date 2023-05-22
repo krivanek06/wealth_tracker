@@ -32,24 +32,8 @@
 		></app-form-mat-input-wrapper>
 
 		<!-- action buttons -->
-		<div class="c-button-wrapper">
-			<button color="accent" mat-icon-button type="submit" matTooltip="Save Changes">
-				<mat-icon>check</mat-icon>
-			</button>
-			<button mat-icon-button type="button" (click)="onEditingToggle()" matTooltip="Cancel">
-				<mat-icon>close</mat-icon>
-			</button>
-			<button
-				*ngIf="account"
-				color="warn"
-				mat-icon-button
-				type="button"
-				(click)="onDelete()"
-				matTooltip="Delete Account"
-			>
-				<mat-icon>delete</mat-icon>
-			</button>
-		</div>
+		<ng-container *ngTemplateOutlet="buttonBigScreen"></ng-container>
+		<ng-container *ngTemplateOutlet="buttonSmallScreen"></ng-container>
 	</form>
 </ng-container>
 
@@ -63,3 +47,36 @@
 		Crate account
 	</button>
 </ng-container>
+
+<!-- big screen buttons -->
+<ng-template #buttonBigScreen>
+	<div class="hidden md:flex c-button-wrapper">
+		<button color="accent" mat-icon-button type="submit" matTooltip="Save Changes">
+			<mat-icon>check</mat-icon>
+		</button>
+		<button mat-icon-button type="button" (click)="onEditingToggle()" matTooltip="Cancel">
+			<mat-icon>close</mat-icon>
+		</button>
+		<button *ngIf="account" color="warn" mat-icon-button type="button" (click)="onDelete()" matTooltip="Delete Account">
+			<mat-icon>delete</mat-icon>
+		</button>
+	</div>
+</ng-template>
+
+<!-- small screen buttons -->
+<ng-template #buttonSmallScreen>
+	<div class="flex md:hidden c-button-wrapper">
+		<button color="accent" mat-stroked-button type="submit">
+			<mat-icon>check</mat-icon>
+			Save Changes
+		</button>
+		<button mat-stroked-button type="button" (click)="onEditingToggle()">
+			<mat-icon>close</mat-icon>
+			Close
+		</button>
+		<button *ngIf="account" color="warn" mat-stroked-button type="button" (click)="onDelete()">
+			<mat-icon>delete</mat-icon>
+			Delete Account
+		</button>
+	</div>
+</ng-template>

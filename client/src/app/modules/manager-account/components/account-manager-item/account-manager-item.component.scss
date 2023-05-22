@@ -2,10 +2,11 @@
 	display: block;
 
 	.c-button-wrapper {
-		@apply flex items-center -mt-4 gap-x-3;
+		@apply flex flex-col sm:flex-row items-center sm:-mt-4 gap-y-4 gap-x-3;
 
 		button {
-			@apply border border-solid flex-1 md:flex-auto;
+			@apply border border-solid flex-1 md:flex-auto w-full sm:w-auto;
+			min-height: 54px !important;
 		}
 	}
 }

@@ -21,6 +21,10 @@
 	@apply text-lg text-center text-white bg-red-500 p-2 rounded-lg;
 }
 
+.g-banner-default {
+	@apply p-4 text-lg text-center bg-gray-600 rounded-lg;
+}
+
 .g-skeleton {
 	@apply rounded-lg bg-wt-gray-medium animate-pulse;
 }

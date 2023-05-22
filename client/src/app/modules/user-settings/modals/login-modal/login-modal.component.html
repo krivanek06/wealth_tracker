@@ -13,6 +13,32 @@
 	<mat-tab-group>
 		<mat-tab label="Login">
 			<app-form-login [formControl]="loginUserInputControl"></app-form-login>
+
+			<div class="my-4">
+				<mat-divider></mat-divider>
+			</div>
+
+			<!-- social media login -->
+			<h2 class="text-lg text-wt-primary-dark">Social Media Login</h2>
+			<mat-dialog-actions>
+				<a
+					mat-flat-button
+					[href]="loginGoogle"
+					(click)="toggleLoading()"
+					color="warn"
+					class="w-full text-center rounded-lg"
+				>
+					Google
+				</a>
+			</mat-dialog-actions>
+
+			<div class="my-4">
+				<mat-divider></mat-divider>
+			</div>
+
+			<!-- development -->
+			<h2 class="text-lg text-wt-primary-dark">Demo Account Login</h2>
+			<button mat-stroked-button color="accent" class="w-full" type="button" (click)="onDemoLogin()">Demo Login</button>
 		</mat-tab>
 		<mat-tab label="Register">
 			<app-form-register [formControl]="registerUserInputControl"></app-form-register>
@@ -21,32 +47,6 @@
 			<app-form-forgot-password [formControl]="forgotPasswordInputControl"></app-form-forgot-password>
 		</mat-tab>
 	</mat-tab-group>
-
-	<div class="my-4">
-		<mat-divider></mat-divider>
-	</div>
-
-	<!-- social media login -->
-	<h2 class="text-lg text-wt-primary-dark">Social Media Login</h2>
-	<mat-dialog-actions>
-		<a
-			mat-flat-button
-			[href]="loginGoogle"
-			(click)="toggleLoading()"
-			color="warn"
-			class="w-full text-center rounded-lg"
-		>
-			Google
-		</a>
-	</mat-dialog-actions>
-
-	<div class="my-4">
-		<mat-divider></mat-divider>
-	</div>
-
-	<!-- development -->
-	<h2 class="text-lg text-wt-primary-dark">Demo Account Login</h2>
-	<button mat-stroked-button color="accent" class="w-full" type="button" (click)="onDemoLogin()">Demo Login</button>
 </mat-dialog-content>
 
 <!-- loader -->

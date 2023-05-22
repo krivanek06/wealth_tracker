@@ -11,7 +11,6 @@ import { PersonalAccountFacadeService } from '../../../../../core/api';
 })
 export class TagSelectorComponent implements OnInit {
 	availableTagImages$!: Observable<string[]>;
-	skeletons = Array(21);
 	constructor(
 		private dialogRef: MatDialogRef<TagSelectorComponent>,
 		private personalAccountFacadeService: PersonalAccountFacadeService

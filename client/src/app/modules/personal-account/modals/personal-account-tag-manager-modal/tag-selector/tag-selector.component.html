@@ -1,4 +1,4 @@
-<h2 class="text-lg text-center">Select Tag Image</h2>
+<h2 class="text-xl text-center text-wt-primary-dark">Select Tag Image</h2>
 
 <mat-dialog-content class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-6 gap-y-4">
 	<!-- images -->
@@ -12,7 +12,7 @@
 
 	<!-- loader -->
 	<ng-template #showLoader>
-		<div *ngFor="let _ of skeletons" class="bg-gray-500 rounded-md w-14 h-14 animate-pulse"></div>
+		<div *ngRange="25" class="bg-gray-500 rounded-md w-14 h-14 animate-pulse"></div>
 	</ng-template>
 </mat-dialog-content>
 

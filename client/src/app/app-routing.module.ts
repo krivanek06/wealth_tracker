@@ -94,6 +94,7 @@ const routes: Routes = [
 	imports: [
 		WelcomeModule,
 		RouterModule.forRoot(routes, {
+			scrollPositionRestoration: 'enabled',
 			initialNavigation: 'enabledBlocking',
 			preloadingStrategy: PreloadAllModules,
 		}),

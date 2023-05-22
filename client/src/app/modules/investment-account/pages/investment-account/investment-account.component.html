@@ -28,12 +28,15 @@
 	</ng-container>
 
 	<!-- allocation charts -->
-	<div class="grid gap-4 mb-6 lg:grid-cols-2 overflow-x-clip">
+	<div class="grid gap-4 mb-6 xl:mt-8 xl:mb-12 lg:grid-cols-2 overflow-x-clip">
 		<!-- sector allocation chart -->
-		<app-pie-chart class="hidden scale-125 lg:block" [series]="sectorAllocationChart$ | async"></app-pie-chart>
+		<app-pie-chart
+			class="hidden scale-125 xl:scale-150 lg:block"
+			[series]="sectorAllocationChart$ | async"
+		></app-pie-chart>
 
 		<!-- asset allocation chart -->
-		<app-pie-chart class="md:scale-125" [series]="assetAllocationChart$ | async"></app-pie-chart>
+		<app-pie-chart class="scale-110 md:scale-125 xl:scale-150" [series]="assetAllocationChart$ | async"></app-pie-chart>
 	</div>
 
 	<!-- action buttons -->

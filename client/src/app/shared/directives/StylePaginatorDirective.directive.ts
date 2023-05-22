@@ -101,6 +101,12 @@ export class StylePaginatorDirective implements OnInit, OnChanges, AfterViewInit
 		const currentIndex = this.matPag.pageIndex < 2 ? 0 : this.matPag.pageIndex - 2;
 		const maxPages = Math.ceil(this.appCustomLength / this.matPag.pageSize);
 
+		// if there is only one page, do not render buttons
+		if (maxPages === 1) {
+			this.ren.setStyle(this.vr.element.nativeElement, 'display', 'none');
+			return;
+		}
+
 		// display buttons
 		for (let index = currentIndex; index <= currentIndex + this.showTotalPages; index++) {
 			// do not render more than max page buttons

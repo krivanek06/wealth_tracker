@@ -1,5 +1,5 @@
 <mat-list>
-	<ng-container *ngFor="let item of personalAccountDailyData">
+	<ng-container *ngFor="let item of personalAccountDailyData; let last = last">
 		<div mat-subheader>{{item.date | date: 'EEEE, MMM. d.'}}</div>
 		<mat-selection-list [multiple]="false" [hideSingleSelectionIndicator]="true">
 			<mat-list-option
@@ -36,11 +36,15 @@
 				</div>
 
 				<!-- description -->
-				<div class="pl-2 mt-2 mb-2 whitespace-pre-wrap text-wt-gray-medium" [innerText]="data.description "></div>
+				<div
+					*ngIf="data.description"
+					class="pl-2 mt-2 mb-6 whitespace-pre-wrap text-wt-gray-medium"
+					[innerText]="data.description "
+				></div>
 			</mat-list-option>
 		</mat-selection-list>
 
-		<div class="my-3">
+		<div *ngIf="!last" class="my-3">
 			<mat-divider></mat-divider>
 		</div>
 	</ng-container>

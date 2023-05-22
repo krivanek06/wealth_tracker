@@ -1,4 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { UserAccountType } from '@prisma/client';
 import { GOOGLE_BUCKET_TAG_IMAGES } from '../../../environments';
 import { StorageFilesService } from '../../../providers';
 import { SharedServiceUtil } from '../../../utils';
@@ -88,10 +89,16 @@ export class PersonalAccountTagService {
 
 	async deletePersonalAccountTag(
 		tagDataDelete: PersonalAccountTagDataDelete,
-		userId: string
+		userId: string,
+		userRole: UserAccountType
 	): Promise<PersonalAccountTag> {
 		// if no account - error is thrown
 		const personalAccount = await this.personalAccountRepositoryService.getPersonalAccountByUserIdStrict(userId);
+
+		// if test account - error is thrown
+		if (userRole === UserAccountType.TEST) {
+			throw new CustomGraphQlError(PERSONAL_ACCOUNT_TAG_ERROR.NOT_ALLOWED_TO_DELETE, HttpStatus.FORBIDDEN);
+		}
 
 		const tags = await this.getTagsForPersonalAccount(personalAccount.id);
 		const searchedTag = tags.find((d) => d.id === tagDataDelete.id);

@@ -1,14 +1,16 @@
-import { ChangeDetectorRef, Directive, inject } from '@angular/core';
+import { ChangeDetectorRef, Directive, OnDestroy, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import {
 	BehaviorSubject,
 	Observable,
+	Subject,
 	combineLatest,
 	map,
 	merge,
 	of,
 	reduce,
+	share,
 	shareReplay,
 	startWith,
 	switchMap,
@@ -34,7 +36,7 @@ import {
 import { PersonalAccountChartService, PersonalAccountDataService } from '../services';
 
 @Directive()
-export abstract class PersonalAccountParent {
+export abstract class PersonalAccountParent implements OnDestroy {
 	personalAccountDetails$!: Observable<PersonalAccountDetailsFragment>;
 
 	yearlyExpenseTags$!: Observable<ValuePresentItem<PersonalAccountTagFragment>[]>;
@@ -106,10 +108,20 @@ export abstract class PersonalAccountParent {
 
 	ChartType = ChartType;
 
+	destroy$ = new Subject<void>();
+
 	get dateSource$() {
 		return this.filterDailyDataGroup.controls.dateFilter.valueChanges.pipe(
 			startWith(this.filterDailyDataGroup.controls.dateFilter.value)
 		);
+	}
+
+	get dateSource() {
+		return this.filterDailyDataGroup.controls.dateFilter.value;
+	}
+
+	get isDateSourceNoDate() {
+		return this.dateSource === NO_DATE_SELECTED;
 	}
 
 	get selectedTagIds$() {
@@ -120,6 +132,10 @@ export abstract class PersonalAccountParent {
 
 	constructor() {
 		this.initData();
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
 	}
 
 	private initData(): void {
@@ -201,7 +217,8 @@ export abstract class PersonalAccountParent {
 				// filter by selected tag id
 				return totalDailyData.filter((d) => selectedTagIds.includes(d.tagId));
 			}),
-			tap(() => this.filteredDailyDataLoaded$.next(true))
+			tap(() => this.filteredDailyDataLoaded$.next(true)),
+			share()
 		);
 
 		// calculate expense chart for filtered data
@@ -214,23 +231,16 @@ export abstract class PersonalAccountParent {
 
 		this.accountTagAggregationForTimePeriod$ = combineLatest([
 			totalDailyDataForTimePeriod$,
-			this.dateSource$,
 			this.personalAccountDetails$,
 		]).pipe(
 			tap(console.log),
-			map(
-				([result, dateFilter, details]: [
-					PersonalAccountDailyDataOutputFragment[],
-					string,
-					PersonalAccountDetailsFragment
-				]) =>
-					dateFilter === NO_DATE_SELECTED
-						? this.personalAccountDataService.getPersonalAccountTagAggregationByAggregationData(
-								details.yearlyAggregation
-						  )
-						: this.personalAccountDataService.getPersonalAccountTagAggregationByDailyData(result, dateFilter)
+			map(([result, details]: [PersonalAccountDailyDataOutputFragment[], PersonalAccountDetailsFragment]) =>
+				this.dateSource === NO_DATE_SELECTED
+					? this.personalAccountDataService.getPersonalAccountTagAggregationByAggregationData(details.yearlyAggregation)
+					: this.personalAccountDataService.getPersonalAccountTagAggregationByDailyData(result, this.dateSource)
 			),
-			map((result) => result.filter((d) => d.type === TagDataType.Expense).sort((a, b) => b.totalValue - a.totalValue))
+			map((result) => result.filter((d) => d.type === TagDataType.Expense).sort((a, b) => b.totalValue - a.totalValue)),
+			shareReplay({ bufferSize: 1, refCount: true })
 		);
 	}
 

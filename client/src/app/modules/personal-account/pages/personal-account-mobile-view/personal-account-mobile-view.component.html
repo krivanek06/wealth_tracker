@@ -48,37 +48,34 @@
 	<!-- table -->
 	<ng-container
 		*ngIf="{
-      isEntryForSelectedMonth: isEntryForSelectedMonth$ | async,
       filteredDailyDataLoaded: filteredDailyDataLoaded$ | async,
       accountTagAggregationForTimePeriod: accountTagAggregationForTimePeriod$ | async,
       dailyDataAggregation: dailyDataAggregation$ | async,
     } as obs"
 	>
 		<ng-container *ngIf="obs.filteredDailyDataLoaded; else filteredDataSkeleton">
-			<ng-container *ngIf="obs.isEntryForSelectedMonth; else noDataForTimePeriod ">
-				<!-- title & show history checkbox -->
-				<div class="mt-2 mb-6">
-					<app-personal-account-display-toggle
-						[formControl]="showHistoryFormControl"
-						[selectedTag]="(filterDailyDataGroup.controls.selectedTagIds.value[0] | getTagById)  | async"
-					></app-personal-account-display-toggle>
-				</div>
+			<!-- title & show history checkbox -->
+			<div class="mt-2 mb-6">
+				<app-personal-account-display-toggle
+					[formControl]="showHistoryFormControl"
+					[selectedTag]="(filterDailyDataGroup.controls.selectedTagIds.value[0] | getTagById)  | async"
+				></app-personal-account-display-toggle>
+			</div>
 
-				<!-- tag aggregation -->
-				<app-personal-account-expenses-by-tag
-					*ngIf="!showHistoryFormControl.value"
-					[formControl]="filterDailyDataGroup.controls.selectedTagIds"
-					[aggregations]="obs.accountTagAggregationForTimePeriod ?? []"
-					[multiple]="false"
-				></app-personal-account-expenses-by-tag>
+			<!-- tag aggregation -->
+			<app-personal-account-expenses-by-tag
+				*ngIf="!showHistoryFormControl.value"
+				[formControl]="filterDailyDataGroup.controls.selectedTagIds"
+				[aggregations]="obs.accountTagAggregationForTimePeriod ?? []"
+				[multiple]="false"
+			></app-personal-account-expenses-by-tag>
 
-				<!-- historical data -->
-				<app-personal-account-daily-entries-table-mobile
-					*ngIf="showHistoryFormControl.value"
-					[personalAccountDailyData]="obs.dailyDataAggregation"
-					(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
-				></app-personal-account-daily-entries-table-mobile>
-			</ng-container>
+			<!-- historical data -->
+			<app-personal-account-daily-entries-table-mobile
+				*ngIf="showHistoryFormControl.value"
+				[personalAccountDailyData]="obs.dailyDataAggregation"
+				(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
+			></app-personal-account-daily-entries-table-mobile>
 		</ng-container>
 	</ng-container>
 </ng-container>

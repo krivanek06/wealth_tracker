@@ -14,11 +14,6 @@
 		></app-pie-chart>
 	</div>
 
-	<!-- no data -->
-	<ng-template #noDataForTimePeriod>
-		<div class="mt-16 mb-12 text-base text-center text-wt-gray-medium">You have no data for this time period</div>
-	</ng-template>
-
 	<!-- settings -->
 	<div class="relative z-10 flex justify-start mb-4 -mt-4">
 		<app-personal-account-action-buttons
@@ -38,37 +33,62 @@
 		[personalAccountDetails]="personalAccountDetails"
 	></app-personal-account-daily-entries-filter>
 
-	<!-- title & show history checkbox -->
-	<ng-container *ngIf="isEntryForSelectedMonth$ | async ">
-		<div class="mt-2 mb-6">
-			<app-personal-account-display-toggle
-				[formControl]="showHistoryFormControl"
-				[selectedTag]="(filterDailyDataGroup.controls.selectedTagIds.value[0] | getTagById)  | async"
-			></app-personal-account-display-toggle>
-		</div>
+	<!-- table -->
+	<ng-container
+		*ngIf="{
+      isEntryForSelectedMonth: isEntryForSelectedMonth$ | async,
+      filteredDailyDataLoaded: filteredDailyDataLoaded$ | async,
+      accountTagAggregationForTimePeriod: accountTagAggregationForTimePeriod$ | async,
+      dailyDataAggregation: dailyDataAggregation$ | async,
+    } as obs"
+	>
+		<ng-container *ngIf="obs.filteredDailyDataLoaded; else filteredDataSkeleton">
+			<ng-container *ngIf="obs.isEntryForSelectedMonth; else noDataForTimePeriod ">
+				<!-- title & show history checkbox -->
+				<div class="mt-2 mb-6">
+					<app-personal-account-display-toggle
+						[formControl]="showHistoryFormControl"
+						[selectedTag]="(filterDailyDataGroup.controls.selectedTagIds.value[0] | getTagById)  | async"
+					></app-personal-account-display-toggle>
+				</div>
 
-		<!-- tag aggregation -->
-		<ng-container *ngIf="accountTagAggregationForTimePeriod$ | async as accountTagAggregationForTimePeriod">
-			<app-personal-account-expenses-by-tag
-				*ngIf="!showHistoryFormControl.value"
-				[formControl]="filterDailyDataGroup.controls.selectedTagIds"
-				[aggregations]="accountTagAggregationForTimePeriod"
-				[multiple]="false"
-			></app-personal-account-expenses-by-tag>
-		</ng-container>
+				<!-- tag aggregation -->
+				<app-personal-account-expenses-by-tag
+					*ngIf="!showHistoryFormControl.value"
+					[formControl]="filterDailyDataGroup.controls.selectedTagIds"
+					[aggregations]="obs.accountTagAggregationForTimePeriod ?? []"
+					[multiple]="false"
+				></app-personal-account-expenses-by-tag>
 
-		<!-- historical data -->
-		<ng-container *ngIf="dailyDataAggregation$ | async as dailyDataAggregation">
-			<app-personal-account-daily-entries-table-mobile
-				*ngIf="showHistoryFormControl.value"
-				[personalAccountDailyData]="dailyDataAggregation"
-				(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
-			></app-personal-account-daily-entries-table-mobile>
+				<!-- historical data -->
+				<app-personal-account-daily-entries-table-mobile
+					*ngIf="showHistoryFormControl.value"
+					[personalAccountDailyData]="obs.dailyDataAggregation"
+					(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
+				></app-personal-account-daily-entries-table-mobile>
+			</ng-container>
 		</ng-container>
 	</ng-container>
 </ng-container>
 
-<!-- skeleton -->
+<!-- page skeleton -->
 <ng-template #showSkeleton>
 	<app-personal-account-mobile-view-skeleton></app-personal-account-mobile-view-skeleton>
+</ng-template>
+
+<!-- tag aggregation skeleton -->
+<ng-template #filteredDataSkeleton>
+	<!-- aggregation text and button -->
+	<div class="flex justify-end mb-6">
+		<div class="w-[200px] h-11 g-skeleton"></div>
+	</div>
+
+	<div class="grid gap-4">
+		<div *ngRange="8" class="h-[95px] w-full g-skeleton"></div>
+	</div>
+</ng-template>
+
+<!-- no data -->
+<ng-template #noDataForTimePeriod>
+	<div class="mt-16 mb-12 text-base text-center text-wt-gray-medium">You have no data for this time period</div>
 </ng-template>

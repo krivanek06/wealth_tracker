@@ -11,17 +11,18 @@ import {
 	PieChartComponent,
 	ValuePresentationCardComponent,
 } from '../../../../shared/components';
+import { RangeDirective } from '../../../../shared/directives';
 import { PersonalAccountParent } from '../../classes';
 import {
 	PersonalAccountAccountStateComponent,
 	PersonalAccountActionButtonsComponent,
 	PersonalAccountDailyEntriesFilterComponent,
 	PersonalAccountDailyEntriesTableComponent,
+	PersonalAccountDailyEntriesTableMobileComponent,
 	PersonalAccountDisplayToggleComponent,
 	PersonalAccountExpensesByTagComponent,
 	PersonalAccountOverviewChartMobileComponent,
 } from '../../components';
-import { PersonalAccountDailyEntriesTableMobileComponent } from '../../components/mobile';
 import { AccountState, NO_DATE_SELECTED, PersonalAccountDailyDataAggregation } from '../../models';
 import { GetTagByIdPipe } from '../../pipes';
 import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-mobile-view-skeleton/personal-account-mobile-view-skeleton.component';
@@ -51,6 +52,7 @@ import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-m
 		PersonalAccountActionButtonsComponent,
 		PersonalAccountDailyEntriesFilterComponent,
 		PersonalAccountMobileViewSkeletonComponent,
+		RangeDirective,
 	],
 })
 export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {

@@ -1,7 +1,19 @@
 import { ChangeDetectorRef, Directive, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, combineLatest, map, merge, of, reduce, startWith, switchMap, tap } from 'rxjs';
+import {
+	BehaviorSubject,
+	Observable,
+	combineLatest,
+	map,
+	merge,
+	of,
+	reduce,
+	shareReplay,
+	startWith,
+	switchMap,
+	tap,
+} from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../core/api';
 import {
 	AccountIdentification,
@@ -52,6 +64,7 @@ export abstract class PersonalAccountParent {
 	 * daily data based on select date interval and tags
 	 */
 	filteredDailyData$!: Observable<PersonalAccountDailyDataOutputFragment[]>;
+	filteredDailyDataLoaded$ = new BehaviorSubject<boolean>(true);
 
 	/**
 	 * Daily data transformed into expense allocation chart
@@ -159,11 +172,14 @@ export abstract class PersonalAccountParent {
 
 		// all daily data for a period
 		const totalDailyDataForTimePeriod$ = this.dateSource$.pipe(
+			tap(() => this.filteredDailyDataLoaded$.next(false)),
 			switchMap((dateFilter) =>
 				dateFilter === NO_DATE_SELECTED
 					? of([])
 					: this.personalAccountFacadeService.getPersonalAccountDailyData(dateFilter)
-			)
+			),
+			// prevent multiple triggers
+			shareReplay({ bufferSize: 1, refCount: true })
 		);
 
 		this.isEntryForSelectedMonth$ = combineLatest([totalDailyDataForTimePeriod$, this.dateSource$]).pipe(
@@ -184,7 +200,8 @@ export abstract class PersonalAccountParent {
 
 				// filter by selected tag id
 				return totalDailyData.filter((d) => selectedTagIds.includes(d.tagId));
-			})
+			}),
+			tap(() => this.filteredDailyDataLoaded$.next(true))
 		);
 
 		// calculate expense chart for filtered data

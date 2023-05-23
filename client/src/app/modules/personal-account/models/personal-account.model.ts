@@ -5,8 +5,6 @@ export interface AccountState {
 	incomeTotal: number;
 	expenseTotal: number;
 	entriesTotal: number;
-	recurringValueTotal: number;
-	recurringEntriesTotal: number;
 }
 
 /**

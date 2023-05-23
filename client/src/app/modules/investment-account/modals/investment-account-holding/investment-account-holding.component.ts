@@ -250,6 +250,10 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit,
 		this.recordingActionButtonPressEnum = type;
 	}
 
+	onCancel(): void {
+		this.dialogRef.close();
+	}
+
 	onTransactionShow(): void {
 		this.showHistoricalTransactions = !this.showHistoricalTransactions;
 	}

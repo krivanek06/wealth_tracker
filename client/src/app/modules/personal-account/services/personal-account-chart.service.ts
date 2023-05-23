@@ -34,8 +34,6 @@ export class PersonalAccountChartService {
 			incomeTotal,
 			total,
 			entriesTotal,
-			recurringValueTotal: 0, // todo
-			recurringEntriesTotal: 0, // todo
 		};
 
 		return result;
@@ -69,8 +67,6 @@ export class PersonalAccountChartService {
 			incomeTotal,
 			total,
 			entriesTotal,
-			recurringValueTotal: 0, // todo
-			recurringEntriesTotal: 0, // todo
 		};
 
 		return result;

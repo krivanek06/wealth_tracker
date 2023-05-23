@@ -50,4 +50,8 @@ export class InvestmentAccountTransactionsComponent implements OnInit {
 			)
 			.subscribe();
 	}
+
+	onCancel(): void {
+		this.dialogRef.close();
+	}
 }

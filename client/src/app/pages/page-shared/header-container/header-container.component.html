@@ -1,6 +1,9 @@
 <div class="flex items-center justify-end p-2 sm:justify-between md:px-8">
 	<!-- title -->
-	<h2 class="hidden text-xl lg:text-4xl text-wt-primary-dark sm:block">Spend mindful</h2>
+	<h2 class="hidden space-x-2 text-xl lg:text-4xl sm:block">
+		<span class="text-wt-primary-dark">Spend</span>
+		<span class="text-white">Mindful</span>
+	</h2>
 
 	<!-- right section -->
 	<div *ngIf="authenticatedUser$ | async as user; else chipSkeleton" class="flex items-center gap-4 max-sm:w-full">

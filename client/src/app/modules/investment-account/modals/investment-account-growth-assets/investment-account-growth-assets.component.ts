@@ -10,7 +10,7 @@ import { Observable, combineLatest, distinctUntilChanged, map, startWith, takeUn
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';
 import { componentDestroyed } from '../../../../core/operators';
 import { ChartConstructor, GeneralFunctionUtil } from '../../../../core/utils';
-import { FormMatInputWrapperModule } from '../../../../shared/components';
+import { DialogCloseHeaderComponent, FormMatInputWrapperModule } from '../../../../shared/components';
 import { DefaultImgDirective } from '../../../../shared/directives';
 import { InputSource, getChartGenericColor } from '../../../../shared/models';
 import { InvestmentAccountCalculatorService } from '../../services';
@@ -27,6 +27,7 @@ import { InvestmentAccountCalculatorService } from '../../services';
 		ReactiveFormsModule,
 		MatChipsModule,
 		DefaultImgDirective,
+		DialogCloseHeaderComponent,
 	],
 	templateUrl: './investment-account-growth-assets.component.html',
 	styleUrls: ['./investment-account-growth-assets.component.scss'],
@@ -70,6 +71,10 @@ export class InvestmentAccountGrowthAssetsComponent extends ChartConstructor imp
 	}
 
 	ngOnDestroy(): void {}
+
+	onCancel(): void {
+		this.dialog.closeAll();
+	}
 
 	getChartSeries(): Observable<Highcharts.SeriesOptionsType[]> {
 		return combineLatest([

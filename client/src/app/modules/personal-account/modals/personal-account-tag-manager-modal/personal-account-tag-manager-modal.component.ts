@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { map, Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../../core/api';
 import { PersonalAccountTagFragment, TagDataType } from '../../../../core/graphql';
 
@@ -53,5 +53,9 @@ export class PersonalAccountTagManagerModalComponent implements OnInit {
 
 	onNewTagRemove(): void {
 		this.creatingNewTagType = null;
+	}
+
+	onCancel(): void {
+		this.dialogRef.close();
 	}
 }

@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { FormMatInputWrapperModule } from '../../../../shared/components';
+import { DialogCloseHeaderComponent, FormMatInputWrapperModule } from '../../../../shared/components';
 import { NotificationBarModule } from '../../../../shared/dialogs';
 import {
 	DefaultImgDirective,
@@ -35,6 +35,7 @@ import { InvestmentAccountTransactionsComponent } from './investment-account-tra
 		MatSortModule,
 		NotificationBarModule,
 		RangeDirective,
+		DialogCloseHeaderComponent,
 	],
 	exports: [InvestmentAccountTransactionsComponent],
 })

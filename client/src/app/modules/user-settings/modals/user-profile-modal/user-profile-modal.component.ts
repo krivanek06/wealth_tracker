@@ -44,6 +44,10 @@ export class UserProfileModalComponent implements OnInit {
 		this.selectedComponent$.next(component);
 	}
 
+	onCancel(): void {
+		this.dialogRef.close();
+	}
+
 	@Confirmable('Please confirm removing your account')
 	onRemoveAccount(): void {
 		DialogServiceUtil.showNotificationBar('Account removal starting', 'notification');

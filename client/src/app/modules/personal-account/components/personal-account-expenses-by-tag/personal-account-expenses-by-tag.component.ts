@@ -37,7 +37,7 @@ export class PersonalAccountExpensesByTagComponent implements ControlValueAccess
 	@Input() expenses!: PersonalAccountTagAggregation[];
 	@Input() incomes?: PersonalAccountTagAggregation[] | null = null;
 	@Input() multiple = true;
-	@Input() disabled = false;
+	@Input() disabledClick = false;
 	@Input() hideBudgeting = false;
 
 	selectedAggregationIds: string[] = [];
@@ -46,7 +46,7 @@ export class PersonalAccountExpensesByTagComponent implements ControlValueAccess
 	onTouched = () => {};
 
 	onClick(aggregations: PersonalAccountTagAggregation) {
-		if (this.disabled) {
+		if (this.disabledClick) {
 			return;
 		}
 

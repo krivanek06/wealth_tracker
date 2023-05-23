@@ -14,7 +14,7 @@
 			[matTooltip]="aggregation.budgetToTimePeriod ? ('Spending on: ' + ((aggregation.totalValue / aggregation.budgetToTimePeriod) | percent) ) : ''"
 			(click)="onClick(aggregation)"
 			[ngClass]="{
-      'cursor-default': disabled,
+      'cursor-default': disabledClick,
       'c-selected-button': selectedAggregationIds | inArray: aggregation.id,
       'bg-wt-background-dark': !(selectedAggregationIds | inArray: aggregation.id)
     }"
@@ -65,7 +65,7 @@
 			<!-- <span *ngIf="aggregation.lastDataEntryDate " class="text-gray-400">
 				Last: {{ aggregation.lastDataEntryDate | date: 'MMM. d' }}
 			</span> -->
-			<span class="text-wt-gray-medium">Entries: {{ aggregation.totalEntries }} </span>
+			<span class="text-base text-wt-gray-medium">Entries: {{ aggregation.totalEntries }} </span>
 		</div>
 
 		<div

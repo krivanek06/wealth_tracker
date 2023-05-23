@@ -68,6 +68,7 @@
 				[expenses]="obs.accountTagAggregationForTimePeriod?.expenses ?? []"
 				[incomes]="obs.accountTagAggregationForTimePeriod?.incomes"
 				[multiple]="false"
+				[disabledClick]="isDateSourceNoDate"
 				[hideBudgeting]="isDateSourceNoDate"
 			></app-personal-account-expenses-by-tag>
 

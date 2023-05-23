@@ -1,41 +1,51 @@
-<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-	<button
-		*ngFor="let aggregation of aggregations"
-		mat-button
-		[matTooltip]="aggregation.budgetToTimePeriod ? ('Spending on: ' + ((aggregation.totalValue / aggregation.budgetToTimePeriod) | percent) ) : ''"
-		(click)="onClick(aggregation)"
-		[ngClass]="{
+<div *ngIf="incomes && incomes.length > 0" class="mb-4">
+	<h2 class="text-wt-success-dark">Income</h2>
+	<ng-container [ngTemplateOutlet]="aggregationBody" [ngTemplateOutletContext]="{aggregations:incomes}"></ng-container>
+</div>
+
+<h2 *ngIf="incomes && incomes.length > 0" class="text-wt-danger-dark">Expense</h2>
+<ng-container [ngTemplateOutlet]="aggregationBody" [ngTemplateOutletContext]="{aggregations:expenses}"></ng-container>
+
+<ng-template #aggregationBody let-aggregations="aggregations">
+	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+		<button
+			*ngFor="let aggregation of aggregations"
+			mat-button
+			[matTooltip]="aggregation.budgetToTimePeriod ? ('Spending on: ' + ((aggregation.totalValue / aggregation.budgetToTimePeriod) | percent) ) : ''"
+			(click)="onClick(aggregation)"
+			[ngClass]="{
       'cursor-default': disabled,
       'c-selected-button': selectedAggregationIds | inArray: aggregation.id,
       'bg-wt-background-dark': !(selectedAggregationIds | inArray: aggregation.id)
     }"
-		class="w-full max-sm:p-0 shadow-lg md:py-4 h-[95px] md:h-[110px] overflow-hidden"
-	>
-		<div class="flex items-center gap-2 -ml-1">
-			<!-- tag image -->
-			<div
-				class="p-2 rounded-l-xl w-14 md:w-16 h-[95px] md:h-[110px] grid min-w-[60px]"
-				style="background-color: {{aggregation.color}};"
-			>
-				<img appDefaultImg [src]="aggregation.imageUrl" alt="tag image" class="m-auto h-9" />
-			</div>
+			class="w-full max-sm:p-0 shadow-lg md:py-4 h-[95px] md:h-[110px] overflow-hidden"
+		>
+			<div class="flex items-center gap-2 -ml-1">
+				<!-- tag image -->
+				<div
+					class="p-2 rounded-l-xl w-14 md:w-16 h-[95px] md:h-[110px] grid min-w-[60px]"
+					style="background-color: {{aggregation.color}};"
+				>
+					<img appDefaultImg [src]="aggregation.imageUrl" alt="tag image" class="m-auto h-9" />
+				</div>
 
-			<div class="flex flex-col flex-1">
-				<!-- body -->
-				<ng-container [ngTemplateOutlet]="buttonBody" [ngTemplateOutletContext]="{aggregation:aggregation}">
-				</ng-container>
+				<div class="flex flex-col flex-1">
+					<!-- body -->
+					<ng-container [ngTemplateOutlet]="buttonBody" [ngTemplateOutletContext]="{aggregation:aggregation}">
+					</ng-container>
 
-				<!-- progress bar -->
-				<div *ngIf="!aggregation.isWeeklyView" class="-mt-1">
-					<app-progress-item
-						[currentValue]="aggregation.budgetToTimePeriod ? aggregation.totalValue : 0"
-						[totalThresholdValue]="aggregation.budgetToTimePeriod ?? 0"
-					></app-progress-item>
+					<!-- progress bar -->
+					<div *ngIf="!aggregation.isWeeklyView && !hideBudgeting" class="-mt-1">
+						<app-progress-item
+							[currentValue]="aggregation.budgetToTimePeriod ? aggregation.totalValue : 0"
+							[totalThresholdValue]="aggregation.budgetToTimePeriod ?? 0"
+						></app-progress-item>
+					</div>
 				</div>
 			</div>
-		</div>
-	</button>
-</div>
+		</button>
+	</div>
+</ng-template>
 
 <!-- button body -->
 <ng-template #buttonBody let-aggregation="aggregation">
@@ -47,7 +57,7 @@
 		<div class="text-start">
 			<div
 				class="space-x-1"
-				[ngClass]="{'text-base':  !!aggregation.lastDataEntryDate, 'text-lg':  !aggregation.lastDataEntryDate}"
+				[ngClass]="{'text-base':  !!aggregation.lastDataEntryDate && !hideBudgeting, 'text-lg':  !aggregation.lastDataEntryDate || hideBudgeting}"
 			>
 				<span style="color: {{aggregation.color}}" class="text-lg">{{ aggregation.name }}</span>
 				<!-- <span class="text-gray-400">({{ aggregation.totalEntries }})</span> -->
@@ -58,11 +68,17 @@
 			<span class="text-wt-gray-medium">Entries: {{ aggregation.totalEntries }} </span>
 		</div>
 
-		<div class="text-end min-w-[100px]" [ngClass]="{'mt-3': !aggregation.budgetToTimePeriod}">
+		<div
+			class="text-end min-w-[100px]"
+			[ngClass]="{'mt-3': !aggregation.budgetToTimePeriod || hideBudgeting || aggregation.isWeeklyView}"
+		>
 			<!-- total spending and budget -->
 			<div class="flex flex-col">
 				<span class="text-xl text-white"> {{ aggregation.totalValue | currency }} </span>
-				<span *ngIf="aggregation.budgetToTimePeriod && !aggregation.isWeeklyView" class="text-wt-gray-medium">
+				<span
+					*ngIf="aggregation.budgetToTimePeriod && !aggregation.isWeeklyView && !hideBudgeting"
+					class="text-wt-gray-medium"
+				>
 					{{ aggregation.budgetToTimePeriod | currency }}
 				</span>
 			</div>

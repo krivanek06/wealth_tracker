@@ -47,3 +47,8 @@ export interface PersonalAccountDailyDataAggregation {
 	date: string;
 	data: PersonalAccountDailyDataOutputFragment[];
 }
+
+export interface PersonalAccountTagAggregationType {
+	incomes: PersonalAccountTagAggregation[];
+	expenses: PersonalAccountTagAggregation[];
+}

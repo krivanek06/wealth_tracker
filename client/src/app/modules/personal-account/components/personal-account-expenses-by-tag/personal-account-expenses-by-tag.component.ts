@@ -34,9 +34,11 @@ import { PersonalAccountTagAggregation } from '../../models';
 	],
 })
 export class PersonalAccountExpensesByTagComponent implements ControlValueAccessor {
-	@Input() aggregations!: PersonalAccountTagAggregation[];
+	@Input() expenses!: PersonalAccountTagAggregation[];
+	@Input() incomes?: PersonalAccountTagAggregation[] | null = null;
 	@Input() multiple = true;
 	@Input() disabled = false;
+	@Input() hideBudgeting = false;
 
 	selectedAggregationIds: string[] = [];
 

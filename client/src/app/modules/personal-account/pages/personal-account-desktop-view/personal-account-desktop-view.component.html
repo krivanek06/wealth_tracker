@@ -107,7 +107,7 @@
 						>
 					</h2>
 					<app-personal-account-expenses-by-tag
-						[aggregations]="obs.accountTagAggregationForTimePeriod ?? []"
+						[expenses]="obs.accountTagAggregationForTimePeriod?.expenses ?? []"
 						[disabled]="true"
 					></app-personal-account-expenses-by-tag>
 				</div>

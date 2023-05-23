@@ -31,7 +31,7 @@ import {
 	AccountState,
 	NO_DATE_SELECTED,
 	PersonalAccountActionButtonType,
-	PersonalAccountTagAggregation,
+	PersonalAccountTagAggregationType,
 } from '../models';
 import { PersonalAccountChartService, PersonalAccountDataService } from '../services';
 
@@ -80,7 +80,7 @@ export abstract class PersonalAccountParent implements OnDestroy {
 	/**
 	 * Aggregating daily data by distinct tag for a time period (month/week)
 	 */
-	accountTagAggregationForTimePeriod$!: Observable<PersonalAccountTagAggregation[]>;
+	accountTagAggregationForTimePeriod$!: Observable<PersonalAccountTagAggregationType>;
 
 	/**
 	 * True if at least one entry exists for the selected month
@@ -239,7 +239,21 @@ export abstract class PersonalAccountParent implements OnDestroy {
 					? this.personalAccountDataService.getPersonalAccountTagAggregationByAggregationData(details.yearlyAggregation)
 					: this.personalAccountDataService.getPersonalAccountTagAggregationByDailyData(result, this.dateSource)
 			),
-			map((result) => result.filter((d) => d.type === TagDataType.Expense).sort((a, b) => b.totalValue - a.totalValue)),
+			// sort DESC by total value
+			map((result) => result.sort((a, b) => b.totalValue - a.totalValue)),
+			// group by income and expenses
+			map((result) =>
+				result.reduce(
+					(acc, curr) =>
+						curr.type === TagDataType.Income
+							? { ...acc, incomes: [...acc.incomes, curr] }
+							: { ...acc, expenses: [...acc.expenses, curr] },
+					{
+						incomes: [],
+						expenses: [],
+					} as PersonalAccountTagAggregationType
+				)
+			),
 			shareReplay({ bufferSize: 1, refCount: true })
 		);
 	}

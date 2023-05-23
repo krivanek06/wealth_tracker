@@ -10,7 +10,7 @@
 	<ng-container
 		*ngIf="{
     filteredDailyDataLoaded: filteredDailyDataLoaded$ | async,
-    personalAccountDailyExpensePieChart: personalAccountDailyExpensePieChart$ | async,
+    personalAccountExpensePieChart: personalAccountExpensePieChart$ | async,
     accountDisplayedState: accountDisplayedState$ | async,
   } as obs"
 	>
@@ -18,7 +18,7 @@
 		<div *ngIf="obs.filteredDailyDataLoaded; else chartSkeleton" class="-mt-8">
 			<app-pie-chart
 				class="scale-110"
-				[series]="obs.personalAccountDailyExpensePieChart"
+				[series]="obs.personalAccountExpensePieChart"
 				[displayValue]="obs.accountDisplayedState?.total"
 			></app-pie-chart>
 		</div>

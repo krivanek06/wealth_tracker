@@ -6,8 +6,10 @@ import {
 	Observable,
 	Subject,
 	combineLatest,
+	iif,
 	map,
 	merge,
+	mergeMap,
 	of,
 	reduce,
 	share,
@@ -69,23 +71,14 @@ export abstract class PersonalAccountParent implements OnDestroy {
 	filteredDailyDataLoaded$ = new BehaviorSubject<boolean>(true);
 
 	/**
-	 * Daily data transformed into expense allocation chart
+	 * Expense allocation chart
 	 */
-	personalAccountDailyExpensePieChart$!: Observable<GenericChartSeriesPie | null>;
-	/**
-	 * yearly data transformed into expense allocation chart
-	 */
-	personalAccountYearlyTagExpensePieChart$!: Observable<GenericChartSeriesPie | null>;
+	personalAccountExpensePieChart$!: Observable<GenericChartSeriesPie | null>;
 
 	/**
 	 * Aggregating daily data by distinct tag for a time period (month/week)
 	 */
 	accountTagAggregationForTimePeriod$!: Observable<PersonalAccountTagAggregationType>;
-
-	/**
-	 * True if at least one entry exists for the selected month
-	 */
-	isEntryForSelectedMonth$!: Observable<boolean>;
 
 	/**
 	 * form used to filter daily data
@@ -198,10 +191,6 @@ export abstract class PersonalAccountParent implements OnDestroy {
 			shareReplay({ bufferSize: 1, refCount: true })
 		);
 
-		this.isEntryForSelectedMonth$ = combineLatest([totalDailyDataForTimePeriod$, this.dateSource$]).pipe(
-			map(([dailyData, dateSource]) => dateSource !== NO_DATE_SELECTED && dailyData.length > 0)
-		);
-
 		this.accountFilteredState$ = totalDailyDataForTimePeriod$.pipe(
 			map((dailyData) => this.personalAccountChartService.getAccountStateByDailyData(dailyData))
 		);
@@ -222,11 +211,21 @@ export abstract class PersonalAccountParent implements OnDestroy {
 		);
 
 		// calculate expense chart for filtered data
-		this.personalAccountDailyExpensePieChart$ = totalDailyDataForTimePeriod$.pipe(
+		const personalAccountDailyExpensePieChart$ = totalDailyDataForTimePeriod$.pipe(
 			map((result) => (!!result ? this.personalAccountChartService.getExpenseAllocationChartData(result) : null))
 		);
-		this.personalAccountYearlyTagExpensePieChart$ = this.personalAccountDetails$.pipe(
+		const personalAccountYearlyTagExpensePieChart$ = this.personalAccountDetails$.pipe(
 			map((result) => this.personalAccountChartService.getExpenseAllocationChartData(result.yearlyAggregation))
+		);
+
+		this.personalAccountExpensePieChart$ = this.dateSource$.pipe(
+			mergeMap((dateSource) =>
+				iif(
+					() => dateSource === NO_DATE_SELECTED,
+					personalAccountYearlyTagExpensePieChart$,
+					personalAccountDailyExpensePieChart$
+				)
+			)
 		);
 
 		this.accountTagAggregationForTimePeriod$ = combineLatest([

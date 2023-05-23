@@ -1,16 +1,20 @@
 <!-- balance -->
 <app-value-presentation-card title="Balance" [showDataInCard]="true">
-	<div *ngIf="accountState" class="c-text">{{ accountState.total | currency }}</div>
+	<div *ngIf="accountState && !loading; else loadingState" class="c-text">{{ accountState.total | currency }}</div>
 </app-value-presentation-card>
 
 <!-- income -->
 <app-value-presentation-card title="Income" [showDataInCard]="true">
-	<div *ngIf="accountState" class="c-text">{{ accountState.incomeTotal | currency }}</div>
+	<div *ngIf="accountState && !loading; else loadingState" class="c-text">
+		{{ accountState.incomeTotal | currency }}
+	</div>
 </app-value-presentation-card>
 
 <!-- expenses -->
 <app-value-presentation-card title="Expenses" [showDataInCard]="true">
-	<div *ngIf="accountState" class="c-text">{{ accountState.expenseTotal | currency }}</div>
+	<div *ngIf="accountState && !loading; else loadingState" class="c-text">
+		{{ accountState.expenseTotal | currency }}
+	</div>
 </app-value-presentation-card>
 
 <!-- recurring -->
@@ -22,5 +26,9 @@
 
 <!-- entries -->
 <app-value-presentation-card title="Entries" [showDataInCard]="true">
-	<div *ngIf="accountState" class="c-text">{{ accountState.entriesTotal }}</div>
+	<div *ngIf="accountState && !loading; else loadingState" class="c-text">{{ accountState.entriesTotal }}</div>
 </app-value-presentation-card>
+
+<ng-template #loadingState>
+	<div class="h-6 mt-2 g-skeleton"></div>
+</ng-template>

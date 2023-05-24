@@ -20,8 +20,7 @@ export class ThemeToggleComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.sliderControl.valueChanges.subscribe((value) => {
-			console.log('Change Theme', value);
+		this.sliderControl.valueChanges.subscribe(() => {
 			this.themeService.toggleTheme();
 		});
 	}

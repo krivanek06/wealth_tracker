@@ -57,6 +57,4 @@ $mat-theming-light: mat.define-dark-theme(
 
 .light-theme {
 	@include mat.all-component-colors($mat-theming-light);
-	// @include mat.core-color($mat-theming-light);
-	// @include mat.button-color($mat-theming-light);
 }

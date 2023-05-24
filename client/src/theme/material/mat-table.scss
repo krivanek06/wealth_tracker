@@ -66,3 +66,7 @@ table[mat-table] tbody tr td {
 		padding: 0 16px 0 16px !important;
 	}
 }
+
+.light-theme .mdc-data-table__header-cell {
+	color: var(--gray-medium) !important;
+}

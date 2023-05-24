@@ -13,7 +13,6 @@
 		<button
 			*ngFor="let aggregation of aggregations"
 			mat-button
-			[matTooltip]="aggregation.budgetToTimePeriod ? ('Spending on: ' + ((aggregation.totalValue / aggregation.budgetToTimePeriod) | percent) ) : ''"
 			(click)="onClick(aggregation)"
 			[ngClass]="{
       'cursor-default': disabledClick,
@@ -73,12 +72,14 @@
 			<!-- total spending and budget -->
 			<div class="flex flex-col">
 				<span class="text-xl text-white"> {{ aggregation.totalValue | currency }} </span>
-				<span
+				<div
 					*ngIf="aggregation.budgetToTimePeriod && !aggregation.isWeeklyView && !hideBudgeting"
-					class="text-wt-gray-medium"
+					class="flex items-center gap-1 text-wt-gray-medium"
 				>
-					{{ aggregation.budgetToTimePeriod | currency }}
-				</span>
+					<span>({{ ((aggregation.totalValue / aggregation.budgetToTimePeriod) | percent) }})</span>
+					<span>/</span>
+					<span> {{ aggregation.budgetToTimePeriod | currency }} </span>
+				</div>
 			</div>
 		</div>
 	</div>

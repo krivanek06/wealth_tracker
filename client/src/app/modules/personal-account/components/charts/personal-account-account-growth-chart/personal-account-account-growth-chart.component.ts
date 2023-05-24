@@ -229,7 +229,8 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 						linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
 						stops: [
 							[0, 'var(--primary-dark)'],
-							[1, 'var(--primary-dark-transparent-low)'],
+							[0.4, 'var(--primary-dark)'],
+							[1, 'transparent'],
 						],
 					},
 					marker: {

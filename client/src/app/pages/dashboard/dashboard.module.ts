@@ -10,6 +10,7 @@ import { map } from 'rxjs';
 import { AccountManagerApiService } from '../../core/api';
 import { AccountType } from '../../core/graphql';
 import { DASHBOARD_ROUTES } from '../../core/models';
+import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
 import { RangeDirective } from '../../shared/directives';
 import { HeaderContainerModule } from '../page-shared';
 import { DashboardComponent } from './dashboard.component';
@@ -99,6 +100,7 @@ const routes: Routes = [
 		MatButtonModule,
 		MatIconModule,
 		RangeDirective,
+		ThemeToggleComponent,
 	],
 })
 export class DashboardModule {}

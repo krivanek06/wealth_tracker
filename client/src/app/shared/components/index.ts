@@ -5,3 +5,4 @@ export * from './form-controls';
 export * from './form-mat-input-wrapper/form-mat-input-wrapper.module';
 export * from './items';
 export * from './scroll-wrapper/scroll-wrapper.module';
+export * from './theme-toggle/theme-toggle.component';

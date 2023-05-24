@@ -1,18 +1,14 @@
 :root {
 	/* primary */
 	--primary-dark: #12aaaa;
-	--primary-dark-transparent-low: #12aaaa32;
 
 	/* success */
-	--success-dark: #0c9710;
 	--success-medium: #25b329;
 
 	/* danger */
-	--danger-dark: #d21414;
 	--danger-medium: #d23131;
 
 	/* gray */
-	--gray-dark-2: #6f737a;
 	--gray-dark: #818690;
 	--gray-medium: #9ca3af;
 	--gray-light: #dcdcdc;
@@ -25,10 +21,14 @@
 	--background-dark: #031e1e;
 	--background-medium: #013838;
 	--background-light: #064d4d;
-
-	/* chart color */
-	--chart-danger: #ac1414;
-	--chart-success: #149a19;
+	--backgroundDashboard: linear-gradient(
+		168.19deg,
+		#000607 1.34%,
+		#000808 1.35%,
+		#031b1b 33.36%,
+		#021a1a 52.32%,
+		#030000 98.93%
+	);
 
 	--disable-default: #3e5156;
 }

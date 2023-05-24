@@ -19,30 +19,16 @@ module.exports = {
 				/* primary */
 				'wt-primary-dark': 'var(--primary-dark)',
 
-				/* secondary */
-				// 'wt-secondary-dark': 'var(--secondary-dark)',
-				// 'wt-secondary-medium': 'var(--secondary-medium)',
-
 				/* success */
-				'wt-success-dark': 'var(--success-dark)',
 				'wt-success-medium': 'var(--success-medium)',
 
 				/* danger */
-				'wt-danger-dark': 'var(--danger-dark)',
 				'wt-danger-medium': 'var(--danger-medium)',
 
 				/* gray */
-				'wt-gray-dark-2': 'var(--gray-dark-2)',
 				'wt-gray-dark': 'var(--gray-dark)',
 				'wt-gray-medium': 'var(--gray-medium)',
 				'wt-gray-light': 'var(--gray-light)',
-
-				/* table */
-				'wt-table-hover': 'var(--table-hover)',
-				'wt-table-border': 'var(--table-border)',
-
-				/* pulse */
-				'wt-pulse': 'var(--gray-medium)',
 			},
 		},
 		screens: {

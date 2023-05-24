@@ -1,11 +1,11 @@
 <!-- income -->
 <div *ngIf="incomes && incomes.length > 0" class="mb-4">
-	<h2 class="text-wt-success-dark">Income</h2>
+	<h2 class="text-wt-success-medium">Income</h2>
 	<ng-container [ngTemplateOutlet]="aggregationBody" [ngTemplateOutletContext]="{aggregations:incomes}"></ng-container>
 </div>
 
 <!-- expense -->
-<h2 *ngIf="incomes && incomes.length > 0" class="text-wt-danger-dark">Expense</h2>
+<h2 *ngIf="incomes && incomes.length > 0" class="text-wt-danger-medium">Expense</h2>
 <ng-container [ngTemplateOutlet]="aggregationBody" [ngTemplateOutletContext]="{aggregations:expenses}"></ng-container>
 
 <ng-template #aggregationBody let-aggregations="aggregations">

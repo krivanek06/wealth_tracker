@@ -8,7 +8,7 @@ import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { environment } from '../../../environments/environment';
 import { DialogServiceUtil } from '../../shared/dialogs';
-import { STORAGE_ACCESS_TOKEN } from '../models';
+import { STORAGE_AUTH_ACCESS_TOKEN } from '../models';
 import { PlatformService } from '../services/platform.service';
 import { LoggedUserOutputFragment } from './schema-backend.service';
 
@@ -50,7 +50,7 @@ const getToken = (platform: PlatformService): string | null => {
 		return null;
 	}
 
-	const token = localStorage.getItem(STORAGE_ACCESS_TOKEN);
+	const token = localStorage.getItem(STORAGE_AUTH_ACCESS_TOKEN);
 	if (!token) {
 		return null;
 	}

@@ -2,7 +2,7 @@
 	@apply block min-h-full;
 
 	//background: linear-gradient(168.19deg, #02171b 1.34%, #011717 1.35%, #011a1a 33.36%, #021919 52.32%, #041a1a 98.93%);
-	background: linear-gradient(168.19deg, #000607 1.34%, #000808 1.35%, #031b1b 33.36%, #021a1a 52.32%, #030000 98.93%);
+	background: var(--backgroundDashboard);
 	color: var(--gray-light);
 	padding: 24px;
 	background-attachment: fixed;

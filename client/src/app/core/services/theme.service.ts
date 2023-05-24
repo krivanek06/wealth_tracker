@@ -1,47 +1,39 @@
-import { Injectable } from '@angular/core';
-import { DarkTheme, LightTheme, STORAGE_THEME_PREFERENCE, ThemeType } from '../models';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
+import { STORAGE_THEME_PREFERENCE } from '../models';
 import { StorageService } from './storage.service';
 
+export type ThemeType = 'light' | 'dark';
 @Injectable({
 	providedIn: 'root',
 })
 export class ThemeService extends StorageService<ThemeType> {
-	constructor() {
+	private readonly LIGHT_THEME = 'light-theme';
+
+	constructor(@Inject(DOCUMENT) private document: Document) {
 		super(STORAGE_THEME_PREFERENCE);
+		this.initTheme();
+	}
+
+	isLightMode(): boolean {
+		return this.getData() === 'light';
 	}
 
 	toggleTheme(): void {
 		const currentTheme = this.getData();
 		if (currentTheme === 'light') {
-			this.setTheme('dark');
 			this.saveData('dark');
+			this.document.body.classList.remove(this.LIGHT_THEME);
 		} else {
-			this.setTheme('light');
 			this.saveData('light');
+			this.document.body.classList.add(this.LIGHT_THEME);
 		}
 	}
 
-	setTheme(theme: ThemeType): void {
-		if (theme === 'light') {
-			this.initLightTheme();
-		} else {
-			this.initDarkTheme();
+	private initTheme(): void {
+		const currentTheme = this.getData();
+		if (currentTheme === 'light') {
+			this.document.body.classList.add(this.LIGHT_THEME);
 		}
-	}
-
-	private initDarkTheme(): void {
-		document.documentElement.style.setProperty(DarkTheme.background.name, DarkTheme.background.value);
-		document.documentElement.style.setProperty(DarkTheme.primary.name, DarkTheme.primary.value);
-		document.documentElement.style.setProperty(DarkTheme.grayDark.name, DarkTheme.grayDark.value);
-		document.documentElement.style.setProperty(DarkTheme.grayMedium.name, DarkTheme.grayMedium.value);
-		document.documentElement.style.setProperty(DarkTheme.grayLight.name, DarkTheme.grayLight.value);
-	}
-
-	private initLightTheme(): void {
-		document.documentElement.style.setProperty(LightTheme.background.name, LightTheme.background.value);
-		document.documentElement.style.setProperty(LightTheme.primary.name, LightTheme.primary.value);
-		document.documentElement.style.setProperty(LightTheme.grayDark.name, LightTheme.grayDark.value);
-		document.documentElement.style.setProperty(LightTheme.grayMedium.name, LightTheme.grayMedium.value);
-		document.documentElement.style.setProperty(LightTheme.grayLight.name, LightTheme.grayLight.value);
 	}
 }

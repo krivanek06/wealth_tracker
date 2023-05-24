@@ -40,7 +40,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
-		if (changes?.['investmentAccountGrowth']?.currentValue) {
+		if (changes?.['doesNotExists']?.currentValue) {
 			const isDesktop = this.breakpointObserver.isMatched(LAYOUT_SM);
 			this.initChart(this.investmentAccountGrowth ?? [], !isDesktop);
 		}

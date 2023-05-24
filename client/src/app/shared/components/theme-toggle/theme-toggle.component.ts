@@ -14,16 +14,15 @@ import { ThemeService } from '../../../core/services';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThemeToggleComponent implements OnInit {
-	sliderControl = new FormControl(true);
-	constructor(private themeService: ThemeService) {}
+	sliderControl = new FormControl<boolean>(false);
+	constructor(private themeService: ThemeService) {
+		this.sliderControl.patchValue(!this.themeService.isLightMode());
+	}
 
 	ngOnInit(): void {
 		this.sliderControl.valueChanges.subscribe((value) => {
-			if (value) {
-				this.themeService.setTheme('dark');
-			} else {
-				this.themeService.setTheme('light');
-			}
+			console.log('Change Theme', value);
+			this.themeService.toggleTheme();
 		});
 	}
 }

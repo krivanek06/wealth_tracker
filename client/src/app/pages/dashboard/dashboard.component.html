@@ -4,7 +4,7 @@
 
 	<div class="flex items-center justify-between">
 		<!-- theme switcher -->
-		<app-theme-toggle></app-theme-toggle>
+		<app-theme-toggle class="hidden sm:block"></app-theme-toggle>
 
 		<!-- navigation -->
 		<ng-container *ngIf="availableAccounts$ | async as accounts; else showNavSkeleton">

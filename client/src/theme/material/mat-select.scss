@@ -61,7 +61,7 @@ mat-select-trigger {
 .mat-mdc-option:focus:not(.mdc-list-item--disabled),
 .mat-mdc-option.mat-mdc-option-active,
 .mat-mdc-option.mdc-list-item--selected:not(.mat-mdc-option-multiple):not(.mdc-list-item--disabled) {
-	background: var(--background-medium) !important;
+	background: var(--background-dark) !important;
 }
 
 .mdc-menu-surface.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible {

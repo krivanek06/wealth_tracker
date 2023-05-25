@@ -52,6 +52,11 @@ export class AccountManagerComponent {
 	}
 
 	async onEdit(formData: AccountManagerEdit, type: AccountType): Promise<void> {
+		if (this.authenticationFacadeService.isAuthenticatedUserTestAccount()) {
+			DialogServiceUtil.showNotificationBar('Test User Authenticated - disabled editing account', 'error');
+			return;
+		}
+
 		const accountName = formData.name;
 		DialogServiceUtil.showNotificationBar(`${ACCOUNT_NAMES[type]}: editing account`, 'notification');
 

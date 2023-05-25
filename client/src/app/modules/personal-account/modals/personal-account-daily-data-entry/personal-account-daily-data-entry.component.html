@@ -1,6 +1,6 @@
-<div class="mt-2 text-xl text-center text-wt-primary-dark">Daily Data</div>
+<app-dialog-close-header (dialogCloseEmitter)="onCancel()" title="Daily Data"></app-dialog-close-header>
 
-<form (ngSubmit)="onSave()" [formGroup]="formGroup">
+<form (ngSubmit)="onSave()" [formGroup]="formGroup" class="-mt-3">
 	<mat-dialog-content class="flex flex-col gap-x-4">
 		<!-- date picker -->
 		<app-date-picker formControlName="date"></app-date-picker>
@@ -39,7 +39,7 @@
 		<button
 			*ngIf="!showDescription"
 			mat-flat-button
-			class="mb-6 bg-wt-gray-dark-2 text-wt-gray-light"
+			class="mb-6 bg-wt-gray-dark text-wt-gray-light"
 			(click)="onDescriptionToggle()"
 		>
 			Add description

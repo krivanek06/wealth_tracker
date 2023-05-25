@@ -5,8 +5,6 @@ export interface AccountState {
 	incomeTotal: number;
 	expenseTotal: number;
 	entriesTotal: number;
-	recurringValueTotal: number;
-	recurringEntriesTotal: number;
 }
 
 /**
@@ -46,4 +44,9 @@ export interface PersonalAccountTagAggregation {
 export interface PersonalAccountDailyDataAggregation {
 	date: string;
 	data: PersonalAccountDailyDataOutputFragment[];
+}
+
+export interface PersonalAccountTagAggregationType {
+	incomes: PersonalAccountTagAggregation[];
+	expenses: PersonalAccountTagAggregation[];
 }

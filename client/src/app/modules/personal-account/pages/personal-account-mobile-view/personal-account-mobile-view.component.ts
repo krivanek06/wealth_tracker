@@ -5,23 +5,24 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { Observable, combineLatest, map } from 'rxjs';
+import { Observable, combineLatest, map, takeUntil } from 'rxjs';
 import {
 	FormMatInputWrapperModule,
 	PieChartComponent,
 	ValuePresentationCardComponent,
 } from '../../../../shared/components';
+import { RangeDirective } from '../../../../shared/directives';
 import { PersonalAccountParent } from '../../classes';
 import {
 	PersonalAccountAccountStateComponent,
 	PersonalAccountActionButtonsComponent,
 	PersonalAccountDailyEntriesFilterComponent,
 	PersonalAccountDailyEntriesTableComponent,
+	PersonalAccountDailyEntriesTableMobileComponent,
 	PersonalAccountDisplayToggleComponent,
 	PersonalAccountExpensesByTagComponent,
 	PersonalAccountOverviewChartMobileComponent,
 } from '../../components';
-import { PersonalAccountDailyEntriesTableMobileComponent } from '../../components/mobile';
 import { AccountState, NO_DATE_SELECTED, PersonalAccountDailyDataAggregation } from '../../models';
 import { GetTagByIdPipe } from '../../pipes';
 import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-mobile-view-skeleton/personal-account-mobile-view-skeleton.component';
@@ -51,6 +52,7 @@ import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-m
 		PersonalAccountActionButtonsComponent,
 		PersonalAccountDailyEntriesFilterComponent,
 		PersonalAccountMobileViewSkeletonComponent,
+		RangeDirective,
 	],
 })
 export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {
@@ -84,6 +86,11 @@ export class PersonalAccountMobileViewComponent extends PersonalAccountParent im
 		this.dailyDataAggregation$ = this.filteredDailyData$.pipe(
 			map((res) => this.personalAccountDataService.aggregateDailyDataOutputByDays(res))
 		);
+
+		// on every change of the date filter, reset show history
+		this.accountTagAggregationForTimePeriod$
+			.pipe(takeUntil(this.destroy$))
+			.subscribe(() => this.showHistoryFormControl.setValue(false));
 
 		// check show history when selecting a tagId
 		this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.subscribe((value) => {

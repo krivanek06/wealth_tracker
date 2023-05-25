@@ -1,17 +1,24 @@
-<div class="flex justify-end mb-4">
-	<button
-		class="min-w-[200px]"
-		mat-stroked-button
-		[color]="showHistoryFormControl ? 'warn' : 'primary' "
-		(click)="onDisplayClick()"
-	>
-		{{ showHistoryFormControl ? 'History' : 'Aggregation' }}
-	</button>
-</div>
+<!-- aggregation & history button -->
+<button
+	*ngIf="!selectedTag"
+	class="min-w-[200px]"
+	mat-stroked-button
+	[color]="showHistoryFormControl ? 'warn' : 'primary' "
+	(click)="onDisplayClick()"
+>
+	{{ showHistoryFormControl ? 'History' : 'Aggregation' }}
+</button>
 
-<div *ngIf="selectedTag" class="mb-4">
+<!-- selected tag button -->
+<button
+	*ngIf="selectedTag"
+	class="min-w-[200px]"
+	style="border-color: {{selectedTag.color}} !important"
+	mat-stroked-button
+	(click)="onDisplayClick()"
+>
 	<div class="flex items-center gap-4 text-xl">
 		<img appDefaultImg [src]="selectedTag.imageUrl" imageType="url" class="h-7 w-7" />
-		<span class="text-wt-primary-dark"> {{ selectedTag.name}} </span>
+		<span style="color: {{selectedTag.color}}"> {{ selectedTag.name}} </span>
 	</div>
-</div>
+</button>

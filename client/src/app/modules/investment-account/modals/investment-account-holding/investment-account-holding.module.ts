@@ -10,6 +10,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
 	DatePickerComponent,
+	DialogCloseHeaderComponent,
 	FormMatInputWrapperModule,
 	GenericChartModule,
 	NumberKeyboardComponent,
@@ -44,6 +45,7 @@ import { RecordStateComponent } from './record-state/record-state.component';
 		NumberKeyboardComponent,
 		GenericChartModule,
 		MatCheckboxModule,
+		DialogCloseHeaderComponent,
 	],
 })
 export class InvestmentAccountHoldingModule {}

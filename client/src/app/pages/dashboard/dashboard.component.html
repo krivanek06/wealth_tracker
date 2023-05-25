@@ -2,24 +2,29 @@
 	<!-- header -->
 	<app-header-container> </app-header-container>
 
-	<!-- navigation -->
-	<ng-container *ngIf="availableAccounts$ | async as accounts; else showNavSkeleton">
-		<div class="justify-end hidden my-4 sm:flex">
-			<nav mat-tab-nav-bar dynamicHeight [tabPanel]="tabPanel">
-				<a
-					mat-tab-link
-					*ngFor="let account of accounts"
-					[routerLink]="[account.route]"
-					routerLinkActive
-					#rla="routerLinkActive"
-					[active]="rla.isActive"
-					class="mr-3"
-				>
-					{{account.data.name}}
-				</a>
-			</nav>
-		</div>
-	</ng-container>
+	<div class="flex items-center justify-between">
+		<!-- theme switcher -->
+		<app-theme-toggle class="hidden sm:block"></app-theme-toggle>
+
+		<!-- navigation -->
+		<ng-container *ngIf="availableAccounts$ | async as accounts; else showNavSkeleton">
+			<div class="justify-end hidden my-4 sm:flex">
+				<nav mat-tab-nav-bar dynamicHeight [tabPanel]="tabPanel">
+					<a
+						mat-tab-link
+						*ngFor="let account of accounts"
+						[routerLink]="[account.route]"
+						routerLinkActive
+						#rla="routerLinkActive"
+						[active]="rla.isActive"
+						class="mr-3"
+					>
+						{{account.data.name}}
+					</a>
+				</nav>
+			</div>
+		</ng-container>
+	</div>
 
 	<!-- navigation skeleton -->
 	<ng-template #showNavSkeleton>

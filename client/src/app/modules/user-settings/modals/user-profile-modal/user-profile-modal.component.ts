@@ -3,9 +3,9 @@ import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, filter, switchMap, tap } from 'rxjs';
-import { AuthenticationFacadeService } from '../../../../core/auth';
 import { ChangePasswordInput, UserFragment } from '../../../../core/graphql';
 import { TOP_LEVEL_NAV } from '../../../../core/models';
+import { AuthenticationFacadeService } from '../../../../core/services';
 import { Confirmable } from '../../../../shared/decorators';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
 
@@ -42,6 +42,10 @@ export class UserProfileModalComponent implements OnInit {
 
 	onComponentChange(component: PROFILE_COMPONENTS): void {
 		this.selectedComponent$.next(component);
+	}
+
+	onCancel(): void {
+		this.dialogRef.close();
 	}
 
 	@Confirmable('Please confirm removing your account')

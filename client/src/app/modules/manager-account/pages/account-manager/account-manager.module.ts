@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule, Routes } from '@angular/router';
+import { ThemeToggleComponent } from '../../../../shared/components';
 import { RangeDirective } from '../../../../shared/directives';
 import { AccountManagerItemComponent } from '../../components';
 import { AccountManagerSkeletonComponent } from './account-manager-skeleton/account-manager-skeleton.component';
@@ -24,6 +25,7 @@ const routes: Routes = [
 		RouterModule.forChild(routes),
 		AccountManagerItemComponent,
 		RangeDirective,
+		ThemeToggleComponent,
 	],
 })
 export class AccountManagerModule {}

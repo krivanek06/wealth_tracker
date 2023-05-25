@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { Observable, combineLatest, map, startWith, switchMap, tap } from 'rxjs';
 import { InvestmentAccountFragmentExtended } from '../../../../core/models';
 
 import { InvestmentAccountFacadeApiService } from '../../../../core/api';

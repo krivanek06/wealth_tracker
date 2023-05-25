@@ -26,40 +26,10 @@
 }
 
 /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
-// app-form-mat-input-wrapper-one-line[inputtype='TEXTAREA'] .mat-form-field-infix,
-// app-form-mat-input-wrapper[ng-reflect-input-type='TEXTAREA'] .mat-form-field-infix {
-// 	height: fit-content;
-// }
-
-/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
 mat-form-field.mat-form-field-should-float label {
 	font-size: 1rem !important;
 	margin-top: -0.25rem !important;
 }
-
-// .filter-sizing-no-outline {
-// 	padding: 0 1rem;
-
-// 	@screen md {
-// 		padding: 0;
-// 	}
-// 	/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
-// 	.mat-form-field-outline {
-// 		opacity: 0 !important;
-// 	}
-// 	/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
-// 	.mat-form-field-infix {
-// 		width: 140px !important;
-// 	}
-// 	/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
-// 	.mat-form-field-flex {
-// 		padding: 0 !important;
-// 	}
-
-// 	label {
-// 		color: var(--gray-light) !important;
-// 	}
-// }
 
 /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
 .mat-form-field-appearance-outline .mat-form-field-outline {
@@ -75,18 +45,18 @@ mat-form-field span.mat-form-field-label-wrapper label {
 
 /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
 mat-form-field.mat-focused span.mat-form-field-label-wrapper label {
-	color: var(--primary-dark) !important;
+	color: var(--primary) !important;
 }
 
 // on Error
 /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
 .mat-form-field-appearance-outline.mat-form-field-invalid.mat-form-field-invalid .mat-form-field-outline-thick {
-	color: var(--primary-dark) !important;
+	color: var(--primary) !important;
 }
 
 /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
 .mat-mdc-form-field.mat-form-field-invalid .mat-form-field-label {
-	color: var(--primary-dark) !important;
+	color: var(--primary) !important;
 }
 
 mat-hint {
@@ -94,7 +64,7 @@ mat-hint {
 }
 
 mat-divider {
-	background-color: var(--background-light) !important;
+	background-color: var(--background-medium) !important;
 }
 
 .mat-mdc-form-field-error {
@@ -103,4 +73,8 @@ mat-divider {
 
 .mat-mdc-text-field-wrapper {
 	background: var(--background-medium) !important;
+}
+
+.light-theme .mat-mdc-text-field-wrapper {
+	background: var(--background-dark) !important;
 }

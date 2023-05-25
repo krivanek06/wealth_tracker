@@ -1,10 +1,4 @@
-<div class="flex items-center justify-between mb-6 text-lg">
-	<span class="text-wt-primary-dark"> Account history </span>
-	<button mat-button mat-dialog-close type="button" class="text-wt-danger-dark">
-		<mat-icon>close</mat-icon>
-		Close
-	</button>
-</div>
+<app-dialog-close-header (dialogCloseEmitter)="onCancel()" title="Account history"></app-dialog-close-header>
 
 <form [formGroup]="formGroup">
 	<!-- symbols -->

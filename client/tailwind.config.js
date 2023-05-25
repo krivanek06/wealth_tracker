@@ -17,32 +17,18 @@ module.exports = {
 				'wt-background-light': 'var(--background-light)',
 
 				/* primary */
-				'wt-primary-dark': 'var(--primary-dark)',
-
-				/* secondary */
-				// 'wt-secondary-dark': 'var(--secondary-dark)',
-				// 'wt-secondary-medium': 'var(--secondary-medium)',
+				'wt-primary-dark': 'var(--primary)',
 
 				/* success */
-				'wt-success-dark': 'var(--success-dark)',
-				'wt-success-medium': 'var(--success-medium)',
+				'wt-success-medium': 'var(--success)',
 
 				/* danger */
-				'wt-danger-dark': 'var(--danger-dark)',
-				'wt-danger-medium': 'var(--danger-medium)',
+				'wt-danger-medium': 'var(--danger)',
 
 				/* gray */
-				'wt-gray-dark-2': 'var(--gray-dark-2)',
 				'wt-gray-dark': 'var(--gray-dark)',
 				'wt-gray-medium': 'var(--gray-medium)',
 				'wt-gray-light': 'var(--gray-light)',
-
-				/* table */
-				'wt-table-hover': 'var(--table-hover)',
-				'wt-table-border': 'var(--table-border)',
-
-				/* pulse */
-				'wt-pulse': 'var(--gray-medium)',
 			},
 		},
 		screens: {

@@ -22,133 +22,39 @@
 @import './material/mat-tooltip.scss';
 
 // COLOR PALETTE GENERATOR - http://mcg.mbitson.com/
+@import './material/mat-custom-colors.scss';
 
-$custom-success: (
-	50: #e2f3e2,
-	100: #b6e0b7,
-	200: #86cb88,
-	300: #55b658,
-	400: #30a734,
-	500: #0c9710,
-	600: #0a8f0e,
-	700: #08840c,
-	800: #067a09,
-	900: #036905,
-	A100: #98ff99,
-	A200: #65ff67,
-	A400: #32ff35,
-	A700: #19ff1c,
-	contrast: (
-		50: #000000,
-		100: #000000,
-		200: #000000,
-		300: #000000,
-		400: #ffffff,
-		500: #ffffff,
-		600: #ffffff,
-		700: #ffffff,
-		800: #ffffff,
-		900: #ffffff,
-		A100: #000000,
-		A200: #000000,
-		A400: #000000,
-		A700: #000000,
-	),
-);
+@include mat.core();
 
-$custom-primary: (
-	50: #e3f5f5,
-	100: #b8e6e6,
-	200: #89d5d5,
-	300: #59c4c4,
-	400: #36b7b7,
-	500: #12aaaa,
-	600: #10a3a3,
-	700: #0d9999,
-	800: #0a9090,
-	900: #057f7f,
-	A100: #aeffff,
-	A200: #7bffff,
-	A400: #48ffff,
-	A700: #2effff,
-	contrast: (
-		50: #000000,
-		100: #000000,
-		200: #000000,
-		300: #000000,
-		400: #000000,
-		500: #ffffff,
-		600: #ffffff,
-		700: #ffffff,
-		800: #ffffff,
-		900: #ffffff,
-		A100: #000000,
-		A200: #000000,
-		A400: #000000,
-		A700: #000000,
-	),
-);
-
-$custom-warn: (
-	50: #fae3e3,
-	100: #f2b9b9,
-	200: #e98a8a,
-	300: #e05b5b,
-	400: #d93737,
-	500: #d21414,
-	600: #cd1212,
-	700: #c70e0e,
-	800: #c10b0b,
-	900: #b60606,
-	A100: #ffe0e0,
-	A200: #ffadad,
-	A400: #ff7a7a,
-	A700: #ff6060,
-	contrast: (
-		50: #000000,
-		100: #000000,
-		200: #000000,
-		300: #000000,
-		400: #ffffff,
-		500: #ffffff,
-		600: #ffffff,
-		700: #ffffff,
-		800: #ffffff,
-		900: #ffffff,
-		A100: #000000,
-		A200: #000000,
-		A400: #000000,
-		A700: #000000,
-	),
-);
-
-// define colors
-$light-primary: mat.define-palette($custom-primary);
-$light-accent: mat.define-palette($custom-success);
-$light-warn: mat.define-palette($custom-warn);
-
-/*
-	$font-weight: 400,
-	$font-size: 1rem,
-	$line-height: 1,
-	$letter-spacing: normal,
-*/
 $custom-typography: mat.define-typography-config(
 	$font-family: 'Poppins, sans-serif',
 );
 
-// define theme
-$mat-theming-light: mat.define-light-theme(
+// dark theme
+$mat-theming-dark: mat.define-light-theme(
 	(
 		color: (
-			primary: $light-primary,
-			accent: $light-accent,
-			warn: $light-warn,
+			primary: mat.define-palette($custom-primary),
+			accent: mat.define-palette($custom-success),
+			warn: mat.define-palette($custom-warn),
 		),
-		typography: $custom-typography,
 	)
 );
 
-@include mat.core();
+// light theme
+$mat-theming-light: mat.define-dark-theme(
+	(
+		color: (
+			primary: mat.define-palette($custom-primary-light),
+			accent: mat.define-palette($custom-success-light),
+			warn: mat.define-palette($custom-warn),
+		),
+	)
+);
+
 @include mat.typography-hierarchy($custom-typography);
-@include mat.all-component-themes($mat-theming-light);
+@include mat.all-component-themes($mat-theming-dark);
+
+.light-theme {
+	@include mat.all-component-colors($mat-theming-light);
+}

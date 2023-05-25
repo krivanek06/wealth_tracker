@@ -1,12 +1,18 @@
 import { inject } from '@angular/core';
+import {
+	EMPTY_STORAGE_SERVICE_STRUCTURE,
+	STORAGE_MAIN_KEY,
+	StorageServiceStructure,
+	StorageServiceStructureKeys,
+} from '../models';
 import { PlatformService } from './platform.service';
 
-export abstract class StorageService<T> {
-	private storageKey: string;
+export class StorageService<T> {
+	private storageKey: StorageServiceStructureKeys;
 
 	platform = inject(PlatformService);
 
-	constructor(key: string) {
+	constructor(key: StorageServiceStructureKeys) {
 		this.storageKey = key;
 	}
 
@@ -15,23 +21,16 @@ export abstract class StorageService<T> {
 			return;
 		}
 
-		localStorage.setItem(this.storageKey, JSON.stringify(data));
+		const savedData = this.getDataFromLocalStorage();
+		const newData = { [this.storageKey]: data };
+		const mergedData = JSON.stringify({ ...savedData, ...newData });
+
+		localStorage.setItem(STORAGE_MAIN_KEY, mergedData);
 	}
 
 	getData(): T | null {
-		if (this.platform.isServer) {
-			return null;
-		}
-
-		const data = localStorage.getItem(this.storageKey);
-
-		if (!data) {
-			return null;
-		}
-
-		const result = JSON.parse(data);
-
-		return result;
+		const data = this.getDataFromLocalStorage();
+		return data[this.storageKey] || null;
 	}
 
 	removeData() {
@@ -39,6 +38,21 @@ export abstract class StorageService<T> {
 			return;
 		}
 
-		localStorage.removeItem(this.storageKey);
+		const data = this.getDataFromLocalStorage();
+		const newData = { ...data, [this.storageKey]: null };
+		localStorage.setItem(STORAGE_MAIN_KEY, JSON.stringify(newData));
+	}
+
+	clearLocalStorage() {
+		localStorage.removeItem(STORAGE_MAIN_KEY);
+	}
+
+	private getDataFromLocalStorage(): StorageServiceStructure {
+		if (this.platform.isServer) {
+			return EMPTY_STORAGE_SERVICE_STRUCTURE;
+		}
+
+		const data = localStorage.getItem(STORAGE_MAIN_KEY) || '{}';
+		return JSON.parse(data);
 	}
 }

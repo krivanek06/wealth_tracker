@@ -1,4 +1,4 @@
-<h2 class="mb-3 text-2xl text-center text-wt-primary-dark max-sm:mt-[20%]">About the Project</h2>
+<app-dialog-close-header (dialogCloseEmitter)="onCancel()" title="About the Project"></app-dialog-close-header>
 
 <!-- content -->
 <mat-dialog-content class="w-full mx-auto text-center md:w-9/12">
@@ -45,10 +45,3 @@
 		</a>
 	</div>
 </mat-dialog-content>
-
-<!-- social media login -->
-<mat-dialog-actions>
-	<div class="g-mat-dialog-actions-end">
-		<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
-	</div>
-</mat-dialog-actions>

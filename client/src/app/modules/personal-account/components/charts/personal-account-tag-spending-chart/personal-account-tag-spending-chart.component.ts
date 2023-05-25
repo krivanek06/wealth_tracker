@@ -70,7 +70,7 @@ export class PersonalAccountTagSpendingChartComponent extends ChartConstructor i
 					color: d.color,
 					data: d.data,
 					//zIndex: index === 0 ? 100 : -1, // bring line chart into the front
-					opacity: index === 0 ? 1 : 0.7,
+					opacity: index === 0 ? 1 : 0.75,
 					lineWidth: index === 0 || index === 2 ? 4 : 1,
 					visible: true, // d.name !== 'Income'
 					dataLabels: {

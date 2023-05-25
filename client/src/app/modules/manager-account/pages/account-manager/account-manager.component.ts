@@ -12,7 +12,7 @@ import { AccountIdentificationFragment, AccountType, UserAccountType, UserFragme
 import { DASHBOARD_ROUTES_BY_TYPE } from '../../../../core/models';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
 import { ACCOUNT_NAMES, ACCOUNT_NAME_OPTIONS, AccountManagerEdit } from '../../models';
-import { AuthenticationFacadeService } from './../../../../core/auth';
+import { AuthenticationFacadeService } from './../../../../core/services';
 
 @Component({
 	selector: 'app-account-manager',

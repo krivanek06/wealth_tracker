@@ -44,7 +44,7 @@ export class TagItemComponent implements OnInit {
 		color: new FormControl<string>('#9c1c1c', { validators: [requiredValidator], nonNullable: true }),
 		icon: new FormControl<string>('', { validators: [requiredValidator], nonNullable: true }),
 		tagName: new FormControl<string>('', {
-			validators: [requiredValidator, minLengthValidator(3), maxLengthValidator(20)],
+			validators: [requiredValidator, minLengthValidator(3), maxLengthValidator(15)],
 			nonNullable: true,
 		}),
 		budget: new FormControl<number>(0, { nonNullable: true }),
@@ -71,6 +71,7 @@ export class TagItemComponent implements OnInit {
 
 		// invalid
 		if (this.tagItemGroup.invalid) {
+			DialogServiceUtil.showNotificationBar('Form is invalid', 'error');
 			return;
 		}
 

@@ -49,6 +49,10 @@ table[mat-table] tbody tr td {
 	color: var(--gray-medium);
 }
 
+.mat-mdc-table {
+	background: transparent !important;
+}
+
 .g-table-disabled-row {
 	opacity: 0.55 !important;
 	pointer-events: none !important;
@@ -61,4 +65,8 @@ table[mat-table] tbody tr td {
 	@screen sm {
 		padding: 0 16px 0 16px !important;
 	}
+}
+
+.light-theme .mdc-data-table__header-cell {
+	color: var(--gray-medium) !important;
 }

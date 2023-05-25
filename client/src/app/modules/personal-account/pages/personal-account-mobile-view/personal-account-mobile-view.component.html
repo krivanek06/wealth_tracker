@@ -1,31 +1,36 @@
 <ng-container *ngIf="personalAccountDetails$ | async as personalAccountDetails; else showSkeleton">
 	<!-- account info -->
-	<div *ngIf="accountDisplayedState$ | async as accountDisplayedState" class="mb-6">
-		<app-personal-account-account-state [accountState]="accountDisplayedState"></app-personal-account-account-state>
+	<div class="mb-6">
+		<app-personal-account-account-state
+			[loading]="(filteredDailyDataLoaded$ | async) === false"
+			[accountState]="accountDisplayedState$ | async"
+		></app-personal-account-account-state>
 	</div>
 
-	<!-- expense chart -->
-	<div class="-mt-8">
-		<app-pie-chart
-			*ngIf="isEntryForSelectedMonth$ | async else noDataForTimePeriod"
-			class="scale-110"
-			[series]="personalAccountDailyExpensePieChart$ | async"
-			[displayValue]="(accountDisplayedState$ | async)?.total"
-		></app-pie-chart>
-	</div>
+	<ng-container
+		*ngIf="{
+    filteredDailyDataLoaded: filteredDailyDataLoaded$ | async,
+    personalAccountExpensePieChart: personalAccountExpensePieChart$ | async,
+    accountDisplayedState: accountDisplayedState$ | async,
+  } as obs"
+	>
+		<!-- expense chart -->
+		<div *ngIf="obs.filteredDailyDataLoaded; else chartSkeleton" class="-mt-8">
+			<app-pie-chart
+				class="scale-110"
+				[series]="obs.personalAccountExpensePieChart"
+				[displayValue]="obs.accountDisplayedState?.total"
+			></app-pie-chart>
+		</div>
 
-	<!-- no data -->
-	<ng-template #noDataForTimePeriod>
-		<div class="mt-16 mb-12 text-base text-center text-wt-gray-medium">You have no data for this time period</div>
-	</ng-template>
-
-	<!-- settings -->
-	<div class="relative z-10 flex justify-start mb-4 -mt-4">
-		<app-personal-account-action-buttons
-			displayType="menu"
-			(buttonClickEmitter)="onActionButtonClick($event)"
-		></app-personal-account-action-buttons>
-	</div>
+		<!-- settings -->
+		<div *ngIf="obs.filteredDailyDataLoaded" class="relative z-10 flex justify-start mb-4 -mt-4">
+			<app-personal-account-action-buttons
+				displayType="menu"
+				(buttonClickEmitter)="onActionButtonClick($event)"
+			></app-personal-account-action-buttons>
+		</div>
+	</ng-container>
 
 	<div class="my-4">
 		<mat-divider></mat-divider>
@@ -38,37 +43,67 @@
 		[personalAccountDetails]="personalAccountDetails"
 	></app-personal-account-daily-entries-filter>
 
-	<!-- title & show history checkbox -->
-	<ng-container *ngIf="isEntryForSelectedMonth$ | async ">
-		<div class="mt-2 mb-6">
-			<app-personal-account-display-toggle
-				[formControl]="showHistoryFormControl"
-				[selectedTag]="(filterDailyDataGroup.controls.selectedTagIds.value[0] | getTagById)  | async"
-			></app-personal-account-display-toggle>
-		</div>
+	<!-- table -->
+	<ng-container
+		*ngIf="{
+      filteredDailyDataLoaded: filteredDailyDataLoaded$ | async,
+      accountTagAggregationForTimePeriod: accountTagAggregationForTimePeriod$ | async,
+      dailyDataAggregation: dailyDataAggregation$ | async,
+    } as obs"
+	>
+		<ng-container *ngIf="obs.filteredDailyDataLoaded; else filteredDataSkeleton">
+			<!-- title & show history checkbox -->
+			<div class="flex justify-end mt-2 mb-6">
+				<app-personal-account-display-toggle
+					*ngIf="!isDateSourceNoDate"
+					[formControl]="showHistoryFormControl"
+					[selectedTag]="(filterDailyDataGroup.controls.selectedTagIds.value[0] | getTagById)  | async"
+				></app-personal-account-display-toggle>
+			</div>
 
-		<!-- tag aggregation -->
-		<ng-container *ngIf="accountTagAggregationForTimePeriod$ | async as accountTagAggregationForTimePeriod">
+			<!-- tag aggregation -->
 			<app-personal-account-expenses-by-tag
 				*ngIf="!showHistoryFormControl.value"
 				[formControl]="filterDailyDataGroup.controls.selectedTagIds"
-				[aggregations]="accountTagAggregationForTimePeriod"
+				[expenses]="obs.accountTagAggregationForTimePeriod?.expenses ?? []"
+				[incomes]="obs.accountTagAggregationForTimePeriod?.incomes"
 				[multiple]="false"
+				[disabledClick]="isDateSourceNoDate"
+				[hideBudgeting]="isDateSourceNoDate"
 			></app-personal-account-expenses-by-tag>
-		</ng-container>
 
-		<!-- historical data -->
-		<ng-container *ngIf="dailyDataAggregation$ | async as dailyDataAggregation">
+			<!-- historical data -->
 			<app-personal-account-daily-entries-table-mobile
 				*ngIf="showHistoryFormControl.value"
-				[personalAccountDailyData]="dailyDataAggregation"
+				[personalAccountDailyData]="obs.dailyDataAggregation"
 				(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
 			></app-personal-account-daily-entries-table-mobile>
 		</ng-container>
 	</ng-container>
 </ng-container>
 
-<!-- skeleton -->
+<!-- page skeleton -->
 <ng-template #showSkeleton>
 	<app-personal-account-mobile-view-skeleton></app-personal-account-mobile-view-skeleton>
+</ng-template>
+
+<!-- tag aggregation skeleton -->
+<ng-template #filteredDataSkeleton>
+	<!-- aggregation text and button -->
+	<div class="flex justify-end mb-6">
+		<div class="w-[200px] h-11 g-skeleton"></div>
+	</div>
+
+	<div class="grid gap-4">
+		<div *ngRange="8" class="h-[95px] w-full g-skeleton"></div>
+	</div>
+</ng-template>
+
+<!-- skeleton for chart -->
+<ng-template #chartSkeleton>
+	<!-- expense chart -->
+	<div class="g-skeleton h-[328px] w-full mb-6"></div>
+
+	<!-- settings button -->
+	<div class="g-skeleton h-11 w-[120px] mb-4"></div>
 </ng-template>

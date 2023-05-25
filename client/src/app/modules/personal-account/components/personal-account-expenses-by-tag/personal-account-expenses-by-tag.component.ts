@@ -34,9 +34,23 @@ import { PersonalAccountTagAggregation } from '../../models';
 	],
 })
 export class PersonalAccountExpensesByTagComponent implements ControlValueAccessor {
-	@Input() aggregations!: PersonalAccountTagAggregation[];
+	@Input() expenses!: PersonalAccountTagAggregation[];
+	@Input() incomes?: PersonalAccountTagAggregation[] | null = null;
+
+	/**
+	 * @description if true, then user can select multiple tags
+	 */
 	@Input() multiple = true;
-	@Input() disabled = false;
+
+	/**
+	 * @description if true, then user can't click on tag
+	 */
+	@Input() disabledClick = false;
+
+	/**
+	 * @description if true, budgeting won't be displayed
+	 */
+	@Input() hideBudgeting = false;
 
 	selectedAggregationIds: string[] = [];
 
@@ -44,7 +58,7 @@ export class PersonalAccountExpensesByTagComponent implements ControlValueAccess
 	onTouched = () => {};
 
 	onClick(aggregations: PersonalAccountTagAggregation) {
-		if (this.disabled) {
+		if (this.disabledClick) {
 			return;
 		}
 

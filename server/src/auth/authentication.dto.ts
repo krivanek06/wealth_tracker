@@ -1,3 +1,4 @@
+import { UserAccountType } from '@prisma/client';
 import { IsString } from 'class-validator';
 
 /**
@@ -9,7 +10,7 @@ export interface RequestUserInt {
 	id: string;
 	username: string;
 	email: string;
-	role: string;
+	role: UserAccountType;
 }
 
 export class RequestUser {
@@ -23,7 +24,7 @@ export class RequestUser {
 	email: string;
 
 	@IsString()
-	role: string;
+	role: UserAccountType;
 
 	constructor(data: RequestUserInt) {
 		this.id = data.id;

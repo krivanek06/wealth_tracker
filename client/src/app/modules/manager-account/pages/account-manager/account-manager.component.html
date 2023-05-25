@@ -1,12 +1,13 @@
 <section
 	*ngIf="availableAccounts$ | async as availableAccounts; else showSkeleton"
-	class="w-full md:w-8/12 mx-auto pt-[12%]"
+	class="w-full md:w-8/12 mx-auto pt-[20%] sm:pt-[12%]"
 >
+	<div class="flex justify-center mb-10 sm:hidden">
+		<app-theme-toggle></app-theme-toggle>
+	</div>
+
 	<ng-container *ngIf="authenticatedUser$ | async as authenticatedUser">
-		<div
-			*ngIf="authenticatedUser.accountType === UserAccountType.Test"
-			class="p-4 mb-10 text-xl text-center bg-gray-600 rounded-lg"
-		>
+		<div *ngIf="authenticatedUser.accountType === UserAccountType.Test" class="mb-10 g-banner-default">
 			You are logged with a testing account, your data won't be persisted for a long period of time. <br />
 			<br />
 			Multiple users can use the same testing account at the same time.

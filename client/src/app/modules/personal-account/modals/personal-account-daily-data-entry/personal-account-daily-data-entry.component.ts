@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { catchError, EMPTY, first, Observable, of, switchMap, tap } from 'rxjs';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { EMPTY, Observable, catchError, first, of, switchMap, tap } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../../core/api';
 import {
 	PersonalAccountDailyDataCreate,
@@ -63,6 +63,10 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 
 	onDescriptionToggle(): void {
 		this.showDescription = !this.showDescription;
+	}
+
+	onCancel(): void {
+		this.dialogRef.close();
 	}
 
 	onRemove(): void {

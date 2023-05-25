@@ -67,45 +67,72 @@
 		></app-personal-account-daily-entries-filter>
 	</div>
 
-	<ng-container *ngIf="isEntryForSelectedMonth$ | async; else noDataForTimePeriod ">
-		<div class="grid items-center grid-cols-1 gap-4 md:px-8 lg:grid-cols-4">
-			<!-- table body -->
-			<div class="relative z-10 h-full lg:col-span-2">
-				<app-personal-account-daily-entries-table
-					(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
-					[personalAccountDailyData]="filteredDailyData$ | async"
-				></app-personal-account-daily-entries-table>
+	<ng-container
+		*ngIf="{
+      accountFilteredState: accountFilteredState$ | async,
+      filteredDailyData: filteredDailyData$ | async,
+      filteredDailyDataLoaded: filteredDailyDataLoaded$ | async,
+      personalAccountExpensePieChart: personalAccountExpensePieChart$ | async,
+      accountTagAggregationForTimePeriod: accountTagAggregationForTimePeriod$ | async,
+    } as obs"
+	>
+		<ng-container *ngIf="obs.filteredDailyDataLoaded; else filteredDataSkeleton">
+			<div *ngIf="!isDateSourceNoDate" class="grid items-center grid-cols-1 gap-4 md:px-8 lg:grid-cols-4">
+				<!-- table body -->
+				<div class="relative z-10 h-full lg:col-span-2">
+					<app-personal-account-daily-entries-table
+						(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
+						[personalAccountDailyData]="obs.filteredDailyData"
+					></app-personal-account-daily-entries-table>
+				</div>
+
+				<!-- spending allocation by tags -->
+				<div class="lg:col-span-2 lg:-mt-12">
+					<app-pie-chart
+						class="scale-150"
+						[series]="obs.personalAccountExpensePieChart"
+						[displayValue]="obs.accountFilteredState?.total"
+					></app-pie-chart>
+				</div>
 			</div>
 
-			<!-- spending allocation by tags -->
-			<div class="lg:col-span-2 lg:-mt-16">
-				<app-pie-chart
-					class="scale-150"
-					[series]="personalAccountDailyExpensePieChart$ | async"
-					[displayValue]="(accountFilteredState$ | async)?.total"
-				></app-pie-chart>
+			<!-- displayed expense by tag -->
+			<div class="mt-6">
+				<h2 *ngIf="!isDateSourceNoDate" class="space-x-2">
+					<span>Date:</span>
+					<span class="text-wt-gray-medium">{{ filterDailyDataGroup.controls.dateFilter.value | dateFormatter }}</span>
+				</h2>
+				<app-personal-account-expenses-by-tag
+					[expenses]="obs.accountTagAggregationForTimePeriod?.expenses ?? []"
+					[disabledClick]="true"
+					[hideBudgeting]="isDateSourceNoDate"
+				></app-personal-account-expenses-by-tag>
 			</div>
-		</div>
-
-		<!-- displayed expense by tag -->
-		<div *ngIf="accountTagAggregationForTimePeriod$ | async as accountTagAggregationForTimePeriod" class="mt-6">
-			<h2 class="space-x-2">
-				<span>Date:</span>
-				<span class="text-wt-gray-medium">{{ filterDailyDataGroup.controls.dateFilter.value | dateFormatter }}</span>
-			</h2>
-			<app-personal-account-expenses-by-tag
-				[aggregations]="accountTagAggregationForTimePeriod"
-				[disabled]="true"
-			></app-personal-account-expenses-by-tag>
-		</div>
+		</ng-container>
 	</ng-container>
-
-	<ng-template #noDataForTimePeriod>
-		<div class="mt-16 mb-12 text-base text-center text-wt-gray-medium">You have no data for this time period</div>
-	</ng-template>
 </ng-container>
 
-<!-- skeleton -->
+<!-- page skeleton -->
 <ng-template #showSkeleton>
 	<app-personal-account-desktop-view-skeleton></app-personal-account-desktop-view-skeleton>
+</ng-template>
+
+<!-- filter table skeleton -->
+<ng-template #filteredDataSkeleton>
+	<div class="grid items-center grid-cols-1 gap-4 mb-8 lg:grid-cols-4 md:px-8">
+		<!-- table body -->
+		<div class="h-full lg:col-span-2">
+			<div *ngRange="10" class="g-skeleton h-[50px] w-full mb-2"></div>
+		</div>
+
+		<!-- spending allocation by tags -->
+		<div class="lg:col-span-2 h-[250px] w-full lg:w-10/12 g-skeleton lg:mx-auto">
+			<div></div>
+		</div>
+	</div>
+
+	<!-- displayed expense by tag -->
+	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+		<div class="w-full g-skeleton h-[95px] md:h-[110px]" *ngRange="12"></div>
+	</div>
 </ng-template>

@@ -10,6 +10,7 @@ import {
 	ScrollWrapperModule,
 	ValuePresentationButtonControlComponent,
 } from '../../../../shared/components';
+import { RangeDirective } from '../../../../shared/directives';
 import { PersonalAccountParent } from '../../classes';
 import {
 	PersonalAccountAccountGrowthChartComponent,
@@ -52,6 +53,7 @@ enum ChartExpand {
 		PersonalAccountExpensesByTagComponent,
 		DateFormatterPipe,
 		ExpanderComponent,
+		RangeDirective,
 	],
 	templateUrl: './personal-account-desktop-view.component.html',
 	styleUrls: ['./personal-account-desktop-view.component.scss'],

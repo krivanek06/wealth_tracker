@@ -3,9 +3,9 @@ import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { EMPTY, Subject, catchError, filter, switchMap, takeUntil, tap } from 'rxjs';
-import { AuthenticationFacadeService } from '../../../../core/auth';
 import { LoginForgotPasswordInput, LoginUserInput, RegisterUserInput } from '../../../../core/graphql';
 import { TEST_USER_EMAIL, TEST_USER_PASSWORD, TOP_LEVEL_NAV } from '../../../../core/models';
+import { AuthenticationFacadeService } from '../../../../core/services';
 import { environment } from './../../../../../environments/environment';
 import { DialogServiceUtil } from './../../../../shared/dialogs';
 
@@ -51,6 +51,10 @@ export class LoginModalComponent implements OnInit, OnDestroy {
 			email: TEST_USER_EMAIL,
 			password: TEST_USER_PASSWORD,
 		});
+	}
+
+	onCancel(): void {
+		this.dialogRef.close();
 	}
 
 	private watchForgotPasswordFormControl(): void {

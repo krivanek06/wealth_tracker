@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { ColorScheme } from '../../../../../core/models';
 import { ChartConstructor } from '../../../../../core/utils';
 import { GenericChartSeries } from '../../../../../shared/models';
 @Component({
@@ -64,7 +65,7 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 			return {
 				name: d.name,
 				type: d.name === 'Total' ? 'area' : d.name === 'Expense Entries' ? 'line' : 'column',
-				color: d.name === 'Total' ? 'var(--primary-dark)' : d.color,
+				color: d.name === 'Total' ? ColorScheme.PRIMARY_VAR : d.color,
 				data: d.data,
 				opacity: index === 0 ? 0.75 : 1,
 				lineWidth: index === 0 || index === 2 ? 4 : 2,
@@ -228,8 +229,9 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 					fillColor: {
 						linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
 						stops: [
-							[0, 'var(--primary-dark)'],
-							[1, 'var(--primary-dark-transparent-low)'],
+							[0, ColorScheme.PRIMARY_VAR],
+							[0.4, ColorScheme.PRIMARY_VAR],
+							[1, 'transparent'],
 						],
 					},
 					marker: {

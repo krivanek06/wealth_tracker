@@ -7,7 +7,7 @@ mat-chip {
 	}
 }
 .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) .mdc-evolution-chip__text-label {
-	color: var(--primary-dark) !important;
+	color: var(--primary) !important;
 }
 
 .mat-mdc-standard-chip:not(.mdc-evolution-chip--selected) .mdc-evolution-chip__action--primary:before {
@@ -16,8 +16,8 @@ mat-chip {
 
 mat-chip-option > span > button,
 mat-chip > .mat-ripple {
-	border: 2px solid var(--primary-dark) !important;
-	color: var(--primary-dark) !important;
+	border: 2px solid var(--primary) !important;
+	color: var(--primary) !important;
 }
 
 mat-chip-option,

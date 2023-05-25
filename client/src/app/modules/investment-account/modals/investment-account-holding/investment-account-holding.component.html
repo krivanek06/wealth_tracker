@@ -1,4 +1,4 @@
-<div class="mb-3 text-xl text-center text-gray-200">Modal to modify active holdings</div>
+<app-dialog-close-header (dialogCloseEmitter)="onCancel()" title="Account Holdings"></app-dialog-close-header>
 
 <div
 	*ngIf="formGroup.controls.symbol.value"

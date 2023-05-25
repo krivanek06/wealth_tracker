@@ -155,16 +155,16 @@
 			<div class="flex items-center gap-2">
 				<!-- PE -->
 				<div>
-					<span class="text-wt-gray-dark">PE:</span>
-					<span>
+					<span class="text-wt-gray-medium">PE:</span>
+					<span class="text-wt-gray-light">
 						{{row.assetGeneral.assetQuote.pe ? ( row.assetGeneral.assetQuote.pe | number: '1.2-2' ) : 'N/A' }}</span
 					>
 				</div>
 				<div>|</div>
 				<!-- EPS -->
 				<div>
-					<span class="text-wt-gray-dark">EPS:</span>
-					<span>
+					<span class="text-wt-gray-medium">EPS:</span>
+					<span class="text-wt-gray-light">
 						{{ row.assetGeneral.assetQuote.eps ? ( row.assetGeneral.assetQuote.eps | number: '1.2-2') : 'N/A' }}</span
 					>
 				</div>
@@ -172,8 +172,10 @@
 
 			<!-- Shares outstanding -->
 			<div class="flex items-center gap-2">
-				<span class="text-wt-gray-dark">Shares:</span>
-				<span> {{ row.assetGeneral.assetQuote.sharesOutstanding | largeNumberFormatter }}</span>
+				<span class="text-wt-gray-medium">Shares:</span>
+				<span class="text-wt-gray-light">
+					{{ row.assetGeneral.assetQuote.sharesOutstanding | largeNumberFormatter }}</span
+				>
 			</div>
 		</td>
 	</ng-container>

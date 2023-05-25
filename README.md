@@ -14,7 +14,10 @@ To deploy the app to GCP, follows these steps:
 
 ## Build for Android 
 - Build the app 
-  - `build:ssr`
+  - `ng build`
+- Copy new code into native projects
+  - `npx cap copy`
+  - `npx cap update`
 - Open Android studio
   - `npx capacitor open android`
 - In `build.gradle` change

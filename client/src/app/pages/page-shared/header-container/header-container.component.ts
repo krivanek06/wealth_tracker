@@ -3,9 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AccountManagerApiService } from '../../../core/api';
-import { AuthenticationFacadeService } from '../../../core/auth';
 import { AccountIdentificationFragment, UserFragment } from '../../../core/graphql';
 import { DASHBOARD_ROUTES, DASHBOARD_ROUTES_BY_TYPE, TOP_LEVEL_NAV } from '../../../core/models';
+import { AuthenticationFacadeService } from '../../../core/services';
 import { AboutComponent, LoginModalComponent, UserProfileModalComponent } from '../../../modules/user-settings';
 
 @Component({

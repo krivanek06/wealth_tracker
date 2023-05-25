@@ -1,8 +1,8 @@
 import { NgModule, inject } from '@angular/core';
 import { ActivatedRouteSnapshot, PreloadAllModules, Router, RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
-import { TokenStorageService } from './core/auth';
 import { TOP_LEVEL_NAV } from './core/models';
+import { AuthenticationFacadeService } from './core/services';
 import { WelcomeModule } from './pages/welcome/welcome.module';
 
 const routes: Routes = [
@@ -19,15 +19,15 @@ const routes: Routes = [
 				path: TOP_LEVEL_NAV.dashboard,
 				canActivate: [
 					(route: ActivatedRouteSnapshot) => {
-						const tokenStorageService = inject(TokenStorageService);
+						const authenticationFacadeService = inject(AuthenticationFacadeService);
 						const router = inject(Router);
 
 						// token is in local storage
-						const tokenLocalStorage = tokenStorageService.getTokenFromLocalStorage();
+						const tokenLocalStorage = authenticationFacadeService.getToken();
 
 						// save token
 						if (tokenLocalStorage) {
-							tokenStorageService.setAccessToken(tokenLocalStorage);
+							authenticationFacadeService.setAccessToken(tokenLocalStorage);
 							return true;
 						}
 
@@ -41,7 +41,7 @@ const routes: Routes = [
 						}
 
 						// save token
-						tokenStorageService.setAccessToken({
+						authenticationFacadeService.setAccessToken({
 							__typename: 'LoggedUserOutput',
 							accessToken,
 						});
@@ -63,15 +63,15 @@ const routes: Routes = [
 				path: TOP_LEVEL_NAV.welcome,
 				canActivate: [
 					() => {
-						const tokenStorageService = inject(TokenStorageService);
+						const authenticationFacadeService = inject(AuthenticationFacadeService);
 						const router = inject(Router);
 
-						const tokenLocalStorage = tokenStorageService.getTokenFromLocalStorage();
+						const tokenLocalStorage = authenticationFacadeService.getToken();
 
 						// save token - don't go to welcome page
 						if (tokenLocalStorage) {
 							console.log('welcome', tokenLocalStorage);
-							tokenStorageService.setAccessToken(tokenLocalStorage);
+							authenticationFacadeService.setAccessToken(tokenLocalStorage);
 							router.navigate([TOP_LEVEL_NAV.dashboard]);
 							return false;
 						}

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { catchError, EMPTY, map, Observable, switchMap, tap } from 'rxjs';
-import { AuthenticationApiService } from '../../api';
+import { AuthenticationApiService } from '../api';
 import {
 	ChangePasswordInput,
 	LoggedUserOutputFragment,
@@ -10,18 +10,17 @@ import {
 	RegisterUserInput,
 	UserAccountType,
 	UserFragment,
-} from '../../graphql';
-import { TokenStorageService } from './token-storage.service';
+} from '../graphql';
+import { STORAGE_AUTH_ACCESS_TOKEN } from '../models';
+import { StorageService } from '../services/storage.service';
 
 @Injectable({
 	providedIn: 'root',
 })
-export class AuthenticationFacadeService {
-	constructor(
-		private tokenStorageService: TokenStorageService,
-		private authenticationApiService: AuthenticationApiService,
-		private apollo: Apollo
-	) {}
+export class AuthenticationFacadeService extends StorageService<LoggedUserOutputFragment> {
+	constructor(private authenticationApiService: AuthenticationApiService, private apollo: Apollo) {
+		super(STORAGE_AUTH_ACCESS_TOKEN);
+	}
 
 	getAuthenticatedUser(): Observable<UserFragment> {
 		return this.authenticationApiService.getAuthenticatedUser();
@@ -31,15 +30,11 @@ export class AuthenticationFacadeService {
 		return this.authenticationApiService.authenticatedUser.accountType === UserAccountType.Test;
 	}
 
-	setAccessToken(token: LoggedUserOutputFragment | null): void {
-		this.tokenStorageService.setAccessToken(token);
-	}
-
 	loginUserBasic(input: LoginUserInput): Observable<UserFragment> {
 		return this.authenticationApiService.loginUserBasic(input).pipe(
 			map((res) => res.data?.loginBasic as LoggedUserOutputFragment),
 			tap((res) => {
-				this.tokenStorageService.setAccessToken(res);
+				this.setAccessToken(res);
 			}),
 			switchMap(() => this.authenticationApiService.getAuthenticatedUser())
 		);
@@ -49,7 +44,7 @@ export class AuthenticationFacadeService {
 		return this.authenticationApiService.registerBasic(input).pipe(
 			map((res) => res.data?.registerBasic as LoggedUserOutputFragment),
 			tap((res) => {
-				this.tokenStorageService.setAccessToken(res);
+				this.setAccessToken(res);
 			}),
 			switchMap(() => this.authenticationApiService.getAuthenticatedUser())
 		);
@@ -80,6 +75,18 @@ export class AuthenticationFacadeService {
 		// clear graphql cache
 		this.apollo.client.resetStore();
 		// remove token from local storage
-		this.tokenStorageService.setAccessToken(null);
+		this.setAccessToken(null);
+	}
+
+	getToken(): LoggedUserOutputFragment | null {
+		return this.getData();
+	}
+
+	setAccessToken(token: LoggedUserOutputFragment | null): void {
+		if (token) {
+			this.saveData(token);
+		} else {
+			this.removeData();
+		}
 	}
 }

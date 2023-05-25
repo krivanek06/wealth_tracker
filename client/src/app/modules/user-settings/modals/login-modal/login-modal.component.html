@@ -1,12 +1,4 @@
-<div *ngIf="!loading" class="flex items-center justify-between p-4 md:px-10">
-	<h2 class="text-lg text-wt-primary-dark">Login</h2>
-
-	<div>
-		<button mat-icon-button mat-dialog-close color="warn">
-			<mat-icon>close</mat-icon>
-		</button>
-	</div>
-</div>
+<app-dialog-close-header *ngIf="!loading" (dialogCloseEmitter)="onCancel()" title="Login"></app-dialog-close-header>
 
 <!-- content -->
 <mat-dialog-content *ngIf="!loading; else loader">

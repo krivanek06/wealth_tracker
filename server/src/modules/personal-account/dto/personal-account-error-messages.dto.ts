@@ -15,5 +15,5 @@ export enum PERSONAL_ACCOUNT_ERROR {
 export enum PERSONAL_ACCOUNT_TAG_ERROR {
 	NOT_FOUND = 'Tags were not loaded for the personal account, please contact administrator',
 	NOT_FOUND_BY_ID = 'Tag you are looking for was not found, please choose another one',
-	NOT_ALLOWED_TO_DELETE = 'You are not allowed to delete tags from the personal account as Test User',
+	NOT_ALLOWED_TO_DELETE = 'You are not allowed to delete tags as Test User',
 }

@@ -2,7 +2,7 @@
 FROM node:16 as build
 
 # Set the working directory for subsequent commands
-WORKDIR usr/src/app
+WORKDIR /usr/src/app
 
 # Copy the package.json and package-lock.json files into the container
 COPY package*.json ./

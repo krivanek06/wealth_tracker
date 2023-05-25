@@ -1,6 +1,6 @@
 export const environment = {
 	production: true,
-	version: '1.0.7',
+	version: '1.0.8',
 
 	backend_url: 'https://spend-mindful-graphql-6bhi5d4fdq-ew.a.run.app',
 	custom_graphql_backend_url: 'https://spend-mindful-graphql-6bhi5d4fdq-ew.a.run.app/graphql',

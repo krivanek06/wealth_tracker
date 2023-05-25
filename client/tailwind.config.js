@@ -17,13 +17,13 @@ module.exports = {
 				'wt-background-light': 'var(--background-light)',
 
 				/* primary */
-				'wt-primary-dark': 'var(--primary-dark)',
+				'wt-primary-dark': 'var(--primary)',
 
 				/* success */
-				'wt-success-medium': 'var(--success-medium)',
+				'wt-success-medium': 'var(--success)',
 
 				/* danger */
-				'wt-danger-medium': 'var(--danger-medium)',
+				'wt-danger-medium': 'var(--danger)',
 
 				/* gray */
 				'wt-gray-dark': 'var(--gray-dark)',

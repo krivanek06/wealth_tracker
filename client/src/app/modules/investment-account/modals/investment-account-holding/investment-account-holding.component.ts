@@ -25,7 +25,7 @@ import {
 	InvestmentAccountHoldingType,
 	InvestmentAccountTransactionOutput,
 } from '../../../../core/graphql';
-import { InvestmentAccountFragmentExtended } from '../../../../core/models';
+import { ColorScheme, InvestmentAccountFragmentExtended } from '../../../../core/models';
 import { DateServiceUtil } from '../../../../core/utils';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
 import {
@@ -194,7 +194,7 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit,
 									? res.assetHistoricalPricesData.map((d) => [new Date(d.date).getTime(), d.close] as [number, number])
 									: [],
 								name: `Historical Price ${asset.id}`,
-								color: 'var(--primary-dark)',
+								color: ColorScheme.PRIMARY_VAR,
 							};
 
 							return result;

@@ -13,6 +13,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { map, startWith } from 'rxjs';
 import { InvestmentAccountGrowth } from '../../../../core/graphql';
 import { ChartConstructor, GeneralFunctionUtil } from '../../../../core/utils';
+import { ColorScheme } from './../../../../core/models';
 import { LAYOUT_SM } from './../../../../shared/models';
 
 @Component({
@@ -237,7 +238,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 			},
 			series: [
 				{
-					color: 'var(--primary-dark)',
+					color: ColorScheme.PRIMARY_VAR,
 					type: 'area',
 					zIndex: 10,
 					fillColor: {
@@ -248,7 +249,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 							y2: 1,
 						},
 						stops: [
-							[0, 'var(--primary-dark)'],
+							[0, ColorScheme.PRIMARY_VAR],
 							[1, 'transparent'],
 						],
 					},

@@ -1,6 +1,6 @@
 export const TagColors = {
-	income: 'var(--success-medium)',
-	expense: 'var(--danger-medium)',
+	income: 'var(--success)',
+	expense: 'var(--danger)',
 	expenseTags: '#a923ef',
 } as const;
 

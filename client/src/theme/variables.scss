@@ -1,12 +1,12 @@
 :root {
 	/* primary */
-	--primary-dark: #12aaaa;
+	--primary: #12aaaa;
 
 	/* success */
-	--success-medium: #25b329;
+	--success: #25b329;
 
 	/* danger */
-	--danger-medium: #d42626;
+	--danger: #d42626;
 
 	/* gray */
 	--gray-dark: #818690;
@@ -36,13 +36,13 @@
 
 :root .light-theme {
 	/* primary */
-	--primary-dark: #f36300;
+	--primary: #f36300;
 
 	/* success */
-	--success-medium: #058f08;
+	--success: #058f08;
 
 	/* danger */
-	--danger-medium: #d42626;
+	--danger: #d42626;
 
 	/* gray */
 	--gray-dark: #444444;

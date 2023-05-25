@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { isDevMode, NgModule } from '@angular/core';
+import { APP_ID, isDevMode, NgModule } from '@angular/core';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -14,7 +14,7 @@ import { DialogServiceModule } from './shared/dialogs';
 @NgModule({
 	declarations: [AppComponent],
 	imports: [
-		BrowserModule.withServerTransition({ appId: 'serverApp' }),
+		BrowserModule,
 		AppRoutingModule,
 		BrowserAnimationsModule,
 		MatSnackBarModule,
@@ -30,7 +30,7 @@ import { DialogServiceModule } from './shared/dialogs';
 			registrationStrategy: 'registerImmediately',
 		}),
 	],
-	providers: [],
+	providers: [{ provide: APP_ID, useValue: 'serverApp' }],
 	bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -116,7 +116,7 @@ export class AuthenticationService {
 			data: {
 				username: displayName,
 				email: email,
-				imageUrl: photos[0].value,
+				imageUrl: photos[0]?.value,
 				authentication: {
 					authenticationType: input.provider,
 					token: input.accessToken,

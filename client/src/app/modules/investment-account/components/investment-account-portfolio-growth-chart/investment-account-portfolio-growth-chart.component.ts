@@ -40,7 +40,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
-		if (changes?.['doesNotExists']?.currentValue) {
+		if (changes?.['investmentAccountGrowth']?.currentValue) {
 			const isDesktop = this.breakpointObserver.isMatched(LAYOUT_SM);
 			this.initChart(this.investmentAccountGrowth ?? [], !isDesktop);
 		}
@@ -237,7 +237,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 			},
 			series: [
 				{
-					color: '#07b9b9',
+					color: 'var(--primary-dark)',
 					type: 'area',
 					zIndex: 10,
 					fillColor: {
@@ -248,7 +248,7 @@ export class InvestmentAccountPortfolioGrowthChartComponent extends ChartConstru
 							y2: 1,
 						},
 						stops: [
-							[0, '#12aaaa'],
+							[0, 'var(--primary-dark)'],
 							[1, 'transparent'],
 						],
 					},

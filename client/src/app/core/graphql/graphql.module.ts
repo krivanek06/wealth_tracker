@@ -8,9 +8,8 @@ import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { environment } from '../../../environments/environment';
 import { DialogServiceUtil } from '../../shared/dialogs';
-import { STORAGE_AUTH_ACCESS_TOKEN } from '../models';
+import { STORAGE_AUTH_ACCESS_TOKEN, STORAGE_MAIN_KEY, StorageServiceStructure } from '../models';
 import { PlatformService } from '../services/platform.service';
-import { LoggedUserOutputFragment } from './schema-backend.service';
 
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
 	// React only on graphql errors
@@ -50,15 +49,16 @@ const getToken = (platform: PlatformService): string | null => {
 		return null;
 	}
 
-	const token = localStorage.getItem(STORAGE_AUTH_ACCESS_TOKEN);
+	const token = localStorage.getItem(STORAGE_MAIN_KEY);
 	if (!token) {
 		return null;
 	}
 
 	try {
-		const parsed = JSON.parse(token) as LoggedUserOutputFragment;
+		const parsed = JSON.parse(token) as StorageServiceStructure;
+		const accessToken = parsed[STORAGE_AUTH_ACCESS_TOKEN]?.accessToken;
 
-		return parsed.accessToken;
+		return accessToken;
 	} catch (err) {
 		return null;
 	}

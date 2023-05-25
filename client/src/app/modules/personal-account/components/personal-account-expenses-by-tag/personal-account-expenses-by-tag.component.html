@@ -14,6 +14,7 @@
 			*ngFor="let aggregation of aggregations"
 			mat-button
 			(click)="onClick(aggregation)"
+			[disableRipple]="disabledClick"
 			[ngClass]="{
       'cursor-default': disabledClick,
       'c-selected-button': selectedAggregationIds | inArray: aggregation.id,

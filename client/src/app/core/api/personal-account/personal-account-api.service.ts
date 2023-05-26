@@ -173,6 +173,9 @@ export class PersonalAccountApiService {
 							personalAccountTag: personalAccount.personalAccountTag.filter((d) => d.id !== result.id),
 							yearlyAggregation: personalAccount.yearlyAggregation.filter((d) => d.tag.id !== result.id),
 						});
+
+						// remove tag from cache
+						this.personalAccountCacheService.removePersonalAccountTagFromCache(result.id);
 					},
 				}
 			)

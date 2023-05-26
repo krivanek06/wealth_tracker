@@ -8,9 +8,7 @@
 
 	<ng-container *ngIf="authenticatedUser$ | async as authenticatedUser">
 		<div *ngIf="authenticatedUser.accountType === UserAccountType.Test" class="mb-10 g-banner-default">
-			You are logged with a testing account, your data won't be persisted for a long period of time. <br />
-			<br />
-			Multiple users can use the same testing account at the same time.
+			This is a demo account, multiple people may use this account at the same time
 		</div>
 	</ng-container>
 

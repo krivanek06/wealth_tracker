@@ -18,10 +18,10 @@ import { DefaultImgDirective, RangeDirective } from '../../../../shared/directiv
 import { TagTypeNameDirective } from '../../directives';
 import { PersonalAccountTagManagerModalComponent } from './personal-account-tag-manager-modal.component';
 import { TagItemComponent } from './tag-item/tag-item.component';
-import { TagSelectorComponent } from './tag-selector/tag-selector.component';
+import { TagImageSelectorComponent } from './tag-image-selector/tag-image-selector.component';
 
 @NgModule({
-	declarations: [PersonalAccountTagManagerModalComponent, TagItemComponent, TagSelectorComponent],
+	declarations: [PersonalAccountTagManagerModalComponent, TagItemComponent, TagImageSelectorComponent],
 	imports: [
 		CommonModule,
 		MatDialogModule,

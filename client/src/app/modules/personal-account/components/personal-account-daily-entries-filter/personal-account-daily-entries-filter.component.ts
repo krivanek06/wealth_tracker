@@ -68,7 +68,7 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
-		if (this.personalAccountDetails) {
+		if (changes?.['personalAccountDetails']?.currentValue) {
 			// get dates that we can filter by
 			this.filterDateInputSourceWrapper = this.personalAccountDataService.getMonthlyInputSource(
 				this.personalAccountDetails.weeklyAggregation

@@ -1,17 +1,20 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { filter, first, map, of, switchMap, tap } from 'rxjs';
-import { PersonalAccountFacadeService } from '../../../../../core/api';
-import { PersonalAccountTagFragment, TagDataType } from '../../../../../core/graphql';
-import { Confirmable } from '../../../../../shared/decorators';
+import { filter, map } from 'rxjs';
+import {
+	PersonalAccountTagDataCreate,
+	PersonalAccountTagDataEdit,
+	PersonalAccountTagFragment,
+	TagDataType,
+} from '../../../../../core/graphql';
 import {
 	InputTypeSlider,
 	maxLengthValidator,
 	minLengthValidator,
 	requiredValidator,
 } from '../../../../../shared/models';
-import { TagSelectorComponent } from '../tag-selector/tag-selector.component';
+import { TagImageSelectorComponent } from '../tag-image-selector/tag-image-selector.component';
 import { DialogServiceUtil } from './../../../../../shared/dialogs';
 
 @Component({
@@ -20,7 +23,9 @@ import { DialogServiceUtil } from './../../../../../shared/dialogs';
 	styleUrls: ['./tag-item.component.scss'],
 })
 export class TagItemComponent implements OnInit {
-	@Output() removeNewTag = new EventEmitter<void>();
+	@Output() createTagEmitter = new EventEmitter<PersonalAccountTagDataCreate>();
+	@Output() editTagEmitter = new EventEmitter<PersonalAccountTagDataEdit>();
+	@Output() removeTagEmitter = new EventEmitter<PersonalAccountTagFragment>();
 	@Input() editing = false;
 
 	/**
@@ -58,7 +63,7 @@ export class TagItemComponent implements OnInit {
 
 	TagDataType = TagDataType;
 
-	constructor(private personalAccountFacadeService: PersonalAccountFacadeService, private dialog: MatDialog) {}
+	constructor(private dialog: MatDialog) {}
 
 	ngOnInit(): void {}
 
@@ -68,6 +73,7 @@ export class TagItemComponent implements OnInit {
 
 	onSubmit(): void {
 		this.tagItemGroup.markAllAsTouched();
+		const controls = this.tagItemGroup.controls;
 
 		// invalid
 		if (this.tagItemGroup.invalid) {
@@ -75,17 +81,29 @@ export class TagItemComponent implements OnInit {
 			return;
 		}
 
-		// edit
-		if (this.tagItemGroup.controls.tagId.value) {
-			this.editExistingTag();
+		// edit edited values
+		if (controls.tagId.value) {
+			this.editing = false;
+			this.editTagEmitter.emit({
+				id: controls.tagId.value,
+				name: controls.tagName.value,
+				color: controls.color.value,
+				imageUrl: controls.icon.value,
+				budgetMonthly: controls.budget.value,
+			});
 			return;
 		}
 
-		// create
-		this.createTag();
+		// emit new tag
+		this.createTagEmitter.emit({
+			name: controls.tagName.value,
+			color: controls.color.value,
+			imageUrl: controls.icon.value,
+			budgetMonthly: controls.budget.value,
+			type: this.tagType,
+		});
 	}
 
-	@Confirmable('Please confirm to remove the selected tag')
 	onRemove(): void {
 		const removingTagId = this.tagItemGroup.controls.tagId.value;
 		const removingTagName = this.tagItemGroup.controls.tagName.value;
@@ -95,42 +113,12 @@ export class TagItemComponent implements OnInit {
 			return;
 		}
 
-		this.personalAccountFacadeService
-			.getPersonalAccountDetailsByUser()
-			.pipe(
-				switchMap((account) => {
-					// find in yearly aggregation the tag that is being removed
-					const tagInfo = account.yearlyAggregation.find((d) => d.tag.id === removingTagId);
-
-					// no daily data was created for a specific tag
-					if (!tagInfo) {
-						return of(true);
-					}
-
-					// ask for confirmation to remove the tag
-					return DialogServiceUtil.showConfirmDialogObs(`You are about to remove ${tagInfo.entries} entries`);
-				}),
-				filter((result) => !!result),
-				tap(() => DialogServiceUtil.showNotificationBar(`Removing tag ${removingTagName}`, 'notification')),
-				switchMap(() =>
-					this.personalAccountFacadeService.deletePersonalAccountTag(this._tag).pipe(
-						tap((result) => {
-							if (!result) {
-								DialogServiceUtil.showNotificationBar('Unable to perform removing operation on tag', 'error');
-								return;
-							}
-							DialogServiceUtil.showNotificationBar(`Tag ${removingTagName} has been removed`, 'success');
-						})
-					)
-				),
-				first()
-			)
-			.subscribe();
+		this.removeTagEmitter.emit(this._tag);
 	}
 
 	onTagImageChange(): void {
 		this.dialog
-			.open(TagSelectorComponent, {
+			.open(TagImageSelectorComponent, {
 				panelClass: ['g-mat-dialog-small'],
 			})
 			.afterClosed()
@@ -142,60 +130,5 @@ export class TagItemComponent implements OnInit {
 				console.log('chosen', imageUrl);
 				this.tagItemGroup.controls.icon.patchValue(imageUrl);
 			});
-	}
-
-	private createTag(): void {
-		const controls = this.tagItemGroup.controls;
-		DialogServiceUtil.showNotificationBar(`Creating new tag ${controls.tagName.value}`, 'notification');
-
-		this.personalAccountFacadeService
-			.createPersonalAccountTag({
-				name: controls.tagName.value,
-				color: controls.color.value,
-				imageUrl: controls.icon.value,
-				budgetMonthly: controls.budget.value,
-				type: this.tagType,
-			})
-			.pipe(
-				tap((result) => {
-					if (!result) {
-						DialogServiceUtil.showNotificationBar('Unable to create tag', 'error');
-						return;
-					}
-					DialogServiceUtil.showNotificationBar(`Tag has been created`, 'success');
-				}),
-				first()
-			)
-			.subscribe(() => this.removeNewTag.emit());
-	}
-
-	private editExistingTag(): void {
-		const controls = this.tagItemGroup.controls;
-
-		if (!controls.tagId.value) {
-			return;
-		}
-
-		this.editing = false;
-		DialogServiceUtil.showNotificationBar(`Editing tag ${controls.tagName.value}`, 'notification');
-
-		this.personalAccountFacadeService
-			.editPersonalAccountTag({
-				id: controls.tagId.value,
-				name: controls.tagName.value,
-				color: controls.color.value,
-				imageUrl: controls.icon.value,
-				budgetMonthly: controls.budget.value,
-			})
-			.pipe(
-				tap((result) => {
-					if (!result) {
-						DialogServiceUtil.showNotificationBar('Unable to change tag', 'error');
-						return;
-					}
-					DialogServiceUtil.showNotificationBar(`Tag has been changed`, 'success');
-				})
-			)
-			.subscribe();
 	}
 }

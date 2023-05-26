@@ -75,6 +75,7 @@ export class PersonalAccountCacheService {
 			data: {
 				__typename: 'Query',
 				getPersonalAccountByUser: {
+					__typename: 'PersonalAccount',
 					...data,
 				},
 			},
@@ -89,5 +90,16 @@ export class PersonalAccountCacheService {
 	removePersonalAccountFromCache(accountId: string): void {
 		this.apollo.client.cache.evict({ id: `PersonalAccount:${accountId}` });
 		this.apollo.client.cache.gc();
+	}
+
+	removePersonalAccountTagFromCache(tagId: string): void {
+		this.apollo.client.cache.evict({ id: `PersonalAccountTag:${tagId}` });
+		this.apollo.client.cache.gc();
+	}
+
+	refetchDailyData(): void {
+		this.apollo.client.refetchQueries({
+			include: [GetPersonalAccountDailyDataDocument],
+		});
 	}
 }

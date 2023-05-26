@@ -32,7 +32,11 @@
 	<!-- new tag -->
 	<div *ngIf="creatingNewTagType">
 		<h2 class="px-2 space-x-2">New Tag: <span [appTagTypeName]="creatingNewTagType"></span></h2>
-		<app-tag-item (removeNewTag)="onNewTagRemove()" [editing]="true" [tagType]="creatingNewTagType"></app-tag-item>
+		<app-tag-item
+			(createTagEmitter)="onCreateTag($event)"
+			[editing]="true"
+			[tagType]="creatingNewTagType"
+		></app-tag-item>
 
 		<div class="my-4">
 			<mat-divider></mat-divider>
@@ -46,9 +50,11 @@
 		</h2>
 		<app-tag-item
 			class="max-lg:my-10"
-			*ngFor="let tag of personalAccountIncomeTags"
+			*ngFor="let tag of personalAccountIncomeTags; trackBy:tagTrackByFn"
 			[tag]="tag"
 			[tagType]="TagDataType.Income"
+			(removeTagEmitter)="onRemoveTag($event)"
+			(editTagEmitter)="onEditTag($event)"
 		></app-tag-item>
 	</div>
 
@@ -77,9 +83,11 @@
 		<!-- expense items -->
 		<app-tag-item
 			class="max-lg:mb-10"
-			*ngFor="let tag of personalAccountExpenseTags"
+			*ngFor="let tag of personalAccountExpenseTags; trackBy:tagTrackByFn"
 			[tag]="tag"
 			[tagType]="TagDataType.Expense"
+			(removeTagEmitter)="onRemoveTag($event)"
+			(editTagEmitter)="onEditTag($event)"
 		></app-tag-item>
 	</div>
 </mat-dialog-content>

@@ -35,6 +35,10 @@ export class PersonalAccountFacadeService {
 		private accountManagerCacheService: AccountManagerCacheService
 	) {}
 
+	get personalAccountDetailsByUser(): PersonalAccountDetailsFragment {
+		return this.personalAccountCacheService.getPersonalAccountDetails();
+	}
+
 	getPersonalAccountAvailableTagImages(): Observable<string[]> {
 		return this.personalAccountApiService.getPersonalAccountAvailableTagImages();
 	}

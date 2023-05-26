@@ -3,6 +3,7 @@ import { Apollo } from 'apollo-angular';
 import {
 	GetInvestmentAccountByUserDocument,
 	GetInvestmentAccountByUserQuery,
+	GetInvestmentAccountGrowthDocument,
 	GetTransactionHistoryDocument,
 	GetTransactionHistoryQuery,
 	InvestmentAccountDetailsFragment,
@@ -61,6 +62,12 @@ export class InvestmentAccountCacheService {
 			variables: {
 				input: {},
 			},
+		});
+	}
+
+	refetchInvestmentAccountGrowth(): void {
+		this.apollo.client.refetchQueries({
+			include: [GetInvestmentAccountGrowthDocument],
 		});
 	}
 }

@@ -29,7 +29,7 @@
 		type="button"
 		mat-stroked-button
 		[color]="isBuying ? 'accent' : 'warn'"
-		class="min-w-[240px] text-lg"
+		class="min-w-[240px] text-lg min-h-[38px]"
 		(click)="onActionButtonPress(data.buttonType)"
 	>
 		<ng-container *ngTemplateOutlet="nonCustomizableTemplate; context:{data}"></ng-container>

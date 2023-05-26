@@ -1,0 +1,10 @@
+node_modules/
+dist/
+android/
+ios/
+.vscode
+.angular
+yarn.lock
+.gitignore
+.idea
+.gcloudignore

@@ -12,7 +12,6 @@ import {
 	mergeMap,
 	of,
 	reduce,
-	share,
 	shareReplay,
 	startWith,
 	switchMap,
@@ -187,6 +186,7 @@ export abstract class PersonalAccountParent implements OnDestroy {
 					? of([])
 					: this.personalAccountFacadeService.getPersonalAccountDailyData(dateFilter)
 			),
+			tap(() => this.filteredDailyDataLoaded$.next(true)),
 			// prevent multiple triggers
 			shareReplay({ bufferSize: 1, refCount: true })
 		);
@@ -205,9 +205,7 @@ export abstract class PersonalAccountParent implements OnDestroy {
 
 				// filter by selected tag id
 				return totalDailyData.filter((d) => selectedTagIds.includes(d.tagId));
-			}),
-			tap(() => this.filteredDailyDataLoaded$.next(true)),
-			share()
+			})
 		);
 
 		// calculate expense chart for filtered data

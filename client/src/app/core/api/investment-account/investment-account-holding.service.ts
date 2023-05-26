@@ -60,6 +60,9 @@ export class InvestmentAccountHoldingService {
 					if (cachedTransactionHistory) {
 						this.investmentAccountCacheService.updateTransactionHistory([...cachedTransactionHistory, transaction]);
 					}
+
+					// reload investment account growth query for updated data
+					this.investmentAccountCacheService.refetchInvestmentAccountGrowth();
 				},
 			}
 		);
@@ -103,6 +106,9 @@ export class InvestmentAccountHoldingService {
 						const filteredHistory = cachedTransactionHistory.filter((d) => d.itemId !== result.itemId);
 						this.investmentAccountCacheService.updateTransactionHistory(filteredHistory);
 					}
+
+					// reload investment account growth query for updated data
+					this.investmentAccountCacheService.refetchInvestmentAccountGrowth();
 				},
 			}
 		);

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DataProxy, FetchResult } from '@apollo/client/core';
 import { Apollo } from 'apollo-angular';
-import { map, Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import {
 	AccountType,
 	ChartSeriesFragment,
@@ -48,17 +48,12 @@ export class InvestmentAccountApiService {
 
 	getInvestmentAccountGrowth(): Observable<InvestmentAccountGrowth[]> {
 		return this.getInvestmentAccountGrowthGQL
-			.fetch(
-				{
-					input: {
-						sectors: [],
-					},
+			.watch({
+				input: {
+					sectors: [],
 				},
-				{
-					fetchPolicy: 'network-only',
-				}
-			)
-			.pipe(map((res) => res.data.getInvestmentAccountGrowth));
+			})
+			.valueChanges.pipe(map((res) => res.data.getInvestmentAccountGrowth));
 	}
 
 	// TODO: once holding added/removed -> make this invalid

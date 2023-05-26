@@ -36,22 +36,12 @@
 		</div>
 
 		<!-- description -->
-		<button
-			*ngIf="!showDescription"
-			mat-flat-button
-			class="mb-6 bg-wt-gray-dark text-wt-gray-light"
-			(click)="onDescriptionToggle()"
-		>
-			Add description
-		</button>
-		<ng-container *ngIf="showDescription">
-			<app-form-mat-input-wrapper
-				controlName="description"
-				inputCaption="Add description"
-				inputType="TEXTAREA"
-				hintText="Maximum 80 characters"
-			></app-form-mat-input-wrapper>
-		</ng-container>
+		<app-form-mat-input-wrapper
+			controlName="description"
+			inputCaption="Add description"
+			inputType="TEXT"
+			hintText="Description for the entry, maximum 80 characters"
+		></app-form-mat-input-wrapper>
 
 		<div>
 			<app-number-keyboard-control formControlName="value"></app-number-keyboard-control>
@@ -65,7 +55,7 @@
 	<!-- action buttons -->
 	<mat-dialog-actions>
 		<div class="g-mat-dialog-actions-full">
-			<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
+			<button class="hidden sm:block" mat-stroked-button mat-dialog-close type="button">Cancel</button>
 			<button mat-stroked-button color="primary" type="submit" [disabled]="!formGroup.controls.value.value">
 				<mat-icon *ngIf="isSaving" class="animate-spin">cached</mat-icon>
 				Save

@@ -32,7 +32,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	// booleans to show spinner
 	isSaving = false;
 	isRemoving = false;
-	showDescription = false;
 
 	readonly formGroup = new FormGroup({
 		tagId: new FormControl<string | null>(null, { validators: [requiredValidator] }),
@@ -61,17 +60,13 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		this.displayTagsInputSource$ = this.personalAccountDataService.getAvailableTagInputSourceWrapper();
 	}
 
-	onDescriptionToggle(): void {
-		this.showDescription = !this.showDescription;
-	}
-
 	onCancel(): void {
 		this.dialogRef.close();
 	}
 
 	onRemove(): void {
 		if (!this.data.dailyData) {
-			throw new Error('PersonalAccountDailyDataEntryComponent, removing unexisting item');
+			throw new Error('PersonalAccountDailyDataEntryComponent, removing nonexisting item');
 		}
 		this.isRemoving = true;
 		DialogServiceUtil.showNotificationBar(`Operation sent to the server side`, 'notification');

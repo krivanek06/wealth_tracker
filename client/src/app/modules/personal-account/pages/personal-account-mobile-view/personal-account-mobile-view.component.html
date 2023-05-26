@@ -15,7 +15,7 @@
   } as obs"
 	>
 		<!-- expense chart -->
-		<div *ngIf="obs.filteredDailyDataLoaded; else chartSkeleton" class="-mt-8">
+		<div *ngIf="obs.filteredDailyDataLoaded; else chartSkeleton" class="-mt-12">
 			<app-pie-chart
 				class="scale-110"
 				[series]="obs.personalAccountExpensePieChart"

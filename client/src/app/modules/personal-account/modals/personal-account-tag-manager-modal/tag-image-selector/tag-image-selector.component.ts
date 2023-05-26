@@ -4,15 +4,15 @@ import { Observable } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../../../core/api';
 
 @Component({
-	selector: 'app-tag-selector',
-	templateUrl: './tag-selector.component.html',
-	styleUrls: ['./tag-selector.component.scss'],
+	selector: 'app-tag-image-selector',
+	templateUrl: './tag-image-selector.component.html',
+	styleUrls: ['./tag-image-selector.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TagSelectorComponent implements OnInit {
+export class TagImageSelectorComponent implements OnInit {
 	availableTagImages$!: Observable<string[]>;
 	constructor(
-		private dialogRef: MatDialogRef<TagSelectorComponent>,
+		private dialogRef: MatDialogRef<TagImageSelectorComponent>,
 		private personalAccountFacadeService: PersonalAccountFacadeService
 	) {}
 	ngOnInit(): void {

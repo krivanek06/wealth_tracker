@@ -176,6 +176,9 @@ export class PersonalAccountApiService {
 
 						// remove tag from cache
 						this.personalAccountCacheService.removePersonalAccountTagFromCache(result.id);
+
+						// remove tag from all cached daily data
+						// TODO
 					},
 				}
 			)

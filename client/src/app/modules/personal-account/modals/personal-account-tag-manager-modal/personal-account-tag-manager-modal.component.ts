@@ -47,6 +47,10 @@ export class PersonalAccountTagManagerModalComponent implements OnInit {
 		);
 	}
 
+	tagTrackByFn(index: number, item: PersonalAccountTagFragment): string {
+		return item.id;
+	}
+
 	onCreateButton(type: TagDataType): void {
 		// remove from screen
 		if (this.creatingNewTagType === type) {
@@ -92,6 +96,7 @@ export class PersonalAccountTagManagerModalComponent implements OnInit {
 			.subscribe();
 	}
 
+	@Confirmable('Confirm creating new tag')
 	onCreateTag(createTag: PersonalAccountTagDataCreate): void {
 		DialogServiceUtil.showNotificationBar(`Creating new tag ${createTag.name}`, 'notification');
 
@@ -116,7 +121,6 @@ export class PersonalAccountTagManagerModalComponent implements OnInit {
 	}
 
 	onEditTag(editTag: PersonalAccountTagDataEdit): void {
-		console.log('edit', editTag);
 		DialogServiceUtil.showNotificationBar(`Editing tag ${editTag.name}`, 'notification');
 
 		this.personalAccountFacadeService

@@ -96,4 +96,10 @@ export class PersonalAccountCacheService {
 		this.apollo.client.cache.evict({ id: `PersonalAccountTag:${tagId}` });
 		this.apollo.client.cache.gc();
 	}
+
+	refetchDailyData(): void {
+		this.apollo.client.refetchQueries({
+			include: [GetPersonalAccountDailyDataDocument],
+		});
+	}
 }

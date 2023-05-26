@@ -172,13 +172,16 @@ export class PersonalAccountApiService {
 							...personalAccount,
 							personalAccountTag: personalAccount.personalAccountTag.filter((d) => d.id !== result.id),
 							yearlyAggregation: personalAccount.yearlyAggregation.filter((d) => d.tag.id !== result.id),
+							weeklyAggregation: personalAccount.weeklyAggregation.map((weeklyData) => {
+								return { ...weeklyData, data: weeklyData.data.filter((d) => d.tag.id !== result.id) };
+							}),
 						});
 
 						// remove tag from cache
 						this.personalAccountCacheService.removePersonalAccountTagFromCache(result.id);
 
-						// remove tag from all cached daily data
-						// TODO
+						// refetch daily data
+						this.personalAccountCacheService.refetchDailyData();
 					},
 				}
 			)

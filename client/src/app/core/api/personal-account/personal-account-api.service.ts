@@ -181,7 +181,7 @@ export class PersonalAccountApiService {
 						this.personalAccountCacheService.removePersonalAccountTagFromCache(result.id);
 
 						// refetch daily data
-						this.personalAccountCacheService.refetchDailyData();
+						this.personalAccountCacheService.refetchDailyDataQuery();
 					},
 				}
 			)

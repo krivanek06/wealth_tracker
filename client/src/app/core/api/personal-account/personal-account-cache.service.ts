@@ -97,9 +97,13 @@ export class PersonalAccountCacheService {
 		this.apollo.client.cache.gc();
 	}
 
-	refetchDailyData(): void {
+	refetchDailyDataQuery(): void {
 		this.apollo.client.refetchQueries({
 			include: [GetPersonalAccountDailyDataDocument],
 		});
+	}
+
+	removeDailyDataQuery(): void {
+		this.apollo.client.cache.evict({ id: 'ROOT_QUERY', fieldName: 'getPersonalAccountDailyData' });
 	}
 }

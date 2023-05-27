@@ -127,6 +127,9 @@ export class InvestmentAccountApiService {
 
 					// remove from cache
 					this.apollo.client.cache.evict({ id: `${data?.__typename}:${data?.deleteInvestmentAccount.id}` });
+					this.apollo.client.cache.evict({ id: 'ROOT_QUERY', fieldName: 'getInvestmentAccountByUser' });
+					this.apollo.client.cache.evict({ id: 'ROOT_QUERY', fieldName: 'getInvestmentAccountGrowth' });
+					this.apollo.client.cache.evict({ id: 'ROOT_QUERY', fieldName: 'getInvestmentAccountGrowthAssets' });
 					this.apollo.client.cache.gc();
 				},
 			}

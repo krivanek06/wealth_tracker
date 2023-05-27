@@ -46,11 +46,16 @@ export class AssetStockService {
 		const profile = AssetStockUtil.convertFMProfileToAssetStockProfile(fmProfile);
 
 		// save symbol data
-		return this.prisma.assetStock.create({
-			data: {
-				id: symbol,
-				profile,
-			},
-		});
+		try {
+			return this.prisma.assetStock.create({
+				data: {
+					id: symbol,
+					profile,
+				},
+			});
+		} catch (error) {
+			console.log(error);
+			throw new Error('Error saving stock symbol data');
+		}
 	}
 }

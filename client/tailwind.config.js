@@ -30,6 +30,9 @@ module.exports = {
 				'wt-gray-medium': 'var(--gray-medium)',
 				'wt-gray-light': 'var(--gray-light)',
 			},
+			flex: {
+				2: '2 2 0%',
+			},
 		},
 		screens: {
 			xs: '475px',

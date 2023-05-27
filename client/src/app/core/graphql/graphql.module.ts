@@ -10,6 +10,11 @@ import { environment } from '../../../environments/environment';
 import { DialogServiceUtil } from '../../shared/dialogs';
 import { STORAGE_AUTH_ACCESS_TOKEN, STORAGE_MAIN_KEY, StorageServiceStructure } from '../models';
 import { PlatformService } from '../services/platform.service';
+import {
+	PersonalAccountAggregationDataFragment,
+	PersonalAccountTagFragment,
+	PersonalAccountWeeklyAggregationFragment,
+} from './schema-backend.service';
 
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
 	// React only on graphql errors
@@ -78,7 +83,29 @@ const basicContext = (platform: PlatformService) =>
 	});
 
 export function createDefaultApollo(httpLink: HttpLink, platform: PlatformService): ApolloClientOptions<any> {
-	const cache = new InMemoryCache({});
+	const cache = new InMemoryCache({
+		typePolicies: {
+			PersonalAccount: {
+				fields: {
+					personalAccountTag: {
+						merge(existing = [], incoming: PersonalAccountTagFragment[]) {
+							return [...incoming];
+						},
+					},
+					yearlyAggregation: {
+						merge(existing = [], incoming: PersonalAccountAggregationDataFragment[]) {
+							return [...incoming];
+						},
+					},
+					weeklyAggregation: {
+						merge(existing = [], incoming: PersonalAccountWeeklyAggregationFragment[]) {
+							return [...incoming];
+						},
+					},
+				},
+			},
+		},
+	});
 
 	// create http with persisten queries
 	// https://apollo-angular.com/docs/recipes/automatic-persisted-queries

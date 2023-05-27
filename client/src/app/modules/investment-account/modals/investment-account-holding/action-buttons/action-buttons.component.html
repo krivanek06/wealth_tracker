@@ -1,0 +1,41 @@
+<div
+	class="flex flex-row items-center gap-2 px-2 md:flex-row lg:mb-2"
+	[ngClass]="{
+    'justify-between': !showHistoricalTransactions,
+    'justify-end': showHistoricalTransactions
+  }"
+>
+	<!-- transaction type -->
+	<button
+		*ngIf="!showHistoricalTransactions"
+		type="button"
+		mat-flat-button
+		[color]="isBuying ? 'accent' : 'warn'"
+		class="max-sm:min-w-0 max-sm:flex-1 sm:g-button-size-lg"
+		(click)="onTransactionTypeChange()"
+	>
+		{{ isBuying ? 'Buy' : 'Sell' }}
+	</button>
+
+	<!-- history -->
+	<button
+		*ngIf="showHistoricalTransactions"
+		mat-stroked-button
+		type="button"
+		(click)="onTransactionShowChange()"
+		class="max-sm:min-w-0 sm:g-button-size-lg max-sm:flex-2"
+	>
+		<mat-icon>visibility_off</mat-icon>
+		Hide Transactions
+	</button>
+	<button
+		*ngIf="!showHistoricalTransactions"
+		mat-stroked-button
+		type="button"
+		(click)="onTransactionShowChange()"
+		class="max-sm:min-w-0 sm:g-button-size-lg max-sm:flex-2"
+	>
+		<mat-icon>visibility</mat-icon>
+		Show Transactions
+	</button>
+</div>

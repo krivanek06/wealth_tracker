@@ -1,27 +1,14 @@
 <app-dialog-close-header (dialogCloseEmitter)="onCancel()" title="Account Holdings"></app-dialog-close-header>
 
-<div
-	*ngIf="formGroup.controls.symbol.value"
-	class="flex flex-col items-center justify-between gap-2 px-2 md:flex-row lg:mb-4"
->
-	<!-- transaction type -->
-	<button
-		[disabled]="!data.activeHolding"
-		type="button"
-		mat-flat-button
-		[color]="formGroup.controls.isBuying.value ? 'accent' : 'warn'"
-		class="w-full md:w-auto g-button-size-lg"
-		(click)="onTransactionTypeChange()"
-	>
-		{{ formGroup.controls.isBuying.value ? 'Buy Asset' : 'Sell Asset' }}
-	</button>
-
-	<!-- history -->
-	<button mat-stroked-button type="button" (click)="onTransactionShow()" class="w-full md:w-auto g-button-size-lg">
-		<mat-icon>visibility</mat-icon>
-		Show Previous Transactions
-	</button>
-</div>
+<!-- action buttons -->
+<ng-container *ngIf="!!data.activeHolding">
+	<app-action-buttons
+		(transactionShowChangeEmitter)="onTransactionShow()"
+		(transactionTypeChangeEmitter)="onTransactionTypeChange()"
+		[showHistoricalTransactions]="showHistoricalTransactions"
+		[isBuying]="formGroup.controls.isBuying.value"
+	></app-action-buttons>
+</ng-container>
 
 <!-- error if more than cash -->
 <div class="w-full mx-auto md:w-9/12">
@@ -36,82 +23,88 @@
 
 <form (ngSubmit)="onSave()" [formGroup]="formGroup">
 	<mat-dialog-content>
-		<!-- historical chart -->
-		<ng-container *ngIf="assetHistoricalData$ | async as assetHistoricalData; else chartSkeleton">
-			<div *ngIf="!loadingHistoricalData; else chartSkeleton" class="min-h-[250px]">
-				<app-generic-chart [series]="[assetHistoricalData]" [heightPx]="250"></app-generic-chart>
-			</div>
-		</ng-container>
-
-		<!-- skeleton -->
-		<ng-template #chartSkeleton>
-			<div *ngIf="formSymbol.value" class="w-full h-[250px] g-skeleton"></div>
-		</ng-template>
-
-		<div class="flex items-center justify-between">
+		<ng-container *ngIf="!showHistoricalTransactions">
 			<!-- selected symbol -->
-			<div class="flex items-center gap-3 text-lg">
-				<div class="text-wt-primary-dark">Selected:</div>
-				<div *ngIf="formGroup.controls.symbol.value as selectedSymbol" class="flex items-center space-x-2">
-					<img appDefaultImg [src]="selectedSymbol.symbolImageURL" alt="Symbol Image" class="h-7 w-7" />
-					<span>{{ selectedSymbol.name }}</span>
+			<div *ngIf="formGroup.controls.symbol.value as selectedSymbol" class="flex items-center py-3 space-x-2 sm:hidden">
+				<img appDefaultImg [src]="selectedSymbol.symbolImageURL" alt="Symbol Image" class="h-7 w-7" />
+				<span>{{ selectedSymbol.name }}</span>
+			</div>
+
+			<!-- historical chart -->
+			<ng-container *ngIf="assetHistoricalData$ | async as assetHistoricalData; else chartSkeleton">
+				<div *ngIf="!loadingHistoricalData; else chartSkeleton" class="min-h-[275px]">
+					<app-generic-chart [series]="[assetHistoricalData]" [heightPx]="275"></app-generic-chart>
+				</div>
+			</ng-container>
+
+			<!-- skeleton -->
+			<ng-template #chartSkeleton>
+				<div *ngIf="formSymbol.value" class="w-full h-[275px] g-skeleton"></div>
+			</ng-template>
+
+			<div class="flex items-center justify-end sm:justify-between">
+				<!-- selected symbol -->
+				<div class="items-center hidden gap-3 text-lg sm:flex">
+					<div class="text-wt-primary-dark">Selected:</div>
+					<div *ngIf="formGroup.controls.symbol.value as selectedSymbol" class="flex items-center space-x-2">
+						<img appDefaultImg [src]="selectedSymbol.symbolImageURL" alt="Symbol Image" class="h-7 w-7" />
+						<span>{{ selectedSymbol.name }}</span>
+					</div>
+				</div>
+
+				<!-- checkbox for custom total value -->
+				<div class="flex justify-end mt-4">
+					<mat-checkbox
+						color="primary"
+						matTooltip="Allow manually set how many units you bought/sold and what was the total price"
+						[formControl]="allowCustomTotalValue"
+					>
+						Allow Custom Total Value
+					</mat-checkbox>
 				</div>
 			</div>
 
-			<!-- checkbox for custom total value -->
-			<div class="flex justify-end mt-4">
-				<mat-checkbox
-					color="primary"
-					matTooltip="Allow manually set how many units you bought/sold and what was the total price"
-					[formControl]="allowCustomTotalValue"
-				>
-					Allow Custom Total Value
-				</mat-checkbox>
-			</div>
-		</div>
+			<mat-divider></mat-divider>
 
-		<mat-divider></mat-divider>
-
-		<!-- record state -->
-		<app-record-state
-			(actionButtonPressEmitter)="onRecordStateAction($event)"
-			[allowCustomization]="allowCustomTotalValue.value"
-			[totalValue]="allowCustomTotalValue.value ? formGroup.controls.customTotalValue.value : calculatedTotalValue"
-			[ownedUnitsShow]="!!data.activeHolding"
-			[ownedUnits]="data.activeHolding?.units"
-			[value]="formSymbolPrice.value"
-			[units]="units.value"
-			[isBuying]="formGroup.controls.isBuying.value"
-		></app-record-state>
-
-		<div class="grid lg:grid-cols-2 gap-x-4 xl:gap-x-8">
-			<div>
-				<!-- date picker -->
-				<app-date-picker formControlName="date" [inputTypeDateTimePickerConfig]="datePickerConfig"></app-date-picker>
-
-				<!-- asset type -->
-				<app-form-mat-input-wrapper
-					[disabled]="!!data.activeHolding"
-					[inputSource]="TransactionAssetTypeInputSource"
-					class="w-full"
-					controlName="assetType"
-					inputCaption="Select asset type"
-					inputType="SELECT"
-				></app-form-mat-input-wrapper>
-
-				<!-- search symbol -->
-				<app-asset-manager-search-asset
-					formControlName="symbol"
-					[isDisabled]="!!data.activeHolding"
-					[searchableAsset]="formGroup.controls.assetType.value"
-				></app-asset-manager-search-asset>
+			<!-- record state -->
+			<div class="hidden sm:block">
+				<ng-container *ngTemplateOutlet="recordState"></ng-container>
 			</div>
 
-			<div class="mt-6">
-				<!-- keyboard -->
-				<app-number-keyboard-control [formControl]="keyBoardFormControl"></app-number-keyboard-control>
+			<div class="grid lg:grid-cols-2 gap-x-4 xl:gap-x-8">
+				<div>
+					<!-- date picker -->
+					<app-date-picker formControlName="date" [inputTypeDateTimePickerConfig]="datePickerConfig"></app-date-picker>
+
+					<!-- asset type -->
+					<app-form-mat-input-wrapper
+						[disabled]="!!data.activeHolding"
+						[inputSource]="TransactionAssetTypeInputSource"
+						class="w-full"
+						controlName="assetType"
+						inputCaption="Select asset type"
+						inputType="SELECT"
+					></app-form-mat-input-wrapper>
+
+					<!-- search symbol -->
+					<app-asset-manager-search-asset
+						formControlName="symbol"
+						[isDisabled]="!!data.activeHolding"
+						[searchableAsset]="formGroup.controls.assetType.value"
+					></app-asset-manager-search-asset>
+				</div>
+
+				<!-- record state -->
+				<div class="block mt-4 sm:hidden">
+					<ng-container *ngTemplateOutlet="recordState"></ng-container>
+				</div>
+
+				<div class="mt-6">
+					<!-- keyboard -->
+					<app-number-keyboard-control [formControl]="keyBoardFormControl"></app-number-keyboard-control>
+				</div>
 			</div>
-		</div>
+		</ng-container>
 
 		<!-- history of asset holding -->
 		<ng-container *ngIf="transactionHistory$ | async as transactionHistory">
@@ -157,3 +150,16 @@
 		</div>
 	</mat-dialog-actions>
 </form>
+
+<ng-template #recordState>
+	<app-record-state
+		(actionButtonPressEmitter)="onRecordStateAction($event)"
+		[allowCustomization]="allowCustomTotalValue.value"
+		[totalValue]="allowCustomTotalValue.value ? formGroup.controls.customTotalValue.value : calculatedTotalValue"
+		[ownedUnitsShow]="!!data.activeHolding"
+		[ownedUnits]="data.activeHolding?.units"
+		[value]="formSymbolPrice.value"
+		[units]="units.value"
+		[isBuying]="formGroup.controls.isBuying.value"
+	></app-record-state>
+</ng-template>

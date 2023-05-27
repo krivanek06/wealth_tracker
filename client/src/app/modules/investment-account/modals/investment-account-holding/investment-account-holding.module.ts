@@ -19,12 +19,18 @@ import { NotificationBarModule } from '../../../../shared/dialogs';
 import { DefaultImgDirective, PerceptageIncreaseDirective } from '../../../../shared/directives';
 import { LargeNumberFormatterPipe, SortByKeyPipe } from '../../../../shared/pipes';
 import { AssetManagerSearchAssetModule } from '../../../asset-manager';
+import { ActionButtonsComponent } from './action-buttons/action-buttons.component';
 import { HoldingHistoryItemComponent } from './holding-history-item/holding-history-item.component';
 import { InvestmentAccountHoldingComponent } from './investment-account-holding.component';
 import { RecordStateComponent } from './record-state/record-state.component';
 
 @NgModule({
-	declarations: [InvestmentAccountHoldingComponent, HoldingHistoryItemComponent, RecordStateComponent],
+	declarations: [
+		InvestmentAccountHoldingComponent,
+		HoldingHistoryItemComponent,
+		RecordStateComponent,
+		ActionButtonsComponent,
+	],
 	imports: [
 		CommonModule,
 		MatDialogModule,

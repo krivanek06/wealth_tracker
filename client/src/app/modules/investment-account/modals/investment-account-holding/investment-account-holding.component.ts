@@ -10,6 +10,7 @@ import {
 	first,
 	map,
 	merge,
+	shareReplay,
 	startWith,
 	switchMap,
 	takeUntil,
@@ -201,7 +202,8 @@ export class InvestmentAccountHoldingComponent implements OnInit, AfterViewInit,
 						})
 					)
 			),
-			tap(() => (this.loadingHistoricalData = false))
+			tap(() => (this.loadingHistoricalData = false)),
+			shareReplay({ bufferSize: 1, refCount: false })
 		);
 
 		// merge errors together

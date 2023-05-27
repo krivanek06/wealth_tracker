@@ -9,7 +9,6 @@ import {
 	DeleteInvestmentAccountMutation,
 	EditInvestmentAccountMutation,
 	InvestmentAccounHoldingCreateInput,
-	InvestmentAccountCashChangeType,
 	InvestmentAccountEditInput,
 	InvestmentAccountGrowth,
 	InvestmentAccountTransactionOutput,
@@ -31,31 +30,12 @@ export class InvestmentAccountFacadeApiService {
 		return this.investmentAccountApiService.getInvestmentAccountByUser().pipe(
 			filter((data): data is InvestmentAccountFragmentExtended => !!data),
 			map((account) => {
-				const currentCash = account.cashChange.reduce((acc, curr) => {
-					if (curr.type === InvestmentAccountCashChangeType.Withdrawal) {
-						return acc - curr.cashValue;
-					}
-
-					return acc + curr.cashValue;
-				}, 0);
 				const currentInvestments = account.activeHoldings.reduce((acc, curr) => acc + curr.totalValue, 0);
-				const currentBalance = currentInvestments + currentCash;
+				const currentBalance = currentInvestments;
 
 				const assetOperationTotal = account.activeHoldings.reduce(
 					(acc, curr) => acc + curr.beakEvenPrice * curr.units,
 					0
-				);
-
-				// create aggregation for each operation
-				const aggregation = account.cashChange.reduce(
-					(acc, curr) => {
-						return { ...acc, [curr.type]: acc[curr.type] + curr.cashValue };
-					},
-					{
-						ASSET_OPERATION: 0, // don't use
-						DEPOSIT: 0,
-						WITHDRAWAL: 0,
-					} as { [key in InvestmentAccountCashChangeType]: number }
 				);
 
 				// create result
@@ -64,16 +44,12 @@ export class InvestmentAccountFacadeApiService {
 					id: account.id,
 					accountType: account.accountType,
 					activeHoldings: account.activeHoldings,
-					cashChange: account.cashChange,
 					name: account.name,
 					userId: account.userId,
 					createdAt: account.createdAt,
-					currentCash,
 					currentInvestments,
 					currentBalance,
 					AssetOperationTotal: assetOperationTotal,
-					DepositTotal: aggregation.DEPOSIT,
-					WithdrawalTotal: aggregation.WITHDRAWAL,
 				};
 
 				return result;

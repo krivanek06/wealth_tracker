@@ -11,6 +11,7 @@ import { DialogServiceUtil } from '../../shared/dialogs';
 import { STORAGE_AUTH_ACCESS_TOKEN, STORAGE_MAIN_KEY, StorageServiceStructure } from '../models';
 import { PlatformService } from '../services/platform.service';
 import {
+	InvestmentAccountActiveHoldingOutput,
 	PersonalAccountAggregationDataFragment,
 	PersonalAccountTagFragment,
 	PersonalAccountWeeklyAggregationFragment,
@@ -85,6 +86,15 @@ const basicContext = (platform: PlatformService) =>
 export function createDefaultApollo(httpLink: HttpLink, platform: PlatformService): ApolloClientOptions<any> {
 	const cache = new InMemoryCache({
 		typePolicies: {
+			InvestmentAccount: {
+				fields: {
+					activeHoldings: {
+						merge(existing = [], incoming: InvestmentAccountActiveHoldingOutput[]) {
+							return [...incoming];
+						},
+					},
+				},
+			},
 			PersonalAccount: {
 				fields: {
 					personalAccountTag: {

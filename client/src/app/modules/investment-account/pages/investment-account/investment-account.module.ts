@@ -13,11 +13,7 @@ import {
 	InvestmentAccountStateComponent,
 } from '../../components';
 import { InvestmentAccountPortfolioGrowthComponent } from '../../containers';
-import {
-	InvestmentAccountCashChangeModule,
-	InvestmentAccountHoldingModule,
-	InvestmentAccountTransactionsModule,
-} from '../../modals';
+import { InvestmentAccountHoldingModule, InvestmentAccountTransactionsModule } from '../../modals';
 import { InvestmentAccountSkeletonComponent } from './investment-account-skeleton/investment-account-skeleton.component';
 import { InvestmentAccountComponent } from './investment-account.component';
 
@@ -34,7 +30,6 @@ const routes: Routes = [
 		InvestmentAccountActiveHoldingsTableModule,
 		InvestmentAccountStateComponent,
 		ReactiveFormsModule,
-		InvestmentAccountCashChangeModule,
 		InvestmentAccountTransactionsModule,
 		InvestmentAccountHoldingModule,
 		InvestmentAccountPeriodChangeComponent,

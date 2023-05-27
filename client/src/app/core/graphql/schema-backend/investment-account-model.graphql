@@ -52,9 +52,6 @@ fragment InvestmentAccountActiveHoldingOutput on InvestmentAccountActiveHoldingO
 
 fragment InvestmentAccountDetails on InvestmentAccount {
 	...InvestmentAccountOverview
-	cashChange {
-		...InvestmentAccountCashChange
-	}
 	activeHoldings {
 		...InvestmentAccountActiveHoldingOutput
 	}

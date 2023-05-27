@@ -16,11 +16,7 @@ import {
 	NONE_INPUT_SOURCE,
 	NONE_INPUT_SOURCE_VALUE,
 } from '../../../../shared/models';
-import {
-	InvestmentAccountCashChangeComponent,
-	InvestmentAccountHoldingComponent,
-	InvestmentAccountTransactionsComponent,
-} from '../../modals';
+import { InvestmentAccountHoldingComponent, InvestmentAccountTransactionsComponent } from '../../modals';
 import { InvestmentAccountPeriodChange } from '../../models';
 import { InvestmentAccountCalculatorService } from '../../services';
 
@@ -109,12 +105,6 @@ export class InvestmentAccountComponent implements OnInit {
 				this.investmentAccountCalculatorService.getInvestmentAccountPeriodChange(account.activeHoldings, growth)
 			)
 		);
-	}
-
-	onCashChangeClick(): void {
-		this.dialog.open(InvestmentAccountCashChangeComponent, {
-			panelClass: ['g-mat-dialog-small'],
-		});
 	}
 
 	onAddHolding(activeHolding?: InvestmentAccountActiveHoldingOutputFragment): void {

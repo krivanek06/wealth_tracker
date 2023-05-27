@@ -87,30 +87,41 @@ export class InvestmentAccountHoldingService {
 			throw new CustomGraphQlError(INVESTMENT_ACCOUNT_HOLDING_ERROR.SELL_ERROR_NO_HOLDING, HttpStatus.FORBIDDEN);
 		}
 
-		// load symbol value on holdingInputData.date if user did not provide customTotalValue
-		const closedValueApi = !input.customTotalValue
-			? (
-					await this.assetGeneralService.getAssetGeneralHistoricalPricesDataOnDate(
-						input.symbol,
-						input.holdingInputData.date
-					)
-			  )?.close
+		// load closed value from API
+		const closedValueApi = await this.assetGeneralService.getAssetGeneralHistoricalPricesDataOnDate(
+			input.symbol,
+			input.holdingInputData.date
+		);
+
+		// check if closedValueApi.date match with input.date
+		if (!MomentServiceUtil.isSameDay(closedValueApi.date, input.holdingInputData.date)) {
+			throw new CustomGraphQlError(
+				`Date: ${input.holdingInputData.date} is sooner than ${closedValueApi.date} (IPO date)`,
+				HttpStatus.FORBIDDEN
+			);
+		}
+
+		// determine which ASSET closed value to used, prefer customTotalValue provided by user
+		const usedClosedValue = !input.customTotalValue
+			? closedValueApi.close
 			: input.customTotalValue / input.holdingInputData.units;
 
 		// calculate return & returnChange if Sell operation
 		const breakEvenPrice = SharedServiceUtil.roundDec(bepHelpers.value / bepHelpers.units);
 		const inputUnits = input.holdingInputData.units;
 		const returnValue =
-			input.type === 'SELL' ? SharedServiceUtil.roundDec((breakEvenPrice - closedValueApi) * inputUnits) : null;
+			input.type === 'SELL' ? SharedServiceUtil.roundDec((breakEvenPrice - usedClosedValue) * inputUnits) : null;
 		const returnChange =
-			input.type === 'SELL' ? SharedServiceUtil.roundDec((breakEvenPrice - closedValueApi) / closedValueApi, 4) : null;
+			input.type === 'SELL'
+				? SharedServiceUtil.roundDec((breakEvenPrice - usedClosedValue) / usedClosedValue, 4)
+				: null;
 
 		// create DB object
 		const newHoldingHistory: InvestmentAccountHoldingHistory = {
 			itemId: SharedServiceUtil.getUUID(),
 			units: inputUnits,
 			type: input.type,
-			unitValue: SharedServiceUtil.roundDec(closedValueApi),
+			unitValue: SharedServiceUtil.roundDec(usedClosedValue),
 			date: MomentServiceUtil.format(input.holdingInputData.date),
 			createdAt: new Date(),
 			return: returnValue,

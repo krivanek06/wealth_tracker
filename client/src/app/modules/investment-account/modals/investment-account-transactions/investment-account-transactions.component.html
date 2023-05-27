@@ -3,7 +3,7 @@
 <form [formGroup]="formGroup">
 	<!-- symbols -->
 	<app-form-mat-input-wrapper
-		class="min-w-[320px]"
+		class="min-w-[320px] pl-4"
 		controlName="symbols"
 		inputCaption="Select symbols"
 		inputType="MULTISELECT"
@@ -11,9 +11,12 @@
 	></app-form-mat-input-wrapper>
 </form>
 
-<!-- table -->
 <mat-dialog-content>
 	<ng-container *ngIf="transactionHistory$ | async as transactionHistory; else skeleton">
+		<!-- result -->
+		<div class="block mb-2 sm:hidden text-wt-gray-medium">Total: {{ transactionHistory.length }}</div>
+
+		<!-- table -->
 		<app-investment-account-transaction-table
 			(removeDataEmitter)="onRemove($event)"
 			[transactions]="transactionHistory"

@@ -37,7 +37,9 @@ button[mat-stroked-button] {
 	color: white !important;
 }
 
-.g-button-size-lg {
-	min-width: 220px !important;
-	min-height: 50px !important;
+@responsive {
+	.g-button-size-lg {
+		min-width: 220px !important;
+		min-height: 50px !important;
+	}
 }

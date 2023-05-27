@@ -43,7 +43,8 @@ export class AccountManagerPopulationService {
 
 		// create new personal account
 		const newPersonalAccount = await this.personalAccountService.createPersonalAccount(userId);
-		const newTags = newPersonalAccount.personalAccountTag;
+		// get first 10 tags
+		const newTags = newPersonalAccount.personalAccountTag.slice(0, 10);
 		console.log('[Personal account]: created new account');
 
 		// create a date range that goes back 4 months
@@ -57,8 +58,8 @@ export class AccountManagerPopulationService {
 			// increment starting date
 			const date = MomentServiceUtil.addDays(startDate, i);
 
-			// for each day have between 8 to 12 entries
-			const numberOfEntries = Math.floor(Math.random() * 5) + 8;
+			// for each day have between 2 to 6 entries
+			const numberOfEntries = Math.floor(Math.random() * 4) + 2;
 			for (let j = 0; j < numberOfEntries; j++) {
 				// get random tag
 				const randomTag = newTags[Math.floor(Math.random() * newTags.length)];

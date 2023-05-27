@@ -11,4 +11,6 @@ export const STOCK_MARKET_CLOSED_DATES = [
 	new Date('2023-11-24T00:00:00Z'), // Thanksgiving Day - U.S.
 	new Date('2023-12-25T00:00:00Z'), // Christmas Holiday - U.S.
 	new Date('2023-12-26T00:00:00Z'), // Christmas Holiday - U.S.
+	// additional dates because of bugs
+	new Date('2022-07-04'),
 ];

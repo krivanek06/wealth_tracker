@@ -76,9 +76,15 @@ export class PersonalAccountFacadeService {
 
 	deletePersonalAccount(): Observable<PersonalAccountOverviewFragment | undefined> {
 		return this.personalAccountApiService.deletePersonalAccount().pipe(
-			tap(() => {
-				// update cache
-				this.accountManagerCacheService.removeAccountType(AccountType.Personal);
+			tap((personalAccount) => {
+				if (personalAccount) {
+					// remove account type from cache
+					this.accountManagerCacheService.removeAccountType(AccountType.Personal);
+					// remove personal account from cache
+					this.personalAccountCacheService.removePersonalAccountFromCache(personalAccount.id);
+					// remove daily data from cache
+					this.personalAccountCacheService.removeDailyDataQuery();
+				}
 			})
 		);
 	}

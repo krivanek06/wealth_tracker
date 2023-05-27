@@ -184,8 +184,11 @@ export class InvestmentAccountCalculatorService {
 				return { title: period.name, value: -1, valuePrct: -1 } as InvestmentAccountPeriodChange;
 			}
 
-			const value = todayBalance - timeDiff.invested;
-			const valuePrct = (todayBalance - timeDiff.invested) / timeDiff.invested;
+			const valueDiff = todayBalance - timeDiff.invested;
+			const valuePrctDiff = (todayBalance - timeDiff.invested) / timeDiff.invested;
+
+			const value = activeHoldings.length === 0 ? -1 : valueDiff;
+			const valuePrct = activeHoldings.length === 0 ? -1 : valuePrctDiff;
 
 			return { title: period.name, value, valuePrct } as InvestmentAccountPeriodChange;
 		});

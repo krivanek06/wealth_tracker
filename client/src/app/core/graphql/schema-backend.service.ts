@@ -6,15 +6,17 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
+  ID: { input: string | number; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
-  DateTime: any;
+  DateTime: { input: any; output: any; }
 };
 
 export type AccountIdentification = {
@@ -22,12 +24,12 @@ export type AccountIdentification = {
   /** What account types it is */
   accountType: AccountType;
   /** Date time when account was created */
-  createdAt: Scalars['String'];
-  id: Scalars['ID'];
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
   /** custom name for account */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   /** Reference to User.ID who created this account */
-  userId: Scalars['String'];
+  userId: Scalars['String']['output'];
 };
 
 export enum AccountType {
@@ -37,111 +39,111 @@ export enum AccountType {
 
 export type AssetGeneral = {
   __typename?: 'AssetGeneral';
-  assetIntoLastUpdate: Scalars['DateTime'];
+  assetIntoLastUpdate: Scalars['DateTime']['output'];
   assetQuote: AssetGeneralQuote;
-  id: Scalars['String'];
-  name: Scalars['String'];
-  symbolImageURL?: Maybe<Scalars['String']>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  symbolImageURL?: Maybe<Scalars['String']['output']>;
 };
 
 export type AssetGeneralHistoricalPrices = {
   __typename?: 'AssetGeneralHistoricalPrices';
   /** Historical prices to create charts for portoflio */
   assetHistoricalPricesData: Array<AssetGeneralHistoricalPricesData>;
-  dateEnd: Scalars['String'];
-  dateStart: Scalars['String'];
+  dateEnd: Scalars['String']['output'];
+  dateStart: Scalars['String']['output'];
   /** Symbol Id - AAPL, MSFT, BTCUSD */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
 };
 
 export type AssetGeneralHistoricalPricesData = {
   __typename?: 'AssetGeneralHistoricalPricesData';
-  close: Scalars['Float'];
+  close: Scalars['Float']['output'];
   /** Format YYYY-MM-DD, i.e: 2022-03-12 */
-  date: Scalars['String'];
+  date: Scalars['String']['output'];
 };
 
 export type AssetGeneralHistoricalPricesInput = {
-  end: Scalars['String'];
-  start: Scalars['String'];
-  symbol: Scalars['String'];
+  end: Scalars['String']['input'];
+  start: Scalars['String']['input'];
+  symbol: Scalars['String']['input'];
 };
 
 export type AssetGeneralHistoricalPricesInputOnDate = {
-  date: Scalars['String'];
-  symbol: Scalars['String'];
+  date: Scalars['String']['input'];
+  symbol: Scalars['String']['input'];
 };
 
 export type AssetGeneralQuote = {
   __typename?: 'AssetGeneralQuote';
   /** Null very rarely when picking uncommon stock, like American Campus Communities */
-  avgVolume?: Maybe<Scalars['Float']>;
-  change: Scalars['Float'];
-  changesPercentage: Scalars['Float'];
+  avgVolume?: Maybe<Scalars['Float']['output']>;
+  change: Scalars['Float']['output'];
+  changesPercentage: Scalars['Float']['output'];
   /** Null value of information was received during weekend */
-  dayHigh?: Maybe<Scalars['Float']>;
+  dayHigh?: Maybe<Scalars['Float']['output']>;
   /** Null value of information was received during weekend */
-  dayLow?: Maybe<Scalars['Float']>;
+  dayLow?: Maybe<Scalars['Float']['output']>;
   /** Only present for stocks */
-  earningsAnnouncement?: Maybe<Scalars['String']>;
+  earningsAnnouncement?: Maybe<Scalars['String']['output']>;
   /** Only present for stocks */
-  eps?: Maybe<Scalars['Float']>;
-  exchange: Scalars['String'];
-  marketCap: Scalars['Float'];
-  name: Scalars['String'];
+  eps?: Maybe<Scalars['Float']['output']>;
+  exchange: Scalars['String']['output'];
+  marketCap: Scalars['Float']['output'];
+  name: Scalars['String']['output'];
   /** Only present for stocks */
-  pe?: Maybe<Scalars['Float']>;
-  price: Scalars['Float'];
+  pe?: Maybe<Scalars['Float']['output']>;
+  price: Scalars['Float']['output'];
   /** Null very rarely when picking uncommon stock, like American Campus Communities */
-  priceAvg50?: Maybe<Scalars['Float']>;
+  priceAvg50?: Maybe<Scalars['Float']['output']>;
   /** Null very rarely when picking uncommon stock, like American Campus Communities */
-  priceAvg200?: Maybe<Scalars['Float']>;
+  priceAvg200?: Maybe<Scalars['Float']['output']>;
   /** For crypto it is current supply, null should be rarely */
-  sharesOutstanding?: Maybe<Scalars['Float']>;
-  symbol: Scalars['String'];
-  symbolImageURL?: Maybe<Scalars['String']>;
-  timestamp: Scalars['Float'];
-  volume: Scalars['Float'];
+  sharesOutstanding?: Maybe<Scalars['Float']['output']>;
+  symbol: Scalars['String']['output'];
+  symbolImageURL?: Maybe<Scalars['String']['output']>;
+  timestamp: Scalars['Float']['output'];
+  volume: Scalars['Float']['output'];
   /** Null very rarely when picking uncommon stock, like American Campus Communities */
-  yearHigh?: Maybe<Scalars['Float']>;
+  yearHigh?: Maybe<Scalars['Float']['output']>;
   /** Null very rarely when picking uncommon stock, like American Campus Communities */
-  yearLow?: Maybe<Scalars['Float']>;
+  yearLow?: Maybe<Scalars['Float']['output']>;
 };
 
 export type AssetGeneralSearchInput = {
-  isCrypto?: Scalars['Boolean'];
-  symbolPrefix: Scalars['String'];
+  isCrypto?: Scalars['Boolean']['input'];
+  symbolPrefix: Scalars['String']['input'];
 };
 
 export type AssetStockProfile = {
   __typename?: 'AssetStockProfile';
-  address: Scalars['String'];
-  ceo: Scalars['String'];
-  cik: Scalars['String'];
-  city: Scalars['String'];
-  companyName: Scalars['String'];
-  country: Scalars['String'];
-  currency: Scalars['String'];
-  cusip: Scalars['String'];
-  defaultImage: Scalars['Boolean'];
-  description: Scalars['String'];
-  exchange: Scalars['String'];
-  exchangeShortName: Scalars['String'];
-  fullTimeEmployees: Scalars['String'];
-  image: Scalars['String'];
-  imageUrl?: Maybe<Scalars['String']>;
-  industry: Scalars['String'];
-  ipoDate: Scalars['String'];
-  isActivelyTrading: Scalars['Boolean'];
-  isAdr: Scalars['Boolean'];
-  isEtf: Scalars['Boolean'];
-  isFund: Scalars['Boolean'];
-  isin: Scalars['String'];
-  phone: Scalars['String'];
-  sector: Scalars['String'];
-  state: Scalars['String'];
-  website: Scalars['String'];
-  zip: Scalars['String'];
+  address: Scalars['String']['output'];
+  ceo: Scalars['String']['output'];
+  cik: Scalars['String']['output'];
+  city: Scalars['String']['output'];
+  companyName: Scalars['String']['output'];
+  country: Scalars['String']['output'];
+  currency: Scalars['String']['output'];
+  cusip: Scalars['String']['output'];
+  defaultImage: Scalars['Boolean']['output'];
+  description: Scalars['String']['output'];
+  exchange: Scalars['String']['output'];
+  exchangeShortName: Scalars['String']['output'];
+  fullTimeEmployees: Scalars['String']['output'];
+  image: Scalars['String']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  industry: Scalars['String']['output'];
+  ipoDate: Scalars['String']['output'];
+  isActivelyTrading: Scalars['Boolean']['output'];
+  isAdr: Scalars['Boolean']['output'];
+  isEtf: Scalars['Boolean']['output'];
+  isFund: Scalars['Boolean']['output'];
+  isin: Scalars['String']['output'];
+  phone: Scalars['String']['output'];
+  sector: Scalars['String']['output'];
+  state: Scalars['String']['output'];
+  website: Scalars['String']['output'];
+  zip: Scalars['String']['output'];
 };
 
 export enum AuthenticationType {
@@ -150,40 +152,40 @@ export enum AuthenticationType {
 }
 
 export type ChangePasswordInput = {
-  password: Scalars['String'];
-  passwordRepeat: Scalars['String'];
+  password: Scalars['String']['input'];
+  passwordRepeat: Scalars['String']['input'];
 };
 
 export type ChartSeries = {
   __typename?: 'ChartSeries';
   /** Chart Data */
-  data: Array<Array<Scalars['Float']>>;
+  data: Array<Array<Scalars['Float']['output']>>;
   /** Name of the series */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
 };
 
 export type HoldingInputData = {
   /** Date when we added this holding to our investment account */
-  date: Scalars['String'];
+  date: Scalars['String']['input'];
   /** How many units of this symbol user has */
-  units: Scalars['Float'];
+  units: Scalars['Float']['input'];
 };
 
 export type InvestmentAccounHoldingCreateInput = {
   /** User can add custom total value of this holding and not load from API */
-  customTotalValue?: InputMaybe<Scalars['Float']>;
+  customTotalValue?: InputMaybe<Scalars['Float']['input']>;
   holdingInputData: HoldingInputData;
-  isCrypto: Scalars['Boolean'];
+  isCrypto: Scalars['Boolean']['input'];
   /** Symbol ID */
-  symbol: Scalars['String'];
+  symbol: Scalars['String']['input'];
   type: InvestmentAccountHoldingHistoryType;
 };
 
 export type InvestmentAccounHoldingHistoryDeleteInput = {
   /** Id of the item the user wants to remove */
-  itemId: Scalars['String'];
+  itemId: Scalars['String']['input'];
   /** Symbol ID */
-  symbol: Scalars['String'];
+  symbol: Scalars['String']['input'];
 };
 
 export type InvestmentAccount = {
@@ -195,34 +197,34 @@ export type InvestmentAccount = {
   /** History of changed cash value */
   cashChange: Array<InvestmentAccountCashChange>;
   /** Date time when account was created */
-  createdAt: Scalars['String'];
+  createdAt: Scalars['String']['output'];
   /** Returns current cash holding */
-  currentCash: Scalars['Float'];
+  currentCash: Scalars['Float']['output'];
   /** Holding history of this asset */
   holdings: Array<InvestmentAccountHolding>;
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
   /** custom name for account */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   /** Reference to User.ID who created this account */
-  userId: Scalars['String'];
+  userId: Scalars['String']['output'];
 };
 
 export type InvestmentAccountActiveHoldingOutput = {
   __typename?: 'InvestmentAccountActiveHoldingOutput';
   assetGeneral: AssetGeneral;
   /** Symbol ID -> AAPL, MSFT, BTC */
-  assetId: Scalars['String'];
-  beakEvenPrice: Scalars['Float'];
+  assetId: Scalars['String']['output'];
+  beakEvenPrice: Scalars['Float']['output'];
   /** Symbol ID -> AAPL, MSFT, BTC */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Associated InvestmentAccount.id */
-  investmentAccountId: Scalars['String'];
-  sector: Scalars['String'];
-  sectorImageUrl?: Maybe<Scalars['String']>;
-  totalValue: Scalars['Float'];
+  investmentAccountId: Scalars['String']['output'];
+  sector: Scalars['String']['output'];
+  sectorImageUrl?: Maybe<Scalars['String']['output']>;
+  totalValue: Scalars['Float']['output'];
   type: InvestmentAccountHoldingType;
   /** Total units for the active holding */
-  units: Scalars['Float'];
+  units: Scalars['Float']['output'];
 };
 
 export type InvestmentAccountActiveHoldingOutputWrapper = {
@@ -235,12 +237,12 @@ export type InvestmentAccountActiveHoldingOutputWrapper = {
 
 export type InvestmentAccountCashChange = {
   __typename?: 'InvestmentAccountCashChange';
-  cashValue: Scalars['Float'];
+  cashValue: Scalars['Float']['output'];
   /** Format yyyy-MM-DD */
-  date: Scalars['String'];
+  date: Scalars['String']['output'];
   /** Returns corresponding image url for the Cash Type */
-  imageUrl: Scalars['String'];
-  itemId: Scalars['String'];
+  imageUrl: Scalars['String']['output'];
+  itemId: Scalars['String']['output'];
   type: InvestmentAccountCashChangeType;
 };
 
@@ -251,51 +253,51 @@ export enum InvestmentAccountCashChangeType {
 }
 
 export type InvestmentAccountEditInput = {
-  name: Scalars['String'];
+  name: Scalars['String']['input'];
 };
 
 export type InvestmentAccountGrowth = {
   __typename?: 'InvestmentAccountGrowth';
-  date: Scalars['Float'];
+  date: Scalars['Float']['output'];
   /** Accumulation of all invested assets in that specific date */
-  invested: Scalars['Float'];
-  ownedAssets: Scalars['Float'];
+  invested: Scalars['Float']['output'];
+  ownedAssets: Scalars['Float']['output'];
 };
 
 export type InvestmentAccountGrowthInput = {
   /** Sectors which to filter by. If empty, no filtering */
-  sectors?: InputMaybe<Array<Scalars['String']>>;
+  sectors?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type InvestmentAccountHolding = {
   __typename?: 'InvestmentAccountHolding';
   /** Symbol ID -> AAPL, MSFT, BTC */
-  assetId: Scalars['String'];
+  assetId: Scalars['String']['output'];
   /** How many units of this symbol user has */
   holdingHistory: Array<InvestmentAccountHoldingHistory>;
   /** Symbol ID -> AAPL, MSFT, BTC */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Associated InvestmentAccount.id */
-  investmentAccountId: Scalars['String'];
-  sector: Scalars['String'];
+  investmentAccountId: Scalars['String']['output'];
+  sector: Scalars['String']['output'];
   /** Returns corresponding image url for the Cash Type */
-  sectorImageUrl: Scalars['String'];
+  sectorImageUrl: Scalars['String']['output'];
   type: InvestmentAccountHoldingType;
 };
 
 export type InvestmentAccountHoldingHistory = {
   __typename?: 'InvestmentAccountHoldingHistory';
   /** Symbol ID -> AAPL, MSFT, BTC */
-  assetId: Scalars['String'];
+  assetId: Scalars['String']['output'];
   /** Date when entry was created */
-  createdAt: Scalars['DateTime'];
-  date: Scalars['String'];
-  itemId: Scalars['String'];
-  return?: Maybe<Scalars['Float']>;
-  returnChange?: Maybe<Scalars['Float']>;
+  createdAt: Scalars['DateTime']['output'];
+  date: Scalars['String']['output'];
+  itemId: Scalars['String']['output'];
+  return?: Maybe<Scalars['Float']['output']>;
+  returnChange?: Maybe<Scalars['Float']['output']>;
   type: InvestmentAccountHoldingHistoryType;
-  unitValue: Scalars['Float'];
-  units: Scalars['Float'];
+  unitValue: Scalars['Float']['output'];
+  units: Scalars['Float']['output'];
 };
 
 export enum InvestmentAccountHoldingHistoryType {
@@ -314,12 +316,12 @@ export enum InvestmentAccountHoldingType {
 
 export type InvestmentAccountTransactionInput = {
   /** Include symbols IDs for filtering, if empty, show all */
-  filterSymbols?: Array<Scalars['String']>;
+  filterSymbols?: Array<Scalars['String']['input']>;
   /** Put false if only SELL operation to get */
-  includeBuyOperation?: Scalars['Boolean'];
-  offset?: Scalars['Int'];
+  includeBuyOperation?: Scalars['Boolean']['input'];
+  offset?: Scalars['Int']['input'];
   /** Put false to order DESC */
-  orderAsc?: Scalars['Boolean'];
+  orderAsc?: Scalars['Boolean']['input'];
   orderType?: InvestmentAccountTransactionInputOrderType;
 };
 
@@ -333,18 +335,18 @@ export enum InvestmentAccountTransactionInputOrderType {
 export type InvestmentAccountTransactionOutput = {
   __typename?: 'InvestmentAccountTransactionOutput';
   /** Symbol ID -> AAPL, MSFT, BTC */
-  assetId: Scalars['String'];
+  assetId: Scalars['String']['output'];
   /** Date when entry was created */
-  createdAt: Scalars['DateTime'];
-  date: Scalars['String'];
+  createdAt: Scalars['DateTime']['output'];
+  date: Scalars['String']['output'];
   holdingType: InvestmentAccountHoldingType;
-  itemId: Scalars['String'];
-  return?: Maybe<Scalars['Float']>;
-  returnChange?: Maybe<Scalars['Float']>;
-  sector: Scalars['String'];
+  itemId: Scalars['String']['output'];
+  return?: Maybe<Scalars['Float']['output']>;
+  returnChange?: Maybe<Scalars['Float']['output']>;
+  sector: Scalars['String']['output'];
   type: InvestmentAccountHoldingHistoryType;
-  unitValue: Scalars['Float'];
-  units: Scalars['Float'];
+  unitValue: Scalars['Float']['output'];
+  units: Scalars['Float']['output'];
 };
 
 export type InvestmentAccountTransactionWrapperOutput = {
@@ -362,21 +364,21 @@ export type InvestmentAccountTransactionWrapperOutput = {
 export type LoggedUserOutput = {
   __typename?: 'LoggedUserOutput';
   /** Generated user's accessToken, encoded RequestUser */
-  accessToken: Scalars['String'];
+  accessToken: Scalars['String']['output'];
 };
 
 export type LoginForgotPasswordInput = {
-  email: Scalars['String'];
+  email: Scalars['String']['input'];
 };
 
 export type LoginUserInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  changePassword: Scalars['Boolean'];
+  changePassword: Scalars['Boolean']['output'];
   createInvestmentAccount: InvestmentAccount;
   createInvestmentAccountHolding: InvestmentAccountActiveHoldingOutputWrapper;
   createPersonalAccount: PersonalAccount;
@@ -393,11 +395,11 @@ export type Mutation = {
   editPersonalAccountDailyEntry: PersonalAccountDailyDataEditOutput;
   editPersonalAccountTag: PersonalAccountTag;
   /** Init user account with dummy data for a specific user */
-  initUserAccountWithDummyData: Scalars['Boolean'];
+  initUserAccountWithDummyData: Scalars['Boolean']['output'];
   loginBasic: LoggedUserOutput;
   registerBasic: LoggedUserOutput;
   removeAccount?: Maybe<User>;
-  resetPassword: Scalars['Boolean'];
+  resetPassword: Scalars['Boolean']['output'];
 };
 
 
@@ -457,7 +459,7 @@ export type MutationEditPersonalAccountTagArgs = {
 
 
 export type MutationInitUserAccountWithDummyDataArgs = {
-  input: Scalars['String'];
+  input: Scalars['String']['input'];
 };
 
 
@@ -480,15 +482,15 @@ export type PersonalAccount = {
   /** What account types it is */
   accountType: AccountType;
   /** Date time when account was created */
-  createdAt: Scalars['String'];
-  enabledBudgeting: Scalars['Boolean'];
-  id: Scalars['ID'];
+  createdAt: Scalars['String']['output'];
+  enabledBudgeting: Scalars['Boolean']['output'];
+  id: Scalars['ID']['output'];
   monthlyData: Array<PersonalAccountMonthlyData>;
   /** custom name for account */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   personalAccountTag: Array<PersonalAccountTag>;
   /** Reference to User.ID who created this account */
-  userId: Scalars['String'];
+  userId: Scalars['String']['output'];
   weeklyAggregation: Array<PersonalAccountWeeklyAggregationOutput>;
   yearlyAggregation: Array<PersonalAccountAggregationDataOutput>;
 };
@@ -496,27 +498,27 @@ export type PersonalAccount = {
 export type PersonalAccountAggregationDataOutput = {
   __typename?: 'PersonalAccountAggregationDataOutput';
   /** How many entries per personalAccountTagId per week there were */
-  entries: Scalars['Int'];
+  entries: Scalars['Int']['output'];
   /** Tag associated with entries */
   tag: PersonalAccountTag;
   /** Sum of values for a specific personalAccountTagId */
-  value: Scalars['Float'];
+  value: Scalars['Float']['output'];
 };
 
 export type PersonalAccountDailyDataCreate = {
   /** Date (past, current, future) to which assign this entry. Timezone difference for current date */
-  date: Scalars['String'];
+  date: Scalars['String']['input'];
   /** Description to daily data */
-  description?: Scalars['String'];
+  description?: Scalars['String']['input'];
   /** Which tag to associate this entry */
-  tagId: Scalars['String'];
+  tagId: Scalars['String']['input'];
   /** How much value (amount) shall be added to the account */
-  value: Scalars['Float'];
+  value: Scalars['Float']['input'];
 };
 
 export type PersonalAccountDailyDataDelete = {
-  dailyDataId: Scalars['String'];
-  monthlyDataId: Scalars['String'];
+  dailyDataId: Scalars['String']['input'];
+  monthlyDataId: Scalars['String']['input'];
 };
 
 export type PersonalAccountDailyDataEdit = {
@@ -536,109 +538,109 @@ export type PersonalAccountDailyDataEditOutput = {
 
 export type PersonalAccountDailyDataOutput = {
   __typename?: 'PersonalAccountDailyDataOutput';
-  date: Scalars['String'];
+  date: Scalars['String']['output'];
   /** Description to daily data */
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   /** Random ID to identify the entity */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Reference to PersonalAccountMonthlyData.id */
-  monthlyDataId: Scalars['String'];
+  monthlyDataId: Scalars['String']['output'];
   /** Reference to PersonalAccount.id */
-  personalAccountId: Scalars['String'];
+  personalAccountId: Scalars['String']['output'];
   /** Reference by PersonalAccountDailyData.tagId */
   tag: PersonalAccountTag;
   /** Reference to PersonalAccountTag.id */
-  tagId: Scalars['String'];
+  tagId: Scalars['String']['output'];
   /** Reference to User.id, person who has created the entry */
-  userId: Scalars['String'];
+  userId: Scalars['String']['output'];
   /** Money amount change for a tagId */
-  value: Scalars['Float'];
+  value: Scalars['Float']['output'];
   /** To which week in a year is this account change associated. Like 37 for "Week 37" */
-  week: Scalars['Int'];
+  week: Scalars['Int']['output'];
 };
 
 export type PersonalAccountDailyDataQuery = {
   /** Which year to query daily data */
-  month: Scalars['Int'];
+  month: Scalars['Int']['input'];
   /** Which year to query daily data */
-  year: Scalars['Int'];
+  year: Scalars['Int']['input'];
 };
 
 export type PersonalAccountEditInput = {
-  name: Scalars['String'];
+  name: Scalars['String']['input'];
 };
 
 export type PersonalAccountMonthlyData = {
   __typename?: 'PersonalAccountMonthlyData';
-  dailyEntries: Scalars['Int'];
-  id: Scalars['String'];
+  dailyEntries: Scalars['Int']['output'];
+  id: Scalars['String']['output'];
   /** To which month in a year is this account change associated. Like 8 for September */
-  month: Scalars['Int'];
-  monthlyExpense: Scalars['Float'];
-  monthlyIncome: Scalars['Float'];
+  month: Scalars['Int']['output'];
+  monthlyExpense: Scalars['Float']['output'];
+  monthlyIncome: Scalars['Float']['output'];
   /** Reference to PersonalAccount.id */
-  personalAccountId: Scalars['String'];
+  personalAccountId: Scalars['String']['output'];
   /** Id of user whose to belong this personal monthly data */
-  userId: Scalars['String'];
+  userId: Scalars['String']['output'];
   /** To which year is this account change associated. */
-  year: Scalars['Int'];
+  year: Scalars['Int']['output'];
 };
 
 export type PersonalAccountTag = {
   __typename?: 'PersonalAccountTag';
   /** Monthly budget for a tag */
-  budgetMonthly?: Maybe<Scalars['Float']>;
+  budgetMonthly?: Maybe<Scalars['Float']['output']>;
   /** Color of the tag */
-  color: Scalars['String'];
-  createdAt: Scalars['String'];
-  id: Scalars['ID'];
+  color: Scalars['String']['output'];
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
   /** URL to image */
-  imageUrl: Scalars['String'];
+  imageUrl: Scalars['String']['output'];
   /** Name of the tag */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   type: TagDataType;
   /** Reference to User.id, person who has created this personcal account tag. For detault tags this is null */
-  userId?: Maybe<Scalars['String']>;
+  userId?: Maybe<Scalars['String']['output']>;
 };
 
 export type PersonalAccountTagDataCreate = {
-  budgetMonthly: Scalars['Float'];
-  color: Scalars['String'];
-  imageUrl: Scalars['String'];
-  name: Scalars['String'];
+  budgetMonthly: Scalars['Float']['input'];
+  color: Scalars['String']['input'];
+  imageUrl: Scalars['String']['input'];
+  name: Scalars['String']['input'];
   type: TagDataType;
 };
 
 export type PersonalAccountTagDataDelete = {
   /** tag id */
-  id: Scalars['String'];
+  id: Scalars['String']['input'];
 };
 
 export type PersonalAccountTagDataEdit = {
-  budgetMonthly: Scalars['Float'];
-  color: Scalars['String'];
-  id: Scalars['String'];
-  imageUrl: Scalars['String'];
-  name: Scalars['String'];
+  budgetMonthly: Scalars['Float']['input'];
+  color: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  imageUrl: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type PersonalAccountWeeklyAggregationOutput = {
   __typename?: 'PersonalAccountWeeklyAggregationOutput';
   data: Array<PersonalAccountAggregationDataOutput>;
   /** Id = Year-Month-Week */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** To which month in a year is this account change associated. Like 8 for September */
-  month: Scalars['Int'];
+  month: Scalars['Int']['output'];
   /** To which week in a year is this account change associated. Like 37 for "Week 37" */
-  week: Scalars['Int'];
+  week: Scalars['Int']['output'];
   /** To which month in a year is this account change associated */
-  year: Scalars['Int'];
+  year: Scalars['Int']['output'];
 };
 
 export type Query = {
   __typename?: 'Query';
   /** Returns all available tag images */
-  getAllAvailableTagImages: Array<Scalars['String']>;
+  getAllAvailableTagImages: Array<Scalars['String']['output']>;
   getAssetGeneralForSymbol?: Maybe<AssetGeneral>;
   getAssetGeneralForSymbols: Array<AssetGeneral>;
   /** Historical price for an Asset */
@@ -664,8 +666,8 @@ export type Query = {
   /** Return by added transaction by same date key */
   getTransactionHistory: Array<InvestmentAccountTransactionOutput>;
   /** All asset symbols that were ever inside holdings, some transaction were made by them */
-  getTransactionSymbols: Array<Scalars['String']>;
-  healthCheck: Scalars['String'];
+  getTransactionSymbols: Array<Scalars['String']['output']>;
+  healthCheck: Scalars['String']['output'];
   /** Search asset based on symbol name */
   searchAssetBySymbol: Array<AssetGeneral>;
   /** Search asset based on symbol identification AAPL, BTC */
@@ -674,12 +676,12 @@ export type Query = {
 
 
 export type QueryGetAssetGeneralForSymbolArgs = {
-  input: Scalars['String'];
+  input: Scalars['String']['input'];
 };
 
 
 export type QueryGetAssetGeneralForSymbolsArgs = {
-  symbols: Array<Scalars['String']>;
+  symbols: Array<Scalars['String']['input']>;
 };
 
 
@@ -714,7 +716,7 @@ export type QueryGetTransactionHistoryArgs = {
 
 
 export type QuerySearchAssetBySymbolArgs = {
-  input: Scalars['String'];
+  input: Scalars['String']['input'];
 };
 
 
@@ -723,9 +725,9 @@ export type QuerySearchAssetBySymbolTickerPrefixArgs = {
 };
 
 export type RegisterUserInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-  passwordRepeat: Scalars['String'];
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  passwordRepeat: Scalars['String']['input'];
 };
 
 export enum TagDataType {
@@ -737,17 +739,17 @@ export type User = {
   __typename?: 'User';
   accountType: UserAccountType;
   authentication: UserAuthentication;
-  createdAt: Scalars['String'];
-  email: Scalars['String'];
-  id: Scalars['String'];
-  imageUrl?: Maybe<Scalars['String']>;
-  investmentAccountId?: Maybe<Scalars['String']>;
-  isAccountAdmin: Scalars['Boolean'];
-  isAccountTest: Scalars['Boolean'];
-  isAuthBasic: Scalars['Boolean'];
-  lastSingInDate: Scalars['String'];
-  personalAccountId?: Maybe<Scalars['String']>;
-  username: Scalars['String'];
+  createdAt: Scalars['String']['output'];
+  email: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  investmentAccountId?: Maybe<Scalars['String']['output']>;
+  isAccountAdmin: Scalars['Boolean']['output'];
+  isAccountTest: Scalars['Boolean']['output'];
+  isAuthBasic: Scalars['Boolean']['output'];
+  lastSingInDate: Scalars['String']['output'];
+  personalAccountId?: Maybe<Scalars['String']['output']>;
+  username: Scalars['String']['output'];
 };
 
 export enum UserAccountType {
@@ -784,7 +786,7 @@ export type GetAssetHistoricalPricesStartToEndQueryVariables = Exact<{
 export type GetAssetHistoricalPricesStartToEndQuery = { __typename?: 'Query', getAssetHistoricalPricesStartToEnd: { __typename?: 'AssetGeneralHistoricalPrices', id: string, dateStart: string, dateEnd: string, assetHistoricalPricesData: Array<{ __typename?: 'AssetGeneralHistoricalPricesData', date: string, close: number }> } };
 
 export type SearchAssetBySymbolQueryVariables = Exact<{
-  input: Scalars['String'];
+  input: Scalars['String']['input'];
 }>;
 
 
@@ -798,7 +800,7 @@ export type SearchAssetBySymbolTickerPrefixQueryVariables = Exact<{
 export type SearchAssetBySymbolTickerPrefixQuery = { __typename?: 'Query', searchAssetBySymbolTickerPrefix: Array<{ __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } }> };
 
 export type GetAssetGeneralForSymbolQueryVariables = Exact<{
-  input: Scalars['String'];
+  input: Scalars['String']['input'];
 }>;
 
 
@@ -823,7 +825,7 @@ export type InvestmentAccountOverviewFragment = { __typename?: 'InvestmentAccoun
 
 export type InvestmentAccountActiveHoldingOutputFragment = { __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, sectorImageUrl?: string | null, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } };
 
-export type InvestmentAccountDetailsFragment = { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType, cashChange: Array<{ __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string, imageUrl: string }>, activeHoldings: Array<{ __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, sectorImageUrl?: string | null, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } }> };
+export type InvestmentAccountDetailsFragment = { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType, activeHoldings: Array<{ __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, sectorImageUrl?: string | null, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } }> };
 
 export type InvestmentAccountGrowthFragment = { __typename?: 'InvestmentAccountGrowth', invested: number, date: number, ownedAssets: number };
 
@@ -832,7 +834,7 @@ export type InvestmentAccountTransactionOutputFragment = { __typename?: 'Investm
 export type GetInvestmentAccountByUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetInvestmentAccountByUserQuery = { __typename?: 'Query', getInvestmentAccountByUser?: { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType, cashChange: Array<{ __typename?: 'InvestmentAccountCashChange', itemId: string, cashValue: number, type: InvestmentAccountCashChangeType, date: string, imageUrl: string }>, activeHoldings: Array<{ __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, sectorImageUrl?: string | null, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } }> } | null };
+export type GetInvestmentAccountByUserQuery = { __typename?: 'Query', getInvestmentAccountByUser?: { __typename?: 'InvestmentAccount', id: string, name: string, createdAt: string, userId: string, accountType: AccountType, activeHoldings: Array<{ __typename?: 'InvestmentAccountActiveHoldingOutput', id: string, assetId: string, investmentAccountId: string, type: InvestmentAccountHoldingType, sector: string, sectorImageUrl?: string | null, units: number, totalValue: number, beakEvenPrice: number, assetGeneral: { __typename?: 'AssetGeneral', id: string, name: string, symbolImageURL?: string | null, assetIntoLastUpdate: any, assetQuote: { __typename?: 'AssetGeneralQuote', symbol: string, symbolImageURL?: string | null, name: string, price: number, changesPercentage: number, change: number, dayLow?: number | null, dayHigh?: number | null, volume: number, yearLow?: number | null, yearHigh?: number | null, marketCap: number, avgVolume?: number | null, sharesOutstanding?: number | null, timestamp: number, eps?: number | null, pe?: number | null, earningsAnnouncement?: string | null } } }> } | null };
 
 export type GetInvestmentAccountGrowthQueryVariables = Exact<{
   input: InvestmentAccountGrowthInput;
@@ -1050,6 +1052,15 @@ export const ChartSeriesFragmentDoc = gql`
   data
 }
     `;
+export const InvestmentAccountCashChangeFragmentDoc = gql`
+    fragment InvestmentAccountCashChange on InvestmentAccountCashChange {
+  itemId
+  cashValue
+  type
+  date
+  imageUrl
+}
+    `;
 export const InvestmentAccountHoldingHistoryFragmentDoc = gql`
     fragment InvestmentAccountHoldingHistory on InvestmentAccountHoldingHistory {
   itemId
@@ -1081,15 +1092,6 @@ export const InvestmentAccountOverviewFragmentDoc = gql`
   createdAt
   userId
   accountType
-}
-    `;
-export const InvestmentAccountCashChangeFragmentDoc = gql`
-    fragment InvestmentAccountCashChange on InvestmentAccountCashChange {
-  itemId
-  cashValue
-  type
-  date
-  imageUrl
 }
     `;
 export const AssetGeneralQuoteFragmentDoc = gql`
@@ -1144,15 +1146,11 @@ export const InvestmentAccountActiveHoldingOutputFragmentDoc = gql`
 export const InvestmentAccountDetailsFragmentDoc = gql`
     fragment InvestmentAccountDetails on InvestmentAccount {
   ...InvestmentAccountOverview
-  cashChange {
-    ...InvestmentAccountCashChange
-  }
   activeHoldings {
     ...InvestmentAccountActiveHoldingOutput
   }
 }
     ${InvestmentAccountOverviewFragmentDoc}
-${InvestmentAccountCashChangeFragmentDoc}
 ${InvestmentAccountActiveHoldingOutputFragmentDoc}`;
 export const InvestmentAccountGrowthFragmentDoc = gql`
     fragment InvestmentAccountGrowth on InvestmentAccountGrowth {

@@ -12,6 +12,7 @@ export enum INVESTMENT_ACCOUNT_HOLDING_ERROR {
 	MIN_UNIT_VALUE = 'Minimal unit amount for holdings is 0, can not be negative',
 	SELL_ERROR_NO_HOLDING = 'Unable to make SELL type operation not enough units',
 	UNABLE_TO_DELETE_HISTORY = 'Holding history is unable to be removed, you will have negative total units',
+	DATE_SOONER_THAN_API = 'Provided date is most likely sooner than the stock was listed on the market',
 }
 
 export enum INVESTMENT_ACCOUNT_CASH_CHANGE_ERROR {

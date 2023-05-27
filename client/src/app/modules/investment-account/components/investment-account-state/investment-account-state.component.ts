@@ -16,7 +16,6 @@ import { InvestmentAccountCalculatorService } from '../../services';
 	imports: [CommonModule, MatButtonModule, MatIconModule, PerceptageIncreaseDirective],
 })
 export class InvestmentAccountStateComponent implements OnInit {
-	@Output() cashChangeClickEmitter = new EventEmitter<void>();
 	@Output() addHoldingClickEmitter = new EventEmitter<void>();
 	@Input() set investmentAccount(account: InvestmentAccountFragmentExtended | null) {
 		if (!account) {
@@ -50,10 +49,6 @@ export class InvestmentAccountStateComponent implements OnInit {
 	constructor(private investmentAccountCalculatorService: InvestmentAccountCalculatorService) {}
 
 	ngOnInit(): void {}
-
-	onCashChangeClick(): void {
-		this.cashChangeClickEmitter.emit();
-	}
 
 	onAddHoldingClick(): void {
 		this.addHoldingClickEmitter.emit();

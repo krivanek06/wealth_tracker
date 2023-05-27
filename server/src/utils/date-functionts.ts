@@ -9,6 +9,7 @@ import {
 	getWeek,
 	getYear,
 	isBefore,
+	isSameDay,
 	isToday,
 	isWeekend,
 	startOfDay,
@@ -73,6 +74,12 @@ export class MomentServiceUtil {
 
 	static getTime(date: DateInput): number {
 		return getTime(new Date(date));
+	}
+
+	static isSameDay(first: DateInput, second: DateInput): boolean {
+		const firstDate = new Date(first);
+		const secondDate = new Date(second);
+		return isSameDay(firstDate, secondDate);
 	}
 
 	static isHoliday(date: DateInput): boolean {

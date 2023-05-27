@@ -1,9 +1,5 @@
 const IS_PROD = process.env.NODE_ENV === 'production';
 
-// Mongo DB
-const PROD_DATABASE_URL =
-	'mongodb+srv://krivanek:MMkkll1122@serverlessinstance0-tes.752cf.mongodb.net/wealth-tracker-test?retryWrites=true&w=majority';
-
 // Login
 const PROD_LOGIN_REDIRECT = 'https://spendmindful.com/dashboard';
 
@@ -25,8 +21,6 @@ const DEV_GOOGLE_CLIENT_SECRET = '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';
 const DEV_LOGIN_REDIRECT = 'http://localhost:4200/dashboard';
 
 const DEV_PORT = 3000;
-const DEV_DEV_DATABASE_URL =
-	'mongodb+srv://krivanek:MMkkll1122@serverlessinstance0-tes.752cf.mongodb.net/wealth-tracker-test?retryWrites=true&w=majority';
 
 // EXPORTED VARIABLES -----------------------
 // EXPORTED VARIABLES -----------------------
@@ -35,7 +29,6 @@ const DEV_DEV_DATABASE_URL =
 export const GOOGLE_CALLBACK = IS_PROD ? PROD_GOOGLE_CALLBACK : DEV_GOOGLE_CALLBACK;
 export const GOOGLE_CLIENT_ID = IS_PROD ? PROD_GOOGLE_CLIENT_ID : DEV_GOOGLE_CLIENT_ID;
 export const GOOGLE_CLIENT_SECRET = IS_PROD ? PROD_GOOGLE_CLIENT_SECRET : DEV_GOOGLE_CLIENT_SECRET;
-export const DATABASE_URL = IS_PROD ? PROD_DATABASE_URL : DEV_DEV_DATABASE_URL;
 export const LOGIN_REDIRECT = IS_PROD ? PROD_LOGIN_REDIRECT : DEV_LOGIN_REDIRECT;
 export const PORT = IS_PROD ? PROD_PORT : DEV_PORT;
 

@@ -96,7 +96,7 @@ export class InvestmentAccountHoldingService {
 		// check if closedValueApi.date match with input.date
 		if (!MomentServiceUtil.isSameDay(closedValueApi.date, input.holdingInputData.date)) {
 			throw new CustomGraphQlError(
-				`Date: ${input.holdingInputData.date} is sooner than ${closedValueApi.date} (IPO date)`,
+				`Symbol: ${input.symbol}, Date: ${input.holdingInputData.date} is sooner than ${closedValueApi.date} (IPO date)`,
 				HttpStatus.FORBIDDEN
 			);
 		}

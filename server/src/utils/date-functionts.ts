@@ -8,6 +8,7 @@ import {
 	getTime,
 	getWeek,
 	getYear,
+	isAfter,
 	isBefore,
 	isSameDay,
 	isToday,
@@ -66,6 +67,12 @@ export class MomentServiceUtil {
 		const firstDate = new Date(date);
 		const secondDate = new Date(dateToCompare);
 		return isBefore(firstDate, secondDate);
+	}
+
+	static isAfter(date: DateInput, dateToCompare: DateInput): boolean {
+		const firstDate = new Date(date);
+		const secondDate = new Date(dateToCompare);
+		return isAfter(firstDate, secondDate);
 	}
 
 	static isWeekend(date: DateInput): boolean {

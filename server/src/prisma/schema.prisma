@@ -1,6 +1,6 @@
 datasource db {
     provider = "mongodb"
-    url      = "mongodb+srv://krivanek:MMkkll1122@serverlessinstance0-tes.752cf.mongodb.net/wealth-tracker-test?retryWrites=true&w=majority"
+    url      = "mongodb+srv://krivanek:MMkkll1122@instance-spend-mindful.wdjbngs.mongodb.net/spend-mindful-prod?retryWrites=true&w=majority"
 }
 
 generator client {

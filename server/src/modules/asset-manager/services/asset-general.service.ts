@@ -108,7 +108,7 @@ export class AssetGeneralService {
 		symbol: string,
 		date: string
 	): Promise<AssetGeneralHistoricalPricesData> {
-		// check if today
+		// no historical data for today, return current price
 		if (MomentServiceUtil.isToday(date)) {
 			const assetsGeneral = await this.getAssetGeneralForSymbols([symbol]);
 			const assetQuote = assetsGeneral[0].assetQuote;
@@ -137,8 +137,12 @@ export class AssetGeneralService {
 		const historicalPrices = await this.refreshHistoricalPriceIntoDatabase(symbol, start, end);
 
 		// using >= because we may choose from weekend
-		const startIndex = historicalPrices.assetHistoricalPricesData.findIndex((d) => d.date >= start);
-		const endIndex = historicalPrices.assetHistoricalPricesData.findIndex((d) => d.date >= end);
+		const startIndex = historicalPrices.assetHistoricalPricesData.findIndex(
+			(d) => MomentServiceUtil.isAfter(d.date, start) || MomentServiceUtil.isSameDay(d.date, start)
+		);
+		const endIndex = historicalPrices.assetHistoricalPricesData.findIndex(
+			(d) => MomentServiceUtil.isAfter(d.date, end) || MomentServiceUtil.isSameDay(d.date, end)
+		);
 
 		// if end index not found, return until the end - can happen if we select today
 		const endIndexFixed = endIndex === -1 ? historicalPrices.assetHistoricalPricesData.length : endIndex;

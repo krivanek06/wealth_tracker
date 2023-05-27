@@ -26,6 +26,12 @@ export class AccountManagerPopulationService {
 	 * @param userId
 	 */
 	async initPersonalAccount(userId: string): Promise<void> {
+		const user = await this.userService.getUserById(userId);
+
+		if (!user) {
+			throw new Error(`User with id: ${userId} does not exist`);
+		}
+
 		console.log(`[Personal account]: initPersonalAccount, userId: ${userId}`);
 
 		// remove existing personal account
@@ -41,7 +47,7 @@ export class AccountManagerPopulationService {
 		console.log('[Personal account]: created new account');
 
 		// create a date range that goes back 4 months
-		const [startDate, endDate] = MomentServiceUtil.getDateRangeByDayDiff(80);
+		const [startDate, endDate] = MomentServiceUtil.getDateRangeByDayDiff(120);
 		const dayDiffs = MomentServiceUtil.getDifference(startDate, endDate, 'days');
 		console.log('[Personal account]: start entering data to DB');
 

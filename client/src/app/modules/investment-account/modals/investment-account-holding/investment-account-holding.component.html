@@ -1,7 +1,7 @@
 <app-dialog-close-header (dialogCloseEmitter)="onCancel()" title="Account Holdings"></app-dialog-close-header>
 
 <!-- action buttons -->
-<ng-container *ngIf="formGroup.controls.symbol.value">
+<ng-container *ngIf="!!data.activeHolding">
 	<app-action-buttons
 		(transactionShowChangeEmitter)="onTransactionShow()"
 		(transactionTypeChangeEmitter)="onTransactionTypeChange()"

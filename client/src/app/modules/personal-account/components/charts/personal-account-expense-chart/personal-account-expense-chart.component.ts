@@ -198,7 +198,6 @@ export class PersonalAccountExpenseChartComponent extends ChartConstructor imple
               <td style="color: ${that.series.color}; line-height: 26px">● ${that.series.name} </td>
               <td style="text-align: right">
                 <span style="color: var(--gray-light)">$${valueRounded}</span>
-                <span style="color: var(--gray-medium); ">USD</span>
               </td>
             </tr>
           `;

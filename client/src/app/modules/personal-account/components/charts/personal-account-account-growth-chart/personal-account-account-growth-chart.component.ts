@@ -211,7 +211,6 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 				      <span style="color: ${that.series.color}; line-height: 26px">● ${that.series.name} </span>
 				      <span style="text-align: right">
                 <span style="color: var(--gray-light); ">${sign}${valueRounded}</span>
-                <span style="color: var(--gray-medium); ">${sign ? 'USD' : ''}</span>
               </span>
 				    </div>
 				  `;

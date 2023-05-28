@@ -145,7 +145,7 @@ export class InvestmentAccountGrowthAssetsComponent extends ChartConstructor imp
 					},
 					{
 						type: 'column',
-						name: 'Total',
+						name: 'Balance',
 						data: [] as [number, number][],
 						yAxis: 0,
 						opacity: 0.55,

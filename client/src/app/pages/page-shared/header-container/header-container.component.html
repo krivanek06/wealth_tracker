@@ -8,7 +8,7 @@
 	<!-- right section -->
 	<div *ngIf="authenticatedUser$ | async as user; else chipSkeleton" class="flex items-center gap-4 max-sm:w-full">
 		<mat-chip-listbox aria-label="Authenticated user" class="max-sm:w-full">
-			<mat-chip [matMenuTriggerFor]="menu" class="h-12 p-5 max-sm:w-full">
+			<mat-chip [matMenuTriggerFor]="menu" class="h-12 p-5 max-sm:w-full min-w-[250px]">
 				<img appDefaultImg matChipAvatar [src]="user.imageUrl" alt="Authenticated user photo" class="h-7 w-7" />
 				{{user.username}}
 			</mat-chip>

@@ -67,6 +67,10 @@ table[mat-table] tbody tr td {
 	}
 }
 
-.light-theme .mdc-data-table__header-cell {
+.mdc-data-table__cell {
+	color: var(--gray-light) !important;
+}
+
+.mdc-data-table__header-cell {
 	color: var(--gray-medium) !important;
 }

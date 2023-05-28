@@ -18,7 +18,7 @@
 						<!-- asset symbol + type -->
 						<div class="flex flex-row gap-x-2">
 							<span class="flex items-center gap-1 text-wt-gray-light"> {{ row.assetId }} </span>
-							<span class="table-cell text-gray-500 lg:hidden">|</span>
+							<span class="table-cell text-wt-gray-medium lg:hidden">|</span>
 							<span
 								class="table-cell lg:hidden"
 								[ngClass]="{
@@ -30,7 +30,7 @@
 						</div>
 
 						<!-- date  -->
-						<div class="block text-sm text-gray-500 md:hidden">{{ row.date | date: 'dd.MM.yyyy' }}</div>
+						<div class="block text-sm text-wt-gray-medium md:hidden">{{ row.date | date: 'dd.MM.yyyy' }}</div>
 					</div>
 				</div>
 			</td>
@@ -127,7 +127,7 @@
 
 <!-- pagination -->
 <div *ngIf="dataSource.filteredData" class="flex items-center justify-end md:justify-between">
-	<div class="hidden pl-4 text-base text-gray-400 md:block">Results: {{dataSource.data.length}}</div>
+	<div class="hidden pl-4 text-base text-wt-gray-medium md:block">Results: {{dataSource.data.length}}</div>
 
 	<mat-paginator
 		appStylePaginator

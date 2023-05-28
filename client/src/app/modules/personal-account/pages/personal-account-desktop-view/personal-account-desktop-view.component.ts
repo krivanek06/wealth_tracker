@@ -18,8 +18,8 @@ import {
 	PersonalAccountActionButtonsComponent,
 	PersonalAccountDailyEntriesFilterComponent,
 	PersonalAccountDailyEntriesTableComponent,
+	PersonalAccountExpenseChartComponent,
 	PersonalAccountExpensesByTagComponent,
-	PersonalAccountTagSpendingChartComponent,
 } from '../../components';
 import { PersonalAccountDailyDataEntryModule, PersonalAccountTagManagerModalModule } from '../../modals';
 import { DateFormatterPipe } from '../../pipes';
@@ -37,7 +37,7 @@ enum ChartExpand {
 		PersonalAccountDesktopViewSkeletonComponent,
 		ValuePresentationButtonControlComponent,
 		ScrollWrapperModule,
-		PersonalAccountTagSpendingChartComponent,
+		PersonalAccountExpenseChartComponent,
 		ReactiveFormsModule,
 		PersonalAccountDailyEntriesTableComponent,
 		MatButtonModule,

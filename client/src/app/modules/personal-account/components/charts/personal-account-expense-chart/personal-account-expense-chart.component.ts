@@ -31,7 +31,7 @@ import { GenericChartSeries } from '../../../../../shared/models';
 	standalone: true,
 	imports: [CommonModule, HighchartsChartModule],
 })
-export class PersonalAccountTagSpendingChartComponent extends ChartConstructor implements OnInit, OnChanges {
+export class PersonalAccountExpenseChartComponent extends ChartConstructor implements OnInit, OnChanges {
 	@Input() categories!: string[] | null;
 
 	// contains [total growth, total income, total expense]
@@ -60,7 +60,7 @@ export class PersonalAccountTagSpendingChartComponent extends ChartConstructor i
 			return;
 		}
 
-		const filteredNames = ['Total', 'Income', 'Expense Entries'];
+		const filteredNames = ['Balance', 'Income', 'Expense Entries'];
 		this.chartOptions.series = [...this.accountOverviewChartData, ...this.expenseTagsChartData]
 			.filter((d) => !filteredNames.includes(d.name ?? ''))
 			.map((d, index) => {
@@ -74,7 +74,7 @@ export class PersonalAccountTagSpendingChartComponent extends ChartConstructor i
 					lineWidth: index === 0 || index === 2 ? 4 : 1,
 					visible: true, // d.name !== 'Income'
 					dataLabels: {
-						enabled: d.name === 'Total' || d.name === 'Expense',
+						enabled: d.name === 'Balance' || d.name === 'Expense',
 					},
 					stack: index === 0 ? 'Expense' : 'ExpenseByTag',
 					yAxis: index === 0 ? 0 : undefined,
@@ -190,7 +190,7 @@ export class PersonalAccountTagSpendingChartComponent extends ChartConstructor i
 					}
 
 					// add divider for better formatting
-					const addDivider = that.series.name === 'Expense' || that.series.name === 'Total';
+					const addDivider = that.series.name === 'Expense' || that.series.name === 'Balance';
 					const valueRounded = Math.round(value * 100) / 100;
 
 					const line = `
@@ -198,7 +198,6 @@ export class PersonalAccountTagSpendingChartComponent extends ChartConstructor i
               <td style="color: ${that.series.color}; line-height: 26px">● ${that.series.name} </td>
               <td style="text-align: right">
                 <span style="color: var(--gray-light)">$${valueRounded}</span>
-                <span style="color: var(--gray-medium); ">USD</span>
               </td>
             </tr>
           `;

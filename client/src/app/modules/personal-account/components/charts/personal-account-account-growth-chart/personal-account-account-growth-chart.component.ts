@@ -64,8 +64,8 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 		this.chartOptions.series = [...this.accountOverviewChartData].map((d, index) => {
 			return {
 				name: d.name,
-				type: d.name === 'Total' ? 'area' : d.name === 'Expense Entries' ? 'line' : 'column',
-				color: d.name === 'Total' ? ColorScheme.PRIMARY_VAR : d.color,
+				type: d.name === 'Balance' ? 'area' : d.name === 'Expense Entries' ? 'line' : 'column',
+				color: d.name === 'Balance' ? ColorScheme.PRIMARY_VAR : d.color,
 				data: d.data,
 				opacity: index === 0 ? 0.75 : 1,
 				lineWidth: index === 0 || index === 2 ? 4 : 2,
@@ -211,7 +211,6 @@ export class PersonalAccountAccountGrowthChartComponent extends ChartConstructor
 				      <span style="color: ${that.series.color}; line-height: 26px">● ${that.series.name} </span>
 				      <span style="text-align: right">
                 <span style="color: var(--gray-light); ">${sign}${valueRounded}</span>
-                <span style="color: var(--gray-medium); ">${sign ? 'USD' : ''}</span>
               </span>
 				    </div>
 				  `;

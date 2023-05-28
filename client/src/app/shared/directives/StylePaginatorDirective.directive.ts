@@ -43,11 +43,13 @@ export class StylePaginatorDirective implements OnInit, OnChanges, AfterViewInit
 		if (changes?.['appCustomLength']?.currentValue === null || changes?.['appCustomLength']?.currentValue === 0) {
 			this.removeButtons();
 		}
+
 		if (changes?.['appCustomLength']?.currentValue) {
 			const index = this.matPag.pageIndex ?? 0;
 			this.switchPage(index);
 			this.buildButtons();
 		}
+
 		if (changes?.['appCustomPageIndex']?.currentValue !== changes?.['appCustomPageIndex']?.previousValue) {
 			const index = this.appCustomPageIndex ?? 0;
 			this.switchPage(index);
@@ -72,10 +74,14 @@ export class StylePaginatorDirective implements OnInit, OnChanges, AfterViewInit
 			this.ren.setStyle(itemsPerPage, 'display', 'none');
 		}
 
-		// remove text '1 of N'
+		// add classes to 'page size' input
 		const howManyDisplayedEl = this.vr.element.nativeElement.querySelector('.mat-mdc-paginator-range-label');
 		if (howManyDisplayedEl) {
-			this.ren.setStyle(howManyDisplayedEl, 'display', 'none');
+			// this.ren.setStyle(howManyDisplayedEl, 'display', 'none');
+			this.ren.setStyle(howManyDisplayedEl, 'position', 'absolute');
+			this.ren.setStyle(howManyDisplayedEl, 'left', '0');
+			this.ren.addClass(howManyDisplayedEl, 'text-wt-gray-medium');
+			this.ren.addClass(howManyDisplayedEl, 'text-base');
 		}
 
 		// remove those arrows from html
@@ -105,6 +111,13 @@ export class StylePaginatorDirective implements OnInit, OnChanges, AfterViewInit
 		if (maxPages === 1) {
 			this.ren.setStyle(this.vr.element.nativeElement, 'display', 'none');
 			return;
+		}
+
+		// determine whether to show first bubble button that will navigate to the start
+		if (this.matPag.pageIndex - 2 > 0) {
+			const element = this.createDotsElement();
+			this.ren.insertBefore(actionContainer, this.createButton(0, this.matPag.pageIndex), nextPageNode);
+			this.ren.insertBefore(actionContainer, element, nextPageNode);
 		}
 
 		// display buttons

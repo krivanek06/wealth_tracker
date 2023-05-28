@@ -181,7 +181,7 @@ export class StylePaginatorDirective implements OnInit, OnChanges, AfterViewInit
 		this.ren.addClass(dotsEl, 'text-lg');
 		this.ren.addClass(dotsEl, 'mr-1');
 		this.ren.addClass(dotsEl, 'ml-1');
-		this.ren.addClass(dotsEl, 'text-gray-400');
+		this.ren.addClass(dotsEl, 'text-wt-gray-medium');
 
 		// append text to element
 		this.ren.appendChild(dotsEl, dotsText);

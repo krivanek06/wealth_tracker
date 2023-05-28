@@ -86,11 +86,9 @@ export class PersonalAccountTagManagerModalComponent implements OnInit {
 			.deletePersonalAccountTag(removeTag)
 			.pipe(
 				tap((result) => {
-					if (!result) {
-						DialogServiceUtil.showNotificationBar('Unable to perform removing operation on tag', 'error');
-						return;
+					if (result) {
+						DialogServiceUtil.showNotificationBar(`Tag ${removeTag.name} has been removed`, 'success');
 					}
-					DialogServiceUtil.showNotificationBar(`Tag ${removeTag.name} has been removed`, 'success');
 				})
 			)
 			.subscribe();

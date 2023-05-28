@@ -57,7 +57,7 @@ export class TagItemComponent implements OnInit {
 
 	sliderConfig: InputTypeSlider = {
 		min: 0,
-		max: 800,
+		max: 600,
 		step: 1,
 	};
 

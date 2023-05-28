@@ -117,7 +117,7 @@ export class PersonalAccountChartService {
 		}, [] as number[]);
 
 		const series: GenericChartSeries = {
-			name: 'Total',
+			name: 'Balance',
 			data: weeklyTotalSeries,
 			type: ChartType.line,
 		};

@@ -3,7 +3,6 @@ import { ActivatedRouteSnapshot, PreloadAllModules, Router, RouterModule, Routes
 import { AppComponent } from './app.component';
 import { TOP_LEVEL_NAV } from './core/models';
 import { AuthenticationFacadeService } from './core/services';
-import { WelcomeModule } from './pages/welcome/welcome.module';
 
 const routes: Routes = [
 	{
@@ -92,7 +91,6 @@ const routes: Routes = [
 
 @NgModule({
 	imports: [
-		WelcomeModule,
 		RouterModule.forRoot(routes, {
 			scrollPositionRestoration: 'enabled',
 			initialNavigation: 'enabledBlocking',

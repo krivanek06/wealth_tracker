@@ -10,6 +10,12 @@ mutation RegisterBasic($input: RegisterUserInput!) {
 	}
 }
 
+mutation SocialMediaLogin($input: LoginSocialInputClient!) {
+	socialMediaLogin(input: $input) {
+		...LoggedUserOutput
+	}
+}
+
 mutation ResetPassword($input: LoginForgotPasswordInput!) {
 	resetPassword(input: $input)
 }

@@ -5,7 +5,13 @@ import { RequestUser } from './authentication.dto';
 import { AuthenticationService } from './authentication.service';
 import { ReqUser } from './decorators';
 import { AuthorizationGuard } from './guards';
-import { ChangePasswordInput, LoginForgotPasswordInput, LoginUserInput, RegisterUserInput } from './inputs';
+import {
+	ChangePasswordInput,
+	LoginForgotPasswordInput,
+	LoginSocialInputClient,
+	LoginUserInput,
+	RegisterUserInput,
+} from './inputs';
 import { LoggedUserOutput } from './outputs';
 
 @Resolver()
@@ -24,6 +30,13 @@ export class AuthenticationResolver {
 	@Mutation(() => Boolean)
 	resetPassword(@Input() forgotPasswordInput: LoginForgotPasswordInput): Promise<boolean> {
 		return this.authenticationService.resetPassword(forgotPasswordInput);
+	}
+
+	@Mutation(() => LoggedUserOutput)
+	async socialMediaLogin(@Input() input: LoginSocialInputClient): Promise<LoggedUserOutput> {
+		const user = await this.authenticationService.loginSocial(input);
+		const userOutput = this.authenticationService.prepareLoggedUserOutput(user);
+		return userOutput;
 	}
 
 	@Mutation(() => LoggedUserOutput)

@@ -1,6 +1,6 @@
 ## Authentication
 
-Currectly are the following authentication processes supported
+Currently are the following authentication processes supported
 
 - Basic authentication
   - user send email & password

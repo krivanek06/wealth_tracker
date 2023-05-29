@@ -25,34 +25,12 @@ const routes: Routes = [
 						const tokenLocalStorage = authenticationFacadeService.getToken();
 
 						// save token
-						if (tokenLocalStorage) {
-							authenticationFacadeService.setAccessToken(tokenLocalStorage);
-							return true;
-						}
-
-						// get token from query param
-						const accessToken = route.queryParams?.['accessToken'];
-						console.log('client got token', accessToken);
-
-						if (!accessToken) {
+						if (!tokenLocalStorage) {
 							router.navigate([TOP_LEVEL_NAV.welcome]);
 							return false;
 						}
 
-						// save token
-						authenticationFacadeService.setAccessToken({
-							__typename: 'LoggedUserOutput',
-							accessToken,
-						});
-
-						// Remove query params
-						router.navigate([TOP_LEVEL_NAV.dashboard], {
-							queryParams: {
-								accessToken: null,
-							},
-							queryParamsHandling: 'merge',
-						});
-
+						authenticationFacadeService.setAccessToken(tokenLocalStorage);
 						return true;
 					},
 				],
@@ -69,7 +47,6 @@ const routes: Routes = [
 
 						// save token - don't go to welcome page
 						if (tokenLocalStorage) {
-							console.log('welcome', tokenLocalStorage);
 							authenticationFacadeService.setAccessToken(tokenLocalStorage);
 							router.navigate([TOP_LEVEL_NAV.dashboard]);
 							return false;

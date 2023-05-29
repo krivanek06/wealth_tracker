@@ -19,6 +19,11 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
+export enum Authentication_Providers {
+  BasicAuth = 'BASIC_AUTH',
+  Google = 'GOOGLE'
+}
+
 export type AccountIdentification = {
   __typename?: 'AccountIdentification';
   /** What account types it is */
@@ -371,6 +376,16 @@ export type LoginForgotPasswordInput = {
   email: Scalars['String']['input'];
 };
 
+export type LoginSocialInputClient = {
+  accessToken: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+  locale: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  picture: Scalars['String']['input'];
+  provider: Authentication_Providers;
+  verified_email: Scalars['Boolean']['input'];
+};
+
 export type LoginUserInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -400,6 +415,7 @@ export type Mutation = {
   registerBasic: LoggedUserOutput;
   removeAccount?: Maybe<User>;
   resetPassword: Scalars['Boolean']['output'];
+  socialMediaLogin: LoggedUserOutput;
 };
 
 
@@ -475,6 +491,11 @@ export type MutationRegisterBasicArgs = {
 
 export type MutationResetPasswordArgs = {
   input: LoginForgotPasswordInput;
+};
+
+
+export type MutationSocialMediaLoginArgs = {
+  input: LoginSocialInputClient;
 };
 
 export type PersonalAccount = {
@@ -996,6 +1017,13 @@ export type RegisterBasicMutationVariables = Exact<{
 
 
 export type RegisterBasicMutation = { __typename?: 'Mutation', registerBasic: { __typename?: 'LoggedUserOutput', accessToken: string } };
+
+export type SocialMediaLoginMutationVariables = Exact<{
+  input: LoginSocialInputClient;
+}>;
+
+
+export type SocialMediaLoginMutation = { __typename?: 'Mutation', socialMediaLogin: { __typename?: 'LoggedUserOutput', accessToken: string } };
 
 export type ResetPasswordMutationVariables = Exact<{
   input: LoginForgotPasswordInput;
@@ -1812,6 +1840,24 @@ export const RegisterBasicDocument = gql`
   })
   export class RegisterBasicGQL extends Apollo.Mutation<RegisterBasicMutation, RegisterBasicMutationVariables> {
     override document = RegisterBasicDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const SocialMediaLoginDocument = gql`
+    mutation SocialMediaLogin($input: LoginSocialInputClient!) {
+  socialMediaLogin(input: $input) {
+    ...LoggedUserOutput
+  }
+}
+    ${LoggedUserOutputFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class SocialMediaLoginGQL extends Apollo.Mutation<SocialMediaLoginMutation, SocialMediaLoginMutationVariables> {
+    override document = SocialMediaLoginDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

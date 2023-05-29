@@ -13,15 +13,7 @@
 			<!-- social media login -->
 			<h2 class="text-lg text-wt-primary-dark">Social Media Login</h2>
 			<mat-dialog-actions>
-				<a
-					mat-flat-button
-					[href]="loginGoogle"
-					(click)="toggleLoading()"
-					color="warn"
-					class="w-full text-center rounded-lg"
-				>
-					Google
-				</a>
+				<a mat-flat-button (click)="onGoogleAuth()" color="warn" class="w-full text-center rounded-lg"> Google </a>
 			</mat-dialog-actions>
 
 			<div class="my-4">

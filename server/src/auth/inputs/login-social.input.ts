@@ -1,5 +1,5 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql';
-import { MaxLength, MinLength } from 'class-validator';
+import { IsEmail, MaxLength, MinLength } from 'class-validator';
 
 export enum AUTHENTICATION_PROVIDERS {
 	BASIC_AUTH = 'BASIC_AUTH',
@@ -12,7 +12,7 @@ registerEnumType(AUTHENTICATION_PROVIDERS, {
 });
 
 @InputType()
-export class LoginSocialInput {
+export class LoginSocialInputClient {
 	@Field(() => String)
 	@MaxLength(500)
 	@MinLength(6)
@@ -20,4 +20,20 @@ export class LoginSocialInput {
 
 	@Field(() => AUTHENTICATION_PROVIDERS)
 	provider: AUTHENTICATION_PROVIDERS;
+
+	@Field(() => String)
+	@IsEmail()
+	email: string;
+
+	@Field(() => Boolean)
+	verified_email: boolean;
+
+	@Field(() => String)
+	name: string;
+
+	@Field(() => String)
+	locale: string;
+
+	@Field(() => String)
+	picture: string;
 }

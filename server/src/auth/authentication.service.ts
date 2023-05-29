@@ -2,7 +2,6 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthenticationType, User as UserClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { Profile } from 'passport-google-oauth20';
 import { JWT_SECRET } from '../environments';
 import { PrismaService } from '../prisma';
 import { MailConstructor, SendGridService } from '../providers/sendgrid';
@@ -12,7 +11,7 @@ import { AuthenticationUtil } from './authentication.util';
 import {
 	ChangePasswordInput,
 	LoginForgotPasswordInput,
-	LoginSocialInput,
+	LoginSocialInputClient,
 	LoginUserInput,
 	RegisterUserInput,
 } from './inputs';
@@ -98,12 +97,9 @@ export class AuthenticationService {
 		return user;
 	}
 
-	async loginSocial(profile: Profile, input: LoginSocialInput): Promise<UserClient> {
-		const { emails, photos, displayName } = profile;
-
+	async loginSocial(data: LoginSocialInputClient): Promise<UserClient> {
 		// load user from DB
-		const email = emails[0].value;
-		const user = await this.getUserByEmail(email);
+		const user = await this.getUserByEmail(data.email);
 
 		// if exists, return
 		if (user) {
@@ -114,12 +110,12 @@ export class AuthenticationService {
 		// register user
 		const newUser = await this.prismaService.user.create({
 			data: {
-				username: displayName,
-				email: email,
-				imageUrl: photos[0]?.value,
+				username: data.name,
+				email: data.email,
+				imageUrl: data.picture,
 				authentication: {
-					authenticationType: input.provider,
-					token: input.accessToken,
+					authenticationType: data.provider,
+					token: data.accessToken,
 				},
 			},
 		});

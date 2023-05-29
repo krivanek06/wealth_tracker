@@ -126,9 +126,7 @@
 </div>
 
 <!-- pagination -->
-<div *ngIf="dataSource.filteredData" class="flex items-center justify-end md:justify-between">
-	<div class="hidden pl-4 text-base text-wt-gray-medium md:block">Results: {{dataSource.data.length}}</div>
-
+<div *ngIf="dataSource.filteredData" class="mt-2">
 	<mat-paginator
 		appStylePaginator
 		showFirstLastButtons

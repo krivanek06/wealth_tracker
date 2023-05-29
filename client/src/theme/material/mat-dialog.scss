@@ -11,6 +11,10 @@
 	}
 }
 
+mat-dialog-content {
+	position: relative !important;
+}
+
 .mat-mdc-dialog-container .mdc-dialog__content {
 	color: var(--gray-light) !important;
 }

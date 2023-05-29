@@ -4,9 +4,9 @@ export const environment = {
 
 	backend_url: 'https://spend-mindful-graphql-6bhi5d4fdq-ew.a.run.app',
 	custom_graphql_backend_url: 'https://spend-mindful-graphql-6bhi5d4fdq-ew.a.run.app/graphql',
-	custom_graphql_backend_ws: 'wss://spend-mindful-graphql-6bhi5d4fdq-ew.a.run.app/graphql',,
+	custom_graphql_backend_ws: 'wss://spend-mindful-graphql-6bhi5d4fdq-ew.a.run.app/graphql',
 
-  authentication: {
+	authentication: {
 		web: {
 			appId: '921790580233-moqje7fjradeg9ccpugs4n28o19urhld.apps.googleusercontent.com',
 			redirectUrl: 'spendmindful.com',

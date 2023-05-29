@@ -37,7 +37,7 @@ button[mat-stroked-button] {
 	color: white !important;
 }
 
-@responsive {
+@layer utilities {
 	.g-button-size-lg {
 		min-width: 220px !important;
 		min-height: 50px !important;

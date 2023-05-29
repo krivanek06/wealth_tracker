@@ -17,11 +17,11 @@ export const environment = {
 		},
 		android: {
 			appId: '921790580233-3gaelif340qt6te9oo0l7pis0u6kkg8v.apps.googleusercontent.com',
-			redirectUrl: 'spendmindful.com',
+			redirectUrl: 'http://localhost:4200',
 		},
 		ios: {
 			appId: '',
-			redirectUrl: 'spendmindful.com',
+			redirectUrl: 'http://localhost:4200',
 		},
 	},
 };

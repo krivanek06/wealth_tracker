@@ -9,7 +9,7 @@ export const environment = {
 	authentication: {
 		web: {
 			appId: '921790580233-moqje7fjradeg9ccpugs4n28o19urhld.apps.googleusercontent.com',
-			redirectUrl: 'spendmindful.com',
+			redirectUrl: 'https://spendmindful.com',
 		},
 		android: {
 			appId: '921790580233-3gaelif340qt6te9oo0l7pis0u6kkg8v.apps.googleusercontent.com',

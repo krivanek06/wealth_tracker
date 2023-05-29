@@ -42,8 +42,24 @@ export class LoginModalComponent implements OnInit, OnDestroy {
 		this.watchForgotPasswordFormControl();
 	}
 
-	toggleLoading(): void {
-		this.loading = !this.loading;
+	onGoogleAuth(): void {
+		this.loading = true;
+		this.authenticationFacadeService
+			.loginSocialMedia()
+			.pipe(
+				tap(() => {
+					DialogServiceUtil.showNotificationBar(`You have been successfully logged in`, 'success');
+					this.dialogRef.close(true);
+					this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+				}),
+				catchError(() => {
+					DialogServiceUtil.showNotificationBar(`Authentication failed`, 'error');
+					this.loading = false;
+					return EMPTY;
+				}),
+				takeUntil(this.destroy$)
+			)
+			.subscribe();
 	}
 
 	onDemoLogin(): void {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
-import { catchError, EMPTY, map, Observable, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, from, map, Observable, switchMap, tap } from 'rxjs';
 import { AuthenticationApiService } from '../api';
 import {
 	ChangePasswordInput,
@@ -28,6 +28,15 @@ export class AuthenticationFacadeService extends StorageService<LoggedUserOutput
 
 	isAuthenticatedUserTestAccount(): boolean {
 		return this.authenticationApiService.authenticatedUser.accountType === UserAccountType.Test;
+	}
+
+	loginSocialMedia(): Observable<UserFragment> {
+		return from(this.authenticationApiService.openSocialMediaLogin()).pipe(
+			tap((res) => {
+				this.setAccessToken(res);
+			}),
+			switchMap((res) => this.authenticationApiService.getAuthenticatedUser())
+		);
 	}
 
 	loginUserBasic(input: LoginUserInput): Observable<UserFragment> {

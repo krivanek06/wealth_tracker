@@ -17,6 +17,7 @@ To deploy the app to GCP, follows these steps:
   - `ng build`
 - Copy new code into native projects
   - `npx cap copy`
+  - `npx cap sync android`
   - `npx cap update`
 - Open Android studio
   - `npx capacitor open android`

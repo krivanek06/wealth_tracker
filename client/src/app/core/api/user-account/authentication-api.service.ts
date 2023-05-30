@@ -68,52 +68,48 @@ export class AuthenticationApiService {
 	}
 
 	async openSocialMediaLogin(): Promise<LoggedUserOutput | null> {
-		try {
-			const response = await OAuth2Client.authenticate({
-				authorizationBaseUrl: 'https://accounts.google.com/o/oauth2/auth',
-				accessTokenEndpoint: 'https://www.googleapis.com/oauth2/v4/token',
-				scope: 'email profile',
-				resourceUrl: 'https://www.googleapis.com/userinfo/v2/me',
-				logsEnabled: true,
-				web: {
-					appId: environment.authentication.web.appId,
-					responseType: 'token', // implicit flow
-					accessTokenEndpoint: '', // clear the tokenEndpoint as we know that implicit flow gets the accessToken from the authorizationRequest
-					redirectUrl: environment.authentication.web.redirectUrl,
-					windowOptions: 'height=600,left=0,top=0',
-				},
-				android: {
-					appId: environment.authentication.android.appId,
-					responseType: 'code', // if you configured a android app in google dev console the value must be "code"
-					redirectUrl: environment.authentication.android.redirectUrl, // package name from google dev console
-				},
-				ios: {
-					appId: environment.authentication.ios.appId,
-					responseType: 'code', // if you configured a ios app in google dev console the value must be "code"
-					redirectUrl: environment.authentication.ios.redirectUrl, // Bundle ID from google dev console
-				},
-			});
+		const response = await OAuth2Client.authenticate({
+			authorizationBaseUrl: 'https://accounts.google.com/o/oauth2/auth',
+			accessTokenEndpoint: 'https://www.googleapis.com/oauth2/v4/token',
+			scope: 'email profile',
+			resourceUrl: 'https://www.googleapis.com/userinfo/v2/me',
+			logsEnabled: true,
+			web: {
+				appId: environment.authentication.web.appId,
+				responseType: 'token', // implicit flow
+				accessTokenEndpoint: '', // clear the tokenEndpoint as we know that implicit flow gets the accessToken from the authorizationRequest
+				redirectUrl: environment.authentication.web.redirectUrl,
+				windowOptions: 'height=600,left=0,top=0',
+			},
+			android: {
+				appId: environment.authentication.android.appId,
+				responseType: 'code', // if you configured a android app in google dev console the value must be "code"
+				redirectUrl: environment.authentication.android.redirectUrl, // package name from google dev console
+			},
+			ios: {
+				appId: environment.authentication.ios.appId,
+				responseType: 'code', // if you configured a ios app in google dev console the value must be "code"
+				redirectUrl: environment.authentication.ios.redirectUrl, // Bundle ID from google dev console
+			},
+		});
 
-			if (!response) {
-				return null;
-			}
-
-			const user = await firstValueFrom(
-				this.socialMediaLogin({
-					accessToken: response.access_token,
-					provider: Authentication_Providers.Google,
-					email: response.email,
-					locale: response.locale,
-					name: response.name,
-					picture: response.picture,
-					verified_email: response.verified_email,
-				})
-			);
-
-			return user.data?.socialMediaLogin ?? null;
-		} catch (e) {
+		if (!response) {
 			return null;
 		}
+
+		const user = await firstValueFrom(
+			this.socialMediaLogin({
+				accessToken: response.access_token,
+				provider: Authentication_Providers.Google,
+				email: response.email,
+				locale: response.locale,
+				name: response.name,
+				picture: response.picture,
+				verified_email: response.verified_email,
+			})
+		);
+
+		return user.data?.socialMediaLogin ?? null;
 	}
 
 	resetPassword(input: LoginForgotPasswordInput): Observable<FetchResult<ResetPasswordMutation>> {

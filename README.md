@@ -17,9 +17,13 @@ To deploy the app to GCP, follows these steps:
   - `ng build`
 - Copy new code into native projects
   - `npx cap copy`
+  - `npx cap sync android`
   - `npx cap update`
 - Open Android studio
   - `npx capacitor open android`
 - In `build.gradle` change
   - `versionCode`
   - `versionName`
+- Commands
+  - Fingerprint Debug: `keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android`
+  - Fingerprint Release: `keytool -keystore Documents/generated_keys/android_signature -list -v`

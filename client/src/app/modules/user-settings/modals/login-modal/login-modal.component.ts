@@ -42,7 +42,7 @@ export class LoginModalComponent implements OnInit, OnDestroy {
 		this.watchForgotPasswordFormControl();
 	}
 
-	onGoogleAuth(): void {
+	async onGoogleAuth() {
 		this.loading = true;
 		this.authenticationFacadeService
 			.loginSocialMedia()
@@ -52,8 +52,9 @@ export class LoginModalComponent implements OnInit, OnDestroy {
 					this.dialogRef.close(true);
 					this.router.navigate([TOP_LEVEL_NAV.dashboard]);
 				}),
-				catchError(() => {
+				catchError((e) => {
 					DialogServiceUtil.showNotificationBar(`Authentication failed`, 'error');
+					console.log(e);
 					this.loading = false;
 					return EMPTY;
 				}),

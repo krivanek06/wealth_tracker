@@ -1,6 +1,6 @@
 export const environment = {
 	production: true,
-	version: '1.0.14',
+	version: '1.0.16',
 
 	backend_url: 'https://spend-mindful-graphql-6bhi5d4fdq-ew.a.run.app',
 	custom_graphql_backend_url: 'https://spend-mindful-graphql-6bhi5d4fdq-ew.a.run.app/graphql',
@@ -12,7 +12,7 @@ export const environment = {
 			redirectUrl: 'https://spendmindful.com',
 		},
 		android: {
-			appId: '921790580233-3gaelif340qt6te9oo0l7pis0u6kkg8v.apps.googleusercontent.com',
+			appId: '921790580233-h9q200ai8rasvji94of6pvf2n91bav49.apps.googleusercontent.com',
 			redirectUrl: 'spendmindful.com',
 		},
 		ios: {

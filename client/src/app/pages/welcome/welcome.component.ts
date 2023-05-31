@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { Apollo } from 'apollo-angular';
 import { STORAGE_MAIN_KEY } from '../../core/models';
 import { PlatformService } from '../../core/services/platform.service';
@@ -32,6 +33,12 @@ export class WelcomeComponent implements OnInit {
 			// remove light theme
 			this.document.body.classList.remove('light-theme');
 		}
+
+		GoogleAuth.initialize({
+			clientId: environment.authentication.web.appId,
+			scopes: ['profile', 'email'],
+			grantOfflineAccess: true,
+		});
 
 		// start backend
 		this.http.get(`${environment.backend_url}/public/start`).subscribe((data) => {

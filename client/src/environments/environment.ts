@@ -12,7 +12,7 @@ export const environment = {
 
 	authentication: {
 		web: {
-			appId: '921790580233-i62eajkmv31d4p8610g3h16942vpq7a3.apps.googleusercontent.com',
+			appId: '921790580233-moqje7fjradeg9ccpugs4n28o19urhld.apps.googleusercontent.com',
 			redirectUrl: 'http://localhost:4200',
 		},
 		android: {

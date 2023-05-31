@@ -51,6 +51,11 @@ export class AccountManagerComponent {
 		this.router.navigate([TOP_LEVEL_NAV.dashboard, DASHBOARD_ROUTES_BY_TYPE[type]]);
 	}
 
+	onReloadClick(): void {
+		// resource: https://stackoverflow.com/questions/61725692/how-to-force-capacitor-app-to-reload-programmatically
+		document.location.href = 'index.html';
+	}
+
 	async onEdit(formData: AccountManagerEdit, type: AccountType): Promise<void> {
 		if (this.authenticationFacadeService.isAuthenticatedUserTestAccount()) {
 			DialogServiceUtil.showNotificationBar('Test User Authenticated - disabled editing account', 'error');

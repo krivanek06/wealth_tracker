@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, catchError, of } from 'rxjs';
 import { AccountManagerApiService } from '../../../core/api';
 import { AccountIdentificationFragment, UserFragment } from '../../../core/graphql';
 import { DASHBOARD_ROUTES, DASHBOARD_ROUTES_BY_TYPE, TOP_LEVEL_NAV } from '../../../core/models';
@@ -26,7 +26,12 @@ export class HeaderContainerComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.authenticatedUser$ = this.authenticationFacadeService.getAuthenticatedUser();
+		this.authenticatedUser$ = this.authenticationFacadeService.getAuthenticatedUser().pipe(
+			catchError(() => {
+				this.router.navigate([TOP_LEVEL_NAV.welcome]);
+				return of(null);
+			})
+		);
 		this.availableAccounts$ = this.managerAccountApiService.getAvailableAccounts();
 	}
 

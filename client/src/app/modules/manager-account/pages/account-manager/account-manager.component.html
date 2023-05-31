@@ -6,7 +6,7 @@
 		<app-theme-toggle></app-theme-toggle>
 	</div>
 
-	<ng-container *ngIf="authenticatedUser$ | async as authenticatedUser">
+	<ng-container *ngIf="authenticatedUser$ | async as authenticatedUser; else reloadSection">
 		<div *ngIf="authenticatedUser.accountType === UserAccountType.Test" class="mb-10 g-banner-default">
 			This is a demo account, multiple people may use this account at the same time
 		</div>
@@ -31,6 +31,17 @@
 		></app-account-manager-item>
 	</div>
 </section>
+
+<!-- error - reload section -->
+<ng-template #reloadSection>
+	<div class="pt-[20%] sm:pt-[12%]">
+		<div class="mb-4 g-banner-default">Click on below button if you received any server error to reload the app</div>
+		<button mat-stroked-button color="warn" type="button" (click)="onReloadClick()" class="w-full min-h-[50px]">
+			<mat-icon>refresh</mat-icon>
+			Reload App
+		</button>
+	</div>
+</ng-template>
 
 <!-- skeleton -->
 <ng-template #showSkeleton>

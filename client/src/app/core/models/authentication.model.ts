@@ -1,20 +1,17 @@
-export type GoogleAuthResponse = {
-	id: string;
+export interface IdToken {
+	iss: string;
+	azp: string;
+	aud: string;
+	sub: string;
 	email: string;
-	verified_email: boolean;
+	email_verified: boolean;
+	at_hash: string;
 	name: string;
+	picture: string;
 	given_name: string;
 	family_name: string;
-	picture: string;
 	locale: string;
-	authorization_response: {
-		state: string;
-		access_token: string;
-		token_type: string;
-		expires_in: string;
-		scope: string;
-		authuser: string;
-		prompt: string;
-	};
-	access_token: string;
-};
+	iat: number;
+	exp: number;
+	jti: string;
+}

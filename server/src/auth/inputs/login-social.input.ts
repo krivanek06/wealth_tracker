@@ -31,8 +31,10 @@ export class LoginSocialInputClient {
 	@Field(() => String)
 	name: string;
 
-	@Field(() => String)
-	locale: string;
+	@Field(() => String, {
+		nullable: true,
+	})
+	locale: string | null;
 
 	@Field(() => String)
 	picture: string;

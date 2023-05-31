@@ -54,6 +54,7 @@ export class LoginModalComponent implements OnInit, OnDestroy {
 				}),
 				catchError((e) => {
 					DialogServiceUtil.showNotificationBar(`Authentication failed`, 'error');
+					console.log(e);
 					this.loading = false;
 					return EMPTY;
 				}),

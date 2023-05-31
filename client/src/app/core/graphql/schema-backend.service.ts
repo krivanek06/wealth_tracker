@@ -379,7 +379,7 @@ export type LoginForgotPasswordInput = {
 export type LoginSocialInputClient = {
   accessToken: Scalars['String']['input'];
   email: Scalars['String']['input'];
-  locale: Scalars['String']['input'];
+  locale?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   picture: Scalars['String']['input'];
   provider: Authentication_Providers;

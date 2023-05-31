@@ -1,5 +1,6 @@
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 
 @Injectable({
 	providedIn: 'root',
@@ -16,5 +17,9 @@ export class PlatformService {
 
 	get isServer(): boolean {
 		return isPlatformServer(this.platformId);
+	}
+
+	get isPlatformWeb(): boolean {
+		return Capacitor.getPlatform() === 'web';
 	}
 }

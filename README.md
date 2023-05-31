@@ -24,3 +24,6 @@ To deploy the app to GCP, follows these steps:
 - In `build.gradle` change
   - `versionCode`
   - `versionName`
+- Commands
+  - Fingerprint Debug: `keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android`
+  - Fingerprint Release: `keytool -keystore Documents/generated_keys/android_signature -list -v`

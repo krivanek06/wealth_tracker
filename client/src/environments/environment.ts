@@ -9,21 +9,6 @@ export const environment = {
 	backend_url: 'http://localhost:3000',
 	custom_graphql_backend_url: 'http://localhost:3000/graphql',
 	custom_graphql_backend_ws: 'ws://localhost:3000/graphql',
-
-	authentication: {
-		web: {
-			appId: '921790580233-moqje7fjradeg9ccpugs4n28o19urhld.apps.googleusercontent.com',
-			redirectUrl: 'http://localhost:4200',
-		},
-		android: {
-			appId: '921790580233-3gaelif340qt6te9oo0l7pis0u6kkg8v.apps.googleusercontent.com',
-			redirectUrl: 'http://localhost:4200',
-		},
-		ios: {
-			appId: '',
-			redirectUrl: 'http://localhost:4200',
-		},
-	},
 };
 
 /*

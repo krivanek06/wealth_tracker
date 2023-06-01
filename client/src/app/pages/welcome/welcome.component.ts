@@ -34,11 +34,8 @@ export class WelcomeComponent implements OnInit {
 			this.document.body.classList.remove('light-theme');
 		}
 
-		GoogleAuth.initialize({
-			clientId: environment.authentication.web.appId,
-			scopes: ['profile', 'email'],
-			grantOfflineAccess: true,
-		});
+		// init google auth
+		GoogleAuth.initialize();
 
 		// start backend
 		this.http.get(`${environment.backend_url}/public/start`).subscribe((data) => {

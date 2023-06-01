@@ -2,34 +2,34 @@
 	*ngIf="availableAccounts$ | async as availableAccounts; else showSkeleton"
 	class="w-full md:w-8/12 mx-auto pt-[20%] sm:pt-[12%]"
 >
-	<div class="flex justify-center mb-10 sm:hidden">
-		<app-theme-toggle></app-theme-toggle>
-	</div>
-
 	<ng-container *ngIf="authenticatedUser$ | async as authenticatedUser; else reloadSection">
+		<div class="flex justify-center mb-10 sm:hidden">
+			<app-theme-toggle></app-theme-toggle>
+		</div>
+
 		<div *ngIf="authenticatedUser.accountType === UserAccountType.Test" class="mb-10 g-banner-default">
 			This is a demo account, multiple people may use this account at the same time
 		</div>
+
+		<!-- existing accounts -->
+		<div *ngFor="let account of availableAccounts" class="mb-12">
+			<app-account-manager-item
+				(editEmitter)="onEdit($event, account.accountType)"
+				(deleteEmitter)="onDelete(account.accountType)"
+				(clickedEmitter)="onClick(account.accountType)"
+				[accountData]="account"
+				[accountType]="account.accountType"
+			></app-account-manager-item>
+		</div>
+
+		<!-- not created accounts -->
+		<div *ngFor="let accountType of creatingAccounts$ | async" class="mb-12">
+			<app-account-manager-item
+				(createEmitter)="onCreate(accountType)"
+				[accountType]="accountType"
+			></app-account-manager-item>
+		</div>
 	</ng-container>
-
-	<!-- existing accounts -->
-	<div *ngFor="let account of availableAccounts" class="mb-12">
-		<app-account-manager-item
-			(editEmitter)="onEdit($event, account.accountType)"
-			(deleteEmitter)="onDelete(account.accountType)"
-			(clickedEmitter)="onClick(account.accountType)"
-			[accountData]="account"
-			[accountType]="account.accountType"
-		></app-account-manager-item>
-	</div>
-
-	<!-- not created accounts -->
-	<div *ngFor="let accountType of creatingAccounts$ | async" class="mb-12">
-		<app-account-manager-item
-			(createEmitter)="onCreate(accountType)"
-			[accountType]="accountType"
-		></app-account-manager-item>
-	</div>
 </section>
 
 <!-- error - reload section -->

@@ -83,7 +83,7 @@ export class AuthenticationApiService {
 					accessToken: user.authentication.accessToken,
 					provider: Authentication_Providers.Google,
 					email: user.email,
-					name: user.name,
+					name: `${user.givenName} ${user.familyName}`,
 					picture: user.imageUrl,
 					verified_email: idTokenDecoded?.email_verified ?? false,
 					locale: idTokenDecoded?.locale ?? null,

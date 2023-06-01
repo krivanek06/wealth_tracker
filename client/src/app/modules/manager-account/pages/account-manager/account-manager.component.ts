@@ -52,6 +52,8 @@ export class AccountManagerComponent {
 	}
 
 	onReloadClick(): void {
+		this.authenticationFacadeService.setAccessToken(null);
+		this.router.navigate([TOP_LEVEL_NAV.welcome]);
 		// resource: https://stackoverflow.com/questions/61725692/how-to-force-capacitor-app-to-reload-programmatically
 		document.location.href = 'index.html';
 	}

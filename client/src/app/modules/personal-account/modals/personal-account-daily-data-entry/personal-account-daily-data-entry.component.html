@@ -48,12 +48,12 @@
 		</div>
 	</mat-dialog-content>
 
-	<div class="my-4">
+	<div class="hidden my-4 sm:block">
 		<mat-divider></mat-divider>
 	</div>
 
 	<!-- action buttons -->
-	<mat-dialog-actions>
+	<mat-dialog-actions class="max-sm:mt-2">
 		<div class="g-mat-dialog-actions-full">
 			<button class="hidden sm:block" mat-stroked-button mat-dialog-close type="button">Cancel</button>
 			<button mat-stroked-button color="primary" type="submit" [disabled]="!formGroup.controls.value.value">

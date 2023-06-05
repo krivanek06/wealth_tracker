@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { EMPTY, Observable, catchError, first, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, catchError, first, of, switchMap, tap } from 'rxjs';
 import { PersonalAccountFacadeService } from '../../../../core/api';
 import {
 	PersonalAccountDailyDataCreate,
@@ -30,8 +30,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	TagDataType = TagDataType;
 
 	// booleans to show spinner
-	isSaving = false;
-	isRemoving = false;
+	showLoader$ = new BehaviorSubject<boolean>(false);
 
 	readonly formGroup = new FormGroup({
 		tagId: new FormControl<string | null>(null, { validators: [requiredValidator] }),
@@ -68,8 +67,9 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		if (!this.data.dailyData) {
 			throw new Error('PersonalAccountDailyDataEntryComponent, removing nonexisting item');
 		}
-		this.isRemoving = true;
+
 		DialogServiceUtil.showNotificationBar(`Operation sent to the server side`, 'notification');
+		this.showLoader$.next(true);
 
 		this.personalAccountFacadeService
 			.deletePersonalAccountDailyEntry({
@@ -83,7 +83,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 				tap(() => this.dialogRef.close()),
 				// client error message
 				catchError(() => {
-					this.isSaving = false;
+					this.showLoader$.next(false);
 					return EMPTY;
 				}),
 				// memory leak
@@ -100,7 +100,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			return;
 		}
 
-		this.isSaving = true;
+		this.showLoader$.next(true);
 
 		// decide if creating or editing
 		const editedDailyData = this.data.dailyData;
@@ -124,7 +124,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 				tap(() => this.dialogRef.close()),
 				// client error message
 				catchError(() => {
-					this.isSaving = false;
+					this.showLoader$.next(false);
 					return EMPTY;
 				}),
 				// memory leak

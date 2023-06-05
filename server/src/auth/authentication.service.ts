@@ -91,9 +91,6 @@ export class AuthenticationService {
 			throw new CustomGraphQlError(`Email or password is invalid`, HttpStatus.FORBIDDEN);
 		}
 
-		// update login time in DB
-		await this.updateUserLastLogin(user);
-
 		return user;
 	}
 
@@ -103,7 +100,6 @@ export class AuthenticationService {
 
 		// if exists, return
 		if (user) {
-			await this.updateUserLastLogin(user);
 			return user;
 		}
 
@@ -203,17 +199,6 @@ export class AuthenticationService {
 		return this.prismaService.user.findFirst({
 			where: {
 				email,
-			},
-		});
-	}
-
-	private async updateUserLastLogin({ id }: UserClient): Promise<void> {
-		await this.prismaService.user.update({
-			data: {
-				lastSingInDate: new Date(),
-			},
-			where: {
-				id,
 			},
 		});
 	}

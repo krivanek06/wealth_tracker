@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { ColorScheme } from '../../../../../core/models';
 import { ChartConstructor } from '../../../../../core/utils';
 import { GenericChartSeries } from '../../../../../shared/models';
 
@@ -67,7 +68,7 @@ export class PersonalAccountExpenseChartComponent extends ChartConstructor imple
 				return {
 					name: d.name,
 					type: d.type,
-					color: d.color,
+					color: d.name === 'Expense' ? ColorScheme.PRIMARY_VAR : d.color,
 					data: d.data,
 					//zIndex: index === 0 ? 100 : -1, // bring line chart into the front
 					opacity: index === 0 ? 1 : 0.75,

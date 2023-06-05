@@ -26,4 +26,15 @@ export class UserService {
 			return null;
 		}
 	}
+
+	updateUserLastLogin(id: string): Promise<User> {
+		return this.prisma.user.update({
+			data: {
+				lastSingInDate: new Date(),
+			},
+			where: {
+				id,
+			},
+		});
+	}
 }

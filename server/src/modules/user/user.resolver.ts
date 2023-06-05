@@ -15,7 +15,7 @@ export class UserResolver {
 		description: 'Return authenticated user based on header information',
 	})
 	getAuthenticatedUser(@ReqUser() authUser: RequestUser): Promise<User> {
-		return this.userService.getUserById(authUser.id);
+		return this.userService.updateUserLastLogin(authUser.id);
 	}
 
 	@Mutation(() => User, {

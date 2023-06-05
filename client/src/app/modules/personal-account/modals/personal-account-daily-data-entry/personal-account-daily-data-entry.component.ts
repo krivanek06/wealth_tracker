@@ -9,6 +9,7 @@ import {
 	PersonalAccountTagFragment,
 	TagDataType,
 } from '../../../../core/graphql';
+import { Confirmable } from '../../../../shared/decorators';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
 import {
 	InputSourceWrapper,
@@ -63,6 +64,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		this.dialogRef.close();
 	}
 
+	@Confirmable('Confirm removing item')
 	onRemove(): void {
 		if (!this.data.dailyData) {
 			throw new Error('PersonalAccountDailyDataEntryComponent, removing nonexisting item');

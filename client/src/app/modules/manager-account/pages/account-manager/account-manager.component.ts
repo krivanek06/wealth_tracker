@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, firstValueFrom, map } from 'rxjs';
+import { Observable, catchError, firstValueFrom, map, of } from 'rxjs';
 import { TOP_LEVEL_NAV } from 'src/app/core/models';
 import { Confirmable } from 'src/app/shared/decorators';
 import {
@@ -22,6 +22,7 @@ import { AuthenticationFacadeService } from './../../../../core/services';
 })
 export class AccountManagerComponent {
 	authenticatedUser$!: Observable<UserFragment>;
+	userLoadingError$!: Observable<boolean>;
 
 	availableAccounts$!: Observable<AccountIdentificationFragment[]>;
 	creatingAccounts$!: Observable<AccountType[]>;
@@ -40,6 +41,12 @@ export class AccountManagerComponent {
 	ngOnInit(): void {
 		this.authenticatedUser$ = this.authenticationFacadeService.getAuthenticatedUser();
 		this.availableAccounts$ = this.managerAccountApiService.getAvailableAccounts();
+		this.userLoadingError$ = this.authenticationFacadeService.getAuthenticatedUser().pipe(
+			map(() => false),
+			catchError(() => of(true))
+		);
+
+		this.userLoadingError$.subscribe(console.log);
 
 		this.creatingAccounts$ = this.availableAccounts$.pipe(
 			map((accounts) => accounts.map((d) => d.accountType)),

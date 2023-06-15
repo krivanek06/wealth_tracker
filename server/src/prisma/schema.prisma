@@ -1,6 +1,6 @@
 datasource db {
     provider = "mongodb"
-    url      = "mongodb+srv://krivanek:MMkkll1122@instance-spend-mindful.wdjbngs.mongodb.net/spend-mindful-prod?retryWrites=true&w=majority"
+    url      = ""
 }
 
 generator client {

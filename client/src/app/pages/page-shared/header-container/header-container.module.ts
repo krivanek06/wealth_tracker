@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { LoginModalModule, UserProfileModalModule } from '../../../modules/user-settings';
 import { DefaultImgDirective } from '../../../shared/directives';
+import { ThemeToggleComponent } from './../../../shared/components/theme-toggle/theme-toggle.component';
 import { HeaderContainerComponent } from './header-container.component';
 @NgModule({
 	declarations: [HeaderContainerComponent],
@@ -22,6 +23,7 @@ import { HeaderContainerComponent } from './header-container.component';
 		MatMenuModule,
 		UserProfileModalModule,
 		MatDividerModule,
+		ThemeToggleComponent,
 	],
 	exports: [HeaderContainerComponent],
 })

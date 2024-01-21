@@ -42,9 +42,9 @@ export class PersonalAccountFacadeService {
 			.pipe(filter((data): data is PersonalAccountDetailsFragment => !!data));
 	}
 
-	getPersonalAccountTagFromCache(tagId: string): PersonalAccountTagFragment | null {
-		return this.personalAccountCacheService.getPersonalAccountTagFromCache(tagId);
-	}
+	// getPersonalAccountTagFromCache(tagId: string): PersonalAccountTagFragment | null {
+	// 	return this.personalAccountCacheService.getPersonalAccountTagFromCache(tagId);
+	// }
 
 	// createPersonalAccount(): Observable<PersonalAccountOverviewFragment | null> {
 	// 	return this.personalAccountApiService.createPersonalAccount().pipe(

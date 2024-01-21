@@ -8,8 +8,6 @@ import {
 	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountDailyDataQuery,
 	PersonalAccountDetailsFragment,
-	PersonalAccountTagFragment,
-	PersonalAccountTagFragmentDoc,
 } from '../../graphql';
 
 @Injectable({
@@ -47,14 +45,14 @@ export class PersonalAccountCacheService {
 		});
 	}
 
-	getPersonalAccountTagFromCache(tagId: string): PersonalAccountTagFragment | null {
-		const fragment = this.apollo.client.readFragment<PersonalAccountTagFragment>({
-			id: `PersonalAccountTag:${tagId}`,
-			fragmentName: 'PersonalAccountTag',
-			fragment: PersonalAccountTagFragmentDoc,
-		});
-		return fragment;
-	}
+	// getPersonalAccountTagFromCache(tagId: string): PersonalAccountTagFragment | null {
+	// 	const fragment = this.apollo.client.readFragment<PersonalAccountTagFragment>({
+	// 		id: `PersonalAccountTag:${tagId}`,
+	// 		fragmentName: 'PersonalAccountTag',
+	// 		fragment: PersonalAccountTagFragmentDoc,
+	// 	});
+	// 	return fragment;
+	// }
 
 	getPersonalAccountDetails(): PersonalAccountDetailsFragment {
 		const fragment = this.apollo.client.readQuery<GetPersonalAccountByUserQuery>({
@@ -87,10 +85,10 @@ export class PersonalAccountCacheService {
 		this.apollo.client.cache.gc();
 	}
 
-	removePersonalAccountFromCache(accountId: string): void {
-		this.apollo.client.cache.evict({ id: `PersonalAccount:${accountId}` });
-		this.apollo.client.cache.gc();
-	}
+	// removePersonalAccountFromCache(accountId: string): void {
+	// 	this.apollo.client.cache.evict({ id: `PersonalAccount:${accountId}` });
+	// 	this.apollo.client.cache.gc();
+	// }
 
 	removePersonalAccountTagFromCache(tagId: string): void {
 		this.apollo.client.cache.evict({ id: `PersonalAccountTag:${tagId}` });
@@ -103,7 +101,7 @@ export class PersonalAccountCacheService {
 		});
 	}
 
-	removeDailyDataQuery(): void {
-		this.apollo.client.cache.evict({ id: 'ROOT_QUERY', fieldName: 'getPersonalAccountDailyData' });
-	}
+	// removeDailyDataQuery(): void {
+	// 	this.apollo.client.cache.evict({ id: 'ROOT_QUERY', fieldName: 'getPersonalAccountDailyData' });
+	// }
 }

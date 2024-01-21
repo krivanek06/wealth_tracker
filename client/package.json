@@ -42,6 +42,7 @@
     "highcharts": "^11.3.0",
     "highcharts-angular": "^4.0.0",
     "inquirer-autocomplete-prompt": "^3.0.1",
+    "rxfire": "^6.0.5",
     "rxjs": "~7.8.1",
     "subscriptions-transport-ws": "^0.11.0",
     "zone.js": "~0.14.3"

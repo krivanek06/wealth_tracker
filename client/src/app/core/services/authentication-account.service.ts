@@ -11,25 +11,44 @@ import {
 	signInWithPopup,
 	updatePassword,
 } from '@angular/fire/auth';
-import { Firestore } from '@angular/fire/firestore';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { LoginUserInput, RegisterUserInput } from '../models/authentication.model';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class AuthenticationAccountService {
-	private firestore = inject(Firestore);
 	private auth = inject(Auth);
+	private authUser$ = new BehaviorSubject<User | null>(null);
 
 	constructor() {
 		this.auth.onAuthStateChanged((user) => {
 			console.log('Auth change', user);
+			this.authUser$.next(user);
 		});
+	}
+
+	get isUserNew(): boolean {
+		if (!this.currentUser) {
+			return false;
+		}
+		return this.currentUser.metadata.creationTime == this.currentUser.metadata.lastSignInTime;
 	}
 
 	get currentUser(): User | null {
 		return this.auth.currentUser;
 	}
+
+	getAuthUser(): Observable<User | null> {
+		return this.authUser$.asObservable();
+	}
+
+	// get currentUserAuth(): User {
+	//   if(!this.currentUser) {
+	//     throw new Error('User is not authenticated');
+	//   }
+	//   return this.currentUser;
+	// }
 
 	signIn(input: LoginUserInput): Promise<UserCredential> {
 		return signInWithEmailAndPassword(this.auth, input.email, input.password);
@@ -76,15 +95,6 @@ export class AuthenticationAccountService {
 			console.error(error);
 			throw new Error('Password change failed');
 		}
-	}
-
-	changePhotoUrl(photoURL: string): void {
-		// this.updateUser(this.currentUserData.id, {
-		//   personal: {
-		//     ...this.currentUserData.personal,
-		//     photoURL,
-		//   },
-		// });
 	}
 
 	async deleteAccount(): Promise<void> {

@@ -8,13 +8,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { DialogCloseHeaderComponent, FormMatInputWrapperModule } from '../../../../shared/components';
-import { FormForgotPasswordComponent } from './form-forgot-password/form-forgot-password.component';
 import { FormLoginComponent } from './form-login/form-login.component';
 import { FormRegisterComponent } from './form-register/form-register.component';
 import { LoginModalComponent } from './login-modal.component';
 
 @NgModule({
-	declarations: [LoginModalComponent, FormRegisterComponent, FormLoginComponent, FormForgotPasswordComponent],
+	declarations: [LoginModalComponent, FormRegisterComponent, FormLoginComponent],
 	imports: [
 		CommonModule,
 		MatDialogModule,

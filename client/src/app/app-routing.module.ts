@@ -2,7 +2,7 @@ import { NgModule, inject } from '@angular/core';
 import { ActivatedRouteSnapshot, PreloadAllModules, Router, RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { TOP_LEVEL_NAV } from './core/models';
-import { AuthenticationFacadeService } from './core/services';
+import { AuthenticationAccountService } from './core/services';
 
 const routes: Routes = [
 	{
@@ -18,19 +18,15 @@ const routes: Routes = [
 				path: TOP_LEVEL_NAV.dashboard,
 				canActivate: [
 					(route: ActivatedRouteSnapshot) => {
-						const authenticationFacadeService = inject(AuthenticationFacadeService);
+						const authenticationFacadeService = inject(AuthenticationAccountService);
 						const router = inject(Router);
 
-						// token is in local storage
-						const tokenLocalStorage = authenticationFacadeService.getToken();
-
 						// save token
-						if (!tokenLocalStorage) {
+						if (!authenticationFacadeService.currentUser) {
 							router.navigate([TOP_LEVEL_NAV.welcome]);
 							return false;
 						}
 
-						authenticationFacadeService.setAccessToken(tokenLocalStorage);
 						return true;
 					},
 				],
@@ -38,24 +34,6 @@ const routes: Routes = [
 			},
 			{
 				path: TOP_LEVEL_NAV.welcome,
-				canActivate: [
-					() => {
-						const authenticationFacadeService = inject(AuthenticationFacadeService);
-						const router = inject(Router);
-
-						const tokenLocalStorage = authenticationFacadeService.getToken();
-
-						// save token - don't go to welcome page
-						if (tokenLocalStorage) {
-							authenticationFacadeService.setAccessToken(tokenLocalStorage);
-							router.navigate([TOP_LEVEL_NAV.dashboard]);
-							return false;
-						}
-
-						// go to welcome page
-						return true;
-					},
-				],
 				loadChildren: () => import('./pages/welcome/welcome.module').then((m) => m.WelcomeModule),
 			},
 			{

@@ -1,17 +1,8 @@
-export interface IdToken {
-	iss: string;
-	azp: string;
-	aud: string;
-	sub: string;
+export type LoginUserInput = {
 	email: string;
-	email_verified: boolean;
-	at_hash: string;
-	name: string;
-	picture: string;
-	given_name: string;
-	family_name: string;
-	locale: string;
-	iat: number;
-	exp: number;
-	jti: string;
-}
+	password: string;
+};
+
+export type RegisterUserInput = LoginUserInput & {
+	passwordRepeat: string;
+};

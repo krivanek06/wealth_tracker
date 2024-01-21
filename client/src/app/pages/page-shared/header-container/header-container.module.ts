@@ -6,7 +6,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { LoginModalModule, UserProfileModalModule } from '../../../modules/user-settings';
+import { LoginModalModule } from '../../../modules/user-settings';
 import { DefaultImgDirective } from '../../../shared/directives';
 import { ThemeToggleComponent } from './../../../shared/components/theme-toggle/theme-toggle.component';
 import { HeaderContainerComponent } from './header-container.component';
@@ -21,7 +21,6 @@ import { HeaderContainerComponent } from './header-container.component';
 		MatChipsModule,
 		DefaultImgDirective,
 		MatMenuModule,
-		UserProfileModalModule,
 		MatDividerModule,
 		ThemeToggleComponent,
 	],

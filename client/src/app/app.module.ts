@@ -10,6 +10,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GraphQLModule } from './core/graphql';
 import { DialogServiceModule } from './shared/dialogs';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 @NgModule({
 	declarations: [AppComponent],
@@ -29,6 +32,9 @@ import { DialogServiceModule } from './shared/dialogs';
 			// or after 30 seconds (whichever comes first).
 			registrationStrategy: 'registerImmediately',
 		}),
+  provideFirebaseApp(() => initializeApp({"projectId":"wealth-tracker-d2757","appId":"1:721049469654:web:cc1d0e3ccff91180607f77","storageBucket":"wealth-tracker-d2757.appspot.com","apiKey":"AIzaSyCF5EIL2kMhlvJAR7a6qJTXUi3tTmOoA8M","authDomain":"wealth-tracker-d2757.firebaseapp.com","messagingSenderId":"721049469654","measurementId":"G-CM0D3TJEXS"})),
+  provideAuth(() => getAuth()),
+  provideFirestore(() => getFirestore()),
 	],
 	providers: [{ provide: APP_ID, useValue: 'serverApp' }],
 	bootstrap: [AppComponent],

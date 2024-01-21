@@ -1,17 +1,12 @@
 import { Injectable } from '@angular/core';
-import { FetchResult } from '@apollo/client/core';
 import { filter, map, Observable, tap } from 'rxjs';
 import {
-	AccountType,
-	EditPersonalAccountMutation,
 	PersonalAccountDailyDataCreate,
 	PersonalAccountDailyDataDelete,
 	PersonalAccountDailyDataEdit,
 	PersonalAccountDailyDataEditOutput,
 	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountDetailsFragment,
-	PersonalAccountEditInput,
-	PersonalAccountOverviewFragment,
 	PersonalAccountTag,
 	PersonalAccountTagDataCreate,
 	PersonalAccountTagDataEdit,
@@ -19,7 +14,6 @@ import {
 	TagDataType,
 } from '../../graphql';
 import { DateServiceUtil } from '../../utils/date-service.util';
-import { AccountManagerCacheService } from '../account-manager';
 import { PersonalAccountApiService } from './personal-account-api.service';
 import { PersonalAccountCacheService } from './personal-account-cache.service';
 import { PersonalAccountDataAggregatorService } from './personal-account-data-aggregator.service';
@@ -31,8 +25,7 @@ export class PersonalAccountFacadeService {
 	constructor(
 		private personalAccountApiService: PersonalAccountApiService,
 		private personalAccountDataAggregatorService: PersonalAccountDataAggregatorService,
-		private personalAccountCacheService: PersonalAccountCacheService,
-		private accountManagerCacheService: AccountManagerCacheService
+		private personalAccountCacheService: PersonalAccountCacheService
 	) {}
 
 	get personalAccountDetailsByUser(): PersonalAccountDetailsFragment {
@@ -53,41 +46,41 @@ export class PersonalAccountFacadeService {
 		return this.personalAccountCacheService.getPersonalAccountTagFromCache(tagId);
 	}
 
-	createPersonalAccount(): Observable<PersonalAccountOverviewFragment | null> {
-		return this.personalAccountApiService.createPersonalAccount().pipe(
-			tap((result) => {
-				if (!result) {
-					return;
-				}
+	// createPersonalAccount(): Observable<PersonalAccountOverviewFragment | null> {
+	// 	return this.personalAccountApiService.createPersonalAccount().pipe(
+	// 		tap((result) => {
+	// 			if (!result) {
+	// 				return;
+	// 			}
 
-				// update cache
-				this.accountManagerCacheService.createAccountType(result);
-			})
-		);
-	}
+	// 			// update cache
+	// 			this.accountManagerCacheService.createAccountType(result);
+	// 		})
+	// 	);
+	// }
 
-	editPersonalAccount(input: PersonalAccountEditInput): Observable<FetchResult<EditPersonalAccountMutation>> {
-		return this.personalAccountApiService.editPersonalAccount(input).pipe(
-			tap(() => {
-				this.accountManagerCacheService.renameAccountType(input.name, AccountType.Personal);
-			})
-		);
-	}
+	// editPersonalAccount(input: PersonalAccountEditInput): Observable<FetchResult<EditPersonalAccountMutation>> {
+	// 	return this.personalAccountApiService.editPersonalAccount(input).pipe(
+	// 		tap(() => {
+	// 			this.accountManagerCacheService.renameAccountType(input.name, AccountType.Personal);
+	// 		})
+	// 	);
+	// }
 
-	deletePersonalAccount(): Observable<PersonalAccountOverviewFragment | undefined> {
-		return this.personalAccountApiService.deletePersonalAccount().pipe(
-			tap((personalAccount) => {
-				if (personalAccount) {
-					// remove account type from cache
-					this.accountManagerCacheService.removeAccountType(AccountType.Personal);
-					// remove personal account from cache
-					this.personalAccountCacheService.removePersonalAccountFromCache(personalAccount.id);
-					// remove daily data from cache
-					this.personalAccountCacheService.removeDailyDataQuery();
-				}
-			})
-		);
-	}
+	// deletePersonalAccount(): Observable<PersonalAccountOverviewFragment | undefined> {
+	// 	return this.personalAccountApiService.deletePersonalAccount().pipe(
+	// 		tap((personalAccount) => {
+	// 			if (personalAccount) {
+	// 				// remove account type from cache
+	// 				this.accountManagerCacheService.removeAccountType(AccountType.Personal);
+	// 				// remove personal account from cache
+	// 				this.personalAccountCacheService.removePersonalAccountFromCache(personalAccount.id);
+	// 				// remove daily data from cache
+	// 				this.personalAccountCacheService.removeDailyDataQuery();
+	// 			}
+	// 		})
+	// 	);
+	// }
 
 	getPersonalAccountTags(): Observable<PersonalAccountTag[]> {
 		return this.getPersonalAccountDetailsByUser().pipe(map((account) => account?.personalAccountTag ?? []));

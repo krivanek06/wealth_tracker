@@ -1,12 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { EMPTY, Subject, catchError, filter, switchMap, takeUntil, tap } from 'rxjs';
-import { LoginForgotPasswordInput, LoginUserInput, RegisterUserInput } from '../../../../core/graphql';
+import { EMPTY, catchError, filter, from, switchMap, take, tap } from 'rxjs';
+import { LoginUserInput, RegisterUserInput } from '../../../../core/graphql';
 import { TEST_USER_EMAIL, TEST_USER_PASSWORD, TOP_LEVEL_NAV } from '../../../../core/models';
-import { AuthenticationFacadeService } from '../../../../core/services';
-import { environment } from './../../../../../environments/environment';
+import { AuthenticationAccountService } from '../../../../core/services';
 import { DialogServiceUtil } from './../../../../shared/dialogs';
 
 @Component({
@@ -15,53 +15,40 @@ import { DialogServiceUtil } from './../../../../shared/dialogs';
 	styleUrls: ['./login-modal.component.scss'],
 	//changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginModalComponent implements OnInit, OnDestroy {
+export class LoginModalComponent {
 	loginUserInputControl = new FormControl<LoginUserInput | null>(null);
 	registerUserInputControl = new FormControl<RegisterUserInput | null>(null);
-	forgotPasswordInputControl = new FormControl<LoginForgotPasswordInput | null>(null);
-
-	loginGoogle = `${environment.backend_url}/auth/google/login`;
-
-	destroy$ = new Subject<void>();
-
 	loading = false;
 
+	private zone = inject(NgZone);
+
 	constructor(
-		private authenticationFacadeService: AuthenticationFacadeService,
+		private authenticationFacadeService: AuthenticationAccountService,
 		private dialogRef: MatDialogRef<LoginModalComponent>,
 		private router: Router
-	) {}
-
-	ngOnDestroy(): void {
-		this.destroy$.next();
-	}
-
-	ngOnInit(): void {
+	) {
 		this.watchLoginUserFormControl();
 		this.watchRegisterUserFormControl();
-		this.watchForgotPasswordFormControl();
 	}
 
 	async onGoogleAuth() {
-		this.loading = true;
-		this.authenticationFacadeService
-			.loginSocialMedia()
+		from(this.authenticationFacadeService.signInGoogle())
 			.pipe(
+				tap(() => (this.loading = true)),
 				tap(() => {
-					DialogServiceUtil.showNotificationBar(`You have been successfully logged in`, 'success');
-					this.dialogRef.close(true);
-					this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+					DialogServiceUtil.showNotificationBar('Successfully login', 'success');
+					// getting error: Navigation triggered outside Angular zone, did you forget to call 'ngZone.run()
+					this.zone.run(() => {
+						this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+					});
 				}),
-				catchError((e) => {
-					DialogServiceUtil.showNotificationBar(`Authentication failed`, 'error');
-					console.log(e);
-					// DialogServiceUtil.showNotificationBar((e as any).message, 'error');
+				take(1),
+				catchError(() => {
 					this.loading = false;
 					return EMPTY;
-				}),
-				takeUntil(this.destroy$)
+				})
 			)
-			.subscribe();
+			.subscribe((e) => console.log('google', e));
 	}
 
 	onDemoLogin(): void {
@@ -75,55 +62,28 @@ export class LoginModalComponent implements OnInit, OnDestroy {
 		this.dialogRef.close();
 	}
 
-	private watchForgotPasswordFormControl(): void {
-		this.forgotPasswordInputControl.valueChanges
-			.pipe(
-				filter((res): res is LoginForgotPasswordInput => !!res),
-				// notify user
-				tap(() => DialogServiceUtil.showNotificationBar(`Request for passport reset has been sent`, 'notification')),
-				switchMap((res) =>
-					this.authenticationFacadeService.resetPassword(res).pipe(
-						tap((result) => {
-							if (result) {
-								// password was reset
-								DialogServiceUtil.showNotificationBar(
-									`Your password has been reset. Please check your email account`,
-									'success'
-								);
-							} else {
-								// error happened
-								DialogServiceUtil.showNotificationBar(
-									`Unsuccessful password reset. Please contact the support team via email`,
-									'error'
-								);
-							}
-						})
-					)
-				),
-				takeUntil(this.destroy$)
-			)
-			.subscribe();
-	}
-
 	private watchLoginUserFormControl(): void {
 		this.loginUserInputControl.valueChanges
 			.pipe(
 				filter((res): res is LoginUserInput => !!res),
 				tap(() => (this.loading = true)),
 				switchMap((res) =>
-					this.authenticationFacadeService.loginUserBasic(res).pipe(
+					from(this.authenticationFacadeService.signIn(res)).pipe(
 						tap(() => {
-							DialogServiceUtil.showNotificationBar(`You have been successfully logged in`, 'success');
-							this.dialogRef.close(true);
-							this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+							DialogServiceUtil.showNotificationBar('Successfully login', 'success');
+							// getting error: Navigation triggered outside Angular zone, did you forget to call 'ngZone.run()
+							this.zone.run(() => {
+								this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+							});
 						}),
-						catchError(() => {
+						catchError((err) => {
+							DialogServiceUtil.handleError(err);
 							this.loading = false;
 							return EMPTY;
 						})
 					)
 				),
-				takeUntil(this.destroy$)
+				takeUntilDestroyed()
 			)
 			.subscribe();
 	}
@@ -134,19 +94,22 @@ export class LoginModalComponent implements OnInit, OnDestroy {
 				filter((res): res is RegisterUserInput => !!res),
 				tap(() => (this.loading = true)),
 				switchMap((res) =>
-					this.authenticationFacadeService.registerBasic(res).pipe(
-						tap((res) => {
-							DialogServiceUtil.showNotificationBar(`Account ${res.email} has been successfully created`, 'success');
-							this.dialogRef.close();
-							this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+					from(this.authenticationFacadeService.register(res)).pipe(
+						tap(() => {
+							DialogServiceUtil.showNotificationBar('User created successfully', 'success');
+							// getting error: Navigation triggered outside Angular zone, did you forget to call 'ngZone.run()
+							this.zone.run(() => {
+								this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+							});
 						}),
-						catchError(() => {
+						catchError((err) => {
+							DialogServiceUtil.handleError(err);
 							this.loading = false;
 							return EMPTY;
 						})
 					)
 				),
-				takeUntil(this.destroy$)
+				takeUntilDestroyed()
 			)
 			.subscribe();
 	}

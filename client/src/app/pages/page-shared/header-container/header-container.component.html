@@ -6,7 +6,7 @@
 	</h2>
 
 	<!-- right section -->
-	<div *ngIf="authenticatedUser$ | async as user; else chipSkeleton" class="flex items-center gap-4 max-sm:w-full">
+	<div class="flex items-center gap-4 max-sm:w-full">
 		<!-- theme switcher -->
 		<app-theme-toggle class="hidden sm:block"></app-theme-toggle>
 
@@ -19,9 +19,4 @@
 			Logout
 		</button>
 	</div>
-
-	<!-- skeleton -->
-	<ng-template #chipSkeleton>
-		<div class="w-full sm:w-[200px] h-12 g-skeleton"></div>
-	</ng-template>
 </div>

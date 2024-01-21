@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FirebaseError } from '@angular/fire/app';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom, Observable, of } from 'rxjs';
@@ -10,9 +11,52 @@ export class DialogServiceUtil {
 	private static snackBar: MatSnackBar;
 	private static matDialog: MatDialog;
 
-	constructor(private dialog: MatDialog, private snackBar: MatSnackBar) {
+	constructor(
+		private dialog: MatDialog,
+		private snackBar: MatSnackBar
+	) {
 		DialogServiceUtil.matDialog = dialog;
 		DialogServiceUtil.snackBar = snackBar;
+	}
+
+	static handleError(error: any): void {
+		console.log('error', error);
+		const message = error?.message ?? '';
+		const code = error?.code satisfies FirebaseError['code'];
+
+		if (code === 'auth/email-already-in-use') {
+			this.showNotificationBar('Email already in use', 'error');
+			return;
+		}
+
+		if (code === 'auth/invalid-email') {
+			this.showNotificationBar('Invalid email', 'error');
+			return;
+		}
+
+		if (code === 'auth/weak-password') {
+			this.showNotificationBar('Weak password', 'error');
+			return;
+		}
+
+		if (code === 'auth/user-not-found') {
+			this.showNotificationBar('Wrong email or password', 'error');
+			return;
+		}
+
+		if (code === 'auth/wrong-password') {
+			this.showNotificationBar('Wrong email or password', 'error');
+			return;
+		}
+
+		// check if error contains the work INTERNAL
+		if (message === 'INTERNAL') {
+			this.showNotificationBar('Something went wrong', 'error');
+			return;
+		}
+
+		// remove the word FirebaseError:
+		this.showNotificationBar(message, 'error');
 	}
 
 	static showNotificationBar(

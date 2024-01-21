@@ -1,8 +1,6 @@
 import { ApplicationRef, ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
-import { Observable, concat, filter, first, interval } from 'rxjs';
-import { AccountManagerApiService } from '../../core/api';
-import { AccountManagerRoutes } from '../../core/models';
+import { concat, filter, first, interval } from 'rxjs';
 import { DialogServiceUtil } from '../../shared/dialogs';
 
 @Component({
@@ -12,17 +10,12 @@ import { DialogServiceUtil } from '../../shared/dialogs';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit {
-	availableAccounts$!: Observable<AccountManagerRoutes[]>;
-
 	constructor(
-		private managerAccountApiService: AccountManagerApiService,
 		private swUpdate: SwUpdate,
 		private appRef: ApplicationRef
 	) {}
 
 	ngOnInit(): void {
-		this.availableAccounts$ = this.managerAccountApiService.getAvailableAccountRoutes();
-
 		if (this.swUpdate.isEnabled) {
 			this.updateWatcher();
 			this.checkServiceWorkerUpdate();

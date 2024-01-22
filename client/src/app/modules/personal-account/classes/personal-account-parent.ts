@@ -159,7 +159,7 @@ export abstract class PersonalAccountParent implements OnDestroy {
 			this.yearlyExpenseTags$.pipe(map((yearlyExpenseTags) => yearlyExpenseTags.map((d) => d.item))),
 		]).pipe(
 			map(([activeTagIds, account, availableExpenseTags]) =>
-				this.personalAccountChartService.getWeeklyExpenseChartData(account, 'week', availableExpenseTags, activeTagIds)
+				this.personalAccountChartService.getWeeklyExpenseChartData(account, availableExpenseTags, activeTagIds)
 			)
 		);
 
@@ -172,8 +172,8 @@ export abstract class PersonalAccountParent implements OnDestroy {
 		]).pipe(
 			switchMap(([activeTagIds, account]) =>
 				merge(
-					[this.personalAccountChartService.getAccountGrowthChartData(account, 'week', activeTagIds)],
-					this.personalAccountChartService.getAccountIncomeExpenseChartData(account, 'week', activeTagIds)
+					[this.personalAccountChartService.getAccountGrowthChartData(account, activeTagIds)],
+					this.personalAccountChartService.getAccountIncomeExpenseChartData(account, activeTagIds)
 				).pipe(reduce((acc, curr) => [...acc, curr], [] as GenericChartSeries[]))
 			)
 		);

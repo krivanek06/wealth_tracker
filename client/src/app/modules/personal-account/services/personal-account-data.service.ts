@@ -4,12 +4,11 @@ import {
 	PersonalAccountAggregationDataOutput,
 	PersonalAccountDailyDataOutputFragment,
 	PersonalAccountTagFragment,
-	PersonalAccountWeeklyAggregationFragment,
 } from '../../../core/graphql';
 import { DateServiceUtil } from '../../../core/utils';
 import { InputSource, InputSourceWrapper, ValuePresentItem } from '../../../shared/models';
 import { NO_DATE_SELECTED, PersonalAccountDailyDataAggregation, PersonalAccountTagAggregation } from '../models';
-import { PersonalAccountFacadeService } from './../../../core/api';
+import { PersonalAccountFacadeService, PersonalAccountWeeklyAggregationOutput } from './../../../core/api';
 
 @Injectable({
 	providedIn: 'root',
@@ -64,7 +63,7 @@ export class PersonalAccountDataService {
 	 * @param weeklyData
 	 * @returns
 	 */
-	getMonthlyInputSource(weeklyData: PersonalAccountWeeklyAggregationFragment[]): InputSourceWrapper[] {
+	getMonthlyInputSource(weeklyData: PersonalAccountWeeklyAggregationOutput[]): InputSourceWrapper[] {
 		// ability to filter everything
 		const allData: InputSourceWrapper = {
 			name: 'All data',
@@ -136,40 +135,43 @@ export class PersonalAccountDataService {
 	getPersonalAccountTagAggregationByAggregationData(
 		data: PersonalAccountAggregationDataOutput[]
 	): PersonalAccountTagAggregation[] {
-		const result = data.reduce((acc, curr) => {
-			const key = curr.tag.id;
-			const selectedTag: PersonalAccountTagAggregation = acc[key];
+		const result = data.reduce(
+			(acc, curr) => {
+				const key = curr.tag.id;
+				const selectedTag: PersonalAccountTagAggregation = acc[key];
 
-			// already in accumulator
-			if (selectedTag) {
-				return {
-					...acc,
-					...{
-						[key]: {
-							...acc[key],
-							// increase total entry
-							totalEntries: selectedTag.totalEntries + curr.entries,
-							// add total value
-							totalValue: selectedTag.totalValue + curr.value,
+				// already in accumulator
+				if (selectedTag) {
+					return {
+						...acc,
+						...{
+							[key]: {
+								...acc[key],
+								// increase total entry
+								totalEntries: selectedTag.totalEntries + curr.entries,
+								// add total value
+								totalValue: selectedTag.totalValue + curr.value,
+							},
 						},
-					},
-				};
-			}
+					};
+				}
 
-			const newData: PersonalAccountTagAggregation = {
-				id: curr.tag.id,
-				name: curr.tag.name,
-				color: curr.tag.color,
-				imageUrl: curr.tag.imageUrl,
-				type: curr.tag.type,
-				totalEntries: curr.entries,
-				totalValue: curr.value,
-				lastDataEntryDate: null,
-				isWeeklyView: false,
-				budgetToTimePeriod: curr.tag.budgetMonthly,
-			};
-			return { ...acc, [key]: newData };
-		}, {} as { [key: string]: PersonalAccountTagAggregation });
+				const newData: PersonalAccountTagAggregation = {
+					id: curr.tag.id,
+					name: curr.tag.name,
+					color: curr.tag.color,
+					imageUrl: curr.tag.imageUrl,
+					type: curr.tag.type,
+					totalEntries: curr.entries,
+					totalValue: curr.value,
+					lastDataEntryDate: null,
+					isWeeklyView: false,
+					budgetToTimePeriod: curr.tag.budgetMonthly,
+				};
+				return { ...acc, [key]: newData };
+			},
+			{} as { [key: string]: PersonalAccountTagAggregation }
+		);
 
 		return Object.values(result);
 	}
@@ -181,50 +183,53 @@ export class PersonalAccountDataService {
 		const [, , week] = dateFilter ? DateServiceUtil.dateSplitter(dateFilter) : [null, null, null];
 		const isWeeklyView = !!week;
 
-		const data = dailyData.reduce((acc, curr) => {
-			const key = curr.tagId;
-			const selectedTag: PersonalAccountTagAggregation = acc[key];
+		const data = dailyData.reduce(
+			(acc, curr) => {
+				const key = curr.tagId;
+				const selectedTag: PersonalAccountTagAggregation = acc[key];
 
-			// already in accumulator
-			if (selectedTag) {
-				return {
-					...acc,
-					...{
-						[key]: {
-							...acc[key],
-							// increase total entry
-							totalEntries: selectedTag.totalEntries + 1,
-							// add total value
-							totalValue: selectedTag.totalValue + curr.value,
-							// save last entry time period
-							lastDataEntryDate:
-								selectedTag.lastDataEntryDate && curr.date > selectedTag.lastDataEntryDate
-									? curr.date
-									: selectedTag.lastDataEntryDate,
+				// already in accumulator
+				if (selectedTag) {
+					return {
+						...acc,
+						...{
+							[key]: {
+								...acc[key],
+								// increase total entry
+								totalEntries: selectedTag.totalEntries + 1,
+								// add total value
+								totalValue: selectedTag.totalValue + curr.value,
+								// save last entry time period
+								lastDataEntryDate:
+									selectedTag.lastDataEntryDate && curr.date > selectedTag.lastDataEntryDate
+										? curr.date
+										: selectedTag.lastDataEntryDate,
+							},
 						},
-					},
+					};
+				}
+
+				// data not yet present
+				const weeksInMonth = DateServiceUtil.getWeeksInMonth(Number(curr.date));
+				const budgetMonthly = curr.tag.budgetMonthly;
+				const budgetToTimePeriod = isWeeklyView && budgetMonthly ? budgetMonthly / weeksInMonth : budgetMonthly;
+
+				const newData: PersonalAccountTagAggregation = {
+					id: curr.tagId,
+					name: curr.tag.name,
+					color: curr.tag.color,
+					imageUrl: curr.tag.imageUrl,
+					type: curr.tag.type,
+					totalEntries: 1,
+					totalValue: curr.value,
+					lastDataEntryDate: curr.date,
+					isWeeklyView,
+					budgetToTimePeriod,
 				};
-			}
-
-			// data not yet present
-			const weeksInMonth = DateServiceUtil.getWeeksInMonth(Number(curr.date));
-			const budgetMonthly = curr.tag.budgetMonthly;
-			const budgetToTimePeriod = isWeeklyView && budgetMonthly ? budgetMonthly / weeksInMonth : budgetMonthly;
-
-			const newData: PersonalAccountTagAggregation = {
-				id: curr.tagId,
-				name: curr.tag.name,
-				color: curr.tag.color,
-				imageUrl: curr.tag.imageUrl,
-				type: curr.tag.type,
-				totalEntries: 1,
-				totalValue: curr.value,
-				lastDataEntryDate: curr.date,
-				isWeeklyView,
-				budgetToTimePeriod,
-			};
-			return { ...acc, [key]: newData };
-		}, {} as { [key: string]: PersonalAccountTagAggregation });
+				return { ...acc, [key]: newData };
+			},
+			{} as { [key: string]: PersonalAccountTagAggregation }
+		);
 
 		return Object.values(data);
 	}

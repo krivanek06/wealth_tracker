@@ -63,3 +63,9 @@ export class GeneralFunctionUtil {
 		return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 	}
 }
+
+type Entries<T> = {
+	[K in keyof T]: [K, T[K]];
+}[keyof T][];
+
+export const getObjectEntries = <T extends object>(obj: T) => Object.entries(obj) as Entries<T>;

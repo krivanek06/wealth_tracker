@@ -3,43 +3,124 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { filter, map } from 'rxjs';
 import {
-	PersonalAccountTagDataCreate,
-	PersonalAccountTagDataEdit,
-	PersonalAccountTagFragment,
-	TagDataType,
-} from '../../../../../core/graphql';
-import {
 	InputTypeSlider,
 	maxLengthValidator,
 	minLengthValidator,
 	requiredValidator,
 } from '../../../../../shared/models';
 import { TagImageSelectorComponent } from '../tag-image-selector/tag-image-selector.component';
+import { PersonalAccountTag, PersonalAccountTagCreate, PersonalAccountTagTypeNew } from './../../../../../core/api';
 import { DialogServiceUtil } from './../../../../../shared/dialogs';
 
 @Component({
 	selector: 'app-tag-item',
-	templateUrl: './tag-item.component.html',
-	styleUrls: ['./tag-item.component.scss'],
+	template: `
+		<form [formGroup]="tagItemGroup" (ngSubmit)="onSubmit()">
+			<!-- color -->
+			<app-color-picker formControlName="color" [componentDisabled]="!editing"></app-color-picker>
+
+			<!-- icon -->
+			<button type="button" (click)="onTagImageChange()" [disabled]="!editing">
+				<img
+					appDefaultImg
+					[src]="tagItemGroup.controls.icon.value"
+					class="w-8 h-8"
+					[matTooltip]="editing ? 'Change image' : ''"
+					alt="Icon image"
+				/>
+			</button>
+
+			<!-- name -->
+			<div>
+				<app-form-mat-input-wrapper
+					[disabled]="!editing"
+					controlName="tagName"
+					inputCaption="Enter name for a tag"
+				></app-form-mat-input-wrapper>
+			</div>
+
+			<!-- budget -->
+			<div *ngIf="tagType === 'EXPENSE'" class="flex-1 col-span-2 sm:col-span-6">
+				<app-slider [componentDisabled]="!editing" formControlName="budget" [config]="sliderConfig"></app-slider>
+			</div>
+
+			<!-- action buttons -->
+			<div *ngIf="editing" class="flex items-center gap-x-5">
+				<button mat-icon-button color="accent" type="submit" matTooltip="Save Tag Changes" class="border border-solid">
+					<mat-icon>done</mat-icon>
+				</button>
+				<button
+					*ngIf="tagItemGroup.controls.tagId.value"
+					mat-icon-button
+					color="warn"
+					type="button"
+					(click)="onRemove()"
+					matTooltip="Remove Tag"
+					class="border border-solid"
+				>
+					<mat-icon>delete</mat-icon>
+				</button>
+			</div>
+
+			<div *ngIf="!editing">
+				<button mat-stroked-button color="primary" type="button" (click)="onEdit()" class="w-full min-w-[120px]">
+					<mat-icon>edit</mat-icon>
+					Edit
+				</button>
+			</div>
+		</form>
+
+		<!-- error for image -->
+		<div *ngIf="tagItemGroup.controls.icon.touched && tagItemGroup.controls.icon.invalid" class="g-error-banner">
+			Please select an image for your tag
+		</div>
+	`,
+	styles: [
+		`
+			:host {
+				display: block;
+
+				form {
+					@apply grid grid-cols-2 sm:grid-cols-6 lg:flex items-center gap-x-8;
+
+					:nth-child(-n + 2) {
+						@apply m-auto col-span-1;
+					}
+
+					:nth-child(3) {
+						@apply pt-2 col-span-2 sm:col-span-4 lg:flex-1;
+					}
+
+					:last-child {
+						@apply col-span-2 sm:col-span-6;
+
+						button {
+							flex: 1;
+						}
+					}
+				}
+			}
+		`,
+	],
 })
 export class TagItemComponent implements OnInit {
-	@Output() createTagEmitter = new EventEmitter<PersonalAccountTagDataCreate>();
-	@Output() editTagEmitter = new EventEmitter<PersonalAccountTagDataEdit>();
-	@Output() removeTagEmitter = new EventEmitter<PersonalAccountTagFragment>();
+	@Output() createTagEmitter = new EventEmitter<PersonalAccountTagCreate>();
+	@Output() editTagEmitter = new EventEmitter<PersonalAccountTag>();
+	@Output() removeTagEmitter = new EventEmitter<PersonalAccountTag>();
 	@Input() editing = false;
 
 	/**
 	 * created as input, because when creating new tag - parent has buttons to choose a type
 	 */
-	@Input() tagType!: TagDataType;
+	@Input() tagType!: PersonalAccountTagTypeNew;
 
-	private _tag!: PersonalAccountTagFragment;
+	private _tag!: PersonalAccountTag;
 
-	@Input() set tag(data: PersonalAccountTagFragment) {
+	@Input() set tag(data: PersonalAccountTag) {
 		this.tagItemGroup.controls.tagId.patchValue(data.id);
 		this.tagItemGroup.controls.tagName.patchValue(data.name);
 		this.tagItemGroup.controls.color.patchValue(data.color);
-		this.tagItemGroup.controls.icon.patchValue(data.imageUrl);
+		this.tagItemGroup.controls.icon.patchValue(data.image);
 		this.tagItemGroup.controls.budget.patchValue(data.budgetMonthly ?? 0);
 		this._tag = data;
 	}
@@ -60,8 +141,6 @@ export class TagItemComponent implements OnInit {
 		max: 600,
 		step: 1,
 	};
-
-	TagDataType = TagDataType;
 
 	constructor(private dialog: MatDialog) {}
 
@@ -88,8 +167,9 @@ export class TagItemComponent implements OnInit {
 				id: controls.tagId.value,
 				name: controls.tagName.value,
 				color: controls.color.value,
-				imageUrl: controls.icon.value,
+				image: controls.icon.value,
 				budgetMonthly: controls.budget.value,
+				type: this.tagType,
 			});
 			return;
 		}
@@ -98,7 +178,7 @@ export class TagItemComponent implements OnInit {
 		this.createTagEmitter.emit({
 			name: controls.tagName.value,
 			color: controls.color.value,
-			imageUrl: controls.icon.value,
+			image: controls.icon.value,
 			budgetMonthly: controls.budget.value,
 			type: this.tagType,
 		});

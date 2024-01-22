@@ -56,7 +56,7 @@ export class DialogServiceUtil {
 		}
 
 		// remove the word FirebaseError:
-		this.showNotificationBar(message, 'error');
+		this.showNotificationBar('Operation failed to execute', 'error');
 	}
 
 	static showNotificationBar(

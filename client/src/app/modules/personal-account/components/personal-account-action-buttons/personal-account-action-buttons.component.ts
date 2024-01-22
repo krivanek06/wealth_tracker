@@ -9,8 +9,46 @@ import { PersonalAccountActionButtonType } from '../../models';
 	selector: 'app-personal-account-action-buttons',
 	standalone: true,
 	imports: [CommonModule, MatIconModule, MatButtonModule, MatMenuModule],
-	templateUrl: './personal-account-action-buttons.component.html',
-	styleUrls: ['./personal-account-action-buttons.component.scss'],
+	template: `
+		<div *ngIf="displayType === 'buttons'" class="c-action-button-wrapper">
+			<button
+				type="button"
+				mat-stroked-button
+				color="primary"
+				(click)="onActionButtonClick('tagManagement')"
+				class="c-action-button g-button-size-lg"
+			>
+				<mat-icon>sell</mat-icon>
+				Manage Tags
+			</button>
+		</div>
+
+		<ng-container *ngIf="displayType === 'menu'">
+			<button type="button" mat-stroked-button [matMenuTriggerFor]="menu">
+				<mat-icon>settings</mat-icon>
+				Settings
+			</button>
+			<mat-menu #menu="matMenu">
+				<button mat-menu-item (click)="onActionButtonClick('tagManagement')">
+					<mat-icon>sell</mat-icon>
+					Manage Tags
+				</button>
+			</mat-menu>
+		</ng-container>
+	`,
+	styles: [
+		`
+			:host {
+				.c-action-button-wrapper {
+					@apply flex flex-col max-lg:justify-center gap-4;
+				}
+
+				.c-action-button {
+					@apply w-full sm:w-10/12 max-lg:m-auto;
+				}
+			}
+		`,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountActionButtonsComponent {

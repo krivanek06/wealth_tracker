@@ -1,24 +1,24 @@
 import { Directive, ElementRef, Input, OnChanges, Renderer2, SimpleChanges } from '@angular/core';
-import { TagDataType } from '../../../core/graphql';
 import { TagColors } from '../models';
+import { PersonalAccountTagTypeNew } from './../../../core/api';
 
 @Directive({
 	selector: '[appTagTypeName]',
 	standalone: true,
 })
 export class TagTypeNameDirective implements OnChanges {
-	@Input() appTagTypeName!: TagDataType;
+	@Input() appTagTypeName!: PersonalAccountTagTypeNew;
 
-	private INCOME = 'Income';
-	private EXPENSE = 'Expense';
-
-	constructor(private el: ElementRef, private ren: Renderer2) {}
+	constructor(
+		private el: ElementRef,
+		private ren: Renderer2
+	) {}
 
 	ngOnInit(): void {}
 
 	ngOnChanges(changes: SimpleChanges): void {
-		const displayName = this.appTagTypeName === TagDataType.Expense ? this.EXPENSE : this.INCOME;
-		const color = this.appTagTypeName === TagDataType.Expense ? TagColors.expense : TagColors.income;
+		const displayName = this.appTagTypeName === 'EXPENSE' ? 'Expense' : 'Income';
+		const color = this.appTagTypeName === 'EXPENSE' ? TagColors.expense : TagColors.income;
 
 		const text = this.ren.createText(displayName);
 		const dot = this.ren.createText('● ');

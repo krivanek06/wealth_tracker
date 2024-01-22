@@ -100,7 +100,9 @@
 			<div class="mt-6">
 				<h2 *ngIf="!isDateSourceNoDate" class="space-x-2">
 					<span>Date:</span>
-					<span class="text-wt-gray-medium">{{ filterDailyDataGroup.controls.dateFilter.value | dateFormatter }}</span>
+					<span class="text-wt-gray-medium"
+						>{{ filterDailyDataGroup.controls.dateFilter.value | date: 'MMMM d, y' }}</span
+					>
 				</h2>
 				<app-personal-account-expenses-by-tag
 					[expenses]="obs.accountTagAggregationForTimePeriod?.expenses ?? []"

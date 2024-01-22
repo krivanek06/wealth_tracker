@@ -1,4 +1,4 @@
-import { PersonalAccountDailyDataOutputFragment, TagDataType } from '../../../core/graphql';
+import { PersonalAccountDailyDataNew, PersonalAccountTagTypeNew } from './../../../core/api';
 
 export interface AccountState {
 	total: number;
@@ -20,7 +20,7 @@ export interface PersonalAccountTagAggregation {
 	imageUrl: string;
 	/** Name of the tag */
 	name: string;
-	type: TagDataType;
+	type: PersonalAccountTagTypeNew;
 
 	/* date when was the last entry added */
 	lastDataEntryDate?: string | null;
@@ -43,7 +43,7 @@ export interface PersonalAccountTagAggregation {
 
 export interface PersonalAccountDailyDataAggregation {
 	date: string;
-	data: PersonalAccountDailyDataOutputFragment[];
+	data: PersonalAccountDailyDataNew[];
 }
 
 export interface PersonalAccountTagAggregationType {

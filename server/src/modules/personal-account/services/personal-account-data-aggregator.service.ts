@@ -105,6 +105,9 @@ export class PersonalAccountDataAggregatorService {
 				.reduce((acc, curr) => [...acc, ...curr], [])
 		) as [PersonalAccountDailyDataExtended[]];
 
+		console.log('monthlyDataGroupByWeek', Array.from(monthlyDataGroupByWeek.keys()));
+		console.log('weeklyDataArray', weeklyDataArray[0][0]);
+
 		/**
 		 * Construct an array of objects where weekly data (weeklyDataArray) will aggregated
 		 * value (previousData.value + curr.value) for a distinct tag in a distics [year, month, week]

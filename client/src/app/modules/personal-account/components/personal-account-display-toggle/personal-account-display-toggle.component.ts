@@ -3,14 +3,45 @@ import { ChangeDetectionStrategy, Component, forwardRef, Input } from '@angular/
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { DefaultImgDirective } from '../../../../shared/directives';
-import { PersonalAccountTagFragment } from './../../../../core/graphql';
+import { PersonalAccountTag } from './../../../../core/api';
 
 @Component({
 	selector: 'app-personal-account-display-toggle',
 	standalone: true,
 	imports: [CommonModule, MatButtonModule, DefaultImgDirective],
-	templateUrl: './personal-account-display-toggle.component.html',
-	styleUrls: ['./personal-account-display-toggle.component.scss'],
+	template: `
+		<!-- aggregation & history button -->
+		<button
+			*ngIf="!selectedTag"
+			class="min-w-[200px]"
+			mat-stroked-button
+			[color]="showHistoryFormControl ? 'warn' : 'primary'"
+			(click)="onDisplayClick()"
+		>
+			{{ showHistoryFormControl ? 'History' : 'Aggregation' }}
+		</button>
+
+		<!-- selected tag button -->
+		<button
+			*ngIf="selectedTag"
+			class="min-w-[200px]"
+			style="border-color: {{ selectedTag.color }} !important"
+			mat-stroked-button
+			(click)="onDisplayClick()"
+		>
+			<div class="flex items-center gap-4 text-xl">
+				<img appDefaultImg [src]="selectedTag.image" imageType="tagName" class="h-7 w-7" />
+				<span style="color: {{ selectedTag.color }}"> {{ selectedTag.name }} </span>
+			</div>
+		</button>
+	`,
+	styles: [
+		`
+			:host {
+				display: block;
+			}
+		`,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		{
@@ -21,7 +52,7 @@ import { PersonalAccountTagFragment } from './../../../../core/graphql';
 	],
 })
 export class PersonalAccountDisplayToggleComponent implements ControlValueAccessor {
-	@Input() selectedTag?: PersonalAccountTagFragment | null;
+	@Input() selectedTag?: PersonalAccountTag | null;
 
 	showHistoryFormControl = false;
 

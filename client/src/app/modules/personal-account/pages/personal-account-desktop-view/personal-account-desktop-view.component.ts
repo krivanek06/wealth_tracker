@@ -22,7 +22,6 @@ import {
 	PersonalAccountExpensesByTagComponent,
 } from '../../components';
 import { PersonalAccountDailyDataEntryModule, PersonalAccountTagManagerModalModule } from '../../modals';
-import { DateFormatterPipe } from '../../pipes';
 import { PersonalAccountDesktopViewSkeletonComponent } from './personal-account-desktop-view-skeleton/personal-account-desktop-view-skeleton.component';
 
 enum ChartExpand {
@@ -51,7 +50,6 @@ enum ChartExpand {
 		PersonalAccountActionButtonsComponent,
 		PersonalAccountTagManagerModalModule,
 		PersonalAccountExpensesByTagComponent,
-		DateFormatterPipe,
 		ExpanderComponent,
 		RangeDirective,
 	],

@@ -1,8 +1,6 @@
-export enum PersonalAccountTagTypEnumNew {
-	INCOME = 'INCOME',
-	EXPENSE = 'EXPENSE',
-}
-export type PersonalAccountTagTypeNew = keyof typeof PersonalAccountTagTypEnumNew;
+import { v4 as uuid } from 'uuid';
+
+export type PersonalAccountTagTypeNew = 'INCOME' | 'EXPENSE';
 
 export const personalAccountTagImageName = [
 	'airplane',
@@ -25,7 +23,7 @@ export const personalAccountTagImageName = [
 	'insurance',
 	'job',
 	'payment',
-	'pet',
+	'pets',
 	'rent',
 	'restaurant',
 	'retirement',
@@ -37,155 +35,215 @@ export const personalAccountTagImageName = [
 	'travel',
 ] as const;
 
-const PERSONAL_ACCOUNT_INCOME_TAGS = [
+export type PersonalAccountDefaultTag = (typeof PERSONAL_ACCOUNT_DEFAULT_TAGS)[number];
+export type PersonalAccountTagImageName = (typeof personalAccountTagImageName)[number];
+
+export type PersonalAccountTag = {
+	id: string;
+	name: string;
+	type: PersonalAccountTagTypeNew;
+	color: string;
+	image: PersonalAccountTagImageName;
+	budgetMonthly: number;
+};
+
+const PERSONAL_ACCOUNT_INCOME_TAGS: PersonalAccountTag[] = [
 	{
 		name: 'Job',
-		type: PersonalAccountTagTypEnumNew.INCOME,
+		type: 'INCOME',
 		color: '#22c55d',
 		image: 'job',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
-] as const;
+];
 
-const PERSONAL_ACCOUNT_EXPENSE_TAGS = [
+const PERSONAL_ACCOUNT_EXPENSE_TAGS: PersonalAccountTag[] = [
 	{
 		name: 'Shopping',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'shopping',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Coffee',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'coffee',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Transport',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'transport',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'House',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'house',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Entertainment',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'entertainment',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Restaurant',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'restaurant',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Health',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'health',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Education',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'education',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Clothes',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'clothes',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Self care',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'self_care',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Food',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'food',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Charity',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'charity',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Gift',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'gift',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Sport',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'sport',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Pets',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'pets',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Child Care',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'child',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Electronics',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'electronics',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Insurance',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'insurance',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Fitness',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'fitness',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Travel',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'travel',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Car',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'car',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Rent',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'rent',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
 	{
 		name: 'Bills',
-		type: PersonalAccountTagTypEnumNew.EXPENSE,
+		type: 'EXPENSE',
 		color: '',
 		image: 'bills',
+		budgetMonthly: 0,
+		id: uuid(),
 	},
-] as const;
+];
 
 const randomColorGenerator = () => '#' + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, '0');
 
@@ -201,21 +259,13 @@ export const PERSONAL_ACCOUNT_DEFAULT_TAGS = [
 	...PERSONAL_ACCOUNT_EXPENSE_TAGS_WITH_COLORS,
 ] as const;
 
-export type PersonalAccountDefaultTag = (typeof PERSONAL_ACCOUNT_DEFAULT_TAGS)[number];
-export type PersonalAccountTagImageName = (typeof personalAccountTagImageName)[number];
+export type PersonalAccountTagCreate = Omit<PersonalAccountTag, 'id'>;
 
-export type PersonalAccountTag = {
-	id: string;
-	name: string;
-	type: PersonalAccountTagTypeNew;
-	color: string;
-	image: string;
-	budgetMonthly: number;
-};
-
-export const PERSONAL_ACCOUNT_DEFAULT_TAG_DATA = {
+export const PERSONAL_ACCOUNT_DEFAULT_TAG_DATA: PersonalAccountTag = {
+	id: 'DEFAULT_TAG',
+	budgetMonthly: 0,
 	name: 'Unknown',
-	type: PersonalAccountTagTypEnumNew.EXPENSE,
+	type: 'EXPENSE',
 	color: '#fe12cc',
 	image: 'shopping',
 };

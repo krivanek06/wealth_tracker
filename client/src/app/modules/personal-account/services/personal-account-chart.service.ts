@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
-import {
-	PersonalAccountAggregationDataOutput,
-	PersonalAccountDailyDataOutputFragment,
-	PersonalAccountDetailsFragment,
-	PersonalAccountTagFragment,
-	PersonalAccountWeeklyAggregationOutput,
-	TagDataType,
-} from '../../../core/graphql';
 import { DateServiceUtil } from '../../../core/utils';
 import { createGenericChartSeriesPie } from '../../../shared/functions';
 import { ChartType, GenericChartSeries, GenericChartSeriesPie } from '../../../shared/models';
 import { AccountState, TagColors } from '../models';
+import {
+	PersonalAccountAggregationDataOutput,
+	PersonalAccountDailyDataNew,
+	PersonalAccountTag,
+	PersonalAccountWeeklyAggregationOutput,
+} from './../../../core/api';
 
 @Injectable({
 	providedIn: 'root',
@@ -25,8 +23,8 @@ export class PersonalAccountChartService {
 	 */
 	getAccountState(data: PersonalAccountAggregationDataOutput[]): AccountState {
 		const entriesTotal = data.reduce((acc, curr) => acc + curr.entries, 0);
-		const expenseTotal = data.filter((d) => d.tag.type === TagDataType.Expense).reduce((a, b) => a + b.value, 0);
-		const incomeTotal = data.filter((d) => d.tag.type === TagDataType.Income).reduce((a, b) => a + b.value, 0);
+		const expenseTotal = data.filter((d) => d.tag.type === 'EXPENSE').reduce((a, b) => a + b.value, 0);
+		const incomeTotal = data.filter((d) => d.tag.type === 'INCOME').reduce((a, b) => a + b.value, 0);
 		const total = incomeTotal - expenseTotal;
 
 		const result: AccountState = {
@@ -56,10 +54,13 @@ export class PersonalAccountChartService {
 		return this.getAccountState(aggregationOutput);
 	}
 
-	getAccountStateByDailyData(data: PersonalAccountDailyDataOutputFragment[]): AccountState {
+	getAccountStateByDailyData(data: PersonalAccountDailyDataNew[], userTags: PersonalAccountTag[]): AccountState {
+		const expenseTags = userTags.filter((d) => d.type === 'EXPENSE').map((d) => d.id);
+		const incomeTags = userTags.filter((d) => d.type === 'INCOME').map((d) => d.id);
+
 		const entriesTotal = data.length;
-		const expenseTotal = data.filter((d) => d.tag.type === TagDataType.Expense).reduce((a, b) => a + b.value, 0);
-		const incomeTotal = data.filter((d) => d.tag.type === TagDataType.Income).reduce((a, b) => a + b.value, 0);
+		const expenseTotal = data.filter((d) => expenseTags.includes(d.tagId)).reduce((a, b) => a + b.value, 0);
+		const incomeTotal = data.filter((d) => incomeTags.includes(d.tagId)).reduce((a, b) => a + b.value, 0);
 		const total = incomeTotal - expenseTotal;
 
 		const result: AccountState = {
@@ -78,8 +79,8 @@ export class PersonalAccountChartService {
 	 * @param aggregation
 	 * @returns weekly or monthly categories in string format
 	 */
-	getChartCategories(data: PersonalAccountDetailsFragment, aggregation: 'week' | 'month' = 'week'): string[] {
-		const categories = data.weeklyAggregation.map((d) => {
+	getChartCategories(data: PersonalAccountWeeklyAggregationOutput[]): string[] {
+		const categories = data.map((d) => {
 			const monthName = DateServiceUtil.formatDate(new Date(d.year, d.month), 'LLL');
 			return `Week: ${d.week}, ${monthName}, ${d.year}`;
 		});
@@ -95,14 +96,13 @@ export class PersonalAccountChartService {
 	 * @returns GenericChartSeries data type
 	 */
 	getAccountGrowthChartData(
-		data: PersonalAccountDetailsFragment,
-		aggregation: 'week' | 'month' = 'week',
+		data: PersonalAccountWeeklyAggregationOutput[],
 		activeTagIds: string[] = []
 	): GenericChartSeries {
 		// aggregates total income / expenses on a weekly bases
-		const weeklyAggregation: number[] = data.weeklyAggregation.map((d) =>
+		const weeklyAggregation: number[] = data.map((d) =>
 			d.data.reduce((acc, curr) => {
-				if (curr.tag.type === TagDataType.Income) {
+				if (curr.tag.type === 'INCOME') {
 					return acc + curr.value;
 				}
 
@@ -133,19 +133,16 @@ export class PersonalAccountChartService {
 	 * @returns [Income, Expense] chart data based on the aggregation
 	 */
 	getAccountIncomeExpenseChartData(
-		data: PersonalAccountDetailsFragment,
-		aggregation: 'week' | 'month' = 'week',
+		data: PersonalAccountWeeklyAggregationOutput[],
 		activeTagIds: string[] = []
 	): [GenericChartSeries, GenericChartSeries, GenericChartSeries] {
 		// reduce data
-		const income = data.weeklyAggregation.map((d) =>
-			d.data.filter((d) => d.tag.type === TagDataType.Income).reduce((acc, curr) => acc + curr.value, 0)
+		const income = data.map((d) =>
+			d.data.filter((d) => d.tag.type === 'INCOME').reduce((acc, curr) => acc + curr.value, 0)
 		);
 
-		const filteredExpenseTags = data.weeklyAggregation.map((d) =>
-			d.data.filter(
-				(d) => d.tag.type === TagDataType.Expense && (activeTagIds.length === 0 || activeTagIds.includes(d.tag.id))
-			)
+		const filteredExpenseTags = data.map((d) =>
+			d.data.filter((d) => d.tag.type === 'EXPENSE' && (activeTagIds.length === 0 || activeTagIds.includes(d.tag.id)))
 		);
 
 		const expense = filteredExpenseTags.map((expenseTags) => expenseTags.reduce((acc, curr) => acc + curr.value, 0));
@@ -187,20 +184,17 @@ export class PersonalAccountChartService {
 	 * @returns GenericChartSeries data type
 	 */
 	getWeeklyExpenseChartData(
-		data: PersonalAccountDetailsFragment,
-		aggregation: 'week' | 'month' = 'week',
-		availableExpenseTags: PersonalAccountTagFragment[] = [],
+		data: PersonalAccountWeeklyAggregationOutput[],
+		availableExpenseTags: PersonalAccountTag[] = [],
 		activeTagIds: string[] = []
 	): GenericChartSeries[] {
 		// go through all weekly data and for each availableExpenseTags save a value
 		// if tag not exist for the specifc week, put 0
-		const series = data.weeklyAggregation
+		const series = data
 			.map((weeklyData) =>
 				availableExpenseTags
 					// filter out only active tags
-					.filter(
-						(tag) => tag.type === TagDataType.Expense && (activeTagIds.length === 0 || activeTagIds.includes(tag.id))
-					)
+					.filter((tag) => tag.type === 'EXPENSE' && (activeTagIds.length === 0 || activeTagIds.includes(tag.id)))
 					.reduce((acc, curr) => {
 						// find TAG daily data value (or 0) in selected week
 						const weeklyDataValueForTag = weeklyData.data.find((d) => d.tag.id === curr.id)?.value ?? 0;
@@ -231,10 +225,10 @@ export class PersonalAccountChartService {
 	}
 
 	getExpenseAllocationChartData(
-		data: (PersonalAccountDailyDataOutputFragment | PersonalAccountAggregationDataOutput)[]
+		data: (PersonalAccountDailyDataNew | PersonalAccountAggregationDataOutput)[]
 	): GenericChartSeriesPie {
-		const notIncomeData = data.filter((d) => d.tag.type !== TagDataType.Income);
-		const seriesData = createGenericChartSeriesPie(notIncomeData, 'tag', 'name', 'color', 'imageUrl');
+		const notIncomeData = data.filter((d) => d.tag.type === 'EXPENSE');
+		const seriesData = createGenericChartSeriesPie(notIncomeData, 'tag', 'name', 'color', 'image');
 
 		return { data: seriesData, colorByPoint: true, name: 'Expenses', innerSize: '80%', type: 'pie' };
 	}

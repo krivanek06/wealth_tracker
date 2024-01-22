@@ -30,6 +30,10 @@ export class DefaultImgDirective implements OnChanges {
 			return 'assets/image-placeholder.jpg';
 		}
 
+		if (this.imageType === 'tagName') {
+			return `assets/personal-account-tags/${location}.svg`;
+		}
+
 		if (this.imageType === 'assetId') {
 			return GeneralFunctionUtil.getAssetUrl(location);
 		}

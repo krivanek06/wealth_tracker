@@ -1,29 +1,76 @@
 import { CommonModule } from '@angular/common';
-import {
-	ChangeDetectionStrategy,
-	Component,
-	EventEmitter,
-	forwardRef,
-	Input,
-	OnChanges,
-	OnInit,
-	Output,
-	SimpleChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, forwardRef, Input, OnInit, Output } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { PersonalAccountDetailsFragment } from '../../../../core/graphql';
 import { DateServiceUtil } from '../../../../core/utils';
 import { FormMatInputWrapperModule } from '../../../../shared/components';
 import { InputSourceWrapper } from '../../../../shared/models';
 import { PersonalAccountDataService } from '../../services';
+import { PersonalAccountWeeklyAggregationOutput } from './../../../../core/api';
 
 @Component({
 	selector: 'app-personal-account-daily-entries-filter',
-	templateUrl: './personal-account-daily-entries-filter.component.html',
-	styleUrls: ['./personal-account-daily-entries-filter.component.scss'],
+	template: `
+		<div class="flex flex-wrap gap-4 max-sm:order-2">
+			<ng-container [formGroup]="formGroup">
+				<div class="w-full md:w-[350px]">
+					<app-form-mat-input-wrapper
+						inputCaption="Filter by date"
+						controlName="dateFilter"
+						inputType="SELECT_SOURCE_WRAPPER"
+						[inputSourceWrapper]="filterDateInputSourceWrapper"
+					></app-form-mat-input-wrapper>
+				</div>
+			</ng-container>
+
+			<div class="hidden mt-1 h-11 lg:block">
+				<button
+					mat-stroked-button
+					(click)="onCurrentMonthClick()"
+					type="button"
+					color="primary"
+					class="w-full h-full g-button-size-lg"
+				>
+					Current month
+				</button>
+			</div>
+		</div>
+
+		<!-- add button -->
+		<div>
+			<button
+				mat-stroked-button
+				(click)="onAddDailyEntryClick()"
+				type="button"
+				color="accent"
+				class="w-full sm:-mt-6 g-button-size-lg"
+			>
+				<mat-icon>add</mat-icon>
+				Add daily entry
+			</button>
+		</div>
+
+		<div class="block my-4 sm:hidden">
+			<mat-divider></mat-divider>
+		</div>
+	`,
+	styles: [
+		`
+			:host {
+				@apply flex flex-col sm:flex-row items-center gap-x-12 justify-between;
+
+				& > * {
+					@apply w-full;
+
+					@screen sm {
+						@apply w-auto;
+					}
+				}
+			}
+		`,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	standalone: true,
 	imports: [
@@ -42,9 +89,11 @@ import { PersonalAccountDataService } from '../../services';
 		},
 	],
 })
-export class PersonalAccountDailyEntriesFilterComponent implements OnInit, ControlValueAccessor, OnChanges {
+export class PersonalAccountDailyEntriesFilterComponent implements OnInit, ControlValueAccessor {
 	@Output() addDailyEntryClickEmitter = new EventEmitter<void>();
-	@Input() personalAccountDetails!: PersonalAccountDetailsFragment;
+	@Input({ required: true }) set weeklyAggregations(data: PersonalAccountWeeklyAggregationOutput[]) {
+		this.filterDateInputSourceWrapper = this.personalAccountDataService.getMonthlyInputSource(data);
+	}
 
 	/**
 	 * values to filter daily data based on some date (year-month-week)
@@ -65,15 +114,6 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 			// value in format year-month-week
 			this.onChange(value);
 		});
-	}
-
-	ngOnChanges(changes: SimpleChanges): void {
-		if (changes?.['personalAccountDetails']?.currentValue) {
-			// get dates that we can filter by
-			this.filterDateInputSourceWrapper = this.personalAccountDataService.getMonthlyInputSource(
-				this.personalAccountDetails.weeklyAggregation
-			);
-		}
 	}
 
 	onAddDailyEntryClick(): void {

@@ -34,7 +34,7 @@ const routes: Routes = [
 			},
 			{
 				path: TOP_LEVEL_NAV.welcome,
-				loadChildren: () => import('./pages/welcome/welcome.module').then((m) => m.WelcomeModule),
+				loadComponent: () => import('./pages/welcome/welcome.component').then((m) => m.WelcomeComponent),
 			},
 			{
 				path: '**',

@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { map, Observable, zip } from 'rxjs';
-import {
-	PersonalAccountAggregationDataOutput,
-	PersonalAccountDailyDataOutputFragment,
-	PersonalAccountTagFragment,
-} from '../../../core/graphql';
 import { DateServiceUtil } from '../../../core/utils';
 import { InputSource, InputSourceWrapper, ValuePresentItem } from '../../../shared/models';
 import { NO_DATE_SELECTED, PersonalAccountDailyDataAggregation, PersonalAccountTagAggregation } from '../models';
-import { PersonalAccountFacadeService, PersonalAccountWeeklyAggregationOutput } from './../../../core/api';
+import {
+	PersonalAccountAggregationDataOutput,
+	PersonalAccountDailyDataNew,
+	PersonalAccountFacadeService,
+	PersonalAccountTag,
+	PersonalAccountWeeklyAggregationOutput,
+} from './../../../core/api';
 
 @Injectable({
 	providedIn: 'root',
@@ -112,16 +113,14 @@ export class PersonalAccountDataService {
 	 * @param tags
 	 * @returns transformed tags into a value type that is displayed for filtering purposes
 	 */
-	createValuePresentItemFromTag(
-		tags: PersonalAccountAggregationDataOutput[]
-	): ValuePresentItem<PersonalAccountTagFragment>[] {
+	createValuePresentItemFromTag(tags: PersonalAccountAggregationDataOutput[]): ValuePresentItem<PersonalAccountTag>[] {
 		const totalValue = tags.reduce((a, b) => a + b.value, 0);
 
 		return tags.map((d) => {
-			const data: ValuePresentItem<PersonalAccountTagFragment> = {
+			const data: ValuePresentItem<PersonalAccountTag> = {
 				color: d.tag.color,
-				imageSrc: d.tag.imageUrl,
-				imageType: 'url',
+				imageSrc: d.tag.image,
+				imageType: 'tagName',
 				name: d.tag.name,
 				value: d.value,
 				valuePrct: d.value / totalValue,
@@ -160,7 +159,7 @@ export class PersonalAccountDataService {
 					id: curr.tag.id,
 					name: curr.tag.name,
 					color: curr.tag.color,
-					imageUrl: curr.tag.imageUrl,
+					imageUrl: curr.tag.image,
 					type: curr.tag.type,
 					totalEntries: curr.entries,
 					totalValue: curr.value,
@@ -177,7 +176,7 @@ export class PersonalAccountDataService {
 	}
 
 	getPersonalAccountTagAggregationByDailyData(
-		dailyData: PersonalAccountDailyDataOutputFragment[],
+		dailyData: PersonalAccountDailyDataNew[],
 		dateFilter?: string
 	): PersonalAccountTagAggregation[] {
 		const [, , week] = dateFilter ? DateServiceUtil.dateSplitter(dateFilter) : [null, null, null];
@@ -218,7 +217,7 @@ export class PersonalAccountDataService {
 					id: curr.tagId,
 					name: curr.tag.name,
 					color: curr.tag.color,
-					imageUrl: curr.tag.imageUrl,
+					imageUrl: curr.tag.image,
 					type: curr.tag.type,
 					totalEntries: 1,
 					totalValue: curr.value,
@@ -240,9 +239,7 @@ export class PersonalAccountDataService {
 	 * @param data
 	 * @returns daily data aggregated by data
 	 */
-	aggregateDailyDataOutputByDays(
-		data: PersonalAccountDailyDataOutputFragment[]
-	): PersonalAccountDailyDataAggregation[] {
+	aggregateDailyDataOutputByDays(data: PersonalAccountDailyDataNew[]): PersonalAccountDailyDataAggregation[] {
 		return data
 			.reduce((acc, curr) => {
 				// check if an entry with the same date is already saved

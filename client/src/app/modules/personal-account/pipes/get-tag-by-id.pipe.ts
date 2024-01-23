@@ -10,6 +10,6 @@ export class GetTagByIdPipe implements PipeTransform {
 	constructor(private personalAccountFacadeService: PersonalAccountService) {}
 
 	transform(tagId: string): PersonalAccountTag | undefined {
-		return this.personalAccountFacadeService.personalAccount.tags.find((d) => d.id === tagId);
+		return this.personalAccountFacadeService.personalAccountTagsSignal().find((d) => d.id === tagId);
 	}
 }

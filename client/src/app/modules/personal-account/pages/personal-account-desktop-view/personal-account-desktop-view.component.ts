@@ -54,15 +54,12 @@ enum ChartExpand {
 		RangeDirective,
 	],
 	template: `
-		<ng-container *ngIf="personalAccountDetails$ | async as personalAccountDetails; else showSkeleton">
+		<ng-container *ngIf="personalAccountSignal() as personalAccountDetails; else showSkeleton">
 			<!-- account total state -->
-			<div
-				*ngIf="accountTotalState$ | async as accountTotalState"
-				class="flex flex-col justify-between gap-x-8 gap-y-8 lg:flex-row"
-			>
+			<div class="flex flex-col justify-between gap-x-8 gap-y-8 lg:flex-row">
 				<app-personal-account-account-state
 					class="md:basis-3/4"
-					[accountState]="accountTotalState"
+					[accountState]="accountTotalState()"
 				></app-personal-account-account-state>
 
 				<app-personal-account-action-buttons
@@ -74,7 +71,7 @@ enum ChartExpand {
 			<app-scroll-wrapper>
 				<app-value-presentation-button-control
 					[formControl]="filterDailyDataGroup.controls.selectedTagIds"
-					[items]="yearlyExpenseTags$ | async"
+					[items]="yearlyExpenseTags()"
 					itemKey="id"
 					[selectWholeItem]="false"
 				></app-value-presentation-button-control>
@@ -90,9 +87,9 @@ enum ChartExpand {
 					></app-expander>
 					<app-personal-account-tag-spending-chart
 						#dataChart
-						[accountOverviewChartData]="accountOverviewChartData$ | async"
-						[expenseTagsChartData]="totalExpenseTagsChartData$ | async"
-						[categories]="categories$ | async"
+						[accountOverviewChartData]="accountOverviewChartData()"
+						[expenseTagsChartData]="totalExpenseTagsChartData()"
+						[categories]="categories()"
 						[heightPx]="525"
 					></app-personal-account-tag-spending-chart>
 				</div>
@@ -107,8 +104,8 @@ enum ChartExpand {
 					></app-expander>
 					<app-personal-account-account-growth-chart
 						#dataChart
-						[accountOverviewChartData]="accountOverviewChartData$ | async"
-						[categories]="categories$ | async"
+						[accountOverviewChartData]="accountOverviewChartData()"
+						[categories]="categories()"
 						[heightPx]="525"
 					></app-personal-account-account-growth-chart>
 				</div>
@@ -119,80 +116,48 @@ enum ChartExpand {
 				<app-personal-account-daily-entries-filter
 					(addDailyEntryClickEmitter)="onDailyEntryClick(null)"
 					[formControl]="filterDailyDataGroup.controls.dateFilter"
-					[personalAccountDetails]="personalAccountDetails"
+					[weeklyAggregations]="weeklyAggregations()"
 				></app-personal-account-daily-entries-filter>
 			</div>
 
-			<ng-container
-				*ngIf="{
-					accountFilteredState: accountFilteredState$ | async,
-					filteredDailyData: filteredDailyData$ | async,
-					filteredDailyDataLoaded: filteredDailyDataLoaded$ | async,
-					personalAccountExpensePieChart: personalAccountExpensePieChart$ | async,
-					accountTagAggregationForTimePeriod: accountTagAggregationForTimePeriod$ | async
-				} as obs"
-			>
-				<ng-container *ngIf="obs.filteredDailyDataLoaded; else filteredDataSkeleton">
-					<div *ngIf="!isDateSourceNoDate" class="grid items-center grid-cols-1 gap-4 md:px-8 lg:grid-cols-4">
-						<!-- table body -->
-						<div class="relative z-10 h-full lg:col-span-2">
-							<app-personal-account-daily-entries-table
-								(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
-								[personalAccountDailyData]="obs.filteredDailyData"
-							></app-personal-account-daily-entries-table>
-						</div>
+			<div *ngIf="!isDateSourceNoDate()" class="grid items-center grid-cols-1 gap-4 md:px-8 lg:grid-cols-4">
+				<!-- table body -->
+				<div class="relative z-10 h-full lg:col-span-2">
+					<app-personal-account-daily-entries-table
+						(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
+						[personalAccountDailyData]="filteredDailyData()"
+					></app-personal-account-daily-entries-table>
+				</div>
 
-						<!-- spending allocation by tags -->
-						<div class="lg:col-span-2 lg:-mt-12">
-							<app-pie-chart
-								class="scale-150"
-								[series]="obs.personalAccountExpensePieChart"
-								[displayValue]="obs.accountFilteredState?.total"
-							></app-pie-chart>
-						</div>
-					</div>
+				<!-- spending allocation by tags -->
+				<div class="lg:col-span-2 lg:-mt-12">
+					<app-pie-chart
+						class="scale-150"
+						[series]="personalAccountExpensePieChart()"
+						[displayValue]="accountFilteredState().total"
+					></app-pie-chart>
+				</div>
+			</div>
 
-					<!-- displayed expense by tag -->
-					<div class="mt-6">
-						<h2 *ngIf="!isDateSourceNoDate" class="space-x-2">
-							<span>Date:</span>
-							<span class="text-wt-gray-medium">{{
-								filterDailyDataGroup.controls.dateFilter.value | date: 'MMMM d, y'
-							}}</span>
-						</h2>
-						<app-personal-account-expenses-by-tag
-							[expenses]="obs.accountTagAggregationForTimePeriod?.expenses ?? []"
-							[disabledClick]="true"
-							[hideBudgeting]="isDateSourceNoDate"
-						></app-personal-account-expenses-by-tag>
-					</div>
-				</ng-container>
-			</ng-container>
+			<!-- displayed expense by tag -->
+			<div class="mt-6">
+				<h2 *ngIf="!isDateSourceNoDate()" class="space-x-2">
+					<span>Date:</span>
+					<span class="text-wt-gray-medium">{{
+						filterDailyDataGroup.controls.dateFilter.value | date: 'MMMM d, y'
+					}}</span>
+				</h2>
+				<app-personal-account-expenses-by-tag
+					[expenses]="accountTagAggregationForTimePeriod().expenses"
+					[disabledClick]="true"
+					[hideBudgeting]="isDateSourceNoDate()"
+				></app-personal-account-expenses-by-tag>
+			</div>
 		</ng-container>
 
 		<!-- page skeleton -->
 		<ng-template #showSkeleton>
 			<app-personal-account-desktop-view-skeleton></app-personal-account-desktop-view-skeleton>
-		</ng-template>
-
-		<!-- filter table skeleton -->
-		<ng-template #filteredDataSkeleton>
-			<div class="grid items-center grid-cols-1 gap-4 mb-8 lg:grid-cols-4 md:px-8">
-				<!-- table body -->
-				<div class="h-full lg:col-span-2">
-					<div *ngRange="12" class="g-skeleton h-[52px] w-full mb-2"></div>
-				</div>
-
-				<!-- spending allocation by tags -->
-				<div class="lg:col-span-2 h-[250px] w-full lg:w-10/12 g-skeleton lg:mx-auto">
-					<div></div>
-				</div>
-			</div>
-
-			<!-- displayed expense by tag -->
-			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-				<div class="w-full g-skeleton h-[95px] md:h-[110px]" *ngRange="12"></div>
-			</div>
 		</ng-template>
 	`,
 	styles: [

@@ -9,7 +9,12 @@ import {
 	requiredValidator,
 } from '../../../../../shared/models';
 import { TagImageSelectorComponent } from '../tag-image-selector/tag-image-selector.component';
-import { PersonalAccountTag, PersonalAccountTagCreate, PersonalAccountTagTypeNew } from './../../../../../core/api';
+import {
+	PersonalAccountTag,
+	PersonalAccountTagCreate,
+	PersonalAccountTagImageName,
+	PersonalAccountTagTypeNew,
+} from './../../../../../core/api';
 import { DialogServiceUtil } from './../../../../../shared/dialogs';
 
 @Component({
@@ -128,7 +133,10 @@ export class TagItemComponent implements OnInit {
 	tagItemGroup = new FormGroup({
 		tagId: new FormControl<string | null>(null),
 		color: new FormControl<string>('#9c1c1c', { validators: [requiredValidator], nonNullable: true }),
-		icon: new FormControl<string>('', { validators: [requiredValidator], nonNullable: true }),
+		icon: new FormControl<PersonalAccountTagImageName | null>(null, {
+			validators: [requiredValidator],
+			nonNullable: true,
+		}),
 		tagName: new FormControl<string>('', {
 			validators: [requiredValidator, minLengthValidator(3), maxLengthValidator(15)],
 			nonNullable: true,
@@ -155,7 +163,7 @@ export class TagItemComponent implements OnInit {
 		const controls = this.tagItemGroup.controls;
 
 		// invalid
-		if (this.tagItemGroup.invalid) {
+		if (this.tagItemGroup.invalid || !controls.icon.value) {
 			DialogServiceUtil.showNotificationBar('Form is invalid', 'error');
 			return;
 		}
@@ -203,7 +211,7 @@ export class TagItemComponent implements OnInit {
 			})
 			.afterClosed()
 			.pipe(
-				filter((res): res is { url: string } => !!res),
+				filter((res): res is { url: PersonalAccountTagImageName } => !!res),
 				map((res) => res.url)
 			)
 			.subscribe((imageUrl) => {

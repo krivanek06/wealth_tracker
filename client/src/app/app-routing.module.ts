@@ -22,7 +22,7 @@ const routes: Routes = [
 						const router = inject(Router);
 
 						// save token
-						if (!authenticationFacadeService.currentUser) {
+						if (!authenticationFacadeService.getCurrentUser()) {
 							router.navigate([TOP_LEVEL_NAV.welcome]);
 							return false;
 						}

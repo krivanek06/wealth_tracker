@@ -6,7 +6,6 @@ import {
 	PersonalAccountDailyDataCreateNew,
 	PersonalAccountDailyDataNew,
 	PersonalAccountService,
-	PersonalAccountTagImageName,
 } from '../../../../core/api';
 import { Confirmable } from '../../../../shared/decorators';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
@@ -87,7 +86,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	showLoader$ = new BehaviorSubject<boolean>(false);
 
 	readonly formGroup = new FormGroup({
-		tagId: new FormControl<PersonalAccountTagImageName | null>(null, { validators: [requiredValidator] }),
+		tagId: new FormControl<string | null>(null, { validators: [requiredValidator] }),
 		value: new FormControl<string | null>(null, { validators: [requiredValidator, positiveNumberValidator] }),
 		time: new FormControl<Date>(new Date(), { validators: [requiredValidator] }),
 		date: new FormControl<Date>(new Date(), { validators: [requiredValidator] }),

@@ -1,7 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, computed, effect, inject } from '@angular/core';
 import { Firestore, arrayUnion, collection, doc, setDoc } from '@angular/fire/firestore';
+import { computedAsync } from 'ngxtension/computed-async';
 import { collection as rxCollection, docData as rxDocData } from 'rxfire/firestore';
-import { BehaviorSubject, Observable, map, of, switchMap, tap } from 'rxjs';
+import { map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { AuthenticationAccountService } from '../../services';
 import { DateServiceUtil, assignTypesClient } from '../../utils';
@@ -14,13 +15,11 @@ import {
 	personalAccountTagImageName,
 } from './personal-account-tags.model';
 import {
-	PersonalAccountAggregationDataOutput,
 	PersonalAccountDailyDataCreateNew,
 	PersonalAccountDailyDataNew,
 	PersonalAccountMonthlyDataNew,
 	PersonalAccountMonthlyDataNewBasic,
 	PersonalAccountNew,
-	PersonalAccountWeeklyAggregationOutput,
 } from './personal-account-types.model';
 
 @Injectable({
@@ -31,62 +30,75 @@ export class PersonalAccountService {
 	private authenticationAccountService = inject(AuthenticationAccountService);
 	private personalAccountAggregatorService = inject(PersonalAccountAggregatorService);
 
-	private personalAccount$ = new BehaviorSubject<PersonalAccountNew | undefined>(undefined);
-	private personalAccountMonthlyData$ = new BehaviorSubject<PersonalAccountMonthlyDataNew[]>([]);
+	personalAccountSignal = computedAsync(() => {
+		const user = this.authenticationAccountService.getCurrentUser();
+		return !user ? undefined : rxDocData(this.getPersonalAccountDocRef(user.uid), { idField: 'userId' });
+	});
+
+	personalAccountMonthlyDataSignal = computedAsync(() => {
+		const user = this.authenticationAccountService.getCurrentUser();
+		const tags = this.personalAccountTagsSignal();
+
+		return !user
+			? []
+			: rxCollection(this.getPersonalAccountMonthlyCollectionRef(user.uid)).pipe(
+					map((res) => res.map((doc) => doc.data())),
+					map((data) =>
+						data.map(
+							(d) =>
+								({
+									...d,
+									dailyData: d.dailyData.map((dd) => ({
+										...dd,
+										tag: tags.find((t) => t.id === dd.tagId) ?? PERSONAL_ACCOUNT_DEFAULT_TAG_DATA,
+										month: d.month,
+										year: d.year,
+									})),
+								}) satisfies PersonalAccountMonthlyDataNew
+						)
+					)
+				);
+	});
+
+	yearlyAggregatedSignal = computed(() => {
+		const data = this.personalAccountMonthlyDataSignal();
+		const account = this.personalAccountSignal();
+		return account ? this.personalAccountAggregatorService.getAllYearlyAggregatedData(account, data) : [];
+	});
+	weeklyAggregatedSignal = computed(() => {
+		const data = this.personalAccountMonthlyDataSignal();
+		const account = this.personalAccountSignal();
+		return account ? this.personalAccountAggregatorService.getAllWeeklyAggregatedData(account, data) : [];
+	});
+
+	personalAccountTagsSignal = computed(() => this.personalAccountSignal()?.tags ?? []);
+	personalAccountTagsExpenseSignal = computed(() =>
+		this.personalAccountTagsSignal().filter((tag) => tag.type === 'EXPENSE')
+	);
+	personalAccountTagsIncomeSignal = computed(() =>
+		this.personalAccountTagsSignal().filter((tag) => tag.type === 'INCOME')
+	);
 
 	constructor() {
-		this.loadUserPersonalAccount();
-		this.loadUserPersonalAccountMonthlyData();
-	}
-
-	get personalAccount(): PersonalAccountNew {
-		const value = this.personalAccount$.getValue();
-		if (!value) {
-			throw new Error('Personal account is not loaded yet');
-		}
-		return value;
-	}
-
-	getYearlyAggregatedData(): Observable<PersonalAccountAggregationDataOutput[]> {
-		return this.personalAccountMonthlyData$.pipe(
-			map((data) => this.personalAccountAggregatorService.getAllYearlyAggregatedData(this.personalAccount, data))
-		);
-	}
-
-	getWeeklyAggregatedData(): Observable<PersonalAccountWeeklyAggregationOutput[]> {
-		return this.personalAccountMonthlyData$.pipe(
-			map((data) => this.personalAccountAggregatorService.getAllWeeklyAggregatedData(this.personalAccount, data))
-		);
-	}
-
-	getUserPersonalAccount(): Observable<PersonalAccountNew | undefined> {
-		return this.personalAccount$.asObservable();
+		effect(() => {
+			const isUserNew = this.authenticationAccountService.isUserNew();
+			const user = this.authenticationAccountService.getCurrentUser();
+			if (isUserNew && user) {
+				console.log('User is new, creating empty portfolio account');
+				this.createEmptyPersonalAccount(user.uid);
+			}
+		});
 	}
 
 	getPersonalAccountAvailableTagImages() {
 		return personalAccountTagImageName;
 	}
 
-	getPersonalAccountTags(): Observable<PersonalAccountTag[]> {
-		return this.getUserPersonalAccount().pipe(map((res) => res?.tags ?? []));
-	}
-
-	getPersonalAccountTagsExpense() {
-		return this.getPersonalAccountTags().pipe(map((tags) => tags.filter((tag) => tag.type === 'EXPENSE')));
-	}
-
-	getPersonalTagsIncome() {
-		return this.getPersonalAccountTags().pipe(map((tags) => tags.filter((tag) => tag.type === 'INCOME')));
-	}
-
 	createPersonalAccountTag(tag: PersonalAccountTagCreate): Promise<void> {
-		// no auth user
-		if (!this.authenticationAccountService.currentUser) {
-			return Promise.reject('No auth user');
-		}
+		const currentUser = this.authenticationAccountService.getCurrentUserMust();
 
 		// limit user
-		if (this.personalAccount.tags.length > 50) {
+		if (this.personalAccountTagsSignal().length > 50) {
 			throw new Error('You can have only 50 tags');
 		}
 
@@ -96,7 +108,7 @@ export class PersonalAccountService {
 		};
 
 		return setDoc(
-			this.getPersonalAccountDocRef(),
+			this.getPersonalAccountDocRef(currentUser.uid),
 			{
 				tags: arrayUnion(data),
 			},
@@ -105,15 +117,11 @@ export class PersonalAccountService {
 	}
 
 	editPersonalAccountTag(input: PersonalAccountTag): Promise<void> {
-		const newData = this.personalAccount.tags.map((tag) => {
-			if (tag.name === input.name) {
-				return input;
-			}
-			return tag;
-		});
+		const currentUser = this.authenticationAccountService.getCurrentUserMust();
+		const newData = this.personalAccountTagsSignal().map((tag) => (tag.name === input.name ? input : tag));
 
 		return setDoc(
-			this.getPersonalAccountDocRef(),
+			this.getPersonalAccountDocRef(currentUser.uid),
 			{
 				tags: newData,
 			},
@@ -122,10 +130,11 @@ export class PersonalAccountService {
 	}
 
 	deletePersonalAccountTag(input: PersonalAccountTag): Promise<void> {
-		const newData = this.personalAccount.tags.filter((tag) => tag.name !== input.name);
+		const currentUser = this.authenticationAccountService.getCurrentUserMust();
+		const newData = this.personalAccountTagsSignal().filter((tag) => tag.name !== input.name);
 
 		return setDoc(
-			this.getPersonalAccountDocRef(),
+			this.getPersonalAccountDocRef(currentUser.uid),
 			{
 				tags: newData,
 			},
@@ -134,22 +143,26 @@ export class PersonalAccountService {
 	}
 
 	createPersonalAccountDailyEntry(input: PersonalAccountDailyDataCreateNew): Promise<void> {
+		const currentUser = this.authenticationAccountService.getCurrentUserMust();
 		const { year, month, week } = DateServiceUtil.getDetailsInformationFromDate(input.date);
 
 		const data: PersonalAccountDailyDataNew = {
 			...input,
 			id: uuid(),
 			week,
+			month,
+			year,
+			tag: this.personalAccountTagsSignal().find((tag) => tag.id === input.tagId) ?? PERSONAL_ACCOUNT_DEFAULT_TAG_DATA,
 		};
 
 		// check if monthly data exists
-		const monthlyData = this.personalAccountMonthlyData$
-			.getValue()
-			.find((data) => data.month === month && data.year === year);
+		const monthlyData = this.personalAccountMonthlyDataSignal().find(
+			(data) => data.month === month && data.year === year
+		);
 
 		// if not create new
 		if (!monthlyData) {
-			return setDoc(this.getPersonalAccountMonthlyDocRef(month, year), {
+			return setDoc(this.getPersonalAccountMonthlyDocRef(currentUser.uid, month, year), {
 				id: `${year}-${month}`,
 				month,
 				year,
@@ -159,7 +172,7 @@ export class PersonalAccountService {
 
 		// update docs
 		return setDoc(
-			this.getPersonalAccountMonthlyDocRef(month, year),
+			this.getPersonalAccountMonthlyDocRef(currentUser.uid, month, year),
 			{
 				dailyData: arrayUnion(data),
 			},
@@ -168,12 +181,13 @@ export class PersonalAccountService {
 	}
 
 	deletePersonalAccountDailyEntry(input: PersonalAccountDailyDataNew): Promise<void> {
+		const currentUser = this.authenticationAccountService.getCurrentUserMust();
 		const oldDataDates = DateServiceUtil.getDetailsInformationFromDate(input.date);
 
 		// remove old data
-		const oldMonthlyData = this.personalAccountMonthlyData$
-			.getValue()
-			.find((data) => data.month === oldDataDates.month && data.year === oldDataDates.year);
+		const oldMonthlyData = this.personalAccountMonthlyDataSignal().find(
+			(data) => data.month === oldDataDates.month && data.year === oldDataDates.year
+		);
 
 		// remove if exists
 		if (!oldMonthlyData) {
@@ -186,7 +200,7 @@ export class PersonalAccountService {
 
 		// update
 		return setDoc(
-			this.getPersonalAccountMonthlyDocRef(oldDataDates.month, oldDataDates.year),
+			this.getPersonalAccountMonthlyDocRef(currentUser.uid, oldDataDates.month, oldDataDates.year),
 			{
 				dailyData: newData,
 			},
@@ -205,52 +219,9 @@ export class PersonalAccountService {
 		await this.createPersonalAccountDailyEntry(newData);
 	}
 
-	private loadUserPersonalAccount(): void {
-		// no auth user
-		if (!this.authenticationAccountService.currentUser) {
-			this.personalAccount$.next(undefined);
-			return;
-		}
-
-		// first time user
-		if (this.authenticationAccountService.isUserNew) {
-			this.createEmptyPersonalAccount(this.authenticationAccountService.currentUser.uid);
-		}
-
-		// load data
-		rxDocData(this.getPersonalAccountDocRef(), { idField: 'userId' })
-			.pipe(tap((res) => this.personalAccount$.next(res)))
-			.subscribe((x) => console.log('loadUserPersonalAccount', x));
-	}
-
-	private loadUserPersonalAccountMonthlyData(): void {
-		this.personalAccount$
-			.asObservable()
-			.pipe(
-				switchMap((account) => (!account ? of([]) : rxCollection(this.getPersonalAccountMonthlyCollectionRef()))),
-				map((res) => res.map((doc) => doc.data())),
-				map((data) =>
-					data.map(
-						(d) =>
-							({
-								...d,
-								dailyData: d.dailyData.map((dd) => ({
-									...dd,
-									tag: this.personalAccount.tags.find((t) => t.id === dd.tagId) ?? PERSONAL_ACCOUNT_DEFAULT_TAG_DATA,
-									month: d.month,
-									year: d.year,
-								})),
-							}) satisfies PersonalAccountMonthlyDataNew
-					)
-				),
-				tap((data) => this.personalAccountMonthlyData$.next(data))
-			)
-			.subscribe((x) => console.log('loadUserPersonalAccountMonthlyData', x));
-	}
-
 	private createEmptyPersonalAccount(userId: string): void {
 		setDoc(
-			this.getPersonalAccountDocRef(),
+			this.getPersonalAccountDocRef(userId),
 			{
 				userId: userId,
 				tags: [...PERSONAL_ACCOUNT_DEFAULT_TAGS],
@@ -259,19 +230,17 @@ export class PersonalAccountService {
 		);
 	}
 
-	private getPersonalAccountMonthlyDocRef(month: number, year: number) {
-		return doc(this.getPersonalAccountMonthlyCollectionRef(), `${year}-${month}`);
+	private getPersonalAccountMonthlyDocRef(userId: string, month: number, year: number) {
+		return doc(this.getPersonalAccountMonthlyCollectionRef(userId), `${year}-${month}`);
 	}
 
-	private getPersonalAccountMonthlyCollectionRef() {
-		return collection(this.getPersonalAccountDocRef(), `monthly-data`).withConverter(
+	private getPersonalAccountMonthlyCollectionRef(userId: string) {
+		return collection(this.getPersonalAccountDocRef(userId), `monthly-data`).withConverter(
 			assignTypesClient<PersonalAccountMonthlyDataNewBasic>()
 		);
 	}
 
-	private getPersonalAccountDocRef() {
-		return doc(this.firestore, `personal-accounts/${this.authenticationAccountService.currentUser?.uid}`).withConverter(
-			assignTypesClient<PersonalAccountNew>()
-		);
+	private getPersonalAccountDocRef(userId: string) {
+		return doc(this.firestore, `personal-accounts/${userId}`).withConverter(assignTypesClient<PersonalAccountNew>());
 	}
 }

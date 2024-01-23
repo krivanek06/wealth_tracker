@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import {
 	Auth,
 	EmailAuthProvider,
@@ -11,7 +11,6 @@ import {
 	signInWithPopup,
 	updatePassword,
 } from '@angular/fire/auth';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { LoginUserInput, RegisterUserInput } from '../models/authentication.model';
 
 @Injectable({
@@ -19,36 +18,20 @@ import { LoginUserInput, RegisterUserInput } from '../models/authentication.mode
 })
 export class AuthenticationAccountService {
 	private auth = inject(Auth);
-	private authUser$ = new BehaviorSubject<User | null>(null);
+	private authUserSignal = signal<User | null>(null);
+
+	isUserNew = computed(
+		() => this.authUserSignal()?.metadata?.creationTime == this.authUserSignal()?.metadata?.lastSignInTime
+	);
+	getCurrentUser = computed(() => this.authUserSignal());
+	getCurrentUserMust = computed(() => this.authUserSignal()!);
 
 	constructor() {
 		this.auth.onAuthStateChanged((user) => {
 			console.log('Auth change', user);
-			this.authUser$.next(user);
+			this.authUserSignal.set(user);
 		});
 	}
-
-	get isUserNew(): boolean {
-		if (!this.currentUser) {
-			return false;
-		}
-		return this.currentUser.metadata.creationTime == this.currentUser.metadata.lastSignInTime;
-	}
-
-	get currentUser(): User | null {
-		return this.auth.currentUser;
-	}
-
-	getAuthUser(): Observable<User | null> {
-		return this.authUser$.asObservable();
-	}
-
-	// get currentUserAuth(): User {
-	//   if(!this.currentUser) {
-	//     throw new Error('User is not authenticated');
-	//   }
-	//   return this.currentUser;
-	// }
 
 	signIn(input: LoginUserInput): Promise<UserCredential> {
 		return signInWithEmailAndPassword(this.auth, input.email, input.password);
@@ -74,15 +57,16 @@ export class AuthenticationAccountService {
 	}
 
 	async changePassword(oldPassword: string, newPassword: string): Promise<void> {
-		if (!this.currentUser?.email) {
+		const currentUser = this.getCurrentUser();
+		if (!currentUser?.email) {
 			throw new Error('User is not authenticated');
 		}
 
 		try {
 			// check if old password is correct
-			const credentials = EmailAuthProvider.credential(this.currentUser.email, oldPassword);
+			const credentials = EmailAuthProvider.credential(currentUser.email, oldPassword);
 			console.log('credentials', credentials);
-			const reauth = await reauthenticateWithCredential(this.currentUser, credentials);
+			const reauth = await reauthenticateWithCredential(currentUser, credentials);
 			console.log('reauth', reauth);
 		} catch (error) {
 			console.error(error);
@@ -90,7 +74,7 @@ export class AuthenticationAccountService {
 		}
 
 		try {
-			await updatePassword(this.currentUser, newPassword);
+			await updatePassword(currentUser, newPassword);
 		} catch (error) {
 			console.error(error);
 			throw new Error('Password change failed');
@@ -100,43 +84,4 @@ export class AuthenticationAccountService {
 	async deleteAccount(): Promise<void> {
 		// TODO
 	}
-
-	// private listenOnUserChanges(): void {
-	//   this.authenticatedUser$
-	//     .pipe(
-	//       switchMap((user) =>
-	//         this.getUserById(user?.uid).pipe(
-	//           switchMap((userData) => (userData ? of(userData) : user ? from(this.userCreateAccount()) : of(null))),
-	//         ),
-	//       ),
-	//     )
-	//     .subscribe((userData) => {
-	//       console.log('UPDATING USER', userData);
-	//       // update user data
-	//       this.authenticatedUserData$.next(userData);
-
-	//       // notify about user change
-	//       const value = userData && !!userData.personal ? userData.id : null;
-	//       this.loadedAuthentication$.next(value);
-	//     });
-	// }
-
-	// private getUserById(userId?: string): Observable<UserData | undefined> {
-	//   if (!userId) {
-	//     return of(undefined);
-	//   }
-	//   return rxDocData(this.getUserDocRef(userId), { idField: 'id' });
-	// }
-
-	// private updateUser(id: string, user: Partial<UserData>): void {
-	//   setDoc(this.getUserDocRef(id), user, { merge: true });
-	// }
-
-	// private getUserDocRef(userId: string): DocumentReference<UserData> {
-	//   return doc(this.userCollection(), userId);
-	// }
-
-	// private userCollection(): CollectionReference<UserData, DocumentData> {
-	//   return collection(this.firestore, 'users').withConverter(assignTypesClient<UserData>());
-	// }
 }

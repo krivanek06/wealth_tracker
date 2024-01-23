@@ -1,6 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { Observable, map } from 'rxjs';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import {
 	PersonalAccountService,
 	PersonalAccountTag,
@@ -13,7 +11,7 @@ import { DialogServiceUtil } from '../../../../shared/dialogs';
 @Component({
 	selector: 'app-personal-account-tag-manager-modal',
 	template: `
-		<app-dialog-close-header (dialogCloseEmitter)="onCancel()" title="Tag Manager"></app-dialog-close-header>
+		<app-dialog-close-header title="Tag Manager" />
 
 		<mat-dialog-content class="px-4 py-4 sm:px-8">
 			<div class="flex flex-col gap-4 mb-8 sm:flex-row lg:justify-end">
@@ -46,11 +44,11 @@ import { DialogServiceUtil } from '../../../../shared/dialogs';
 
 			<!-- new tag -->
 			<div *ngIf="creatingNewTagType">
-				<h2 class="px-2 space-x-2">New Tag: <span [appTagTypeName]="creatingNewTagType"></span></h2>
+				<h2 class="px-2 space-x-2">New Tag: <span [appTagTypeName]="creatingNewTagType()"></span></h2>
 				<app-tag-item
 					(createTagEmitter)="onCreateTag($event)"
 					[editing]="true"
-					[tagType]="creatingNewTagType"
+					[tagType]="creatingNewTagType()"
 				></app-tag-item>
 
 				<div class="my-4">
@@ -59,16 +57,17 @@ import { DialogServiceUtil } from '../../../../shared/dialogs';
 			</div>
 
 			<!-- Income -->
-			<div *ngIf="personalAccountIncomeTags$ | async as personalAccountIncomeTags">
+			<div *ngIf="personalAccountIncomeTags() as personalAccountIncomeTags">
 				<h2 class="px-2"><span appTagTypeName="INCOME"></span> Tags: {{ personalAccountIncomeTags.length }}</h2>
-				<app-tag-item
-					class="max-lg:my-10"
-					*ngFor="let tag of personalAccountIncomeTags; trackBy: tagTrackByFn"
-					[tag]="tag"
-					tagType="INCOME"
-					(removeTagEmitter)="onRemoveTag($event)"
-					(editTagEmitter)="onEditTag($event)"
-				></app-tag-item>
+				@for (tag of personalAccountIncomeTags; track tag.id) {
+					<app-tag-item
+						class="max-lg:my-10"
+						[tag]="tag"
+						tagType="INCOME"
+						(removeTagEmitter)="onRemoveTag($event)"
+						(editTagEmitter)="onEditTag($event)"
+					></app-tag-item>
+				}
 			</div>
 
 			<div class="my-4">
@@ -76,7 +75,7 @@ import { DialogServiceUtil } from '../../../../shared/dialogs';
 			</div>
 
 			<!-- Expense -->
-			<div *ngIf="personalAccountExpenseTags$ | async as personalAccountExpenseTags">
+			<div *ngIf="personalAccountExpenseTags() as personalAccountExpenseTags">
 				<!-- heading -->
 				<h2 class="flex flex-col gap-2 px-2 sm:items-center sm:justify-between sm:flex-row">
 					<div><span appTagTypeName="EXPENSE"></span> Tags: {{ personalAccountExpenseTags.length }}</div>
@@ -89,19 +88,20 @@ import { DialogServiceUtil } from '../../../../shared/dialogs';
 							help
 						</mat-icon>
 						<span class="text-wt-primary-dark">Budgeting:</span>
-						<span>{{ monthlyBudget$ | async | currency }}</span>
+						<span>{{ monthlyBudget() | currency }}</span>
 					</div>
 				</h2>
 
 				<!-- expense items -->
-				<app-tag-item
-					class="max-lg:mb-10"
-					*ngFor="let tag of personalAccountExpenseTags; trackBy: tagTrackByFn"
-					[tag]="tag"
-					tagType="EXPENSE"
-					(removeTagEmitter)="onRemoveTag($event)"
-					(editTagEmitter)="onEditTag($event)"
-				></app-tag-item>
+				@for (tag of personalAccountExpenseTags; track tag.id) {
+					<app-tag-item
+						class="max-lg:mb-10"
+						[tag]="tag"
+						tagType="EXPENSE"
+						(removeTagEmitter)="onRemoveTag($event)"
+						(editTagEmitter)="onEditTag($event)"
+					></app-tag-item>
+				}
 			</div>
 		</mat-dialog-content>
 
@@ -121,49 +121,21 @@ import { DialogServiceUtil } from '../../../../shared/dialogs';
         @apply overflow-x-clip;
       }
   `,
-	//changeDetection: ChangeDetectionStrategy.OnPush, // <- uncommented because tag images were not changing
+	changeDetection: ChangeDetectionStrategy.OnPush, // <- TODO: uncommented because tag images were not changing
 })
-export class PersonalAccountTagManagerModalComponent implements OnInit {
-	personalAccountIncomeTags$!: Observable<PersonalAccountTag[]>;
-	personalAccountExpenseTags$!: Observable<PersonalAccountTag[]>;
-	monthlyBudget$!: Observable<number>;
+export class PersonalAccountTagManagerModalComponent {
+	private personalAccountFacadeService = inject(PersonalAccountService);
 
-	creatingNewTagType: PersonalAccountTagTypeNew | null = null;
+	personalAccountIncomeTags = this.personalAccountFacadeService.personalAccountTagsIncomeSignal;
+	personalAccountExpenseTags = this.personalAccountFacadeService.personalAccountTagsExpenseSignal;
+	monthlyBudget = computed(() =>
+		this.personalAccountExpenseTags().reduce((acc, curr) => acc + (curr.budgetMonthly ?? 0), 0)
+	);
 
-	constructor(
-		private personalAccountFacadeService: PersonalAccountService,
-		private dialogRef: MatDialogRef<PersonalAccountTagManagerModalComponent>
-	) {}
-	ngOnInit(): void {
-		this.personalAccountIncomeTags$ = this.personalAccountFacadeService
-			.getPersonalAccountTags()
-			.pipe(map((tags) => tags.filter((tag) => tag.type === 'INCOME')));
-		this.personalAccountExpenseTags$ = this.personalAccountFacadeService
-			.getPersonalAccountTags()
-			.pipe(map((tags) => tags.filter((tag) => tag.type === 'EXPENSE')));
-
-		this.monthlyBudget$ = this.personalAccountExpenseTags$.pipe(
-			map((res) => res.reduce((acc, curr) => acc + (curr.budgetMonthly ?? 0), 0))
-		);
-	}
-
-	tagTrackByFn(index: number, item: PersonalAccountTag): string {
-		return item.id;
-	}
+	creatingNewTagType = signal<PersonalAccountTagTypeNew>('EXPENSE');
 
 	onCreateButton(type: PersonalAccountTagTypeNew): void {
-		// remove from screen
-		if (this.creatingNewTagType === type) {
-			this.creatingNewTagType = null;
-			return;
-		}
-
-		// display
-		this.creatingNewTagType = type;
-	}
-
-	onCancel(): void {
-		this.dialogRef.close();
+		this.creatingNewTagType.set(type);
 	}
 
 	@Confirmable('Please confirm to remove the selected tag')

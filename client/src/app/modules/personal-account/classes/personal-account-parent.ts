@@ -17,14 +17,7 @@ import {
 	switchMap,
 	tap,
 } from 'rxjs';
-import { PersonalAccountFacadeService } from '../../../core/api';
-import {
-	AccountIdentification,
-	PersonalAccountDailyDataOutputFragment,
-	PersonalAccountDetailsFragment,
-	PersonalAccountTagFragment,
-	TagDataType,
-} from '../../../core/graphql';
+import { PersonalAccountDailyDataNew, PersonalAccountFacadeService, PersonalAccountTag } from '../../../core/api';
 import { DateServiceUtil } from '../../../core/utils';
 import { ChartType, GenericChartSeries, GenericChartSeriesPie, ValuePresentItem } from '../../../shared/models';
 import { PersonalAccountDailyDataEntryComponent, PersonalAccountTagManagerModalComponent } from '../modals';
@@ -38,9 +31,9 @@ import { PersonalAccountChartService, PersonalAccountDataService } from '../serv
 
 @Directive()
 export abstract class PersonalAccountParent implements OnDestroy {
-	personalAccountDetails$!: Observable<PersonalAccountDetailsFragment>;
+	//personalAccountDetails$!: Observable<PersonalAccountDetailsFragment>;
 
-	yearlyExpenseTags$!: Observable<ValuePresentItem<PersonalAccountTagFragment>[]>;
+	yearlyExpenseTags$!: Observable<ValuePresentItem<PersonalAccountTag>[]>;
 
 	/**
 	 * current account state totalIncome, totalExpense and difference
@@ -66,7 +59,7 @@ export abstract class PersonalAccountParent implements OnDestroy {
 	/**
 	 * daily data based on select date interval and tags
 	 */
-	filteredDailyData$!: Observable<PersonalAccountDailyDataOutputFragment[]>;
+	filteredDailyData$!: Observable<PersonalAccountDailyDataNew[]>;
 	filteredDailyDataLoaded$ = new BehaviorSubject<boolean>(true);
 
 	/**
@@ -90,7 +83,7 @@ export abstract class PersonalAccountParent implements OnDestroy {
 		selectedTagIds: new FormControl<string[]>([], { nonNullable: true }),
 	});
 
-	personalAccountBasic!: AccountIdentification;
+	//personalAccountBasic!: AccountIdentification;
 
 	personalAccountFacadeService = inject(PersonalAccountFacadeService);
 	personalAccountChartService = inject(PersonalAccountChartService);
@@ -131,7 +124,7 @@ export abstract class PersonalAccountParent implements OnDestroy {
 	}
 
 	private initData(): void {
-		this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsByUser();
+		//this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsByUser();
 
 		// calculate account state - balance, cash, invested
 		this.accountTotalState$ = this.personalAccountDetails$.pipe(

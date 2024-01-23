@@ -12,7 +12,7 @@ export type PersonalAccountMonthlyDataNewBasic = {
 	dailyData: PersonalAccountDailyDataBasic[];
 };
 
-export type PersonalAccountDailyDataBasic = {
+type PersonalAccountDailyDataBasic = {
 	id: string;
 	tagId: string;
 	value: number;

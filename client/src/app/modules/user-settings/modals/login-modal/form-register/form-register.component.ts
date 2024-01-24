@@ -16,7 +16,7 @@ import {
 			<!-- email -->
 			<app-form-mat-input-wrapper
 				hintText="Enter your email address"
-				controlName="email"
+				controlControlName="email"
 				inputCaption="Email"
 				inputType="EMAIL"
 			></app-form-mat-input-wrapper>
@@ -24,7 +24,7 @@ import {
 			<!-- password1 -->
 			<app-form-mat-input-wrapper
 				hintText="Enter your password"
-				controlName="password1"
+				controlControlName="password1"
 				inputCaption="Password"
 				inputType="PASSWORD"
 			></app-form-mat-input-wrapper>
@@ -32,7 +32,7 @@ import {
 			<!-- password2 -->
 			<app-form-mat-input-wrapper
 				hintText="Repeat your password"
-				controlName="password2"
+				controlControlName="password2"
 				inputCaption="Password"
 				inputType="PASSWORD"
 			></app-form-mat-input-wrapper>

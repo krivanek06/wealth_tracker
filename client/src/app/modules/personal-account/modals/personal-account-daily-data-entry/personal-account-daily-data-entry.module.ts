@@ -11,7 +11,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {
 	DatePickerComponent,
 	DialogCloseHeaderComponent,
-	FormMatInputWrapperModule,
+	FormMatInputWrapperComponent,
 	NumberKeyboardComponent,
 } from '../../../../shared/components';
 import { NotificationBarModule } from './../../../../shared/dialogs';
@@ -31,7 +31,7 @@ import { PersonalAccountDailyDataEntryComponent } from './personal-account-daily
 		MatDividerModule,
 		DefaultImgDirective,
 		NumberKeyboardComponent,
-		FormMatInputWrapperModule,
+		FormMatInputWrapperComponent,
 		DatePickerComponent,
 		MatTooltipModule,
 		NotificationBarModule,

@@ -1,9 +1,12 @@
 <fieldset [disabled]="disabled">
 	<ng-container [ngSwitch]="inputType">
 		<mat-form-field
-			*ngIf="!['CHECKBOX', 'RADIO', 'SLIDE_TOGGLE', 'SLIDER' ,'BUTTON'].includes(inputType); else fieldWhichCannotBeInFormField"
+			*ngIf="
+        !['CHECKBOX', 'RADIO', 'SLIDE_TOGGLE', 'SLIDER', 'BUTTON'].includes(inputType);
+        else fieldWhichCannotBeInFormField
+      "
 			appearance="fill"
-			[ngClass]="{ 'errors-showed': usedFormControl.touched  && usedFormControl.invalid }"
+			[ngClass]="{ 'g-form-error': parentFormControl?.touched && parentFormControl?.invalid }"
 		>
 			<!-- label -->
 			<mat-label> {{ inputCaption }}</mat-label>
@@ -12,7 +15,7 @@
 			<textarea
 				#textAreaElement
 				*ngSwitchCase="'TEXTAREA'"
-				[formControl]="formInputControl"
+				[formControl]="internalFormControl"
 				cdkAutosizeMinRows="4"
 				cdkTextareaAutosize
 				matInput
@@ -23,12 +26,18 @@
 			<ng-container *ngSwitchCase="'SELECT_SOURCE_WRAPPER'">
 				<mat-select
 					[disableRipple]="disabled"
-					[formControl]="formInputControl"
-					[ngClass]="{'disabled-element': disabled}"
+					[formControl]="internalFormControl"
+					[ngClass]="{ 'disabled-element': disabled }"
 				>
-					<mat-select-trigger *ngIf="selectedInputSource" class="flex items-center gap-2">
-						<img *ngIf="selectedInputSource?.image" [src]="selectedInputSource.image" alt="" />
-						{{ selectedInputSource.caption }}
+					<mat-select-trigger *ngIf="internalSelectFormControl() as selectedOption" class="flex items-center gap-2">
+						<img
+							appDefaultImg
+							[imageType]="selectedOption?.imageType"
+							*ngIf="selectedOption?.image as selectedOptionImage"
+							[src]="selectedOptionImage"
+							alt="Option image"
+						/>
+						{{ selectedOption.caption }}
 					</mat-select-trigger>
 					<mat-optgroup *ngFor="let source of inputSourceWrapper" [label]="source.name">
 						<mat-option
@@ -37,7 +46,13 @@
 							(onSelectionChange)="onSelectChange(optionData, $event)"
 						>
 							<div class="flex items-center gap-2">
-								<img *ngIf="optionData?.image" [src]="optionData.image" alt="" />
+								<img
+									*ngIf="optionData?.image"
+									appDefaultImg
+									[imageType]="optionData?.imageType"
+									[src]="optionData.image"
+									alt=""
+								/>
 								{{ optionData.caption }}
 							</div>
 						</mat-option>
@@ -59,13 +74,18 @@
 			<ng-template #selectTemplate>
 				<mat-select
 					[disableRipple]="disabled"
-					[formControl]="formInputControl"
-					[ngClass]="{'disabled-element': disabled}"
+					[formControl]="internalFormControl"
+					[ngClass]="{ 'disabled-element': disabled }"
 					[multiple]="inputType === InputType.MULTISELECT"
 				>
-					<mat-select-trigger *ngIf="selectedInputSource" class="flex items-center gap-2">
-						<img *ngIf="selectedInputSource?.image" [src]="selectedInputSource.image" alt="" />
-						{{ selectedInputSource.caption }}
+					<mat-select-trigger *ngIf="internalSelectFormControl() as selectedOption" class="flex items-center gap-2">
+						<img
+							appDefaultImg
+							*ngIf="selectedOption.image as selectedOptionImage"
+							[src]="selectedOptionImage"
+							alt="Option image"
+						/>
+						{{ selectedOption.caption }}
 					</mat-select-trigger>
 					<input
 						*ngIf="inputType === InputType.SELECTSEARCH || inputType === InputType.MULTISELECT"
@@ -78,7 +98,7 @@
 						[value]="optionData.value"
 						(onSelectionChange)="onSelectChange(optionData, $event)"
 					>
-						<div class="flex items-center gap-2">
+						<div class="flex items-center gap-2 min-w-max">
 							<img *ngIf="optionData?.image" [src]="optionData.image" alt="" />
 							{{ optionData.caption }}
 						</div>
@@ -88,34 +108,21 @@
 
 			<!-- number -->
 			<ng-container *ngSwitchCase="'NUMBER'">
-				<input
-					[formControl]="formInputControl"
-					[readOnly]="disabled"
-					type="number"
-					[autocomplete]="inputAutoComplete ? 'on' : 'off'"
-					matInput
-				/>
+				<input [formControl]="internalFormControl" [readOnly]="disabled" type="number" autocomplete="off" matInput />
 			</ng-container>
 
 			<!-- text, number, time, email -->
 			<input
 				*ngSwitchDefault
-				[formControl]="formInputControl"
+				[formControl]="internalFormControl"
 				[readOnly]="disabled"
 				[type]="inputType | lowercase"
-				[autocomplete]="inputAutoComplete ? 'on' : 'off'"
+				autocomplete="off"
 				matInput
 			/>
 
-			<!-- errors -->
-			<mat-error *ngFor="let inputError of usedFormControl.errors | keyvalue" [id]="''">
-				{{ inputError.value.errorText }}
-			</mat-error>
-
 			<!-- hint -->
-			<mat-icon *ngIf="hintText" [matTooltip]="hintText" class="hidden sm:block text-wt-gray-medium" matSuffix>
-				help_outline
-			</mat-icon>
+			<mat-hint *ngIf="hintText" class="hidden sm:block text-wt-gray-medium" matSuffix> {{ hintText }} </mat-hint>
 
 			<!-- prefix icon -->
 			<mat-icon *ngIf="prefixIcon" matPrefix class="icon-prefix">{{ prefixIcon }}</mat-icon>
@@ -128,10 +135,10 @@
 				<mat-checkbox
 					*ngSwitchCase="'CHECKBOX'"
 					[disableRipple]="disabled"
-					[formControl]="formInputControl"
+					[formControl]="internalFormControl"
 					color="primary"
-					[matTooltip]="hintText ? (hintText) : ''"
-					[ngClass]="{'disabled-element': disabled}"
+					[matTooltip]="hintText ? hintText : ''"
+					[ngClass]="{ 'disabled-element': disabled }"
 				>
 					{{ inputCaption }}
 				</mat-checkbox>
@@ -142,9 +149,9 @@
 					<mat-label class="font-bold"> {{ inputCaption }}</mat-label>
 
 					<mat-radio-group
-						[formControl]="formInputControl"
-						[matTooltip]="hintText ? (hintText) : ''"
-						[ngClass]="{'disabled-element': disabled}"
+						[formControl]="internalFormControl"
+						[matTooltip]="hintText ? hintText : ''"
+						[ngClass]="{ 'disabled-element': disabled }"
 						class="flex flex-col mt-4"
 					>
 						<mat-radio-button *ngFor="let optionData of inputSource" [value]="optionData.value">
@@ -152,13 +159,19 @@
 						</mat-radio-button>
 					</mat-radio-group>
 				</ng-container>
+
 				<!-- errors -->
-				<ng-container *ngIf="shouldBeErrorsShowed">
-					<mat-error *ngFor="let inputError of usedFormControl.errors | keyvalue" [id]="''">
-						{{ inputError.value.errorText }}
-					</mat-error>
-				</ng-container>
+				<mat-error *ngFor="let inputError of parentFormControl?.errors | keyvalue" [id]="''">
+					{{ inputError.value.errorText }}
+				</mat-error>
 			</div>
 		</ng-template>
 	</ng-container>
 </fieldset>
+
+<!-- errors -->
+<ng-container *ngIf="showErrors">
+	<mat-error *ngFor="let inputError of parentFormControl?.errors | keyvalue" [id]="''">
+		{{ inputError.value.errorText }}
+	</mat-error>
+</ng-container>

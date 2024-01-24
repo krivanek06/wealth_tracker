@@ -21,6 +21,18 @@ export type DateServiceUtilDateInformation = {
 
 type DateInput = string | number | Date;
 
+export const getCurrentDateDefaultFormat = (addTime = false): string => {
+	if (addTime) {
+		return dateFormatDate(new Date(), 'yyyy-MM-dd HH:mm:ss');
+	}
+	return dateFormatDate(new Date(), 'yyyy-MM-dd ');
+};
+
+export const dateFormatDate = (inputDate: DateInput, formateStr: string = 'yyyy-MM-dd'): string => {
+	const date = new Date(inputDate);
+	return format(date, formateStr);
+};
+
 export class DateServiceUtil {
 	static getDetailsInformationFromDate(input: string | Date | number): DateServiceUtilDateInformation {
 		const date = new Date(input);

@@ -8,7 +8,7 @@ import { DefaultImageType } from '../models';
 })
 export class DefaultImgDirective implements OnChanges {
 	@Input() src?: string | null;
-	@Input() imageType: DefaultImageType = 'url';
+	@Input() imageType?: DefaultImageType;
 
 	constructor(private imageRef: ElementRef) {}
 

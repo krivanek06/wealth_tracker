@@ -1,13 +1,14 @@
-import { DateFilterFn } from '@angular/material/datepicker';
+import { DefaultImageType } from './uncotegorized.model';
 
-export interface InputSourceWrapper {
+export interface InputSourceWrapper<T = unknown> {
 	name: string;
-	items: InputSource[];
+	items: InputSource<T>[];
 }
 
-export interface InputSource {
+export interface InputSource<T = unknown> {
 	image?: string;
-	value: string | number;
+	imageType?: DefaultImageType;
+	value: T;
 	caption: string;
 	additionalData?: unknown;
 }
@@ -68,12 +69,6 @@ export const KeyboardComponent = [
 export type KeyboardComponentType = (typeof KeyboardComponent)[number];
 
 // -------------------------------------------------
-
-export interface InputTypeDateTimePickerConfig {
-	minDate?: Date | string;
-	maxDate?: Date | string;
-	dateFilter?: DateFilterFn<any>;
-}
 
 export interface InputTypeSlider {
 	min: number;

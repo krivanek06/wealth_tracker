@@ -127,7 +127,8 @@ export class PersonalAccountDailyEntriesTableComponent implements OnInit, AfterV
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 	@ViewChild(MatSort) sort!: MatSort;
 
-	@Input() set personalAccountDailyData(data: PersonalAccountDailyDataNew[] | null) {
+	@Input({ required: true }) set personalAccountDailyData(data: PersonalAccountDailyDataNew[] | null) {
+		console.log('data in table', data);
 		const dataOrder = (data ?? []).slice().sort((a, b) => Number(b.date) - Number(a.date));
 		this.dataSource = new MatTableDataSource(dataOrder);
 		this.dataSource.paginator = this.paginator;

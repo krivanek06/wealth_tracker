@@ -5,8 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import {
 	ExpanderComponent,
-	FormMatInputWrapperModule,
-	PieChartComponent,
 	ScrollWrapperModule,
 	ValuePresentationButtonControlComponent,
 } from '../../../../shared/components';
@@ -19,6 +17,7 @@ import {
 	PersonalAccountDailyEntriesFilterComponent,
 	PersonalAccountDailyEntriesTableComponent,
 	PersonalAccountExpenseChartComponent,
+	PersonalAccountExpensePieChartComponent,
 	PersonalAccountExpensesByTagComponent,
 } from '../../components';
 import { PersonalAccountDailyDataEntryModule, PersonalAccountTagManagerModalModule } from '../../modals';
@@ -42,10 +41,9 @@ enum ChartExpand {
 		MatButtonModule,
 		MatIconModule,
 		PersonalAccountDailyDataEntryModule,
-		FormMatInputWrapperModule,
 		PersonalAccountDailyEntriesFilterComponent,
 		PersonalAccountAccountStateComponent,
-		PieChartComponent,
+		PersonalAccountExpensePieChartComponent,
 		PersonalAccountAccountGrowthChartComponent,
 		PersonalAccountActionButtonsComponent,
 		PersonalAccountTagManagerModalModule,
@@ -131,11 +129,11 @@ enum ChartExpand {
 
 				<!-- spending allocation by tags -->
 				<div class="lg:col-span-2 lg:-mt-12">
-					<app-pie-chart
+					<app-personal-account-expense-pie-chart
 						class="scale-150"
 						[series]="personalAccountExpensePieChart()"
 						[displayValue]="accountFilteredState().total"
-					></app-pie-chart>
+					></app-personal-account-expense-pie-chart>
 				</div>
 			</div>
 

@@ -9,7 +9,7 @@ import { emailValidator, maxLengthValidator, requiredValidator } from '../../../
 			<!-- email -->
 			<app-form-mat-input-wrapper
 				hintText="Enter your email address"
-				controlName="email"
+				controlControlName="email"
 				inputCaption="Email"
 				inputType="EMAIL"
 			></app-form-mat-input-wrapper>
@@ -17,7 +17,7 @@ import { emailValidator, maxLengthValidator, requiredValidator } from '../../../
 			<!-- password -->
 			<app-form-mat-input-wrapper
 				hintText="Enter your password"
-				controlName="password"
+				controlControlName="password"
 				inputCaption="Password"
 				inputType="PASSWORD"
 			></app-form-mat-input-wrapper>

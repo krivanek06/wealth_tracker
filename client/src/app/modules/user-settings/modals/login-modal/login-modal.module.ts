@@ -7,7 +7,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
-import { DialogCloseHeaderComponent, FormMatInputWrapperModule } from '../../../../shared/components';
+import { DialogCloseHeaderComponent, FormMatInputWrapperComponent } from '../../../../shared/components';
 import { FormLoginComponent } from './form-login/form-login.component';
 import { FormRegisterComponent } from './form-register/form-register.component';
 import { LoginModalComponent } from './login-modal.component';
@@ -21,7 +21,7 @@ import { LoginModalComponent } from './login-modal.component';
 		ReactiveFormsModule,
 		MatIconModule,
 		MatDividerModule,
-		FormMatInputWrapperModule,
+		FormMatInputWrapperComponent,
 		MatTabsModule,
 		MatProgressSpinnerModule,
 		DialogCloseHeaderComponent,

@@ -39,7 +39,7 @@ import { DialogServiceUtil } from './../../../../../shared/dialogs';
 			<div>
 				<app-form-mat-input-wrapper
 					[disabled]="!editing"
-					controlName="tagName"
+					controlControlName="tagName"
 					inputCaption="Enter name for a tag"
 				></app-form-mat-input-wrapper>
 			</div>

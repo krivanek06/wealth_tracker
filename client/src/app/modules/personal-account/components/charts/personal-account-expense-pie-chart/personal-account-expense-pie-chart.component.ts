@@ -1,18 +1,36 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { HighchartsChartModule } from 'highcharts-angular';
-import { ChartConstructor } from '../../../../core/utils';
-import { ChartType, GenericChartSeriesPie } from '../../../models';
+import { ChartConstructor } from '../../../../../core/utils';
+import { ChartType, GenericChartSeriesPie } from '../../../../../shared/models';
 
 @Component({
-	selector: 'app-pie-chart',
+	selector: 'app-personal-account-expense-pie-chart',
 	standalone: true,
 	imports: [CommonModule, HighchartsChartModule],
-	templateUrl: './pie-chart.component.html',
-	styleUrls: ['./pie-chart.component.scss'],
+	template: `
+		<highcharts-chart
+			#chartRef
+			*ngIf="isHighcharts"
+			[Highcharts]="Highcharts"
+			[options]="chartOptions"
+			[callbackFunction]="chartCallback"
+			[(update)]="updateFromInput"
+			[oneToOne]="true"
+			style="width: 98%; transform: scale(0.9); margin: auto; display: block"
+		>
+		</highcharts-chart>
+	`,
+	styles: [
+		`
+			:host {
+				display: block;
+			}
+		`,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PieChartComponent extends ChartConstructor implements OnChanges {
+export class PersonalAccountExpensePieChartComponent extends ChartConstructor implements OnChanges {
 	@Input() displayValue?: number | null;
 
 	@Input() series?: GenericChartSeriesPie | null;
@@ -123,7 +141,7 @@ export class PieChartComponent extends ChartConstructor implements OnChanges {
 							const percentageRounded = Math.round(percentage * 100) / 100;
 							const color = this.color ?? 'white';
 
-							const imageSection = `<img src=${url} alt="Tag Image" class="h-6 w-6" />`;
+							const imageSection = `<img src="./assets/personal-account-tags/${url}.svg" alt="Tag Image" class="h-6 w-6" />`;
 							const nameSection = `
                 <div>
                   <span style="color: ${color}">●</span>

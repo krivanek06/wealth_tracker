@@ -24,6 +24,7 @@ export class PersonalAccountDataService {
 					value: res.id,
 					additionalData: res,
 					image: res.image,
+					imageType: 'tagName',
 				}) satisfies InputSource
 		);
 
@@ -34,6 +35,7 @@ export class PersonalAccountDataService {
 					value: res.id,
 					additionalData: res,
 					image: res.image,
+					imageType: 'tagName',
 				}) satisfies InputSource
 		);
 

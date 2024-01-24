@@ -5,11 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import {
-	FormMatInputWrapperModule,
-	PieChartComponent,
-	ValuePresentationCardComponent,
-} from '../../../../shared/components';
+import { ValuePresentationCardComponent } from '../../../../shared/components';
 import { RangeDirective } from '../../../../shared/directives';
 import { PersonalAccountParent } from '../../classes';
 import {
@@ -19,6 +15,7 @@ import {
 	PersonalAccountDailyEntriesTableComponent,
 	PersonalAccountDailyEntriesTableMobileComponent,
 	PersonalAccountDisplayToggleComponent,
+	PersonalAccountExpensePieChartComponent,
 	PersonalAccountExpensesByTagComponent,
 	PersonalAccountOverviewChartMobileComponent,
 } from '../../components';
@@ -38,11 +35,11 @@ import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-m
 
 			<!-- expense chart -->
 			<div class="-mt-12">
-				<app-pie-chart
+				<app-personal-account-expense-pie-chart
 					class="scale-110"
 					[series]="personalAccountExpensePieChart()"
 					[displayValue]="accountDisplayedState().total"
-				></app-pie-chart>
+				></app-personal-account-expense-pie-chart>
 			</div>
 
 			<!-- settings -->
@@ -108,7 +105,6 @@ import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-m
 	standalone: true,
 	imports: [
 		CommonModule,
-		FormMatInputWrapperModule,
 		ReactiveFormsModule,
 		PersonalAccountOverviewChartMobileComponent,
 		PersonalAccountDailyEntriesTableComponent,
@@ -118,7 +114,7 @@ import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-m
 		MatButtonModule,
 		MatIconModule,
 		GetTagByIdPipe,
-		PieChartComponent,
+		PersonalAccountExpensePieChartComponent,
 		ValuePresentationCardComponent,
 		PersonalAccountAccountStateComponent,
 		PersonalAccountDisplayToggleComponent,

@@ -16,7 +16,7 @@ type PersonalAccountDailyDataBasic = {
 	id: string;
 	tagId: string;
 	value: number;
-	date: string; // i.e: YYYY-MM-DDTHH:mm:ss
+	date: string; // i.e: YYYY-MM-DD
 	week: number;
 };
 

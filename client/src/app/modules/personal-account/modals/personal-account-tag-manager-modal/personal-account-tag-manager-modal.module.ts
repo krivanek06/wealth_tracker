@@ -11,14 +11,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {
 	ColorPickerComponent,
 	DialogCloseHeaderComponent,
-	FormMatInputWrapperModule,
+	FormMatInputWrapperComponent,
 	SliderComponent,
 } from '../../../../shared/components';
 import { DefaultImgDirective, RangeDirective } from '../../../../shared/directives';
 import { TagTypeNameDirective } from '../../directives';
 import { PersonalAccountTagManagerModalComponent } from './personal-account-tag-manager-modal.component';
-import { TagItemComponent } from './tag-item/tag-item.component';
 import { TagImageSelectorComponent } from './tag-image-selector/tag-image-selector.component';
+import { TagItemComponent } from './tag-item/tag-item.component';
 
 @NgModule({
 	declarations: [PersonalAccountTagManagerModalComponent, TagItemComponent, TagImageSelectorComponent],
@@ -30,7 +30,6 @@ import { TagImageSelectorComponent } from './tag-image-selector/tag-image-select
 		MatInputModule,
 		MatIconModule,
 		MatDividerModule,
-		FormMatInputWrapperModule,
 		MatCheckboxModule,
 		ColorPickerComponent,
 		DefaultImgDirective,
@@ -39,6 +38,7 @@ import { TagImageSelectorComponent } from './tag-image-selector/tag-image-select
 		MatTooltipModule,
 		RangeDirective,
 		DialogCloseHeaderComponent,
+		FormMatInputWrapperComponent,
 	],
 })
 export class PersonalAccountTagManagerModalModule {}

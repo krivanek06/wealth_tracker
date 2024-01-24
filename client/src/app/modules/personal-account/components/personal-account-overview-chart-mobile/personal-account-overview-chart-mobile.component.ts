@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { PieChartComponent, ValuePresentationCardComponent } from '../../../../shared/components';
+import { ValuePresentationCardComponent } from '../../../../shared/components';
 import { GenericChartSeriesPie } from '../../../../shared/models';
 import { AccountState } from '../../models';
+import { PersonalAccountExpensePieChartComponent } from '../charts';
 
 @Component({
 	selector: 'app-personal-account-overview-chart-mobile',
 	standalone: true,
-	imports: [CommonModule, PieChartComponent, ValuePresentationCardComponent],
+	imports: [CommonModule, PersonalAccountExpensePieChartComponent, ValuePresentationCardComponent],
 	template: `
 		<div class="relative">
 			<!-- expense -->
@@ -26,7 +27,11 @@ import { AccountState } from '../../models';
 
 			<!-- expense chart -->
 			<div class="p-8">
-				<app-pie-chart *ngIf="chartData" chartTitlePosition="center" [series]="chartData"></app-pie-chart>
+				<app-personal-account-expense-pie-chart
+					*ngIf="chartData"
+					chartTitlePosition="center"
+					[series]="chartData"
+				></app-personal-account-expense-pie-chart>
 			</div>
 
 			<!-- balance -->

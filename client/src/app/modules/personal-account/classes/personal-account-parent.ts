@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { computedFrom } from 'ngxtension/computed-from';
 import { of, pipe, startWith, switchMap } from 'rxjs';
 import { PersonalAccountDailyDataNew, PersonalAccountService } from '../../../core/api';
-import { DateServiceUtil } from '../../../core/utils';
+import { DateServiceUtil, getCurrentDateDefaultFormat } from '../../../core/utils';
 import { ChartType } from '../../../shared/models';
 import { PersonalAccountDailyDataEntryComponent, PersonalAccountTagManagerModalComponent } from '../modals';
 import { NO_DATE_SELECTED, PersonalAccountActionButtonType, PersonalAccountTagAggregationType } from '../models';
@@ -21,10 +21,11 @@ export abstract class PersonalAccountParent {
 	/**
 	 * form used to filter daily data
 	 */
-	private today = DateServiceUtil.getDetailsInformationFromDate(new Date());
+	private today = getCurrentDateDefaultFormat();
+
 	readonly filterDailyDataGroup = new FormGroup({
 		// selected month - format year-month-week, week is optional
-		dateFilter: new FormControl<string>(`${this.today.year}-${this.today.month}`, { nonNullable: true }),
+		dateFilter: new FormControl<string>(`${this.today}`, { nonNullable: true }),
 		// keeps track of visible tags, if empty -> all is visible
 		selectedTagIds: new FormControl<string[]>([], { nonNullable: true }),
 	});
@@ -36,7 +37,7 @@ export abstract class PersonalAccountParent {
 		this.filterDailyDataGroup.controls.dateFilter.valueChanges.pipe(
 			startWith(this.filterDailyDataGroup.controls.dateFilter.value)
 		),
-		{ initialValue: `${this.today.year}-${this.today.month}` }
+		{ initialValue: `${this.today}` }
 	);
 
 	//personalAccountDetails$!: Observable<PersonalAccountDetailsFragment>;
@@ -76,10 +77,12 @@ export abstract class PersonalAccountParent {
 		[this.personalAccountService.personalAccountMonthlyDataSignal, this.dateSource],
 		pipe(
 			switchMap(([monthlyData, dateFilter]) => {
+				console.log('totalDailyDataForTimePeriod', monthlyData, dateFilter);
 				if (dateFilter === NO_DATE_SELECTED || !monthlyData) {
 					return of([]);
 				}
 				const { year, month, week } = DateServiceUtil.getDetailsInformationFromDate(dateFilter);
+				console.log('totalDailyDataForTimePeriod', year, month);
 				const monthlyDataForTimePeriod = monthlyData.filter((d) => d.year === year && d.month === month);
 				return of(monthlyDataForTimePeriod.length === 0 ? [] : monthlyDataForTimePeriod[0].dailyData);
 			})
@@ -122,6 +125,7 @@ export abstract class PersonalAccountParent {
 	filteredDailyData = computed(() => {
 		const data = this.totalDailyDataForTimePeriod();
 		const tags = this.selectedTagIds();
+		console.log('filteredDailyData', data, tags);
 		return !!tags ? data.filter((d) => tags.includes(d.tagId)) : [];
 	});
 

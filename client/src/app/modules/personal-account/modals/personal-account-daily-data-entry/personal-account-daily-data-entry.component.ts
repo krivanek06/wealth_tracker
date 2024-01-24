@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { BehaviorSubject } from 'rxjs';
+import { format } from 'date-fns';
 import {
 	PersonalAccountDailyDataCreateNew,
 	PersonalAccountDailyDataNew,
@@ -17,7 +17,7 @@ import { PersonalAccountDataService } from '../../services';
 	template: `
 		<app-dialog-close-header (dialogCloseEmitter)="onCancel()" title="Daily Data"></app-dialog-close-header>
 
-		<div *ngIf="showLoader$ | async; else showForm" class="mt-6 mb-10">
+		<div *ngIf="showLoader(); else showForm" class="mt-6 mb-10">
 			<mat-spinner diameter="100" class="m-auto"></mat-spinner>
 		</div>
 
@@ -29,14 +29,14 @@ import { PersonalAccountDataService } from '../../services';
 
 					<!-- tag -->
 					<app-form-mat-input-wrapper
-						controlName="tagId"
+						formControlName="tagId"
 						inputCaption="Select tag"
 						inputType="SELECT_SOURCE_WRAPPER"
 						[inputSourceWrapper]="displayTagsInputSource()"
 					></app-form-mat-input-wrapper>
 
 					<!-- display value -->
-					<div class="flex items-center justify-between w-full pl-4 mb-5 text-xl">
+					<div class="flex items-center justify-between w-full pl-4 mb-6 mt-4 text-xl">
 						<span class="text-wt-gray-light">$</span>
 
 						<div class="flex items-center gap-4">
@@ -83,12 +83,11 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	displayTagsInputSource = this.personalAccountDataService.availableTagInputSourceWrapper;
 
 	// booleans to show spinner
-	showLoader$ = new BehaviorSubject<boolean>(false);
+	showLoader = signal(false);
 
 	readonly formGroup = new FormGroup({
 		tagId: new FormControl<string | null>(null, { validators: [requiredValidator] }),
 		value: new FormControl<string | null>(null, { validators: [requiredValidator, positiveNumberValidator] }),
-		time: new FormControl<Date>(new Date(), { validators: [requiredValidator] }),
 		date: new FormControl<Date>(new Date(), { validators: [requiredValidator] }),
 	});
 
@@ -120,7 +119,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		}
 
 		DialogServiceUtil.showNotificationBar(`Operation sent to the server side`, 'notification');
-		this.showLoader$.next(true);
+		this.showLoader.set(true);
 
 		try {
 			this.personalAccountFacadeService.deletePersonalAccountDailyEntry(this.data.dailyData);
@@ -128,7 +127,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		} catch (e) {
 			DialogServiceUtil.handleError(e);
 		} finally {
-			this.showLoader$.next(false);
+			this.showLoader.set(false);
 		}
 	}
 
@@ -140,7 +139,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			return;
 		}
 
-		this.showLoader$.next(true);
+		this.showLoader.set(true);
 
 		// decide if creating or editing
 		const editedDailyData = this.data.dailyData;
@@ -151,17 +150,17 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 			} else {
 				await this.personalAccountFacadeService.createPersonalAccountDailyEntry(dailyDataCreate);
 			}
+			this.dialogRef.close();
 		} catch (e) {
 			DialogServiceUtil.handleError(e);
 		} finally {
-			this.showLoader$.next(false);
+			this.showLoader.set(false);
 		}
 	}
 
 	private initEditing(dailyData: PersonalAccountDailyDataNew): void {
 		this.formGroup.setValue({
-			date: new Date(Number(dailyData.date)),
-			time: new Date(Number(dailyData.date)),
+			date: new Date(dailyData.date),
 			tagId: dailyData.tagId,
 			value: String(dailyData.value),
 		});
@@ -170,28 +169,17 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 	private getDailyDatafromForm(): PersonalAccountDailyDataCreateNew | null {
 		// get values from form
 		const dateValue = this.formGroup.controls.date.value;
-		const timeValue = this.formGroup.controls.time.value;
 		const tagValue = this.formGroup.controls.tagId.value;
 		const valueValue = this.formGroup.controls.value.value;
 
 		// TS checking, should not happen
-		if (!dateValue || !timeValue || !tagValue || !valueValue) {
+		if (!dateValue || !tagValue || !valueValue) {
 			return null;
 		}
 
-		// combine dateValue & timeValue into one date
-		const combinedDate = new Date(
-			dateValue.getFullYear(),
-			dateValue.getMonth(),
-			dateValue.getDate(),
-			timeValue.getHours(),
-			timeValue.getMinutes(),
-			timeValue.getSeconds()
-		);
-
 		// create server obj
 		const dailyEntry: PersonalAccountDailyDataCreateNew = {
-			date: combinedDate.toString(),
+			date: format(dateValue, 'yyyy-MM-dd'),
 			value: Number(valueValue),
 			tagId: tagValue,
 		};

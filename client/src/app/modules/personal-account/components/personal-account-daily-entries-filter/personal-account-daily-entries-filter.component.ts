@@ -4,8 +4,8 @@ import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, Reacti
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { DateServiceUtil } from '../../../../core/utils';
-import { FormMatInputWrapperModule } from '../../../../shared/components';
+import { getCurrentDateDefaultFormat } from '../../../../core/utils';
+import { FormMatInputWrapperComponent } from '../../../../shared/components';
 import { InputSourceWrapper } from '../../../../shared/models';
 import { PersonalAccountDataService } from '../../services';
 import { PersonalAccountWeeklyAggregationOutput } from './../../../../core/api';
@@ -18,7 +18,7 @@ import { PersonalAccountWeeklyAggregationOutput } from './../../../../core/api';
 				<div class="w-full md:w-[350px]">
 					<app-form-mat-input-wrapper
 						inputCaption="Filter by date"
-						controlName="dateFilter"
+						formControlName="dateFilter"
 						inputType="SELECT_SOURCE_WRAPPER"
 						[inputSourceWrapper]="filterDateInputSourceWrapper"
 					></app-form-mat-input-wrapper>
@@ -76,7 +76,7 @@ import { PersonalAccountWeeklyAggregationOutput } from './../../../../core/api';
 	imports: [
 		CommonModule,
 		ReactiveFormsModule,
-		FormMatInputWrapperModule,
+		FormMatInputWrapperComponent,
 		MatButtonModule,
 		MatIconModule,
 		MatDividerModule,
@@ -121,15 +121,12 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	}
 
 	onCurrentMonthClick(): void {
-		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(new Date());
-		this.formGroup.controls.dateFilter.patchValue(`${year}-${month}`);
+		this.formGroup.controls.dateFilter.patchValue(getCurrentDateDefaultFormat());
 	}
 
 	writeValue(value: string): void {
-		const { year, month } = DateServiceUtil.getDetailsInformationFromDate(new Date());
-
 		// save selected month-year into the form
-		this.formGroup.controls.dateFilter.reset(`${year}-${month}`, { emitEvent: false });
+		this.formGroup.controls.dateFilter.reset(getCurrentDateDefaultFormat(), { emitEvent: false });
 	}
 	/**
 	 * Register Component's ControlValueAccessor onChange callback

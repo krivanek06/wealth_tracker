@@ -5,7 +5,6 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { PersonalAccountDailyDataAggregation } from '../../../models';
 import { PersonalAccountDailyDataNew } from './../../../../../core/api';
-import { TagDataType } from './../../../../../core/graphql';
 import { DefaultImgDirective } from './../../../../../shared/directives';
 
 @Component({
@@ -45,8 +44,8 @@ import { DefaultImgDirective } from './../../../../../shared/directives';
 
 							<div
 								[ngClass]="{
-									'text-wt-danger-medium': data.tag.type === TagDataType.Expense,
-									'text-wt-success-medium': data.tag.type === TagDataType.Income
+									'text-wt-danger-medium': data.tag.type === 'EXPENSE',
+									'text-wt-success-medium': data.tag.type === 'INCOME'
 								}"
 							>
 								{{ data.value | currency }}
@@ -82,8 +81,6 @@ import { DefaultImgDirective } from './../../../../../shared/directives';
 export class PersonalAccountDailyEntriesTableMobileComponent {
 	@Output() editDailyEntryClickEmitter = new EventEmitter<PersonalAccountDailyDataNew>();
 	@Input() personalAccountDailyData?: PersonalAccountDailyDataAggregation[] | null;
-
-	TagDataType = TagDataType;
 
 	onEditDailyEntryClick(data: PersonalAccountDailyDataNew): void {
 		this.editDailyEntryClickEmitter.emit(data);

@@ -1,12 +1,38 @@
 import { ChangeDetectionStrategy, Component, forwardRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { LoginUserInput } from '../../../../../core/graphql';
+import { LoginUserInput } from '../../../../../core/models';
 import { emailValidator, maxLengthValidator, requiredValidator } from '../../../../../shared/models';
-
 @Component({
 	selector: 'app-form-login',
-	templateUrl: './form-login.component.html',
-	styleUrls: ['./form-login.component.scss'],
+	template: `
+		<form [formGroup]="formGroup" class="space-y-4" (ngSubmit)="onSubmit()">
+			<!-- email -->
+			<app-form-mat-input-wrapper
+				hintText="Enter your email address"
+				controlName="email"
+				inputCaption="Email"
+				inputType="EMAIL"
+			></app-form-mat-input-wrapper>
+
+			<!-- password -->
+			<app-form-mat-input-wrapper
+				hintText="Enter your password"
+				controlName="password"
+				inputCaption="Password"
+				inputType="PASSWORD"
+			></app-form-mat-input-wrapper>
+
+			<!-- submit -->
+			<button mat-stroked-button color="primary" class="w-full" type="submit">Login</button>
+		</form>
+	`,
+	styles: [
+		`
+			:host {
+				display: block;
+			}
+		`,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		{

@@ -2,7 +2,6 @@ import { CommonModule, DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
-import { Apollo } from 'apollo-angular';
 import { STORAGE_MAIN_KEY } from '../../core/models';
 import { PlatformService } from '../../core/services/platform.service';
 import { environment } from './../../../environments/environment';
@@ -26,7 +25,6 @@ import { WelcomeHeroComponent } from './welcome-hero.component';
 })
 export class WelcomeComponent implements OnInit {
 	constructor(
-		private apollo: Apollo,
 		private http: HttpClient,
 		private platform: PlatformService,
 		@Inject(DOCUMENT) private document: Document
@@ -35,8 +33,6 @@ export class WelcomeComponent implements OnInit {
 	ngOnInit(): void {
 		if (!this.platform.isServer) {
 			console.log('reset local storage');
-			// clear graphql cache
-			this.apollo.client.resetStore();
 
 			// clear local storage
 			localStorage.removeItem(STORAGE_MAIN_KEY);

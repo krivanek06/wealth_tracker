@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, forwardRef, OnInit } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { RegisterUserInput } from '../../../../../core/graphql';
+import { RegisterUserInput } from '../../../../../core/models';
 import { DialogServiceUtil } from '../../../../../shared/dialogs';
 import {
 	emailValidator,
@@ -11,8 +11,43 @@ import {
 
 @Component({
 	selector: 'app-form-register',
-	templateUrl: './form-register.component.html',
-	styleUrls: ['./form-register.component.scss'],
+	template: `
+		<form [formGroup]="formGroup" class="space-y-4" (ngSubmit)="onSubmit()">
+			<!-- email -->
+			<app-form-mat-input-wrapper
+				hintText="Enter your email address"
+				controlName="email"
+				inputCaption="Email"
+				inputType="EMAIL"
+			></app-form-mat-input-wrapper>
+
+			<!-- password1 -->
+			<app-form-mat-input-wrapper
+				hintText="Enter your password"
+				controlName="password1"
+				inputCaption="Password"
+				inputType="PASSWORD"
+			></app-form-mat-input-wrapper>
+
+			<!-- password2 -->
+			<app-form-mat-input-wrapper
+				hintText="Repeat your password"
+				controlName="password2"
+				inputCaption="Password"
+				inputType="PASSWORD"
+			></app-form-mat-input-wrapper>
+
+			<!-- submit -->
+			<button mat-stroked-button class="w-full text-wt-success-medium" type="submit">Register</button>
+		</form>
+	`,
+	styles: [
+		`
+			:host {
+				display: block;
+			}
+		`,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		{

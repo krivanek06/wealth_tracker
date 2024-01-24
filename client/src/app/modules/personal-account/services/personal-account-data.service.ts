@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
-import { map, Observable, zip } from 'rxjs';
+import { computed, Injectable } from '@angular/core';
 import { DateServiceUtil } from '../../../core/utils';
 import { InputSource, InputSourceWrapper, ValuePresentItem } from '../../../shared/models';
 import { NO_DATE_SELECTED, PersonalAccountDailyDataAggregation, PersonalAccountTagAggregation } from '../models';
 import {
 	PersonalAccountAggregationDataOutput,
 	PersonalAccountDailyDataNew,
-	PersonalAccountFacadeService,
+	PersonalAccountService,
 	PersonalAccountTag,
 	PersonalAccountWeeklyAggregationOutput,
 } from './../../../core/api';
@@ -15,43 +14,42 @@ import {
 	providedIn: 'root',
 })
 export class PersonalAccountDataService {
-	constructor(private personalAccountFacadeService: PersonalAccountFacadeService) {}
+	constructor(private personalAccountFacadeService: PersonalAccountService) {}
 
-	getAvailableTagInputSourceWrapper(): Observable<InputSourceWrapper[]> {
-		const expenseTags$ = this.personalAccountFacadeService.getPersonalAccountTagsExpense().pipe(
-			map((res) => {
-				return {
-					name: res[0].type,
-					items: res.map((d) => {
-						return {
-							caption: d.name,
-							value: d.id,
-							additionalData: d,
-							image: d.imageUrl,
-						} as InputSource;
-					}),
-				};
-			})
+	availableTagInputSourceWrapper = computed(() => {
+		const expenseTags = this.personalAccountFacadeService.personalAccountTagsExpenseSignal().map(
+			(res) =>
+				({
+					caption: res.name,
+					value: res.id,
+					additionalData: res,
+					image: res.image,
+				}) satisfies InputSource
 		);
 
-		const incomeTags$ = this.personalAccountFacadeService.getPersonalTagsIncome().pipe(
-			map((res) => {
-				return {
-					name: res[0].type,
-					items: res.map((d) => {
-						return {
-							caption: d.name,
-							value: d.id,
-							additionalData: d,
-							image: d.imageUrl,
-						} as InputSource;
-					}),
-				};
-			})
+		const incomeTags = this.personalAccountFacadeService.personalAccountTagsIncomeSignal().map(
+			(res) =>
+				({
+					caption: res.name,
+					value: res.id,
+					additionalData: res,
+					image: res.image,
+				}) satisfies InputSource
 		);
 
-		return zip(expenseTags$, incomeTags$);
-	}
+		const result: InputSourceWrapper[] = [
+			{
+				name: 'Expense',
+				items: expenseTags,
+			},
+			{
+				name: 'Income',
+				items: incomeTags,
+			},
+		];
+
+		return result;
+	});
 
 	/**
 	 * from weekly data where we have [year, month], we create InputSourceWrapper based on each month

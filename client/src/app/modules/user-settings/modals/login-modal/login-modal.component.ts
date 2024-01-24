@@ -4,15 +4,71 @@ import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { EMPTY, catchError, filter, from, switchMap, take, tap } from 'rxjs';
-import { LoginUserInput, RegisterUserInput } from '../../../../core/graphql';
-import { TEST_USER_EMAIL, TEST_USER_PASSWORD, TOP_LEVEL_NAV } from '../../../../core/models';
+import {
+	LoginUserInput,
+	RegisterUserInput,
+	TEST_USER_EMAIL,
+	TEST_USER_PASSWORD,
+	TOP_LEVEL_NAV,
+} from '../../../../core/models';
 import { AuthenticationAccountService } from '../../../../core/services';
 import { DialogServiceUtil } from './../../../../shared/dialogs';
 
 @Component({
 	selector: 'app-login-modal',
-	templateUrl: './login-modal.component.html',
-	styleUrls: ['./login-modal.component.scss'],
+	template: `
+		<app-dialog-close-header *ngIf="!loading" (dialogCloseEmitter)="onCancel()" title="Login"></app-dialog-close-header>
+
+		<!-- content -->
+		<mat-dialog-content *ngIf="!loading; else loader">
+			<mat-tab-group>
+				<mat-tab label="Login">
+					<app-form-login [formControl]="loginUserInputControl"></app-form-login>
+
+					<div class="my-4">
+						<mat-divider></mat-divider>
+					</div>
+
+					<!-- social media login -->
+					<h2 class="text-lg text-wt-primary-dark">Social Media Login</h2>
+					<mat-dialog-actions>
+						<a mat-flat-button (click)="onGoogleAuth()" color="warn" class="w-full text-center rounded-lg"> Google </a>
+					</mat-dialog-actions>
+
+					<div class="my-4">
+						<mat-divider></mat-divider>
+					</div>
+
+					<!-- development -->
+					<h2 class="text-lg text-wt-primary-dark">Demo Account Login</h2>
+					<button mat-stroked-button color="accent" class="w-full" type="button" (click)="onDemoLogin()">
+						Demo Login
+					</button>
+				</mat-tab>
+				<mat-tab label="Register">
+					<app-form-register [formControl]="registerUserInputControl"></app-form-register>
+				</mat-tab>
+			</mat-tab-group>
+		</mat-dialog-content>
+
+		<!-- loader -->
+		<ng-template #loader>
+			<div class="flex justify-center mt-[40%] sm:my-10">
+				<mat-spinner color="primary" diameter="120"></mat-spinner>
+			</div>
+		</ng-template>
+	`,
+	styles: [
+		`
+			:host {
+				display: block;
+			}
+
+			::ng-deep .mat-mdc-tab-body-wrapper {
+				@apply max-sm:mt-[20px];
+			}
+		`,
+	],
 	//changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginModalComponent {

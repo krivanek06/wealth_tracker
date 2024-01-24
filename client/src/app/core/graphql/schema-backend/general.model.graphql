@@ -1,4 +1,0 @@
-fragment ChartSeries on ChartSeries {
-	name
-	data
-}

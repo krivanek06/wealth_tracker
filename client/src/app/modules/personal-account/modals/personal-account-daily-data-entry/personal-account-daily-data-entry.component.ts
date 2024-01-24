@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import {
 	PersonalAccountDailyDataCreateNew,
 	PersonalAccountDailyDataNew,
@@ -9,7 +9,7 @@ import {
 } from '../../../../core/api';
 import { Confirmable } from '../../../../shared/decorators';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
-import { InputSourceWrapper, positiveNumberValidator, requiredValidator } from '../../../../shared/models';
+import { positiveNumberValidator, requiredValidator } from '../../../../shared/models';
 import { PersonalAccountDataService } from '../../services';
 
 @Component({
@@ -32,7 +32,7 @@ import { PersonalAccountDataService } from '../../services';
 						controlName="tagId"
 						inputCaption="Select tag"
 						inputType="SELECT_SOURCE_WRAPPER"
-						[inputSourceWrapper]="displayTagsInputSource$ | async"
+						[inputSourceWrapper]="displayTagsInputSource()"
 					></app-form-mat-input-wrapper>
 
 					<!-- display value -->
@@ -80,7 +80,7 @@ import { PersonalAccountDataService } from '../../services';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountDailyDataEntryComponent implements OnInit {
-	displayTagsInputSource$!: Observable<InputSourceWrapper[]>;
+	displayTagsInputSource = this.personalAccountDataService.availableTagInputSourceWrapper;
 
 	// booleans to show spinner
 	showLoader$ = new BehaviorSubject<boolean>(false);
@@ -107,8 +107,6 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		if (this.data.dailyData) {
 			this.initEditing(this.data.dailyData);
 		}
-
-		this.displayTagsInputSource$ = this.personalAccountDataService.getAvailableTagInputSourceWrapper();
 	}
 
 	onCancel(): void {

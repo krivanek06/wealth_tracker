@@ -1,6 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { PersonalAccountService, PersonalAccountTag } from '../../../core/api';
-import {} from '../../../core/graphql';
 
 @Pipe({
 	name: 'getTagById',

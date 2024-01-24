@@ -1,10 +1,7 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { STORAGE_MAIN_KEY } from '../../core/models';
 import { PlatformService } from '../../core/services/platform.service';
-import { environment } from './../../../environments/environment';
 import { WelcomeHeroComponent } from './welcome-hero.component';
 
 @Component({
@@ -25,7 +22,6 @@ import { WelcomeHeroComponent } from './welcome-hero.component';
 })
 export class WelcomeComponent implements OnInit {
 	constructor(
-		private http: HttpClient,
 		private platform: PlatformService,
 		@Inject(DOCUMENT) private document: Document
 	) {}
@@ -42,11 +38,6 @@ export class WelcomeComponent implements OnInit {
 		}
 
 		// init google auth
-		GoogleAuth.initialize();
-
-		// start backend
-		this.http.get(`${environment.backend_url}/public/start`).subscribe((data) => {
-			console.log(`Application starting: ${data}`);
-		});
+		// GoogleAuth.initialize();
 	}
 }

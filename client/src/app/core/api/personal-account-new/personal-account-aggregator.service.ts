@@ -16,13 +16,11 @@ import {
 export class PersonalAccountAggregatorService {
 	getAllYearlyAggregatedData(
 		personalAccount: PersonalAccountNew,
-		monthlyData: PersonalAccountMonthlyDataNew[]
+		monthlyData?: PersonalAccountMonthlyDataNew[]
 	): PersonalAccountAggregationDataOutput[] {
 		// merge together all daily data for each month
-		const allDailyData = monthlyData.reduce(
-			(acc, curr) => [...acc, ...curr.dailyData],
-			[] as PersonalAccountDailyDataNew[]
-		);
+		const allDailyData =
+			monthlyData?.reduce((acc, curr) => [...acc, ...curr.dailyData], [] as PersonalAccountDailyDataNew[]) ?? [];
 
 		const aggregationDataByTagId = allDailyData.reduce(
 			(acc, curr) => {
@@ -56,17 +54,18 @@ export class PersonalAccountAggregatorService {
 	 * */
 	getAllWeeklyAggregatedData(
 		personalAccount: PersonalAccountNew,
-		monthlyData: PersonalAccountMonthlyDataNew[]
+		monthlyData?: PersonalAccountMonthlyDataNew[]
 	): PersonalAccountWeeklyAggregationOutput[] {
 		// adding 'YEAR' and 'MONTH' keys to the daily data for easier manipulation
-		const monthlyDataModified = monthlyData.map((m) => {
-			return {
-				...m,
-				dailyData: m.dailyData.map((d) => {
-					return { ...d, year: m.year, month: m.month };
-				}),
-			};
-		});
+		const monthlyDataModified =
+			monthlyData?.map((m) => {
+				return {
+					...m,
+					dailyData: m.dailyData.map((d) => {
+						return { ...d, year: m.year, month: m.month };
+					}),
+				};
+			}) ?? [];
 
 		/**
 		 * group each daily data from a monthly by a specific week

@@ -1,4 +1,4 @@
 export enum TOP_LEVEL_NAV {
-	dashboard = 'dashboard',
+	dashboard = '',
 	welcome = 'welcome',
 }

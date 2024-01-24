@@ -11,6 +11,7 @@ import {
 	signInWithPopup,
 	updatePassword,
 } from '@angular/fire/auth';
+import { Observable, Subject } from 'rxjs';
 import { LoginUserInput, RegisterUserInput } from '../models/authentication.model';
 
 @Injectable({
@@ -19,6 +20,7 @@ import { LoginUserInput, RegisterUserInput } from '../models/authentication.mode
 export class AuthenticationAccountService {
 	private auth = inject(Auth);
 	private authUserSignal = signal<User | null>(null);
+	private loadedAuthentication$ = new Subject<User['uid'] | null>();
 
 	isUserNew = computed(
 		() => this.authUserSignal()?.metadata?.creationTime == this.authUserSignal()?.metadata?.lastSignInTime
@@ -30,7 +32,12 @@ export class AuthenticationAccountService {
 		this.auth.onAuthStateChanged((user) => {
 			console.log('Auth change', user);
 			this.authUserSignal.set(user);
+			this.loadedAuthentication$.next(user?.uid ?? null);
 		});
+	}
+
+	getLoadedAuthentication(): Observable<User['uid'] | null> {
+		return this.loadedAuthentication$.asObservable();
 	}
 
 	signIn(input: LoginUserInput): Promise<UserCredential> {

@@ -1,4 +1,4 @@
-import { Component, NgZone, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, NgZone, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -17,10 +17,14 @@ import { DialogServiceUtil } from './../../../../shared/dialogs';
 @Component({
 	selector: 'app-login-modal',
 	template: `
-		<app-dialog-close-header *ngIf="!loading" (dialogCloseEmitter)="onCancel()" title="Login"></app-dialog-close-header>
+		<app-dialog-close-header
+			*ngIf="!loading()"
+			(dialogCloseEmitter)="onCancel()"
+			title="Login"
+		></app-dialog-close-header>
 
 		<!-- content -->
-		<mat-dialog-content *ngIf="!loading; else loader">
+		<mat-dialog-content *ngIf="!loading(); else loader">
 			<mat-tab-group>
 				<mat-tab label="Login">
 					<app-form-login [formControl]="loginUserInputControl"></app-form-login>
@@ -69,12 +73,12 @@ import { DialogServiceUtil } from './../../../../shared/dialogs';
 			}
 		`,
 	],
-	//changeDetection: ChangeDetectionStrategy.OnPush,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginModalComponent {
 	loginUserInputControl = new FormControl<LoginUserInput | null>(null);
 	registerUserInputControl = new FormControl<RegisterUserInput | null>(null);
-	loading = false;
+	loading = signal<boolean>(false);
 
 	private zone = inject(NgZone);
 
@@ -90,17 +94,18 @@ export class LoginModalComponent {
 	async onGoogleAuth() {
 		from(this.authenticationFacadeService.signInGoogle())
 			.pipe(
-				tap(() => (this.loading = true)),
+				tap(() => this.loading.set(true)),
 				tap(() => {
 					DialogServiceUtil.showNotificationBar('Successfully login', 'success');
 					// getting error: Navigation triggered outside Angular zone, did you forget to call 'ngZone.run()
 					this.zone.run(() => {
 						this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+						this.dialogRef.close();
 					});
 				}),
 				take(1),
 				catchError(() => {
-					this.loading = false;
+					this.loading.set(false);
 					return EMPTY;
 				})
 			)
@@ -122,7 +127,7 @@ export class LoginModalComponent {
 		this.loginUserInputControl.valueChanges
 			.pipe(
 				filter((res): res is LoginUserInput => !!res),
-				tap(() => (this.loading = true)),
+				tap(() => this.loading.set(true)),
 				switchMap((res) =>
 					from(this.authenticationFacadeService.signIn(res)).pipe(
 						tap(() => {
@@ -130,11 +135,12 @@ export class LoginModalComponent {
 							// getting error: Navigation triggered outside Angular zone, did you forget to call 'ngZone.run()
 							this.zone.run(() => {
 								this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+								this.dialogRef.close();
 							});
 						}),
 						catchError((err) => {
 							DialogServiceUtil.handleError(err);
-							this.loading = false;
+							this.loading.set(false);
 							return EMPTY;
 						})
 					)
@@ -148,7 +154,7 @@ export class LoginModalComponent {
 		this.registerUserInputControl.valueChanges
 			.pipe(
 				filter((res): res is RegisterUserInput => !!res),
-				tap(() => (this.loading = true)),
+				tap(() => this.loading.set(true)),
 				switchMap((res) =>
 					from(this.authenticationFacadeService.register(res)).pipe(
 						tap(() => {
@@ -156,11 +162,12 @@ export class LoginModalComponent {
 							// getting error: Navigation triggered outside Angular zone, did you forget to call 'ngZone.run()
 							this.zone.run(() => {
 								this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+								this.dialogRef.close();
 							});
 						}),
 						catchError((err) => {
 							DialogServiceUtil.handleError(err);
-							this.loading = false;
+							this.loading.set(false);
 							return EMPTY;
 						})
 					)

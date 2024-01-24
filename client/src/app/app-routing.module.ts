@@ -1,5 +1,6 @@
 import { NgModule, inject } from '@angular/core';
 import { ActivatedRouteSnapshot, PreloadAllModules, Router, RouterModule, Routes } from '@angular/router';
+import { map, take, tap } from 'rxjs';
 import { AppComponent } from './app.component';
 import { TOP_LEVEL_NAV } from './core/models';
 import { AuthenticationAccountService } from './core/services';
@@ -11,23 +12,22 @@ const routes: Routes = [
 		children: [
 			{
 				path: '',
-				redirectTo: TOP_LEVEL_NAV.dashboard,
 				pathMatch: 'full',
-			},
-			{
-				path: TOP_LEVEL_NAV.dashboard,
 				canActivate: [
 					(route: ActivatedRouteSnapshot) => {
 						const authenticationFacadeService = inject(AuthenticationAccountService);
 						const router = inject(Router);
 
-						// save token
-						if (!authenticationFacadeService.getCurrentUser()) {
-							router.navigate([TOP_LEVEL_NAV.welcome]);
-							return false;
+						if (authenticationFacadeService.getCurrentUser()) {
+							return true;
 						}
 
-						return true;
+						// listen on user loaded
+						return authenticationFacadeService.getLoadedAuthentication().pipe(
+							tap(() => console.log('CHECK REDIRECT DASHBOARD')),
+							take(1),
+							map((isLoaded) => (isLoaded ? true : router.navigate([TOP_LEVEL_NAV.welcome])))
+						);
 					},
 				],
 				loadChildren: () => import('./pages/dashboard/dashboard.module').then((m) => m.DashboardModule),

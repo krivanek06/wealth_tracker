@@ -83,6 +83,7 @@ export class PersonalAccountService {
 		effect(() => {
 			const isUserNew = this.authenticationAccountService.isUserNew();
 			const user = this.authenticationAccountService.getCurrentUser();
+			console.log('effect is running', isUserNew, user);
 			if (isUserNew && user) {
 				console.log('User is new, creating empty portfolio account');
 				this.createEmptyPersonalAccount(user.uid);

@@ -76,7 +76,7 @@ export abstract class PersonalAccountParent {
 		[this.personalAccountService.personalAccountMonthlyDataSignal, this.dateSource],
 		pipe(
 			switchMap(([monthlyData, dateFilter]) => {
-				if (dateFilter === NO_DATE_SELECTED) {
+				if (dateFilter === NO_DATE_SELECTED || !monthlyData) {
 					return of([]);
 				}
 				const { year, month, week } = DateServiceUtil.getDetailsInformationFromDate(dateFilter);

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { DateServiceUtil } from '../../../core/utils';
+import { format } from 'date-fns';
+import { dateSplitter } from '../../../core/utils';
 import { createGenericChartSeriesPie } from '../../../shared/functions';
 import { ChartType, GenericChartSeries, GenericChartSeriesPie } from '../../../shared/models';
 import { AccountState, TagColors } from '../models';
@@ -38,7 +39,7 @@ export class PersonalAccountChartService {
 	}
 
 	getAccountStateByDate(data: PersonalAccountWeeklyAggregationOutput[], dateFormat: string): AccountState {
-		const [year, month, week] = DateServiceUtil.dateSplitter(dateFormat);
+		const [year, month, week] = dateSplitter(dateFormat);
 
 		// filter out relevant data
 		const weeklyAggregationFiltered = data.filter(
@@ -74,17 +75,10 @@ export class PersonalAccountChartService {
 	}
 
 	/**
-	 *
-	 * @param data
-	 * @param aggregation
 	 * @returns weekly or monthly categories in string format
 	 */
 	getChartCategories(data: PersonalAccountWeeklyAggregationOutput[]): string[] {
-		const categories = data.map((d) => {
-			const monthName = DateServiceUtil.formatDate(new Date(d.year, d.month), 'LLL');
-			return `Week: ${d.week}, ${monthName}, ${d.year}`;
-		});
-		return categories;
+		return data.map((d) => `Week: ${d.week}, ${format(new Date(d.id), 'LLLL')}, ${d.year}`);
 	}
 
 	/**

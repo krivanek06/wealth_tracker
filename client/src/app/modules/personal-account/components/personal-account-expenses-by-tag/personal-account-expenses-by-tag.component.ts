@@ -59,7 +59,7 @@ import { PersonalAccountTagAggregation } from '../../models';
 							class="p-2 rounded-l-xl w-14 md:w-16 h-[95px] md:h-[110px] grid min-w-[60px]"
 							style="background-color: {{ aggregation.color }};"
 						>
-							<img appDefaultImg [src]="aggregation.image" imageType="tagName" alt="tag image" class="m-auto h-9" />
+							<img appDefaultImg [src]="aggregation.imageUrl" imageType="tagName" alt="tag image" class="m-auto h-9" />
 						</div>
 
 						<div class="flex flex-col flex-1">

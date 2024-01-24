@@ -1,5 +1,6 @@
 import { computed, Injectable } from '@angular/core';
-import { DateServiceUtil } from '../../../core/utils';
+import { getWeeksInMonth, isSameDay } from 'date-fns';
+import { dateSplitter, formatDate } from '../../../core/utils';
 import { InputSource, InputSourceWrapper, ValuePresentItem } from '../../../shared/models';
 import { NO_DATE_SELECTED, PersonalAccountDailyDataAggregation, PersonalAccountTagAggregation } from '../models';
 import {
@@ -79,7 +80,8 @@ export class PersonalAccountDataService {
 		const monthlyInputSources = weeklyData
 			.reduce((acc, curr) => {
 				// format to 'January, 2022'
-				const keyId = `${DateServiceUtil.formatDate(new Date(curr.year, curr.month, 1), 'LLLL')}, ${curr.year}`;
+				const keyId = `${formatDate(new Date(curr.id), 'LLLL')}, ${curr.year}`;
+				console.log('keyId', keyId);
 
 				const lastElement: InputSourceWrapper | undefined = acc[acc.length - 1];
 
@@ -179,7 +181,7 @@ export class PersonalAccountDataService {
 		dailyData: PersonalAccountDailyDataNew[],
 		dateFilter?: string
 	): PersonalAccountTagAggregation[] {
-		const [, , week] = dateFilter ? DateServiceUtil.dateSplitter(dateFilter) : [null, null, null];
+		const [, , week] = dateFilter ? dateSplitter(dateFilter) : [null, null, null];
 		const isWeeklyView = !!week;
 
 		const data = dailyData.reduce(
@@ -209,7 +211,7 @@ export class PersonalAccountDataService {
 				}
 
 				// data not yet present
-				const weeksInMonth = DateServiceUtil.getWeeksInMonth(Number(curr.date));
+				const weeksInMonth = getWeeksInMonth(Number(curr.date));
 				const budgetMonthly = curr.tag.budgetMonthly;
 				const budgetToTimePeriod = isWeeklyView && budgetMonthly ? budgetMonthly / weeksInMonth : budgetMonthly;
 
@@ -243,7 +245,7 @@ export class PersonalAccountDataService {
 		return data
 			.reduce((acc, curr) => {
 				// check if an entry with the same date is already saved
-				const lastItem = acc.find((d) => DateServiceUtil.isSameDay(d.date, curr.date));
+				const lastItem = acc.find((d) => isSameDay(d.date, curr.date));
 
 				// if same date, add to the last entry in array
 				if (lastItem) {

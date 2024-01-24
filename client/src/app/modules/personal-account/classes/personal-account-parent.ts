@@ -1,12 +1,12 @@
-import { ChangeDetectorRef, Directive, computed, inject } from '@angular/core';
+import { Directive, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { computedFrom } from 'ngxtension/computed-from';
 import { of, pipe, startWith, switchMap } from 'rxjs';
 import { PersonalAccountDailyDataNew, PersonalAccountService } from '../../../core/api';
-import { DateServiceUtil, getCurrentDateDefaultFormat } from '../../../core/utils';
-import { ChartType } from '../../../shared/models';
+import { dateSplitter, getDetailsInformationFromDate } from '../../../core/utils';
+import { SCREEN_DIALOGS } from '../../../shared/models';
 import { PersonalAccountDailyDataEntryComponent, PersonalAccountTagManagerModalComponent } from '../modals';
 import { NO_DATE_SELECTED, PersonalAccountActionButtonType, PersonalAccountTagAggregationType } from '../models';
 import { PersonalAccountChartService, PersonalAccountDataService } from '../services';
@@ -16,16 +16,15 @@ export abstract class PersonalAccountParent {
 	protected personalAccountChartService = inject(PersonalAccountChartService);
 	protected personalAccountDataService = inject(PersonalAccountDataService);
 	protected dialog = inject(MatDialog);
-	protected cd = inject(ChangeDetectorRef);
 
 	/**
 	 * form used to filter daily data
 	 */
-	private today = getCurrentDateDefaultFormat();
+	private today = getDetailsInformationFromDate();
 
 	readonly filterDailyDataGroup = new FormGroup({
 		// selected month - format year-month-week, week is optional
-		dateFilter: new FormControl<string>(`${this.today}`, { nonNullable: true }),
+		dateFilter: new FormControl<string>(this.today.currentDateMonth, { nonNullable: true }),
 		// keeps track of visible tags, if empty -> all is visible
 		selectedTagIds: new FormControl<string[]>([], { nonNullable: true }),
 	});
@@ -37,7 +36,7 @@ export abstract class PersonalAccountParent {
 		this.filterDailyDataGroup.controls.dateFilter.valueChanges.pipe(
 			startWith(this.filterDailyDataGroup.controls.dateFilter.value)
 		),
-		{ initialValue: `${this.today}` }
+		{ initialValue: this.today.currentDateMonth }
 	);
 
 	//personalAccountDetails$!: Observable<PersonalAccountDetailsFragment>;
@@ -77,14 +76,21 @@ export abstract class PersonalAccountParent {
 		[this.personalAccountService.personalAccountMonthlyDataSignal, this.dateSource],
 		pipe(
 			switchMap(([monthlyData, dateFilter]) => {
-				console.log('totalDailyDataForTimePeriod', monthlyData, dateFilter);
 				if (dateFilter === NO_DATE_SELECTED || !monthlyData) {
 					return of([]);
 				}
-				const { year, month, week } = DateServiceUtil.getDetailsInformationFromDate(dateFilter);
-				console.log('totalDailyDataForTimePeriod', year, month);
-				const monthlyDataForTimePeriod = monthlyData.filter((d) => d.year === year && d.month === month);
-				return of(monthlyDataForTimePeriod.length === 0 ? [] : monthlyDataForTimePeriod[0].dailyData);
+
+				const [year, month, week] = dateSplitter(dateFilter);
+
+				const monthlyDataForTimePeriod = monthlyData.find((d) => d.year === year && d.month === month);
+				const dailyData = monthlyDataForTimePeriod?.dailyData ?? [];
+
+				if (!week) {
+					return of(dailyData);
+				}
+
+				const weeklyData = dailyData.filter((d) => d.week === week);
+				return of(weeklyData);
 			})
 		)
 	);
@@ -125,8 +131,11 @@ export abstract class PersonalAccountParent {
 	filteredDailyData = computed(() => {
 		const data = this.totalDailyDataForTimePeriod();
 		const tags = this.selectedTagIds();
-		console.log('filteredDailyData', data, tags);
-		return !!tags ? data.filter((d) => tags.includes(d.tagId)) : [];
+		if (!tags || tags.length === 0) {
+			return data;
+		}
+
+		return data.filter((d) => tags.includes(d.tagId));
 	});
 
 	/**
@@ -175,18 +184,6 @@ export abstract class PersonalAccountParent {
 		return dataGrouped;
 	});
 
-	//personalAccountBasic!: AccountIdentification;
-
-	ChartType = ChartType;
-
-	// get dateSource() {
-	// 	return this.filterDailyDataGroup.controls.dateFilter.value;
-	// }
-
-	// get isDateSourceNoDate() {
-	// 	return this.dateSource === NO_DATE_SELECTED;
-	// }
-
 	isDateSourceNoDate = computed(() => this.dateSource() === NO_DATE_SELECTED);
 
 	selectedTagIds = toSignal(
@@ -195,131 +192,18 @@ export abstract class PersonalAccountParent {
 		)
 	);
 
-	private initData(): void {
-		//this.personalAccountDetails$ = this.personalAccountFacadeService.getPersonalAccountDetailsByUser();
-		// calculate account state - balance, cash, invested
-		// this.accountTotalState$ = this.personalAccountDetails$.pipe(
-		// 	map((account) => this.personalAccountChartService.getAccountState(account.yearlyAggregation))
-		// );
-		// filter out expense tags to show them to the user
-		// this.yearlyExpenseTags$ = this.personalAccountDetails$.pipe(
-		// 	map((account) => account.yearlyAggregation.filter((d) => d.tag.type === TagDataType.Expense && d.value > 0)),
-		// 	map((expenseTags) => this.personalAccountDataService.createValuePresentItemFromTag(expenseTags))
-		// );
-		// get chart categories displayed on X-axis
-		// this.categories$ = this.personalAccountDetails$.pipe(
-		// 	map((account) => this.personalAccountChartService.getChartCategories(account))
-		// );
-		// construct expense chart by the selected expenses tags
-		// this.totalExpenseTagsChartData$ = combineLatest([
-		// 	// selected expenses
-		// 	this.selectedTagIds$,
-		// 	// account
-		// 	this.personalAccountDetails$,
-		// 	// passing all available expense tags to create chart
-		// 	this.yearlyExpenseTags$.pipe(map((yearlyExpenseTags) => yearlyExpenseTags.map((d) => d.item))),
-		// ]).pipe(
-		// 	map(([activeTagIds, account, availableExpenseTags]) =>
-		// 		this.personalAccountChartService.getWeeklyExpenseChartData(account, availableExpenseTags, activeTagIds)
-		// 	)
-		// );
-		// // construct account overview vy the selected expense tags
-		// this.accountOverviewChartData$ = combineLatest([
-		// 	// selected expenses
-		// 	this.selectedTagIds$,
-		// 	// account
-		// 	this.personalAccountDetails$,
-		// ]).pipe(
-		// 	switchMap(([activeTagIds, account]) =>
-		// 		merge(
-		// 			[this.personalAccountChartService.getAccountGrowthChartData(account, activeTagIds)],
-		// 			this.personalAccountChartService.getAccountIncomeExpenseChartData(account, activeTagIds)
-		// 		).pipe(reduce((acc, curr) => [...acc, curr], [] as GenericChartSeries[]))
-		// 	)
-		// );
-		// all daily data for a period
-		// const totalDailyDataForTimePeriod$ = this.dateSource$.pipe(
-		// 	tap(() => this.filteredDailyDataLoaded$.next(false)),
-		// 	switchMap((dateFilter) =>
-		// 		dateFilter === NO_DATE_SELECTED
-		// 			? of([])
-		// 			: this.personalAccountFacadeService.getPersonalAccountDailyData(dateFilter)
-		// 	),
-		// 	tap(() => this.filteredDailyDataLoaded$.next(true)),
-		// 	// prevent multiple triggers
-		// 	shareReplay({ bufferSize: 1, refCount: true })
-		// );
-		// this.accountFilteredState$ = totalDailyDataForTimePeriod$.pipe(
-		// 	map((dailyData) => this.personalAccountChartService.getAccountStateByDailyData(dailyData))
-		// );
-		// daily data displayed on UI - filtered by selected tag ids
-		// this.filteredDailyData$ = combineLatest([totalDailyDataForTimePeriod$, this.selectedTagIds$]).pipe(
-		// 	map(([totalDailyData, selectedTagIds]) => {
-		// 		// no tag id is selected
-		// 		if (selectedTagIds.length === 0) {
-		// 			return totalDailyData;
-		// 		}
-		// 		// filter by selected tag id
-		// 		return totalDailyData.filter((d) => selectedTagIds.includes(d.tagId));
-		// 	})
-		// );
-		// calculate expense chart for filtered data
-		// const personalAccountDailyExpensePieChart$ = totalDailyDataForTimePeriod$.pipe(
-		// 	map((result) => (!!result ? this.personalAccountChartService.getExpenseAllocationChartData(result) : null))
-		// );
-		// const personalAccountYearlyTagExpensePieChart$ = this.personalAccountDetails$.pipe(
-		// 	map((result) => this.personalAccountChartService.getExpenseAllocationChartData(result.yearlyAggregation))
-		// );
-		// this.personalAccountExpensePieChart$ = this.dateSource$.pipe(
-		// 	mergeMap((dateSource) =>
-		// 		iif(
-		// 			() => dateSource === NO_DATE_SELECTED,
-		// 			personalAccountYearlyTagExpensePieChart$,
-		// 			personalAccountDailyExpensePieChart$
-		// 		)
-		// 	)
-		// );
-		// this.accountTagAggregationForTimePeriod$ = combineLatest([
-		// 	totalDailyDataForTimePeriod$,
-		// 	this.personalAccountDetails$,
-		// ]).pipe(
-		// 	tap(console.log),
-		// 	map(([result, details]: [PersonalAccountDailyDataOutputFragment[], PersonalAccountDetailsFragment]) =>
-		// 		this.dateSource === NO_DATE_SELECTED
-		// 			? this.personalAccountDataService.getPersonalAccountTagAggregationByAggregationData(details.yearlyAggregation)
-		// 			: this.personalAccountDataService.getPersonalAccountTagAggregationByDailyData(result, this.dateSource)
-		// 	),
-		// 	// sort DESC by total value
-		// 	map((result) => result.sort((a, b) => b.totalValue - a.totalValue)),
-		// 	// group by income and expenses
-		// 	map((result) =>
-		// 		result.reduce(
-		// 			(acc, curr) =>
-		// 				curr.type === TagDataType.Income
-		// 					? { ...acc, incomes: [...acc.incomes, curr] }
-		// 					: { ...acc, expenses: [...acc.expenses, curr] },
-		// 			{
-		// 				incomes: [],
-		// 				expenses: [],
-		// 			} as PersonalAccountTagAggregationType
-		// 		)
-		// 	),
-		// 	shareReplay({ bufferSize: 1, refCount: true })
-		// );
-	}
-
 	onDailyEntryClick(editingDailyData: PersonalAccountDailyDataNew | null): void {
 		this.dialog.open(PersonalAccountDailyDataEntryComponent, {
 			data: {
 				dailyData: editingDailyData,
 			},
-			panelClass: ['g-mat-dialog-small'],
+			panelClass: [SCREEN_DIALOGS.DIALOG_SMALL],
 		});
 	}
 
 	onActionButtonClick(type: PersonalAccountActionButtonType): void {
 		this.dialog.open(PersonalAccountTagManagerModalComponent, {
-			panelClass: ['g-mat-dialog-big'],
+			panelClass: [SCREEN_DIALOGS.DIALOG_BIG],
 		});
 	}
 }

@@ -5,7 +5,7 @@ import { collection as rxCollection, docData as rxDocData } from 'rxfire/firesto
 import { map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { AuthenticationAccountService } from '../../services';
-import { DateServiceUtil, assignTypesClient } from '../../utils';
+import { assignTypesClient, getCurrentDateDefaultFormat, getDetailsInformationFromDate } from '../../utils';
 import { PersonalAccountAggregatorService } from './personal-account-aggregator.service';
 import {
 	PERSONAL_ACCOUNT_DEFAULT_TAGS,
@@ -15,6 +15,7 @@ import {
 	personalAccountTagImageName,
 } from './personal-account-tags.model';
 import {
+	PersonalAccountDailyDataBasic,
 	PersonalAccountDailyDataCreateNew,
 	PersonalAccountDailyDataNew,
 	PersonalAccountMonthlyDataNew,
@@ -62,13 +63,13 @@ export class PersonalAccountService {
 
 	yearlyAggregatedSignal = computed(() => {
 		const data = this.personalAccountMonthlyDataSignal();
-		const account = this.personalAccountSignal();
-		return account ? this.personalAccountAggregatorService.getAllYearlyAggregatedData(account, data) : [];
+		const availableTags = this.personalAccountTagsSignal();
+		return this.personalAccountAggregatorService.getAllYearlyAggregatedData(availableTags, data);
 	});
 	weeklyAggregatedSignal = computed(() => {
 		const data = this.personalAccountMonthlyDataSignal();
-		const account = this.personalAccountSignal();
-		return account ? this.personalAccountAggregatorService.getAllWeeklyAggregatedData(account, data) : [];
+		const availableTags = this.personalAccountTagsSignal();
+		return this.personalAccountAggregatorService.getAllWeeklyAggregatedData(availableTags, data);
 	});
 
 	personalAccountTagsSignal = computed(() => this.personalAccountSignal()?.tags ?? []);
@@ -145,27 +146,27 @@ export class PersonalAccountService {
 
 	createPersonalAccountDailyEntry(input: PersonalAccountDailyDataCreateNew): Promise<void> {
 		const currentUser = this.authenticationAccountService.getCurrentUserMust();
-		const { year, month, week } = DateServiceUtil.getDetailsInformationFromDate(input.date);
+		const { year, month, week } = getDetailsInformationFromDate(input.date);
+		const dateKey = getCurrentDateDefaultFormat({
+			onlyMonth: true,
+		});
 
-		const data: PersonalAccountDailyDataNew = {
-			...input,
+		const data: PersonalAccountDailyDataBasic = {
 			id: uuid(),
 			week,
-			month,
-			year,
-			tag: this.personalAccountTagsSignal().find((tag) => tag.id === input.tagId) ?? PERSONAL_ACCOUNT_DEFAULT_TAG_DATA,
+			date: input.date,
+			value: input.value,
+			tagId: input.tagId,
 		};
 
 		// check if monthly data exists
-		const monthlyData = this.personalAccountMonthlyDataSignal().find(
-			(data) => data.month === month && data.year === year
-		);
+		const monthlyData = this.personalAccountMonthlyDataSignal().find((data) => data.id === dateKey);
 
 		// if not create new
 		if (!monthlyData) {
-			return setDoc(this.getPersonalAccountMonthlyDocRef(currentUser.uid, month, year), {
-				id: `${year}-${month}`,
-				month,
+			return setDoc(this.getPersonalAccountMonthlyDocRef(currentUser.uid, dateKey), {
+				id: dateKey,
+				month: month,
 				year,
 				dailyData: [data],
 			});
@@ -173,7 +174,7 @@ export class PersonalAccountService {
 
 		// update docs
 		return setDoc(
-			this.getPersonalAccountMonthlyDocRef(currentUser.uid, month, year),
+			this.getPersonalAccountMonthlyDocRef(currentUser.uid, dateKey),
 			{
 				dailyData: arrayUnion(data),
 			},
@@ -183,12 +184,9 @@ export class PersonalAccountService {
 
 	deletePersonalAccountDailyEntry(input: PersonalAccountDailyDataNew): Promise<void> {
 		const currentUser = this.authenticationAccountService.getCurrentUserMust();
-		const oldDataDates = DateServiceUtil.getDetailsInformationFromDate(input.date);
 
 		// remove old data
-		const oldMonthlyData = this.personalAccountMonthlyDataSignal().find(
-			(data) => data.month === oldDataDates.month && data.year === oldDataDates.year
-		);
+		const oldMonthlyData = this.personalAccountMonthlyDataSignal().find((data) => data.id === input.id);
 
 		// remove if exists
 		if (!oldMonthlyData) {
@@ -201,7 +199,7 @@ export class PersonalAccountService {
 
 		// update
 		return setDoc(
-			this.getPersonalAccountMonthlyDocRef(currentUser.uid, oldDataDates.month, oldDataDates.year),
+			this.getPersonalAccountMonthlyDocRef(currentUser.uid, oldMonthlyData.id),
 			{
 				dailyData: newData,
 			},
@@ -231,8 +229,8 @@ export class PersonalAccountService {
 		);
 	}
 
-	private getPersonalAccountMonthlyDocRef(userId: string, month: number, year: number) {
-		return doc(this.getPersonalAccountMonthlyCollectionRef(userId), `${year}-${month}`);
+	private getPersonalAccountMonthlyDocRef(userId: string, dateKey: string) {
+		return doc(this.getPersonalAccountMonthlyCollectionRef(userId), dateKey);
 	}
 
 	private getPersonalAccountMonthlyCollectionRef(userId: string) {

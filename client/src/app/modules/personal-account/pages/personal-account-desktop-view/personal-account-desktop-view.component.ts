@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, QueryList, ViewChildren } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -167,16 +167,10 @@ enum ChartExpand {
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PersonalAccountDesktopViewComponent extends PersonalAccountParent implements OnInit {
+export class PersonalAccountDesktopViewComponent extends PersonalAccountParent {
 	@ViewChildren('dataChart') dataChart!: QueryList<any>;
 	expandedChart: ChartExpand | null = null;
 	ChartExpand = ChartExpand;
-
-	constructor() {
-		super();
-	}
-
-	ngOnInit(): void {}
 
 	onExpandChartClick(chart: ChartExpand): void {
 		if (chart === ChartExpand.EXPENSE && this.expandedChart === ChartExpand.EXPENSE) {
@@ -191,7 +185,6 @@ export class PersonalAccountDesktopViewComponent extends PersonalAccountParent i
 		setTimeout(() => {
 			this.dataChart.forEach((d) => {
 				d.chart.reflow();
-				this.cd.detectChanges();
 			});
 		}, 0);
 	}

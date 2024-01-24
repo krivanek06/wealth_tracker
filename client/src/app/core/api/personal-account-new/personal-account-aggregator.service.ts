@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { groupBy } from 'lodash';
 import { getObjectEntries } from '../../utils';
-import { PersonalAccountTagImageName } from './personal-account-tags.model';
+import { PERSONAL_ACCOUNT_DEFAULT_TAG_DATA, PersonalAccountTag } from './personal-account-tags.model';
 import {
 	PersonalAccountAggregationDataOutput,
 	PersonalAccountDailyDataNew,
 	PersonalAccountMonthlyDataNew,
-	PersonalAccountNew,
 	PersonalAccountWeeklyAggregationOutput,
 } from './personal-account-types.model';
 
@@ -15,7 +14,7 @@ import {
 })
 export class PersonalAccountAggregatorService {
 	getAllYearlyAggregatedData(
-		personalAccount: PersonalAccountNew,
+		availableTags: PersonalAccountTag[],
 		monthlyData?: PersonalAccountMonthlyDataNew[]
 	): PersonalAccountAggregationDataOutput[] {
 		// merge together all daily data for each month
@@ -24,11 +23,15 @@ export class PersonalAccountAggregatorService {
 
 		const aggregationDataByTagId = allDailyData.reduce(
 			(acc, curr) => {
-				const previousAggregation = acc[curr.tag.image];
+				const previousAggregation = acc[curr.tagId];
 
 				// create new or increase previous PersonalAccountAggregationDataOutput
 				const data = !previousAggregation
-					? { entries: 1, value: curr.value, tag: personalAccount.tags.find((d) => d.id === curr.tagId) }
+					? {
+							entries: 1,
+							value: curr.value,
+							tag: availableTags.find((d) => d.id === curr.tagId) ?? PERSONAL_ACCOUNT_DEFAULT_TAG_DATA,
+						}
 					: ({
 							...previousAggregation,
 							entries: previousAggregation.entries + 1,
@@ -37,7 +40,7 @@ export class PersonalAccountAggregatorService {
 
 				return { ...acc, [curr.tagId]: data };
 			},
-			{} as { [K in PersonalAccountTagImageName]: PersonalAccountAggregationDataOutput }
+			{} as { [K in string]: PersonalAccountAggregationDataOutput }
 		);
 
 		// format {key: value} to [value]
@@ -53,7 +56,7 @@ export class PersonalAccountAggregatorService {
 	 * by each distinct tag in a distinct [year, month, week] period.
 	 * */
 	getAllWeeklyAggregatedData(
-		personalAccount: PersonalAccountNew,
+		availableTags: PersonalAccountTag[],
 		monthlyData?: PersonalAccountMonthlyDataNew[]
 	): PersonalAccountWeeklyAggregationOutput[] {
 		// adding 'YEAR' and 'MONTH' keys to the daily data for easier manipulation
@@ -128,7 +131,7 @@ export class PersonalAccountAggregatorService {
 					weeklyAggregation.data[index].value += curr.value;
 				} else {
 					// add new data
-					const data = { entries: 1, value: curr.value, tag: personalAccount.tags.find((d) => d.id === curr.tagId)! };
+					const data = { entries: 1, value: curr.value, tag: availableTags.find((d) => d.id === curr.tagId)! };
 					weeklyAggregation.data = [...weeklyAggregation.data, data];
 				}
 

@@ -4,7 +4,7 @@ import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, Reacti
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { getCurrentDateDefaultFormat } from '../../../../core/utils';
+import { getDetailsInformationFromDate } from '../../../../core/utils';
 import { FormMatInputWrapperComponent } from '../../../../shared/components';
 import { InputSourceWrapper } from '../../../../shared/models';
 import { PersonalAccountDataService } from '../../services';
@@ -111,6 +111,7 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 
 	ngOnInit(): void {
 		this.formGroup.controls.dateFilter.valueChanges.subscribe((value) => {
+			console.log('onchange', value);
 			// value in format year-month-week
 			this.onChange(value);
 		});
@@ -121,12 +122,14 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	}
 
 	onCurrentMonthClick(): void {
-		this.formGroup.controls.dateFilter.patchValue(getCurrentDateDefaultFormat());
+		const today = getDetailsInformationFromDate();
+		this.formGroup.controls.dateFilter.patchValue(today.currentDateMonth);
 	}
 
 	writeValue(value: string): void {
+		console.log('value', value);
 		// save selected month-year into the form
-		this.formGroup.controls.dateFilter.reset(getCurrentDateDefaultFormat(), { emitEvent: false });
+		this.formGroup.controls.dateFilter.setValue(value, { emitEvent: false });
 	}
 	/**
 	 * Register Component's ControlValueAccessor onChange callback

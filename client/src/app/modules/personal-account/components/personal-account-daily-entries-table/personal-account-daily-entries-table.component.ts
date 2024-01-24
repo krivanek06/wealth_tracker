@@ -28,7 +28,7 @@ import { DefaultImgDirective, RangeDirective, StylePaginatorDirective } from './
 				<td mat-cell *matCellDef="let row">
 					<div class="flex items-center gap-3">
 						<!-- tag svg -->
-						<img appDefaultImg [src]="row.tag.imageUrl" class="h-9" />
+						<img appDefaultImg imageType="tagName" [src]="row.tag.image" class="h-9" />
 
 						<!-- tag data -->
 						<div class="flex flex-col">
@@ -37,10 +37,6 @@ import { DefaultImgDirective, RangeDirective, StylePaginatorDirective } from './
 									<span style="color: {{ row.tag.color }}">●</span>
 									{{ row.tag.name }}
 								</div>
-								<!-- description -->
-								<mat-icon *ngIf="row.description" [matTooltip]="row.description" class="text-wt-gray-medium">
-									description
-								</mat-icon>
 							</div>
 
 							<!-- date -->

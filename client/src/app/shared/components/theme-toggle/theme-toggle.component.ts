@@ -9,8 +9,24 @@ import { ThemeService } from '../../../core/services';
 	selector: 'app-theme-toggle',
 	standalone: true,
 	imports: [CommonModule, MatSlideToggleModule, MatIconModule, ReactiveFormsModule],
-	templateUrl: './theme-toggle.component.html',
-	styleUrls: ['./theme-toggle.component.scss'],
+	template: `
+		<div class="flex items-center gap-4">
+			<mat-icon>light_mode</mat-icon>
+			<mat-slide-toggle [formControl]="sliderControl" color="primary"></mat-slide-toggle>
+			<mat-icon>dark_mode</mat-icon>
+		</div>
+	`,
+	styles: [
+		`
+			:host {
+				display: block;
+			}
+
+			::ng-deep .mat-mdc-slide-toggle .mdc-switch {
+				width: 120px !important;
+			}
+		`,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThemeToggleComponent implements OnInit {

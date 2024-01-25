@@ -11,10 +11,8 @@ import { DialogServiceUtil } from '../../../../shared/dialogs';
 @Component({
 	selector: 'app-personal-account-tag-manager-modal',
 	template: `
-		<app-dialog-close-header title="Tag Manager" />
-
-		<mat-dialog-content class="px-4 py-4 sm:px-8">
-			<div class="flex flex-col gap-4 mb-8 sm:flex-row lg:justify-end">
+		<div class="flex items-center justify-between p-4">
+			<div class="flex flex-col gap-4 mb-4 sm:flex-row lg:justify-end">
 				<!-- create income button -->
 				<button
 					class="max-lg:flex-1 g-button-size-lg"
@@ -42,14 +40,19 @@ import { DialogServiceUtil } from '../../../../shared/dialogs';
 				</button>
 			</div>
 
+			<!-- close button -->
+			<div>
+				<button mat-icon-button mat-dialog-close color="warn" type="button">
+					<mat-icon>close</mat-icon>
+				</button>
+			</div>
+		</div>
+
+		<mat-dialog-content class="px-4 py-4 sm:px-8">
 			<!-- new tag -->
-			<div *ngIf="creatingNewTagType">
-				<h2 class="px-2 space-x-2">New Tag: <span [appTagTypeName]="creatingNewTagType()"></span></h2>
-				<app-tag-item
-					(createTagEmitter)="onCreateTag($event)"
-					[editing]="true"
-					[tagType]="creatingNewTagType()"
-				></app-tag-item>
+			<div>
+				<h2 class="space-x-4">New Tag: <span [appTagTypeName]="creatingNewTagType()"></span></h2>
+				<app-tag-item (createTagEmitter)="onCreateTag($event)" [tagType]="creatingNewTagType()"></app-tag-item>
 
 				<div class="my-4">
 					<mat-divider></mat-divider>
@@ -104,13 +107,6 @@ import { DialogServiceUtil } from '../../../../shared/dialogs';
 				}
 			</div>
 		</mat-dialog-content>
-
-		<!-- action buttons -->
-		<mat-dialog-actions class="mt-3">
-			<div class="g-mat-dialog-actions-end">
-				<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
-			</div>
-		</mat-dialog-actions>
 	`,
 	styles: `
     :host {
@@ -121,7 +117,7 @@ import { DialogServiceUtil } from '../../../../shared/dialogs';
         @apply overflow-x-clip;
       }
   `,
-	changeDetection: ChangeDetectionStrategy.OnPush, // <- TODO: uncommented because tag images were not changing
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountTagManagerModalComponent {
 	private personalAccountFacadeService = inject(PersonalAccountService);

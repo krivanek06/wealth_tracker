@@ -8,8 +8,55 @@ import { InArrayPipe } from '../../../pipes';
 
 @Component({
 	selector: 'app-value-presentation-button-control',
-	templateUrl: './value-presentation-button-control.component.html',
-	styleUrls: ['./value-presentation-button-control.component.scss'],
+	template: `
+		<div class="flex" [ngClass]="{ 'flex-col': !isFlexRow }">
+			<button
+				*ngFor="let item of items"
+				mat-button
+				[ngClass]="{ 'w-max': isFlexRow }"
+				[style.--valueItemColor]="item.color"
+				[style.--valueItemColorActive]="item.color + '44'"
+				[style]="(activeItems | inArray: item.item : itemKey) ? 'background-color: ' + item.color + '44' : ''"
+				(click)="onClick(item.item)"
+				class="h-16"
+			>
+				<div class="flex flex-col">
+					<div class="flex flex-row gap-2">
+						<img appDefaultImg [src]="item.imageSrc" [imageType]="item.imageType" />
+						<div class="mr-2 text-lg text-wt-gray-light">{{ item.name }}</div>
+					</div>
+					<div class="flex flex-row gap-2">
+						<div class="text-base text-wt-gray-medium">{{ item.value | currency }}</div>
+						<div *ngIf="item.valuePrct" class="text-base text-wt-gray-dark">
+							({{ item.valuePrct | percent: '1.2-2' }})
+						</div>
+					</div>
+				</div>
+			</button>
+		</div>
+	`,
+	styles: [
+		`
+			:host {
+				display: block;
+
+				img {
+					height: 24px;
+				}
+
+				button {
+					@apply px-4 p-1 rounded-lg m-1;
+
+					border: 1px solid var(--valueItemColor);
+					border-left: 4px solid var(--valueItemColor);
+					border-right: 4px solid var(--valueItemColor);
+					&:hover {
+						background-color: var(--valueItemColorActive);
+					}
+				}
+			}
+		`,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	standalone: true,
 	imports: [CommonModule, MatButtonModule, DefaultImgDirective, InArrayPipe],

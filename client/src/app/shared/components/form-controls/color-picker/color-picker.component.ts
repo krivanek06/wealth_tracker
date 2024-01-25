@@ -1,13 +1,27 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, forwardRef, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef, signal } from '@angular/core';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
 	selector: 'app-color-picker',
 	standalone: true,
 	imports: [CommonModule, FormsModule],
-	templateUrl: './color-picker.component.html',
-	styleUrls: ['./color-picker.component.scss'],
+	template: `
+		<input
+			[disabled]="componentDisabled()"
+			type="color"
+			name="color picker"
+			[value]="selectedColor"
+			(change)="onColorChange($event)"
+		/>
+	`,
+	styles: [
+		`
+			:host {
+				display: block;
+			}
+		`,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		{
@@ -20,7 +34,7 @@ import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 export class ColorPickerComponent {
 	selectedColor = '#9c1c1c';
 
-	@Input() componentDisabled = false;
+	componentDisabled = signal(false);
 
 	onChange: (value: string) => void = () => {};
 	onTouched = () => {};
@@ -46,5 +60,10 @@ export class ColorPickerComponent {
 	 */
 	registerOnTouched(fn: ColorPickerComponent['onTouched']): void {
 		this.onTouched = fn;
+	}
+
+	setDisabledState(isDisabled: boolean): void {
+		console.log('color picket change', isDisabled);
+		this.componentDisabled.set(isDisabled);
 	}
 }

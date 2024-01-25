@@ -90,6 +90,11 @@ export class PersonalAccountService {
 				this.createEmptyPersonalAccount(user.uid);
 			}
 		});
+
+		effect(() => {
+			const data = this.personalAccountSignal();
+			console.log('personal account data', data);
+		});
 	}
 
 	getPersonalAccountAvailableTagImages() {
@@ -120,7 +125,7 @@ export class PersonalAccountService {
 
 	editPersonalAccountTag(input: PersonalAccountTag): Promise<void> {
 		const currentUser = this.authenticationAccountService.getCurrentUserMust();
-		const newData = this.personalAccountTagsSignal().map((tag) => (tag.name === input.name ? input : tag));
+		const newData = this.personalAccountTagsSignal().map((tag) => (tag.id === input.id ? input : tag));
 
 		return setDoc(
 			this.getPersonalAccountDocRef(currentUser.uid),
@@ -133,7 +138,7 @@ export class PersonalAccountService {
 
 	deletePersonalAccountTag(input: PersonalAccountTag): Promise<void> {
 		const currentUser = this.authenticationAccountService.getCurrentUserMust();
-		const newData = this.personalAccountTagsSignal().filter((tag) => tag.name !== input.name);
+		const newData = this.personalAccountTagsSignal().filter((tag) => tag.id !== input.id);
 
 		return setDoc(
 			this.getPersonalAccountDocRef(currentUser.uid),

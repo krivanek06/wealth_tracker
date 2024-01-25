@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { filter, map } from 'rxjs';
 import {
 	InputTypeSlider,
+	SCREEN_DIALOGS,
 	maxLengthValidator,
 	minLengthValidator,
 	requiredValidator,
@@ -22,15 +23,15 @@ import { DialogServiceUtil } from './../../../../../shared/dialogs';
 	template: `
 		<form [formGroup]="tagItemGroup" (ngSubmit)="onSubmit()">
 			<!-- color -->
-			<app-color-picker formControlName="color" [componentDisabled]="!editing"></app-color-picker>
+			<app-color-picker formControlName="color"></app-color-picker>
 
 			<!-- icon -->
-			<button type="button" (click)="onTagImageChange()" [disabled]="!editing">
+			<button [ngClass]="{ 'g-disabled': tagItemGroup.disabled }" type="button" (click)="onTagImageChange()">
 				<img
 					appDefaultImg
+					imageType="tagName"
 					[src]="tagItemGroup.controls.icon.value"
 					class="w-8 h-8"
-					[matTooltip]="editing ? 'Change image' : ''"
 					alt="Icon image"
 				/>
 			</button>
@@ -38,19 +39,18 @@ import { DialogServiceUtil } from './../../../../../shared/dialogs';
 			<!-- name -->
 			<div>
 				<app-form-mat-input-wrapper
-					[disabled]="!editing"
-					controlControlName="tagName"
+					formControlName="tagName"
 					inputCaption="Enter name for a tag"
 				></app-form-mat-input-wrapper>
 			</div>
 
 			<!-- budget -->
 			<div *ngIf="tagType === 'EXPENSE'" class="flex-1 col-span-2 sm:col-span-6">
-				<app-slider [componentDisabled]="!editing" formControlName="budget" [config]="sliderConfig"></app-slider>
+				<app-slider formControlName="budget" [config]="sliderConfig"></app-slider>
 			</div>
 
 			<!-- action buttons -->
-			<div *ngIf="editing" class="flex items-center gap-x-5">
+			<div *ngIf="!tagItemGroup.disabled" class="flex items-center gap-x-5">
 				<button mat-icon-button color="accent" type="submit" matTooltip="Save Tag Changes" class="border border-solid">
 					<mat-icon>done</mat-icon>
 				</button>
@@ -67,7 +67,7 @@ import { DialogServiceUtil } from './../../../../../shared/dialogs';
 				</button>
 			</div>
 
-			<div *ngIf="!editing">
+			<div *ngIf="tagItemGroup.disabled">
 				<button mat-stroked-button color="primary" type="button" (click)="onEdit()" class="w-full min-w-[120px]">
 					<mat-icon>edit</mat-icon>
 					Edit
@@ -108,11 +108,10 @@ import { DialogServiceUtil } from './../../../../../shared/dialogs';
 		`,
 	],
 })
-export class TagItemComponent implements OnInit {
+export class TagItemComponent {
 	@Output() createTagEmitter = new EventEmitter<PersonalAccountTagCreate>();
 	@Output() editTagEmitter = new EventEmitter<PersonalAccountTag>();
 	@Output() removeTagEmitter = new EventEmitter<PersonalAccountTag>();
-	@Input() editing = false;
 
 	/**
 	 * created as input, because when creating new tag - parent has buttons to choose a type
@@ -120,6 +119,7 @@ export class TagItemComponent implements OnInit {
 	@Input() tagType!: PersonalAccountTagTypeNew;
 
 	private _tag!: PersonalAccountTag;
+	private dialog = inject(MatDialog);
 
 	@Input() set tag(data: PersonalAccountTag) {
 		this.tagItemGroup.controls.tagId.patchValue(data.id);
@@ -128,6 +128,8 @@ export class TagItemComponent implements OnInit {
 		this.tagItemGroup.controls.icon.patchValue(data.image);
 		this.tagItemGroup.controls.budget.patchValue(data.budgetMonthly ?? 0);
 		this._tag = data;
+
+		this.tagItemGroup.disable();
 	}
 
 	tagItemGroup = new FormGroup({
@@ -150,12 +152,12 @@ export class TagItemComponent implements OnInit {
 		step: 1,
 	};
 
-	constructor(private dialog: MatDialog) {}
-
-	ngOnInit(): void {}
-
 	onEdit(): void {
-		this.editing = !this.editing;
+		if (this.tagItemGroup.disabled) {
+			this.tagItemGroup.enable();
+		} else {
+			this.tagItemGroup.disable();
+		}
 	}
 
 	onSubmit(): void {
@@ -170,7 +172,6 @@ export class TagItemComponent implements OnInit {
 
 		// edit edited values
 		if (controls.tagId.value) {
-			this.editing = false;
 			this.editTagEmitter.emit({
 				id: controls.tagId.value,
 				name: controls.tagName.value,
@@ -205,9 +206,13 @@ export class TagItemComponent implements OnInit {
 	}
 
 	onTagImageChange(): void {
+		if (this.tagItemGroup.disabled) {
+			return;
+		}
+
 		this.dialog
 			.open(TagImageSelectorComponent, {
-				panelClass: ['g-mat-dialog-small'],
+				panelClass: [SCREEN_DIALOGS.DIALOG_SMALL],
 			})
 			.afterClosed()
 			.pipe(

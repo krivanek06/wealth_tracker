@@ -8,8 +8,26 @@ import { KeyboardComponent, KeyboardComponentType } from '../../../models';
 	selector: 'app-number-keyboard-control',
 	standalone: true,
 	imports: [CommonModule, MatButtonModule],
-	templateUrl: './number-keyboard-control.component.html',
-	styleUrls: ['./number-keyboard-control.component.scss'],
+	template: `
+		<div class="grid grid-cols-3 gap-2">
+			<button
+				*ngFor="let button of KeyboardComponent"
+				type="button"
+				mat-stroked-button
+				(click)="onButtonClick(button)"
+				class="min-h-[52px]"
+			>
+				{{ button.label }}
+			</button>
+		</div>
+	`,
+	styles: [
+		`
+			:host {
+				display: block;
+			}
+		`,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		{

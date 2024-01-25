@@ -28,3 +28,8 @@
 .g-skeleton {
 	@apply rounded-lg bg-wt-gray-medium animate-pulse;
 }
+
+.g-disabled {
+	pointer-events: none;
+	opacity: 0.7;
+}

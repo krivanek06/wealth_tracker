@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { TOP_LEVEL_NAV } from '../../core/models';
 import { LoginModalComponent } from '../../modules/user-settings/modals';
+import { SCREEN_DIALOGS } from './../../shared/models/layout.model';
 
 @Component({
 	selector: 'app-welcome-hero',
@@ -345,7 +346,7 @@ export class WelcomeHeroComponent {
 	onLogin() {
 		this.dialog
 			.open(LoginModalComponent, {
-				panelClass: ['g-mat-dialog-small'],
+				panelClass: [SCREEN_DIALOGS.DIALOG_SMALL],
 			})
 			.afterClosed()
 			.subscribe((res: boolean) => {

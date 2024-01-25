@@ -8,8 +8,50 @@ import { InputTypeSlider } from '../../../models';
 	selector: 'app-slider',
 	standalone: true,
 	imports: [CommonModule, MatSliderModule, ReactiveFormsModule],
-	templateUrl: './slider.component.html',
-	styleUrls: ['./slider.component.scss'],
+	template: `
+		<div
+			class="-mb-3 text-sm text-center"
+			[ngClass]="{
+				'text-wt-gray-medium': isDisabled,
+				'text-wt-gray-light': !isDisabled
+			}"
+		>
+			{{ selectedValue.value | currency }}
+		</div>
+
+		<mat-slider
+			[max]="config.max"
+			[min]="config.min"
+			[step]="config.step"
+			[discrete]="true"
+			[showTickMarks]="false"
+			[displayWith]="formatLabel"
+		>
+			<input matSliderThumb [formControl]="selectedValue" />
+		</mat-slider>
+
+		<div
+			class="flex items-center justify-between -mt-5 text-sm"
+			[ngClass]="{
+				'text-wt-gray-dark': isDisabled,
+				'text-wt-gray-medium': !isDisabled
+			}"
+		>
+			<span>{{ config.min | currency }}</span>
+			<span class="-mr-3">{{ config.max | currency }}</span>
+		</div>
+	`,
+	styles: [
+		`
+			:host {
+				display: block;
+
+				mat-slider {
+					@apply w-full;
+				}
+			}
+		`,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		{
@@ -72,5 +114,9 @@ export class SliderComponent implements OnInit, ControlValueAccessor {
 	 */
 	registerOnTouched(fn: SliderComponent['onTouched']): void {
 		this.onTouched = fn;
+	}
+
+	setDisabledState?(isDisabled: boolean): void {
+		this.componentDisabled = isDisabled;
 	}
 }

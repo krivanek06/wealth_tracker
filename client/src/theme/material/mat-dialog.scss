@@ -164,3 +164,8 @@ mat-dialog-content {
 .mat-mdc-tab-body-content {
 	overflow: hidden !important;
 }
+
+.mat-mdc-dialog-actions .mat-button-base + .mat-button-base,
+.mat-mdc-dialog-actions .mat-mdc-button-base + .mat-mdc-button-base {
+	margin-left: 0px !important;
+}

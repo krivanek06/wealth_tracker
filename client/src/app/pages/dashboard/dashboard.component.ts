@@ -8,9 +8,9 @@ import { DialogServiceUtil } from '../../shared/dialogs';
 	template: `
 		<div class="c-screen-size">
 			<!-- header -->
-			<app-header-container> </app-header-container>
+			<app-header-container class="hidden sm:block" />
 
-			<div class="max-sm:py-4">
+			<div class="hidden sm:block max-sm:py-4">
 				<mat-divider class="sm:hidden"></mat-divider>
 			</div>
 

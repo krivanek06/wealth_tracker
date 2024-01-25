@@ -59,9 +59,9 @@ import { PersonalAccountDataService } from '../../services';
 				</div>
 
 				<!-- action buttons -->
-				<mat-dialog-actions class="max-sm:mt-2">
+				<mat-dialog-actions class="max-sm:mt-2 pl-5">
 					<div class="g-mat-dialog-actions-full">
-						<button class="hidden sm:block" mat-stroked-button mat-dialog-close type="button">Cancel</button>
+						<button mat-stroked-button mat-dialog-close type="button">Cancel</button>
 						<button mat-stroked-button color="primary" type="submit" [disabled]="!formGroup.controls.value.value">
 							Save
 						</button>

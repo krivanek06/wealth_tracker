@@ -1,4 +1,3 @@
-import { BUCKET_ASSETS } from '../../core/models';
 import { GenericChartSeriesData } from '../models';
 
 export const createGenericChartSeriesPie = <T, TKeyFirst extends keyof T, TKeySecond extends keyof T[TKeyFirst]>(
@@ -44,7 +43,7 @@ export const createGenericChartSeriesPie = <T, TKeyFirst extends keyof T, TKeySe
 			acc[acc.length - 1].name = 'Other';
 			acc[acc.length - 1].y += curr.y;
 			acc[acc.length - 1].color = '#9ca3af';
-			acc[acc.length - 1].custom = BUCKET_ASSETS.PAYMENT;
+			acc[acc.length - 1].custom = '';
 
 			return acc;
 		}, [] as GenericChartSeriesData[]);

@@ -36,8 +36,5 @@ export class WelcomeComponent implements OnInit {
 			// remove light theme
 			this.document.body.classList.remove('light-theme');
 		}
-
-		// init google auth
-		// GoogleAuth.initialize();
 	}
 }

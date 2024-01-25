@@ -60,9 +60,7 @@ enum ChartExpand {
 					[accountState]="accountTotalState()"
 				></app-personal-account-account-state>
 
-				<app-personal-account-action-buttons
-					(buttonClickEmitter)="onActionButtonClick($event)"
-				></app-personal-account-action-buttons>
+				<app-personal-account-action-buttons />
 			</div>
 
 			<!-- tag expense legend -->

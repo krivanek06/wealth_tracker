@@ -1,21 +1,34 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { PersonalAccountActionButtonType } from '../../models';
+import { Router } from '@angular/router';
+import { PersonalAccountTagManagerModalComponent, PersonalAccountTagManagerModalModule } from '../../modals';
+import { TOP_LEVEL_NAV } from './../../../../core/models/navigation.model';
+import { AuthenticationAccountService } from './../../../../core/services/authentication-account.service';
+import { SCREEN_DIALOGS } from './../../../../shared/models/layout.model';
+import { AboutComponent } from './../../../user-settings/modals/about/about.component';
 
 @Component({
 	selector: 'app-personal-account-action-buttons',
 	standalone: true,
-	imports: [CommonModule, MatIconModule, MatButtonModule, MatMenuModule],
+	imports: [
+		CommonModule,
+		MatIconModule,
+		MatButtonModule,
+		MatMenuModule,
+		AboutComponent,
+		PersonalAccountTagManagerModalModule,
+	],
 	template: `
-		<div *ngIf="displayType === 'buttons'" class="c-action-button-wrapper">
+		<div class="hidden sm:block c-action-button-wrapper">
 			<button
 				type="button"
 				mat-stroked-button
 				color="primary"
-				(click)="onActionButtonClick('tagManagement')"
+				(click)="onManageTags()"
 				class="c-action-button g-button-size-lg"
 			>
 				<mat-icon>sell</mat-icon>
@@ -23,18 +36,26 @@ import { PersonalAccountActionButtonType } from '../../models';
 			</button>
 		</div>
 
-		<ng-container *ngIf="displayType === 'menu'">
+		<div class="block sm:hidden">
 			<button type="button" mat-stroked-button [matMenuTriggerFor]="menu">
 				<mat-icon>settings</mat-icon>
 				Settings
 			</button>
 			<mat-menu #menu="matMenu">
-				<button mat-menu-item (click)="onActionButtonClick('tagManagement')">
+				<button mat-menu-item (click)="onManageTags()" class="mb-3">
 					<mat-icon>sell</mat-icon>
 					Manage Tags
 				</button>
+				<button mat-menu-item (click)="onAboutProjectClick()" class="mb-3">
+					<mat-icon>eco</mat-icon>
+					<span>About</span>
+				</button>
+				<button mat-menu-item (click)="onUserLogout()" class="mb-3">
+					<mat-icon>logout</mat-icon>
+					Logout
+				</button>
 			</mat-menu>
-		</ng-container>
+		</div>
 	`,
 	styles: [
 		`
@@ -44,7 +65,7 @@ import { PersonalAccountActionButtonType } from '../../models';
 				}
 
 				.c-action-button {
-					@apply w-full sm:w-10/12 max-lg:m-auto;
+					@apply w-full max-lg:m-auto;
 				}
 			}
 		`,
@@ -52,11 +73,24 @@ import { PersonalAccountActionButtonType } from '../../models';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountActionButtonsComponent {
-	@Input() displayType: 'buttons' | 'menu' = 'buttons';
+	private authenticationFacadeService = inject(AuthenticationAccountService);
+	private dialog = inject(MatDialog);
+	private router = inject(Router);
 
-	@Output() buttonClickEmitter = new EventEmitter<PersonalAccountActionButtonType>();
+	onManageTags(): void {
+		this.dialog.open(PersonalAccountTagManagerModalComponent, {
+			panelClass: [SCREEN_DIALOGS.DIALOG_BIG],
+		});
+	}
 
-	onActionButtonClick(type: PersonalAccountActionButtonType): void {
-		this.buttonClickEmitter.emit(type);
+	onUserLogout(): void {
+		this.authenticationFacadeService.signOut();
+		this.router.navigate([TOP_LEVEL_NAV.welcome]);
+	}
+
+	onAboutProjectClick(): void {
+		this.dialog.open(AboutComponent, {
+			panelClass: [SCREEN_DIALOGS.DIALOG_MEDIUM],
+		});
 	}
 }

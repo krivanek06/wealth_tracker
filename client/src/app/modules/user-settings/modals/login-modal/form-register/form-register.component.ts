@@ -12,27 +12,24 @@ import {
 @Component({
 	selector: 'app-form-register',
 	template: `
-		<form [formGroup]="formGroup" class="space-y-4" (ngSubmit)="onSubmit()">
+		<form [formGroup]="formGroup" class="flex flex-col gap-6" (ngSubmit)="onSubmit()">
 			<!-- email -->
 			<app-form-mat-input-wrapper
-				hintText="Enter your email address"
-				controlControlName="email"
+				formControlName="email"
 				inputCaption="Email"
 				inputType="EMAIL"
 			></app-form-mat-input-wrapper>
 
 			<!-- password1 -->
 			<app-form-mat-input-wrapper
-				hintText="Enter your password"
-				controlControlName="password1"
+				formControlName="password1"
 				inputCaption="Password"
 				inputType="PASSWORD"
 			></app-form-mat-input-wrapper>
 
 			<!-- password2 -->
 			<app-form-mat-input-wrapper
-				hintText="Repeat your password"
-				controlControlName="password2"
+				formControlName="password2"
 				inputCaption="Password"
 				inputType="PASSWORD"
 			></app-form-mat-input-wrapper>

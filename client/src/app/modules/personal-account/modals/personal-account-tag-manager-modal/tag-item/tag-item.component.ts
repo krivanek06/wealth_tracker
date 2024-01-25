@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { filter, map } from 'rxjs';
@@ -120,6 +120,7 @@ export class TagItemComponent {
 
 	private _tag!: PersonalAccountTag;
 	private dialog = inject(MatDialog);
+	private cd = inject(ChangeDetectorRef);
 
 	@Input() set tag(data: PersonalAccountTag) {
 		this.tagItemGroup.controls.tagId.patchValue(data.id);
@@ -222,6 +223,7 @@ export class TagItemComponent {
 			.subscribe((imageUrl) => {
 				console.log('chosen', imageUrl);
 				this.tagItemGroup.controls.icon.patchValue(imageUrl);
+				this.cd.detectChanges();
 			});
 	}
 }

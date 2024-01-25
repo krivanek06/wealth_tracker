@@ -49,6 +49,11 @@ export class DialogServiceUtil {
 			return;
 		}
 
+		if (code === 'auth/invalid-credential') {
+			this.showNotificationBar('Invalid Email or Password', 'error');
+			return;
+		}
+
 		// check if error contains the work INTERNAL
 		if (message === 'INTERNAL') {
 			this.showNotificationBar('Something went wrong', 'error');

@@ -43,11 +43,8 @@ import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-m
 			</div>
 
 			<!-- settings -->
-			<div class="relative z-10 flex justify-start mb-4 -mt-4">
-				<app-personal-account-action-buttons
-					displayType="menu"
-					(buttonClickEmitter)="onActionButtonClick($event)"
-				></app-personal-account-action-buttons>
+			<div class="relative z-10 flex justify-start mb-4 -mt-10">
+				<app-personal-account-action-buttons />
 			</div>
 
 			<div class="my-4">
@@ -62,9 +59,9 @@ import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-m
 			></app-personal-account-daily-entries-filter>
 
 			<!-- title & show history checkbox -->
-			<div class="flex justify-end mt-2 mb-6">
+			<div class="mt-4 mb-6">
 				<app-personal-account-display-toggle
-					*ngIf="!isDateSourceNoDate"
+					*ngIf="!isDateSourceNoDate()"
 					[formControl]="showHistoryFormControl"
 					[selectedTag]="filterDailyDataGroup.controls.selectedTagIds.value[0] | getTagById"
 				></app-personal-account-display-toggle>

@@ -5,19 +5,17 @@ import { emailValidator, maxLengthValidator, requiredValidator } from '../../../
 @Component({
 	selector: 'app-form-login',
 	template: `
-		<form [formGroup]="formGroup" class="space-y-4" (ngSubmit)="onSubmit()">
+		<form [formGroup]="formGroup" class="flex flex-col gap-6" (ngSubmit)="onSubmit()">
 			<!-- email -->
 			<app-form-mat-input-wrapper
-				hintText="Enter your email address"
-				controlControlName="email"
+				formControlName="email"
 				inputCaption="Email"
 				inputType="EMAIL"
 			></app-form-mat-input-wrapper>
 
 			<!-- password -->
 			<app-form-mat-input-wrapper
-				hintText="Enter your password"
-				controlControlName="password"
+				formControlName="password"
 				inputCaption="Password"
 				inputType="PASSWORD"
 			></app-form-mat-input-wrapper>

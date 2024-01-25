@@ -71,6 +71,12 @@ import { DialogServiceUtil } from './../../../../shared/dialogs';
 			::ng-deep .mat-mdc-tab-body-wrapper {
 				@apply max-sm:mt-[20px];
 			}
+
+			::ng-deep mat-dialog-container {
+				@screen md {
+					min-height: 670px !important;
+				}
+			}
 		`,
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,

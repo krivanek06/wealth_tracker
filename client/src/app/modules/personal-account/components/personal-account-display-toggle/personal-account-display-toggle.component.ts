@@ -13,7 +13,7 @@ import { PersonalAccountTag } from './../../../../core/api';
 		<!-- aggregation & history button -->
 		<button
 			*ngIf="!selectedTag"
-			class="min-w-[200px]"
+			class="w-full"
 			mat-stroked-button
 			[color]="showHistoryFormControl ? 'warn' : 'primary'"
 			(click)="onDisplayClick()"
@@ -24,7 +24,7 @@ import { PersonalAccountTag } from './../../../../core/api';
 		<!-- selected tag button -->
 		<button
 			*ngIf="selectedTag"
-			class="min-w-[200px]"
+			class="w-full"
 			style="border-color: {{ selectedTag.color }} !important"
 			mat-stroked-button
 			(click)="onDisplayClick()"

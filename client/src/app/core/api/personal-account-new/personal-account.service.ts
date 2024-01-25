@@ -152,8 +152,11 @@ export class PersonalAccountService {
 	createPersonalAccountDailyEntry(input: PersonalAccountDailyDataCreateNew): Promise<void> {
 		const currentUser = this.authenticationAccountService.getCurrentUserMust();
 		const { year, month, week } = getDetailsInformationFromDate(input.date);
+
+		// create DB key from provided date
 		const dateKey = getCurrentDateDefaultFormat({
 			onlyMonth: true,
+			someDate: input.date,
 		});
 
 		const data: PersonalAccountDailyDataBasic = {

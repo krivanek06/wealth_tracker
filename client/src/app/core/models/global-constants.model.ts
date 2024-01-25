@@ -1,4 +1,4 @@
-export const URL_LINKED_IN = 'https://www.linkedin.com/in/eduard-krivanek-714760148/';
+export const URL_LINKED_IN = 'https://www.linkedin.com/in/eduard-krivanek/';
 export const URL_GITHUB = 'https://github.com/krivanek06';
 export const URL_INSTAGRAM = 'https://www.instagram.com/eduard_krivanek/';
 export const URL_PERSONAL_WEBSITE = 'https://eduardkrivanek.com/';

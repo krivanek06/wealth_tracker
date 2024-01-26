@@ -1,84 +1,24 @@
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
-import { dateSplitter } from '../../../core/utils';
 import { createGenericChartSeriesPie } from '../../../shared/functions';
 import { ChartType, GenericChartSeries, GenericChartSeriesPie } from '../../../shared/models';
-import { AccountState, TagColors } from '../models';
 import {
 	PersonalAccountAggregationDataOutput,
-	PersonalAccountDailyDataNew,
+	PersonalAccountDailyData,
 	PersonalAccountTag,
 	PersonalAccountWeeklyAggregationOutput,
+	TagColors,
 } from './../../../core/api';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class PersonalAccountChartService {
-	constructor() {}
-
-	/**
-	 *
-	 * @param data
-	 * @returns accumulated expenses, incomes and their difference
-	 */
-	getAccountState(data: PersonalAccountAggregationDataOutput[]): AccountState {
-		const entriesTotal = data.reduce((acc, curr) => acc + curr.entries, 0);
-		const expenseTotal = data.filter((d) => d.tag.type === 'EXPENSE').reduce((a, b) => a + b.value, 0);
-		const incomeTotal = data.filter((d) => d.tag.type === 'INCOME').reduce((a, b) => a + b.value, 0);
-		const total = incomeTotal - expenseTotal;
-
-		const result: AccountState = {
-			expenseTotal,
-			incomeTotal,
-			total,
-			entriesTotal,
-		};
-
-		return result;
-	}
-
-	getAccountStateByDate(data: PersonalAccountWeeklyAggregationOutput[], dateFormat: string): AccountState {
-		const [year, month, week] = dateSplitter(dateFormat);
-
-		// filter out relevant data
-		const weeklyAggregationFiltered = data.filter(
-			(d) => d.year === year && d.month === month && (week ? d.week === week : 1)
-		);
-
-		// flatten array
-		const aggregationOutput = weeklyAggregationFiltered.reduce(
-			(acc, curr) => [...acc, ...curr.data],
-			[] as PersonalAccountAggregationDataOutput[]
-		);
-
-		return this.getAccountState(aggregationOutput);
-	}
-
-	getAccountStateByDailyData(data: PersonalAccountDailyDataNew[], userTags: PersonalAccountTag[]): AccountState {
-		const expenseTags = userTags.filter((d) => d.type === 'EXPENSE').map((d) => d.id);
-		const incomeTags = userTags.filter((d) => d.type === 'INCOME').map((d) => d.id);
-
-		const entriesTotal = data.length;
-		const expenseTotal = data.filter((d) => expenseTags.includes(d.tagId)).reduce((a, b) => a + b.value, 0);
-		const incomeTotal = data.filter((d) => incomeTags.includes(d.tagId)).reduce((a, b) => a + b.value, 0);
-		const total = incomeTotal - expenseTotal;
-
-		const result: AccountState = {
-			expenseTotal,
-			incomeTotal,
-			total,
-			entriesTotal,
-		};
-
-		return result;
-	}
-
 	/**
 	 * @returns weekly or monthly categories in string format
 	 */
 	getChartCategories(data: PersonalAccountWeeklyAggregationOutput[]): string[] {
-		return data.map((d) => `Week: ${d.week}, ${format(new Date(d.id), 'LLLL')}, ${d.year}`);
+		return data.map((d) => `Week: ${d.week}, ${format(new Date(d.year, d.month, 0), 'LLLL')}, ${d.year}`);
 	}
 
 	/**
@@ -219,7 +159,7 @@ export class PersonalAccountChartService {
 	}
 
 	getExpenseAllocationChartData(
-		data: (PersonalAccountDailyDataNew | PersonalAccountAggregationDataOutput)[]
+		data: (PersonalAccountDailyData | PersonalAccountAggregationDataOutput)[]
 	): GenericChartSeriesPie {
 		const notIncomeData = data.filter((d) => d.tag.type === 'EXPENSE');
 		const seriesData = createGenericChartSeriesPie(notIncomeData, 'tag', 'name', 'color', 'image');

@@ -15,9 +15,9 @@ import {
 	personalAccountTagImageName,
 } from './personal-account-tags.model';
 import {
+	PersonalAccountDailyData,
 	PersonalAccountDailyDataBasic,
-	PersonalAccountDailyDataCreateNew,
-	PersonalAccountDailyDataNew,
+	PersonalAccountDailyDataCreate,
 	PersonalAccountMonthlyDataNew,
 	PersonalAccountMonthlyDataNewBasic,
 	PersonalAccountNew,
@@ -52,8 +52,9 @@ export class PersonalAccountService {
 									dailyData: d.dailyData.map((dd) => ({
 										...dd,
 										tag: tags.find((t) => t.id === dd.tagId) ?? PERSONAL_ACCOUNT_DEFAULT_TAG_DATA,
-										month: d.month,
-										year: d.year,
+										// month: d.month,
+										// year: d.year,
+										// week: d.week,
 									})),
 								}) satisfies PersonalAccountMonthlyDataNew
 						)
@@ -149,9 +150,8 @@ export class PersonalAccountService {
 		);
 	}
 
-	createPersonalAccountDailyEntry(input: PersonalAccountDailyDataCreateNew): Promise<void> {
+	createPersonalAccountDailyEntry(input: PersonalAccountDailyDataCreate): Promise<void> {
 		const currentUser = this.authenticationAccountService.getCurrentUserMust();
-		const { year, month, week } = getDetailsInformationFromDate(input.date);
 
 		// create DB key from provided date
 		const dateKey = getCurrentDateDefaultFormat({
@@ -161,7 +161,6 @@ export class PersonalAccountService {
 
 		const data: PersonalAccountDailyDataBasic = {
 			id: uuid(),
-			week,
 			date: input.date,
 			value: input.value,
 			tagId: input.tagId,
@@ -174,8 +173,6 @@ export class PersonalAccountService {
 		if (!monthlyData) {
 			return setDoc(this.getPersonalAccountMonthlyDocRef(currentUser.uid, dateKey), {
 				id: dateKey,
-				month: month,
-				year,
 				dailyData: [data],
 			});
 		}
@@ -190,11 +187,12 @@ export class PersonalAccountService {
 		);
 	}
 
-	deletePersonalAccountDailyEntry(input: PersonalAccountDailyDataNew): Promise<void> {
+	deletePersonalAccountDailyEntry(input: PersonalAccountDailyData): Promise<void> {
 		const currentUser = this.authenticationAccountService.getCurrentUserMust();
+		const { currentDateMonthCorrect } = getDetailsInformationFromDate(input.date);
 
 		// remove old data
-		const oldMonthlyData = this.personalAccountMonthlyDataSignal().find((data) => data.id === input.id);
+		const oldMonthlyData = this.personalAccountMonthlyDataSignal().find((data) => data.id === currentDateMonthCorrect);
 
 		// remove if exists
 		if (!oldMonthlyData) {
@@ -216,8 +214,8 @@ export class PersonalAccountService {
 	}
 
 	async editPersonalAccountDailyEntry(
-		oldData: PersonalAccountDailyDataNew,
-		newData: PersonalAccountDailyDataCreateNew
+		oldData: PersonalAccountDailyData,
+		newData: PersonalAccountDailyDataCreate
 	): Promise<void> {
 		// remove old
 		await this.deletePersonalAccountDailyEntry(oldData);

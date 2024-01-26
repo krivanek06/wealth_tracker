@@ -1,4 +1,47 @@
-import { PersonalAccountDailyDataNew, PersonalAccountTagTypeNew } from './../../../core/api';
+import { PersonalAccountTag, PersonalAccountTagTypeNew } from './personal-account-tags.model';
+
+export type PersonalAccountNew = {
+	userId: string;
+	tags: PersonalAccountTag[];
+};
+
+export type PersonalAccountMonthlyDataNewBasic = {
+	id: string;
+	// month: number;
+	// year: number;
+	dailyData: PersonalAccountDailyDataBasic[];
+};
+
+export type PersonalAccountDailyDataBasic = {
+	id: string;
+	tagId: string;
+	value: number;
+	date: string; // i.e: YYYY-MM-DD
+};
+
+export type PersonalAccountMonthlyDataNew = PersonalAccountMonthlyDataNewBasic & {
+	dailyData: PersonalAccountDailyData[];
+};
+
+export type PersonalAccountDailyData = PersonalAccountDailyDataBasic & {
+	tag: PersonalAccountTag;
+};
+
+export type PersonalAccountDailyDataCreate = Omit<PersonalAccountDailyDataBasic, 'id' | 'week' | 'year' | 'month'>;
+
+export type PersonalAccountAggregationDataOutput = {
+	value: number;
+	entries: number;
+	tag: PersonalAccountTag;
+};
+
+export type PersonalAccountWeeklyAggregationOutput = {
+	id: string;
+	year: number;
+	month: number;
+	week: number;
+	data: PersonalAccountAggregationDataOutput[];
+};
 
 export interface AccountState {
 	total: number;
@@ -43,7 +86,7 @@ export interface PersonalAccountTagAggregation {
 
 export interface PersonalAccountDailyDataAggregation {
 	date: string;
-	data: PersonalAccountDailyDataNew[];
+	data: PersonalAccountDailyData[];
 }
 
 export interface PersonalAccountTagAggregationType {

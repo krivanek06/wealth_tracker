@@ -5,7 +5,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
+import { Confirmable } from 'src/app/shared/decorators';
 import { PersonalAccountTagManagerModalComponent, PersonalAccountTagManagerModalModule } from '../../modals';
+import { PersonalAccountTestDataService } from './../../../../core/api';
 import { TOP_LEVEL_NAV } from './../../../../core/models/navigation.model';
 import { AuthenticationAccountService } from './../../../../core/services/authentication-account.service';
 import { SCREEN_DIALOGS } from './../../../../shared/models/layout.model';
@@ -23,16 +25,27 @@ import { AboutComponent } from './../../../user-settings/modals/about/about.comp
 		PersonalAccountTagManagerModalModule,
 	],
 	template: `
-		<div class="hidden sm:block c-action-button-wrapper">
+		<div class="hidden sm:flex flex-col max-lg:justify-center gap-4">
 			<button
 				type="button"
 				mat-stroked-button
 				color="primary"
 				(click)="onManageTags()"
-				class="c-action-button g-button-size-lg"
+				class="w-full max-lg:m-auto g-button-size-lg"
 			>
 				<mat-icon>sell</mat-icon>
 				Manage Tags
+			</button>
+
+			<button
+				type="button"
+				mat-flat-button
+				color="warn"
+				(click)="onAddTestingData()"
+				class="hidden xl:block max-lg:m-auto g-button-size-lg"
+			>
+				<mat-icon>bug_report</mat-icon>
+				Add Testing Data
 			</button>
 		</div>
 
@@ -60,19 +73,14 @@ import { AboutComponent } from './../../../user-settings/modals/about/about.comp
 	styles: [
 		`
 			:host {
-				.c-action-button-wrapper {
-					@apply flex flex-col max-lg:justify-center gap-4;
-				}
-
-				.c-action-button {
-					@apply w-full max-lg:m-auto;
-				}
+				display: block;
 			}
 		`,
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountActionButtonsComponent {
+	private personalAccountTestDataService = inject(PersonalAccountTestDataService);
 	private authenticationFacadeService = inject(AuthenticationAccountService);
 	private dialog = inject(MatDialog);
 	private router = inject(Router);
@@ -92,5 +100,11 @@ export class PersonalAccountActionButtonsComponent {
 		this.dialog.open(AboutComponent, {
 			panelClass: [SCREEN_DIALOGS.DIALOG_MEDIUM],
 		});
+	}
+
+	@Confirmable('Are you sure you want to add testing data?')
+	onAddTestingData(): void {
+		console.log('do it');
+		this.personalAccountTestDataService.populateData();
 	}
 }

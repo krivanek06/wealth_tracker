@@ -7,7 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ProgressItemComponent } from '../../../../shared/components';
 import { DefaultImgDirective, RangeDirective } from '../../../../shared/directives';
 import { InArrayPipe } from '../../../../shared/pipes';
-import { PersonalAccountTagAggregation } from '../../models';
+import { PersonalAccountTagAggregation } from './../../../../core/api';
 
 @Component({
 	selector: 'app-personal-account-expenses-by-tag',

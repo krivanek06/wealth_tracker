@@ -16,7 +16,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { PersonalAccountDailyDataNew } from './../../../../core/api';
+import { PersonalAccountDailyData } from './../../../../core/api';
 import { DefaultImgDirective, RangeDirective, StylePaginatorDirective } from './../../../../shared/directives';
 @Component({
 	selector: 'app-personal-account-daily-entries-table',
@@ -118,20 +118,20 @@ import { DefaultImgDirective, RangeDirective, StylePaginatorDirective } from './
 	],
 })
 export class PersonalAccountDailyEntriesTableComponent implements OnInit, AfterViewInit {
-	@Output() editDailyEntryClickEmitter = new EventEmitter<PersonalAccountDailyDataNew>();
+	@Output() editDailyEntryClickEmitter = new EventEmitter<PersonalAccountDailyData>();
 
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 	@ViewChild(MatSort) sort!: MatSort;
 
-	@Input({ required: true }) set personalAccountDailyData(data: PersonalAccountDailyDataNew[] | null) {
-		console.log('data in table', data);
+	@Input({ required: true }) set personalAccountDailyData(data: PersonalAccountDailyData[] | null) {
+		//console.log('data in table', data);
 		const dataOrder = (data ?? []).slice().sort((a, b) => Number(b.date) - Number(a.date));
 		this.dataSource = new MatTableDataSource(dataOrder);
 		this.dataSource.paginator = this.paginator;
 		this.dataSource.sort = this.sort;
 	}
 	displayedColumns: string[] = ['tag', 'value'];
-	dataSource!: MatTableDataSource<PersonalAccountDailyDataNew>;
+	dataSource!: MatTableDataSource<PersonalAccountDailyData>;
 
 	constructor() {}
 
@@ -143,11 +143,11 @@ export class PersonalAccountDailyEntriesTableComponent implements OnInit, AfterV
 		}
 	}
 
-	identity(index: number, item: PersonalAccountDailyDataNew): string {
+	identity(index: number, item: PersonalAccountDailyData): string {
 		return item.id;
 	}
 
-	onEditDailyEntryClick(data: PersonalAccountDailyDataNew): void {
+	onEditDailyEntryClick(data: PersonalAccountDailyData): void {
 		this.editDailyEntryClickEmitter.emit(data);
 	}
 }

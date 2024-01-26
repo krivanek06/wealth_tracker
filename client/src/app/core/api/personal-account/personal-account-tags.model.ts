@@ -269,3 +269,11 @@ export const PERSONAL_ACCOUNT_DEFAULT_TAG_DATA: PersonalAccountTag = {
 	color: '#fe12cc',
 	image: 'shopping',
 };
+
+export const TagColors = {
+	income: 'var(--success)',
+	expense: 'var(--danger)',
+	expenseTags: '#a923ef',
+} as const;
+
+export const NO_DATE_SELECTED = 'NO_DATE_SELECTED';

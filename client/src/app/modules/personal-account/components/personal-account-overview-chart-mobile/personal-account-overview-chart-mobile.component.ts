@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ValuePresentationCardComponent } from '../../../../shared/components';
 import { GenericChartSeriesPie } from '../../../../shared/models';
-import { AccountState } from '../../models';
 import { PersonalAccountExpensePieChartComponent } from '../charts';
+import { AccountState } from './../../../../core/api';
 
 @Component({
 	selector: 'app-personal-account-overview-chart-mobile',

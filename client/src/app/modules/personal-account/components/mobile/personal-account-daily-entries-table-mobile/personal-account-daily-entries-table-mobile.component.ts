@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
-import { PersonalAccountDailyDataAggregation } from '../../../models';
-import { PersonalAccountDailyDataNew } from './../../../../../core/api';
+import { PersonalAccountDailyData, PersonalAccountDailyDataAggregation } from './../../../../../core/api';
 import { DefaultImgDirective } from './../../../../../shared/directives';
 
 @Component({
@@ -79,10 +78,10 @@ import { DefaultImgDirective } from './../../../../../shared/directives';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountDailyEntriesTableMobileComponent {
-	@Output() editDailyEntryClickEmitter = new EventEmitter<PersonalAccountDailyDataNew>();
+	@Output() editDailyEntryClickEmitter = new EventEmitter<PersonalAccountDailyData>();
 	@Input() personalAccountDailyData?: PersonalAccountDailyDataAggregation[] | null;
 
-	onEditDailyEntryClick(data: PersonalAccountDailyDataNew): void {
+	onEditDailyEntryClick(data: PersonalAccountDailyData): void {
 		this.editDailyEntryClickEmitter.emit(data);
 	}
 }

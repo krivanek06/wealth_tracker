@@ -1,31 +1,22 @@
 import { format, getMonth, getWeek, getYear } from 'date-fns';
-export type DateServiceUtilDateInformation = {
-	year: number;
-	month: number;
-	week: number;
-	// format is yyyy-MM
-	currentDateMonth: string;
-	// format is yyyy-MM-ww
-	currentDateMonthWeek: string;
-};
 
 type DateInput = string | number | Date;
 
 export const getCurrentDateDefaultFormat = (config?: {
-	addTime?: boolean;
-	onlyMonth?: boolean;
-	someDate?: string;
+	addTime?: boolean; // i.e: YYYY-MM-DD HH:mm:ss
+	onlyMonth?: boolean; // i.e: YYYY-MM or YYYY-MM-dd
+	someDate?: string | Date; // i.e: YYYY-MM-DD - use this date instead of current date
 }): string => {
 	const workingDate = config?.someDate ? new Date(config.someDate) : new Date();
 
 	if (config?.addTime) {
-		return dateFormatDate(workingDate, 'yyyy-MM-dd HH:mm:ss');
+		return format(workingDate, 'yyyy-MM-dd HH:mm:ss');
 	}
 	if (config?.onlyMonth) {
-		return dateFormatDate(workingDate, 'yyyy-MM');
+		return format(workingDate, 'yyyy-MM');
 	}
 
-	return dateFormatDate(workingDate, 'yyyy-MM-dd ');
+	return format(workingDate, 'yyyy-MM-dd ');
 };
 
 export const dateFormatDate = (inputDate: DateInput, formateStr: string = 'yyyy-MM-dd'): string => {
@@ -40,15 +31,28 @@ export const formatDate = (inputDate: DateInput, formateStr: string = 'yyyy-MM-d
 
 export const getDetailsInformationFromDate = (
 	input: string | Date | number = new Date()
-): DateServiceUtilDateInformation => {
+): {
+	year: number;
+	month: number;
+	week: number;
+	// format is yyyy-MM: 2024-1
+	currentDateMonth: string;
+	// format is yyyy-MM-ww: 2024-1-1
+	currentDateMonthWeek: string;
+	// format is yyyy-MM-dd: 2024-01
+	currentDateMonthCorrect: string;
+} => {
 	const date = new Date(input);
 
 	const year = getYear(date);
 	const month = getMonth(date) + 1;
-	const week = getWeek(date) + 1;
+	const week = getWeek(date, {
+		weekStartsOn: 0,
+	});
 
 	const currentDateMonth = `${year}-${month}`;
-	const currentDateMonthWeek = `${year}-${currentDateMonth}-${week}`;
+	const currentDateMonthCorrect = `${year}-${month < 10 ? '0' + month : month}`;
+	const currentDateMonthWeek = `${year}-${month}-${week}`;
 
 	return {
 		year,
@@ -56,6 +60,7 @@ export const getDetailsInformationFromDate = (
 		week,
 		currentDateMonth,
 		currentDateMonthWeek,
+		currentDateMonthCorrect,
 	};
 };
 

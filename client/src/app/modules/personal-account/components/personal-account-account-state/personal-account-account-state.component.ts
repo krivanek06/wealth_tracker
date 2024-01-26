@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ValuePresentationCardComponent } from '../../../../shared/components';
-import { AccountState } from '../../models';
+import { AccountState } from './../../../../core/api';
 
 @Component({
 	selector: 'app-personal-account-account-state',
@@ -39,7 +39,7 @@ import { AccountState } from '../../models';
 	styles: [
 		`
 			:host {
-				@apply grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-4 lg:gap-8;
+				@apply grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 lg:gap-8;
 
 				.c-text {
 					@apply text-xl xl:text-2xl text-center text-white mt-2;

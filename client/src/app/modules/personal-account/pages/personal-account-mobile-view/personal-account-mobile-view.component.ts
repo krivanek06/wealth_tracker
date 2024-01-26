@@ -19,8 +19,8 @@ import {
 	PersonalAccountExpensesByTagComponent,
 	PersonalAccountOverviewChartMobileComponent,
 } from '../../components';
-import { NO_DATE_SELECTED } from '../../models';
 import { GetTagByIdPipe } from '../../pipes';
+import { NO_DATE_SELECTED } from './../../../../core/api';
 import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-mobile-view-skeleton/personal-account-mobile-view-skeleton.component';
 @Component({
 	selector: 'app-personal-account-mobile-view',
@@ -80,6 +80,7 @@ import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-m
 
 			<!-- historical data -->
 			<app-personal-account-daily-entries-table-mobile
+				class="-mt-3"
 				*ngIf="showHistoryFormControl.value"
 				[personalAccountDailyData]="dailyDataAggregation()"
 				(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
@@ -134,31 +135,12 @@ export class PersonalAccountMobileViewComponent extends PersonalAccountParent im
 	 * daily data divided by dates: PersonalAccountDailyDataAggregation
 	 */
 	dailyDataAggregation = computed(() =>
-		this.personalAccountDataService.aggregateDailyDataOutputByDays(this.filteredDailyData())
+		this.personalAccountAggregatorService.aggregateDailyDataOutputByDays(this.filteredDailyData())
 	);
 
 	showHistoryFormControl = new FormControl<boolean>(false, { nonNullable: true });
 
 	ngOnInit(): void {
-		// this.accountDisplayedState$ = combineLatest([
-		// 	this.dateSource$,
-		// 	this.accountTotalState$,
-		// 	this.accountFilteredState$,
-		// ]).pipe(
-		// 	map(([dateFilter, accountTotal, accountFiltered]) =>
-		// 		dateFilter === NO_DATE_SELECTED ? accountTotal : accountFiltered
-		// 	)
-		// );
-
-		// this.dailyDataAggregation$ = this.filteredDailyData$.pipe(
-		// 	map((res) => this.personalAccountDataService.aggregateDailyDataOutputByDays(res))
-		// );
-
-		// on every change of the date filter, reset show history
-		// this.accountTagAggregationForTimePeriod$
-		// 	.pipe(takeUntil(this.destroy$))
-		// 	.subscribe(() => this.showHistoryFormControl.setValue(false));
-
 		// check show history when selecting a tagId
 		this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.subscribe((value) => {
 			if (value.length !== 0) {

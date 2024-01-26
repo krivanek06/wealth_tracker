@@ -1,16 +1,11 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit, computed, signal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { format } from 'date-fns';
-import {
-	PersonalAccountDailyDataCreateNew,
-	PersonalAccountDailyDataNew,
-	PersonalAccountService,
-} from '../../../../core/api';
+import { PersonalAccountDailyData, PersonalAccountDailyDataCreate, PersonalAccountService } from '../../../../core/api';
 import { Confirmable } from '../../../../shared/decorators';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
-import { positiveNumberValidator, requiredValidator } from '../../../../shared/models';
-import { PersonalAccountDataService } from '../../services';
+import { InputSource, InputSourceWrapper, positiveNumberValidator, requiredValidator } from '../../../../shared/models';
 
 @Component({
 	selector: 'app-personal-account-daily-data-entry',
@@ -80,7 +75,42 @@ import { PersonalAccountDataService } from '../../services';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountDailyDataEntryComponent implements OnInit {
-	displayTagsInputSource = this.personalAccountDataService.availableTagInputSourceWrapper;
+	displayTagsInputSource = computed(() => {
+		const expenseTags = this.personalAccountFacadeService.personalAccountTagsExpenseSignal().map(
+			(res) =>
+				({
+					caption: res.name,
+					value: res.id,
+					additionalData: res,
+					image: res.image,
+					imageType: 'tagName',
+				}) satisfies InputSource
+		);
+
+		const incomeTags = this.personalAccountFacadeService.personalAccountTagsIncomeSignal().map(
+			(res) =>
+				({
+					caption: res.name,
+					value: res.id,
+					additionalData: res,
+					image: res.image,
+					imageType: 'tagName',
+				}) satisfies InputSource
+		);
+
+		const result: InputSourceWrapper[] = [
+			{
+				name: 'Expense',
+				items: expenseTags,
+			},
+			{
+				name: 'Income',
+				items: incomeTags,
+			},
+		];
+
+		return result;
+	});
 
 	// booleans to show spinner
 	showLoader = signal(false);
@@ -93,11 +123,10 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 
 	constructor(
 		private personalAccountFacadeService: PersonalAccountService,
-		private personalAccountDataService: PersonalAccountDataService,
 		private dialogRef: MatDialogRef<PersonalAccountDailyDataEntryComponent>,
 		@Inject(MAT_DIALOG_DATA)
 		public data: {
-			dailyData: PersonalAccountDailyDataNew | null;
+			dailyData: PersonalAccountDailyData | null;
 		}
 	) {}
 
@@ -158,7 +187,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		}
 	}
 
-	private initEditing(dailyData: PersonalAccountDailyDataNew): void {
+	private initEditing(dailyData: PersonalAccountDailyData): void {
 		this.formGroup.setValue({
 			date: new Date(dailyData.date),
 			tagId: dailyData.tagId,
@@ -166,7 +195,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		});
 	}
 
-	private getDailyDatafromForm(): PersonalAccountDailyDataCreateNew | null {
+	private getDailyDatafromForm(): PersonalAccountDailyDataCreate | null {
 		// get values from form
 		const dateValue = this.formGroup.controls.date.value;
 		const tagValue = this.formGroup.controls.tagId.value;
@@ -178,7 +207,7 @@ export class PersonalAccountDailyDataEntryComponent implements OnInit {
 		}
 
 		// create server obj
-		const dailyEntry: PersonalAccountDailyDataCreateNew = {
+		const dailyEntry: PersonalAccountDailyDataCreate = {
 			date: format(dateValue, 'yyyy-MM-dd'),
 			value: Number(valueValue),
 			tagId: tagValue,

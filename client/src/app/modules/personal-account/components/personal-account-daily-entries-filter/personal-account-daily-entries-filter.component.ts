@@ -4,11 +4,11 @@ import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, Reacti
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { formatDate } from 'date-fns';
 import { getDetailsInformationFromDate } from '../../../../core/utils';
 import { FormMatInputWrapperComponent } from '../../../../shared/components';
-import { InputSourceWrapper } from '../../../../shared/models';
-import { PersonalAccountDataService } from '../../services';
-import { PersonalAccountWeeklyAggregationOutput } from './../../../../core/api';
+import { InputSource, InputSourceWrapper } from '../../../../shared/models';
+import { NO_DATE_SELECTED, PersonalAccountWeeklyAggregationOutput } from './../../../../core/api';
 
 @Component({
 	selector: 'app-personal-account-daily-entries-filter',
@@ -92,7 +92,7 @@ import { PersonalAccountWeeklyAggregationOutput } from './../../../../core/api';
 export class PersonalAccountDailyEntriesFilterComponent implements OnInit, ControlValueAccessor {
 	@Output() addDailyEntryClickEmitter = new EventEmitter<void>();
 	@Input({ required: true }) set weeklyAggregations(data: PersonalAccountWeeklyAggregationOutput[]) {
-		this.filterDateInputSourceWrapper = this.personalAccountDataService.getMonthlyInputSource(data);
+		this.filterDateInputSourceWrapper = this.getMonthlyInputSource(data);
 	}
 
 	/**
@@ -106,8 +106,6 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 
 	onChange: (dateFilter?: string) => void = () => {};
 	onTouched = () => {};
-
-	constructor(private personalAccountDataService: PersonalAccountDataService) {}
 
 	ngOnInit(): void {
 		this.formGroup.controls.dateFilter.valueChanges.subscribe((value) => {
@@ -143,5 +141,64 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 	 */
 	registerOnTouched(fn: PersonalAccountDailyEntriesFilterComponent['onTouched']): void {
 		this.onTouched = fn;
+	}
+
+	/**
+	 * from weekly data where we have [year, month], we create InputSourceWrapper based on each month
+	 * and items will be weeks in that month
+	 * it is used for filtering account data based on month/week
+	 *
+	 * Values for a month: [year-month-week] [2022-1, 2022-1-1, 2022-1-2, 2022-1-3, 2022-1-4]
+	 * Adding value -1 to display total aggregation
+	 *
+	 * @param weeklyData
+	 * @returns
+	 */
+	getMonthlyInputSource(weeklyData: PersonalAccountWeeklyAggregationOutput[]): InputSourceWrapper[] {
+		// ability to filter everything
+		const allData: InputSourceWrapper = {
+			name: 'All data',
+			items: [
+				{
+					caption: 'Select total aggregation',
+					value: NO_DATE_SELECTED,
+				},
+			],
+		};
+
+		// console.log('weeklyData', weeklyData);
+
+		const monthlyInputSources = weeklyData
+			.reduce((acc, curr) => {
+				// format to 'January, 2022'
+				const keyId = `${formatDate(new Date(curr.year, curr.month, 0), 'LLLL')}, ${curr.year}`;
+				console.log('keyId', keyId);
+
+				const lastElement: InputSourceWrapper | undefined = acc[acc.length - 1];
+
+				// item that will be added
+				const weeklyItem: InputSource = {
+					caption: `Week: ${curr.week}, ${keyId}`,
+					value: curr.id, // year-month-week: 2022-2-12
+				};
+
+				// key in array, append curr as last item for the key
+				if (lastElement?.name === keyId) {
+					acc[acc.length - 1] = { ...lastElement, items: [...lastElement.items, weeklyItem] };
+					return acc;
+				}
+
+				// create empty to filter by whole month
+				const monthlyItem: InputSource = {
+					caption: keyId,
+					value: `${curr.year}-${curr.month}`,
+				};
+
+				// last item don't match key
+				return [...acc, { name: keyId, items: [monthlyItem, weeklyItem] }] as InputSourceWrapper[];
+			}, [] as InputSourceWrapper[])
+			.reverse();
+
+		return [allData, ...monthlyInputSources];
 	}
 }

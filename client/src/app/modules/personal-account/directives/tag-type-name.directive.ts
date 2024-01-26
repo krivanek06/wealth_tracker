@@ -1,6 +1,5 @@
 import { Directive, ElementRef, Input, OnChanges, Renderer2, SimpleChanges } from '@angular/core';
-import { TagColors } from '../models';
-import { PersonalAccountTagTypeNew } from './../../../core/api';
+import { PersonalAccountTagTypeNew, TagColors } from './../../../core/api';
 
 @Directive({
 	selector: '[appTagTypeName]',

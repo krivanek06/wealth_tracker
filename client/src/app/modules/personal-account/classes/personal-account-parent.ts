@@ -2,19 +2,23 @@ import { Directive, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { computedFrom } from 'ngxtension/computed-from';
-import { of, pipe, startWith, switchMap } from 'rxjs';
-import { PersonalAccountDailyDataNew, PersonalAccountService } from '../../../core/api';
+import { getWeek } from 'date-fns';
+import { startWith } from 'rxjs';
+import { PersonalAccountDailyData, PersonalAccountService, PersonalAccountTag } from '../../../core/api';
 import { dateSplitter, getDetailsInformationFromDate } from '../../../core/utils';
-import { SCREEN_DIALOGS } from '../../../shared/models';
-import { PersonalAccountDailyDataEntryComponent, PersonalAccountTagManagerModalComponent } from '../modals';
-import { NO_DATE_SELECTED, PersonalAccountActionButtonType, PersonalAccountTagAggregationType } from '../models';
-import { PersonalAccountChartService, PersonalAccountDataService } from '../services';
+import { SCREEN_DIALOGS, ValuePresentItem } from '../../../shared/models';
+import { PersonalAccountDailyDataEntryComponent } from '../modals';
+import { PersonalAccountChartService } from '../services';
+import {
+	NO_DATE_SELECTED,
+	PersonalAccountAggregatorService,
+	PersonalAccountTagAggregationType,
+} from './../../../core/api';
 @Directive()
 export abstract class PersonalAccountParent {
 	protected personalAccountService = inject(PersonalAccountService);
 	protected personalAccountChartService = inject(PersonalAccountChartService);
-	protected personalAccountDataService = inject(PersonalAccountDataService);
+	protected personalAccountAggregatorService = inject(PersonalAccountAggregatorService);
 	protected dialog = inject(MatDialog);
 
 	/**
@@ -39,20 +43,33 @@ export abstract class PersonalAccountParent {
 		{ initialValue: this.today.currentDateMonth }
 	);
 
-	//personalAccountDetails$!: Observable<PersonalAccountDetailsFragment>;
-
 	yearlyExpenseTags = computed(() => {
 		const data = this.personalAccountService
 			.yearlyAggregatedSignal()
 			.filter((d) => d.tag.type === 'EXPENSE' && d.value > 0);
-		return this.personalAccountDataService.createValuePresentItemFromTag(data);
+
+		const totalValue = data.reduce((a, b) => a + b.value, 0);
+
+		return data.map((d) => {
+			const data: ValuePresentItem<PersonalAccountTag> = {
+				color: d.tag.color,
+				imageSrc: d.tag.image,
+				imageType: 'tagName',
+				name: d.tag.name,
+				value: d.value,
+				valuePrct: d.value / totalValue,
+				item: d.tag,
+			};
+
+			return data;
+		});
 	});
 
 	/**
 	 * current account state totalIncome, totalExpense and difference
 	 */
 	accountTotalState = computed(() =>
-		this.personalAccountChartService.getAccountState(this.personalAccountService.yearlyAggregatedSignal())
+		this.personalAccountAggregatorService.getAccountState(this.personalAccountService.yearlyAggregatedSignal())
 	);
 
 	/**
@@ -72,28 +89,30 @@ export abstract class PersonalAccountParent {
 	/**
 	 * all daily data for a period
 	 */
-	totalDailyDataForTimePeriod = computedFrom(
-		[this.personalAccountService.personalAccountMonthlyDataSignal, this.dateSource],
-		pipe(
-			switchMap(([monthlyData, dateFilter]) => {
-				if (dateFilter === NO_DATE_SELECTED || !monthlyData) {
-					return of([]);
-				}
+	totalDailyDataForTimePeriod = computed(() => {
+		const allMonthlyData = this.personalAccountService.personalAccountMonthlyDataSignal();
+		const selectedData = this.dateSource();
 
-				const [year, month, week] = dateSplitter(dateFilter);
+		if (selectedData === NO_DATE_SELECTED || !allMonthlyData) {
+			return [];
+		}
 
-				const monthlyDataForTimePeriod = monthlyData.find((d) => d.year === year && d.month === month);
-				const dailyData = monthlyDataForTimePeriod?.dailyData ?? [];
+		const [year, month, week] = dateSplitter(selectedData);
+		// format date, make 2022-1-1 to be 2022-01
+		const correctKey = month < 10 ? `${year}-0${month}` : `${year}-${month}`;
 
-				if (!week) {
-					return of(dailyData);
-				}
+		const monthlyDataForTimePeriod = allMonthlyData.find((d) => d.id === correctKey);
+		const dailyData = monthlyDataForTimePeriod?.dailyData ?? [];
 
-				const weeklyData = dailyData.filter((d) => d.week === week);
-				return of(weeklyData);
-			})
-		)
-	);
+		// no week selected, return all daily data for a month
+		if (!week) {
+			return dailyData;
+		}
+
+		// filter daily data by week
+		const weeklyData = dailyData.filter((d) => getWeek(d.date) === week);
+		return weeklyData;
+	});
 
 	/**
 	 * account state by selected date interval and tags
@@ -101,7 +120,7 @@ export abstract class PersonalAccountParent {
 	accountFilteredState = computed(() => {
 		const dailyData = this.totalDailyDataForTimePeriod();
 		const tags = this.personalAccountService.personalAccountTagsSignal();
-		return this.personalAccountChartService.getAccountStateByDailyData(dailyData, tags);
+		return this.personalAccountAggregatorService.getAccountStateByDailyData(dailyData, tags);
 	});
 
 	/**
@@ -163,8 +182,11 @@ export abstract class PersonalAccountParent {
 
 		const data =
 			this.dateSource() === NO_DATE_SELECTED
-				? this.personalAccountDataService.getPersonalAccountTagAggregationByAggregationData(yearlyAggregation)
-				: this.personalAccountDataService.getPersonalAccountTagAggregationByDailyData(dailyData, this.dateSource());
+				? this.personalAccountAggregatorService.getPersonalAccountTagAggregationByAggregationData(yearlyAggregation)
+				: this.personalAccountAggregatorService.getPersonalAccountTagAggregationByDailyData(
+						dailyData,
+						this.dateSource()
+					);
 
 		// sort DESC by total value
 		const dataSorted = data.sort((a, b) => b.totalValue - a.totalValue);
@@ -192,18 +214,12 @@ export abstract class PersonalAccountParent {
 		)
 	);
 
-	onDailyEntryClick(editingDailyData: PersonalAccountDailyDataNew | null): void {
+	onDailyEntryClick(editingDailyData: PersonalAccountDailyData | null): void {
 		this.dialog.open(PersonalAccountDailyDataEntryComponent, {
 			data: {
 				dailyData: editingDailyData,
 			},
 			panelClass: [SCREEN_DIALOGS.DIALOG_SMALL],
-		});
-	}
-
-	onActionButtonClick(type: PersonalAccountActionButtonType): void {
-		this.dialog.open(PersonalAccountTagManagerModalComponent, {
-			panelClass: [SCREEN_DIALOGS.DIALOG_BIG],
 		});
 	}
 }

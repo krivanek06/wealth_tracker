@@ -5,7 +5,6 @@ import {
 	Component,
 	EventEmitter,
 	Input,
-	OnInit,
 	Output,
 	ViewChild,
 } from '@angular/core';
@@ -17,7 +16,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PersonalAccountDailyData } from './../../../../core/api';
-import { DefaultImgDirective, RangeDirective, StylePaginatorDirective } from './../../../../shared/directives';
+import { BubblePaginationDirective, DefaultImgDirective, RangeDirective } from './../../../../shared/directives';
 @Component({
 	selector: 'app-personal-account-daily-entries-table',
 	template: `
@@ -80,9 +79,9 @@ import { DefaultImgDirective, RangeDirective, StylePaginatorDirective } from './
 		</table>
 
 		<!-- pagination -->
-		<div *ngIf="dataSource?.filteredData" class="mt-2">
+		<div *ngIf="dataSource?.filteredData" class="mt-2 flex items-center justify-end">
 			<mat-paginator
-				appStylePaginator
+				appBubblePagination
 				showFirstLastButtons
 				[length]="dataSource.filteredData.length"
 				[appCustomLength]="dataSource.filteredData.length"
@@ -109,7 +108,7 @@ import { DefaultImgDirective, RangeDirective, StylePaginatorDirective } from './
 		MatRippleModule,
 		MatSortModule,
 		MatPaginatorModule,
-		StylePaginatorDirective,
+		BubblePaginationDirective,
 		MatIconModule,
 		MatButtonModule,
 		DefaultImgDirective,
@@ -117,14 +116,14 @@ import { DefaultImgDirective, RangeDirective, StylePaginatorDirective } from './
 		RangeDirective,
 	],
 })
-export class PersonalAccountDailyEntriesTableComponent implements OnInit, AfterViewInit {
+export class PersonalAccountDailyEntriesTableComponent implements AfterViewInit {
 	@Output() editDailyEntryClickEmitter = new EventEmitter<PersonalAccountDailyData>();
 
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 	@ViewChild(MatSort) sort!: MatSort;
 
 	@Input({ required: true }) set personalAccountDailyData(data: PersonalAccountDailyData[] | null) {
-		//console.log('data in table', data);
+		// console.log('data in table', data);
 		const dataOrder = (data ?? []).slice().sort((a, b) => Number(b.date) - Number(a.date));
 		this.dataSource = new MatTableDataSource(dataOrder);
 		this.dataSource.paginator = this.paginator;
@@ -133,14 +132,8 @@ export class PersonalAccountDailyEntriesTableComponent implements OnInit, AfterV
 	displayedColumns: string[] = ['tag', 'value'];
 	dataSource!: MatTableDataSource<PersonalAccountDailyData>;
 
-	constructor() {}
-
-	ngOnInit(): void {}
-
 	ngAfterViewInit(): void {
-		if (this.dataSource) {
-			this.dataSource.paginator = this.paginator;
-		}
+		this.dataSource.paginator = this.paginator;
 	}
 
 	identity(index: number, item: PersonalAccountDailyData): string {

@@ -37,7 +37,7 @@ import { AboutComponent } from './../../../user-settings/modals/about/about.comp
 				Manage Tags
 			</button>
 
-			<button
+			<!-- <button
 				type="button"
 				mat-flat-button
 				color="warn"
@@ -46,7 +46,7 @@ import { AboutComponent } from './../../../user-settings/modals/about/about.comp
 			>
 				<mat-icon>bug_report</mat-icon>
 				Add Testing Data
-			</button>
+			</button> -->
 		</div>
 
 		<div class="block sm:hidden">

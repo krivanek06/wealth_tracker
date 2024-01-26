@@ -1,4 +1,4 @@
-export * from './StylePaginatorDirective.directive';
+export * from './bubble-pagination.directive';
 export * from './default-img.directive';
 export * from './perceptage-increase.directive';
 export * from './range.directive';

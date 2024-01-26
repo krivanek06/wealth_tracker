@@ -1,3 +1,8 @@
+.g-bubble-container {
+	display: flex;
+	gap: 4px;
+}
+
 .g-bubble {
 	background-color: var(--background-medium);
 	border-radius: 50%;

@@ -17,17 +17,14 @@ export class PersonalAccountTestDataService {
 			return;
 		}
 
-		const usedDays = 40; // go back 6 months
+		const usedDays = 140; // go back N days
 		const startingDate = format(subDays(new Date(), usedDays), 'yyyy-MM-dd');
 
 		// create data for the last 6 months
 		for (let i = 0; i < usedDays; i++) {
 			const currentDate = format(addDays(startingDate, i), 'yyyy-MM-dd');
-			const randomDataNumber = getRandomNumber(1, 3);
-			//const currentDate = format(subMonths(today, i), 'yyyy-MM-dd');
-			// const currentYear = getYear(currentDate);
-			// const currentMonth = getMonth(currentDate);
-			//console.log('date', currentDate);
+			const randomDataNumber = getRandomNumber(1, 2);
+
 			console.log('currentDate', currentDate);
 
 			const data = this.getDataForDate(currentDate, randomDataNumber);

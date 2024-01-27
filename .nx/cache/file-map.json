@@ -1,0 +1,1568 @@
+{
+  "version": "6.0",
+  "nxVersion": "17.2.8",
+  "deps": {
+    "@angular/animations": "^17.1.0",
+    "@angular/cdk": "17.1.0",
+    "@angular/common": "^17.1.0",
+    "@angular/compiler": "^17.1.0",
+    "@angular/core": "^17.1.0",
+    "@angular/fire": "17.0.1",
+    "@angular/forms": "^17.1.0",
+    "@angular/material": "17.1.0",
+    "@angular/platform-browser": "^17.1.0",
+    "@angular/platform-browser-dynamic": "^17.1.0",
+    "@angular/platform-server": "^17.1.0",
+    "@angular/router": "^17.1.0",
+    "@angular/service-worker": "^17.1.0",
+    "@capacitor/android": "^5.6.0",
+    "@capacitor/core": "^5.6.0",
+    "@capacitor/ios": "^5.6.0",
+    "@types/lodash-es": "^4.17.12",
+    "date-fns": "^3.3.0",
+    "highcharts": "^11.3.0",
+    "highcharts-angular": "^4.0.0",
+    "inquirer-autocomplete-prompt": "^3.0.1",
+    "lodash": "^4.17.21",
+    "ngxtension": "^1.11.0",
+    "rxfire": "^6.0.5",
+    "rxjs": "~7.8.1",
+    "subscriptions-transport-ws": "^0.11.0",
+    "uuid": "^9.0.1",
+    "zone.js": "~0.14.3",
+    "@angular-devkit/build-angular": "^17.1.0",
+    "@angular-eslint/builder": "17.2.1",
+    "@angular-eslint/eslint-plugin": "17.2.1",
+    "@angular-eslint/eslint-plugin-template": "17.2.1",
+    "@angular-eslint/schematics": "17.2.1",
+    "@angular-eslint/template-parser": "17.2.1",
+    "@angular/cli": "~17.1.0",
+    "@angular/compiler-cli": "^17.1.0",
+    "@capacitor/cli": "^5.6.0",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.11.5",
+    "@types/uuid": "^9.0.7",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "jest": "^29.7.0",
+    "jest-preset-angular": "^14.0.0",
+    "karma-coverage": "~2.2.1",
+    "postcss": "^8.4.33",
+    "prettier-eslint": "^16.3.0",
+    "tailwindcss": "^3.4.1",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.2.2"
+  },
+  "pathMappings": {},
+  "nxJsonPlugins": [],
+  "fileMap": {
+    "projectFileMap": {},
+    "nonProjectFiles": [
+      {
+        "file": ".angulardoc.json",
+        "hash": "1424566421161840840"
+      },
+      {
+        "file": ".dockerignore",
+        "hash": "14036038161614981165"
+      },
+      {
+        "file": ".editorconfig",
+        "hash": "6686520031028425313"
+      },
+      {
+        "file": ".eslintignore",
+        "hash": "13271375176391810126"
+      },
+      {
+        "file": ".eslintrc.json",
+        "hash": "450039405135819077"
+      },
+      {
+        "file": ".gcloudignore",
+        "hash": "13931990594136167981"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "12148565830528444608"
+      },
+      {
+        "file": ".lintstagedrc.json",
+        "hash": "17560762175460156968"
+      },
+      {
+        "file": ".prettierignore",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": ".prettierrc.json",
+        "hash": "1069997925665013473"
+      },
+      {
+        "file": ".vscode/extensions.json",
+        "hash": "5331566439708925252"
+      },
+      {
+        "file": ".vscode/launch.json",
+        "hash": "4815948323043747099"
+      },
+      {
+        "file": ".vscode/settings.json",
+        "hash": "1389868326933519382"
+      },
+      {
+        "file": ".vscode/tasks.json",
+        "hash": "5336636969995539451"
+      },
+      {
+        "file": "Dockerfile",
+        "hash": "15980905987979057983"
+      },
+      {
+        "file": "LICENSE",
+        "hash": "6470149683788844103"
+      },
+      {
+        "file": "README.md",
+        "hash": "2817604793105114792"
+      },
+      {
+        "file": "android/.gitignore",
+        "hash": "16088808965373471785"
+      },
+      {
+        "file": "android/app/.gitignore",
+        "hash": "3800628318224317187"
+      },
+      {
+        "file": "android/app/build.gradle",
+        "hash": "12538938802731308845"
+      },
+      {
+        "file": "android/app/capacitor.build.gradle",
+        "hash": "5436406447799602409"
+      },
+      {
+        "file": "android/app/proguard-rules.pro",
+        "hash": "16319704539319765030"
+      },
+      {
+        "file": "android/app/src/androidTest/java/com/getcapacitor/myapp/ExampleInstrumentedTest.java",
+        "hash": "1280125089554780403"
+      },
+      {
+        "file": "android/app/src/main/AndroidManifest.xml",
+        "hash": "17723283346327553940"
+      },
+      {
+        "file": "android/app/src/main/ic_launcher-playstore.png",
+        "hash": "7100151825689206256"
+      },
+      {
+        "file": "android/app/src/main/java/spendmindful/com/MainActivity.java",
+        "hash": "8752658256318668007"
+      },
+      {
+        "file": "android/app/src/main/res/drawable-land-hdpi/splash.png",
+        "hash": "12618218220193540786"
+      },
+      {
+        "file": "android/app/src/main/res/drawable-land-mdpi/splash.png",
+        "hash": "13354102016025079206"
+      },
+      {
+        "file": "android/app/src/main/res/drawable-land-xhdpi/splash.png",
+        "hash": "16928120350772912315"
+      },
+      {
+        "file": "android/app/src/main/res/drawable-land-xxhdpi/splash.png",
+        "hash": "8114284271146720243"
+      },
+      {
+        "file": "android/app/src/main/res/drawable-land-xxxhdpi/splash.png",
+        "hash": "10648225290896133372"
+      },
+      {
+        "file": "android/app/src/main/res/drawable-port-hdpi/splash.png",
+        "hash": "7870574596552345396"
+      },
+      {
+        "file": "android/app/src/main/res/drawable-port-mdpi/splash.png",
+        "hash": "512985810174291431"
+      },
+      {
+        "file": "android/app/src/main/res/drawable-port-xhdpi/splash.png",
+        "hash": "13168839858812363171"
+      },
+      {
+        "file": "android/app/src/main/res/drawable-port-xxhdpi/splash.png",
+        "hash": "1546567578093946022"
+      },
+      {
+        "file": "android/app/src/main/res/drawable-port-xxxhdpi/splash.png",
+        "hash": "7224188242308859997"
+      },
+      {
+        "file": "android/app/src/main/res/drawable-v24/ic_launcher_foreground.xml",
+        "hash": "16602625396055746895"
+      },
+      {
+        "file": "android/app/src/main/res/drawable/ic_launcher_background.xml",
+        "hash": "11296163535477003649"
+      },
+      {
+        "file": "android/app/src/main/res/drawable/splash.png",
+        "hash": "13354102016025079206"
+      },
+      {
+        "file": "android/app/src/main/res/layout/activity_main.xml",
+        "hash": "13540211242698942768"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+        "hash": "9287103047754506818"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
+        "hash": "9287103047754506818"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+        "hash": "14065172310999947930"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png",
+        "hash": "16645762735224769091"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png",
+        "hash": "12587818144617740551"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+        "hash": "10311892610249730847"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png",
+        "hash": "1756854080487396544"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png",
+        "hash": "13138802599303568396"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+        "hash": "8688869919821716044"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png",
+        "hash": "2618270060948745025"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
+        "hash": "13925586253943407474"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+        "hash": "4845678935286078832"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png",
+        "hash": "5761849636138877674"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
+        "hash": "5521663844515799450"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+        "hash": "6488623541339083680"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png",
+        "hash": "13880247540475916256"
+      },
+      {
+        "file": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
+        "hash": "8243620098819885290"
+      },
+      {
+        "file": "android/app/src/main/res/values/ic_launcher_background.xml",
+        "hash": "9482601953118464086"
+      },
+      {
+        "file": "android/app/src/main/res/values/strings.xml",
+        "hash": "11055528362138805684"
+      },
+      {
+        "file": "android/app/src/main/res/values/styles.xml",
+        "hash": "17918612613785874663"
+      },
+      {
+        "file": "android/app/src/main/res/xml/file_paths.xml",
+        "hash": "14753087816109454837"
+      },
+      {
+        "file": "android/app/src/test/java/com/getcapacitor/myapp/ExampleUnitTest.java",
+        "hash": "11856600006954306230"
+      },
+      {
+        "file": "android/build.gradle",
+        "hash": "15247024166514751308"
+      },
+      {
+        "file": "android/capacitor.settings.gradle",
+        "hash": "10796121669633683561"
+      },
+      {
+        "file": "android/gradle.properties",
+        "hash": "2024862945433011340"
+      },
+      {
+        "file": "android/gradle/wrapper/gradle-wrapper.jar",
+        "hash": "13643854122011606232"
+      },
+      {
+        "file": "android/gradle/wrapper/gradle-wrapper.properties",
+        "hash": "10340632815092109200"
+      },
+      {
+        "file": "android/gradlew",
+        "hash": "9896656627243825026"
+      },
+      {
+        "file": "android/gradlew.bat",
+        "hash": "8837338129170646035"
+      },
+      {
+        "file": "android/settings.gradle",
+        "hash": "426215723856156424"
+      },
+      {
+        "file": "android/variables.gradle",
+        "hash": "9467210284462474397"
+      },
+      {
+        "file": "angular.json",
+        "hash": "409326602359908621"
+      },
+      {
+        "file": "capacitor.config.ts",
+        "hash": "6798767341613556877"
+      },
+      {
+        "file": "cloudbuild.yaml",
+        "hash": "5469052454224858043"
+      },
+      {
+        "file": "codegen.yml",
+        "hash": "15983717152522187202"
+      },
+      {
+        "file": "firebase.json",
+        "hash": "1389868326933519382"
+      },
+      {
+        "file": "ios/.gitignore",
+        "hash": "7320921161647232324"
+      },
+      {
+        "file": "ios/App/App.xcodeproj/project.pbxproj",
+        "hash": "413484257082311964"
+      },
+      {
+        "file": "ios/App/App.xcodeproj/project.xcworkspace/contents.xcworkspacedata",
+        "hash": "1121729896424732029"
+      },
+      {
+        "file": "ios/App/App.xcworkspace/contents.xcworkspacedata",
+        "hash": "5267424201368556030"
+      },
+      {
+        "file": "ios/App/App.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist",
+        "hash": "12722229457274558422"
+      },
+      {
+        "file": "ios/App/App/AppDelegate.swift",
+        "hash": "10885055232217572631"
+      },
+      {
+        "file": "ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png",
+        "hash": "15912141732076635821"
+      },
+      {
+        "file": "ios/App/App/Assets.xcassets/AppIcon.appiconset/Contents.json",
+        "hash": "8592742828066986329"
+      },
+      {
+        "file": "ios/App/App/Assets.xcassets/Contents.json",
+        "hash": "5990803069847060607"
+      },
+      {
+        "file": "ios/App/App/Assets.xcassets/Splash.imageset/Contents.json",
+        "hash": "9385842541853943677"
+      },
+      {
+        "file": "ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-1.png",
+        "hash": "3237967808663258630"
+      },
+      {
+        "file": "ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-2.png",
+        "hash": "3237967808663258630"
+      },
+      {
+        "file": "ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png",
+        "hash": "3237967808663258630"
+      },
+      {
+        "file": "ios/App/App/Base.lproj/LaunchScreen.storyboard",
+        "hash": "12402387980291643647"
+      },
+      {
+        "file": "ios/App/App/Base.lproj/Main.storyboard",
+        "hash": "14085817207643424634"
+      },
+      {
+        "file": "ios/App/App/Info.plist",
+        "hash": "9716936612306921166"
+      },
+      {
+        "file": "ios/App/Podfile",
+        "hash": "5876635743003509543"
+      },
+      {
+        "file": "jest.config.js",
+        "hash": "4985689339185827292"
+      },
+      {
+        "file": "nginx.conf",
+        "hash": "3061215632545191220"
+      },
+      {
+        "file": "ngsw-config.json",
+        "hash": "11744428379602790380"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "1980612756907922657"
+      },
+      {
+        "file": "package.json",
+        "hash": "9752944777763941170"
+      },
+      {
+        "file": "server.ts",
+        "hash": "1511726866595490113"
+      },
+      {
+        "file": "setup-jest.ts",
+        "hash": "9280823597149519015"
+      },
+      {
+        "file": "src/app/app-routing.module.ts",
+        "hash": "18231273732891619737"
+      },
+      {
+        "file": "src/app/app.component.html",
+        "hash": "17816966185630879015"
+      },
+      {
+        "file": "src/app/app.component.scss",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "src/app/app.component.spec.ts",
+        "hash": "10509659415774490934"
+      },
+      {
+        "file": "src/app/app.component.ts",
+        "hash": "323362528230147141"
+      },
+      {
+        "file": "src/app/app.module.ts",
+        "hash": "13728136736352818685"
+      },
+      {
+        "file": "src/app/app.server.module.ts",
+        "hash": "7491879697926474385"
+      },
+      {
+        "file": "src/app/core/api/index.ts",
+        "hash": "560547759489893778"
+      },
+      {
+        "file": "src/app/core/api/personal-account/index.ts",
+        "hash": "10434469863923959105"
+      },
+      {
+        "file": "src/app/core/api/personal-account/personal-account-aggregator.service.ts",
+        "hash": "6978086027380680230"
+      },
+      {
+        "file": "src/app/core/api/personal-account/personal-account-tags.model.ts",
+        "hash": "15769659471797585242"
+      },
+      {
+        "file": "src/app/core/api/personal-account/personal-account-test-data.service.ts",
+        "hash": "766636440647585260"
+      },
+      {
+        "file": "src/app/core/api/personal-account/personal-account-types.model.ts",
+        "hash": "14657055751760184553"
+      },
+      {
+        "file": "src/app/core/api/personal-account/personal-account.service.ts",
+        "hash": "15532030512355909450"
+      },
+      {
+        "file": "src/app/core/models/authentication.model.ts",
+        "hash": "17372827824289867014"
+      },
+      {
+        "file": "src/app/core/models/color-scheme.model.ts",
+        "hash": "15499620543861433614"
+      },
+      {
+        "file": "src/app/core/models/constants.model.ts",
+        "hash": "1111891421183674062"
+      },
+      {
+        "file": "src/app/core/models/global-constants.model.ts",
+        "hash": "2661514452899245226"
+      },
+      {
+        "file": "src/app/core/models/index.ts",
+        "hash": "4698500839914959129"
+      },
+      {
+        "file": "src/app/core/models/navigation.model.ts",
+        "hash": "7841322369781448463"
+      },
+      {
+        "file": "src/app/core/models/storage-keys.model.ts",
+        "hash": "424187393491546762"
+      },
+      {
+        "file": "src/app/core/services/authentication-account.service.spec.ts",
+        "hash": "79997833342332944"
+      },
+      {
+        "file": "src/app/core/services/authentication-account.service.ts",
+        "hash": "1800602485131074499"
+      },
+      {
+        "file": "src/app/core/services/index.ts",
+        "hash": "13639620890437807860"
+      },
+      {
+        "file": "src/app/core/services/platform.service.spec.ts",
+        "hash": "13534138182783605324"
+      },
+      {
+        "file": "src/app/core/services/platform.service.ts",
+        "hash": "8355861026870779480"
+      },
+      {
+        "file": "src/app/core/services/storage.service.spec.ts",
+        "hash": "9858457675316039179"
+      },
+      {
+        "file": "src/app/core/services/storage.service.ts",
+        "hash": "18127941384732381834"
+      },
+      {
+        "file": "src/app/core/services/theme.service.spec.ts",
+        "hash": "12659729553284747897"
+      },
+      {
+        "file": "src/app/core/services/theme.service.ts",
+        "hash": "18263701761635974276"
+      },
+      {
+        "file": "src/app/core/utils/assign-type-client.ts",
+        "hash": "17883739878181750711"
+      },
+      {
+        "file": "src/app/core/utils/chart-constructor.util.ts",
+        "hash": "1449489153240481287"
+      },
+      {
+        "file": "src/app/core/utils/date-service.util.ts",
+        "hash": "2719324679104619002"
+      },
+      {
+        "file": "src/app/core/utils/general-function.util.ts",
+        "hash": "14258067230134899291"
+      },
+      {
+        "file": "src/app/core/utils/index.ts",
+        "hash": "12069068641337848901"
+      },
+      {
+        "file": "src/app/modules/personal-account/classes/index.ts",
+        "hash": "2798295765200446771"
+      },
+      {
+        "file": "src/app/modules/personal-account/classes/personal-account-parent.ts",
+        "hash": "7956087317406083133"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/charts/index.ts",
+        "hash": "8627691828542931976"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/charts/personal-account-account-growth-chart/personal-account-account-growth-chart.component.ts",
+        "hash": "3004397172241518621"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/charts/personal-account-expense-chart/personal-account-expense-chart.component.ts",
+        "hash": "14605370717502846996"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/charts/personal-account-expense-pie-chart/personal-account-expense-pie-chart.component.spec.ts",
+        "hash": "12584978452786952645"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/charts/personal-account-expense-pie-chart/personal-account-expense-pie-chart.component.ts",
+        "hash": "12723379068359262312"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/index.ts",
+        "hash": "2902630041468928614"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/mobile/index.ts",
+        "hash": "16402752345292445424"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/mobile/personal-account-daily-entries-table-mobile/personal-account-daily-entries-table-mobile.component.spec.ts",
+        "hash": "6909006727453486241"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/mobile/personal-account-daily-entries-table-mobile/personal-account-daily-entries-table-mobile.component.ts",
+        "hash": "2027030447349537889"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-account-state/personal-account-account-state.component.spec.ts",
+        "hash": "1161547702089600147"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-account-state/personal-account-account-state.component.ts",
+        "hash": "1819757629975585007"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-action-buttons/personal-account-action-buttons.component.spec.ts",
+        "hash": "2131798443605288699"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-action-buttons/personal-account-action-buttons.component.ts",
+        "hash": "3408097063514763764"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-daily-entries-filter/personal-account-daily-entries-filter.component.spec.ts",
+        "hash": "13862676948593214951"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-daily-entries-filter/personal-account-daily-entries-filter.component.ts",
+        "hash": "2240996175645088738"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-daily-entries-table/personal-account-daily-entries-table.component.spec.ts",
+        "hash": "5791221705249619732"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-daily-entries-table/personal-account-daily-entries-table.component.ts",
+        "hash": "8505505808450486449"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-display-toggle/personal-account-display-toggle.component.spec.ts",
+        "hash": "2233668545115033565"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-display-toggle/personal-account-display-toggle.component.ts",
+        "hash": "14915935948717004809"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-expenses-by-tag/personal-account-expenses-by-tag.component.spec.ts",
+        "hash": "13680043023909652700"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-expenses-by-tag/personal-account-expenses-by-tag.component.ts",
+        "hash": "4150592844091459514"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-overview-chart-mobile/personal-account-overview-chart-mobile.component.spec.ts",
+        "hash": "5136193761934611357"
+      },
+      {
+        "file": "src/app/modules/personal-account/components/personal-account-overview-chart-mobile/personal-account-overview-chart-mobile.component.ts",
+        "hash": "17570270600957564134"
+      },
+      {
+        "file": "src/app/modules/personal-account/directives/index.ts",
+        "hash": "5370063661651663347"
+      },
+      {
+        "file": "src/app/modules/personal-account/directives/tag-type-name.directive.ts",
+        "hash": "10247791856220797466"
+      },
+      {
+        "file": "src/app/modules/personal-account/index.ts",
+        "hash": "17113413549286409748"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/index.ts",
+        "hash": "1163074580106556024"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-daily-data-entry/daily-data-entry-display-elements/daily-data-entry-display-elements.component.spec.ts",
+        "hash": "6766822442734063817"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-daily-data-entry/daily-data-entry-display-elements/daily-data-entry-display-elements.component.ts",
+        "hash": "4337625986071056834"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-daily-data-entry/index.ts",
+        "hash": "11701439724744694151"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-daily-data-entry/personal-account-daily-data-entry.component.spec.ts",
+        "hash": "16097681841074467208"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-daily-data-entry/personal-account-daily-data-entry.component.ts",
+        "hash": "8097712171118179031"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-daily-data-entry/personal-account-daily-data-entry.module.ts",
+        "hash": "13282150639188583115"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-tag-manager-modal/index.ts",
+        "hash": "1110631595971837514"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-tag-manager-modal/personal-account-tag-manager-modal.component.spec.ts",
+        "hash": "16908574791393885900"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-tag-manager-modal/personal-account-tag-manager-modal.component.ts",
+        "hash": "14034206985054243607"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-tag-manager-modal/personal-account-tag-manager-modal.module.ts",
+        "hash": "16346811337334912148"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-tag-manager-modal/tag-image-selector/tag-image-selector.component.spec.ts",
+        "hash": "10221655912602152915"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-tag-manager-modal/tag-image-selector/tag-image-selector.component.ts",
+        "hash": "3578661081362703080"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-tag-manager-modal/tag-item/tag-item.component.spec.ts",
+        "hash": "2104234388554679019"
+      },
+      {
+        "file": "src/app/modules/personal-account/modals/personal-account-tag-manager-modal/tag-item/tag-item.component.ts",
+        "hash": "42685980723873089"
+      },
+      {
+        "file": "src/app/modules/personal-account/pages/index.ts",
+        "hash": "14959590342735319146"
+      },
+      {
+        "file": "src/app/modules/personal-account/pages/personal-account-desktop-view/personal-account-desktop-view-skeleton/personal-account-desktop-view-skeleton.component.spec.ts",
+        "hash": "4221712703314115168"
+      },
+      {
+        "file": "src/app/modules/personal-account/pages/personal-account-desktop-view/personal-account-desktop-view-skeleton/personal-account-desktop-view-skeleton.component.ts",
+        "hash": "14160846606800868995"
+      },
+      {
+        "file": "src/app/modules/personal-account/pages/personal-account-desktop-view/personal-account-desktop-view.component.spec.ts",
+        "hash": "8237024343308523471"
+      },
+      {
+        "file": "src/app/modules/personal-account/pages/personal-account-desktop-view/personal-account-desktop-view.component.ts",
+        "hash": "3887328443628907811"
+      },
+      {
+        "file": "src/app/modules/personal-account/pages/personal-account-mobile-view/personal-account-mobile-view-skeleton/personal-account-mobile-view-skeleton.component.spec.ts",
+        "hash": "6801343906802588341"
+      },
+      {
+        "file": "src/app/modules/personal-account/pages/personal-account-mobile-view/personal-account-mobile-view-skeleton/personal-account-mobile-view-skeleton.component.ts",
+        "hash": "17016788736064112501"
+      },
+      {
+        "file": "src/app/modules/personal-account/pages/personal-account-mobile-view/personal-account-mobile-view.component.spec.ts",
+        "hash": "14884236674310991026"
+      },
+      {
+        "file": "src/app/modules/personal-account/pages/personal-account-mobile-view/personal-account-mobile-view.component.ts",
+        "hash": "16213538822820496399"
+      },
+      {
+        "file": "src/app/modules/personal-account/pages/personal-account/personal-account.component.spec.ts",
+        "hash": "4187468966407230768"
+      },
+      {
+        "file": "src/app/modules/personal-account/pages/personal-account/personal-account.component.ts",
+        "hash": "13981524681106129679"
+      },
+      {
+        "file": "src/app/modules/personal-account/pages/personal-account/personal-account.module.ts",
+        "hash": "793858685947445386"
+      },
+      {
+        "file": "src/app/modules/personal-account/services/index.ts",
+        "hash": "2973123113607360631"
+      },
+      {
+        "file": "src/app/modules/personal-account/services/personal-account-chart.service.ts",
+        "hash": "14592830608928264384"
+      },
+      {
+        "file": "src/app/modules/user-settings/index.ts",
+        "hash": "330710694820948785"
+      },
+      {
+        "file": "src/app/modules/user-settings/modals/about/about.component.html",
+        "hash": "18435199365521935164"
+      },
+      {
+        "file": "src/app/modules/user-settings/modals/about/about.component.scss",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "src/app/modules/user-settings/modals/about/about.component.spec.ts",
+        "hash": "11993825308567919436"
+      },
+      {
+        "file": "src/app/modules/user-settings/modals/about/about.component.ts",
+        "hash": "3603617117066040745"
+      },
+      {
+        "file": "src/app/modules/user-settings/modals/index.ts",
+        "hash": "17416804475789815795"
+      },
+      {
+        "file": "src/app/modules/user-settings/modals/login-modal/form-login/form-login.component.spec.ts",
+        "hash": "13636507954345551561"
+      },
+      {
+        "file": "src/app/modules/user-settings/modals/login-modal/form-login/form-login.component.ts",
+        "hash": "4726396089700488104"
+      },
+      {
+        "file": "src/app/modules/user-settings/modals/login-modal/form-register/form-register.component.spec.ts",
+        "hash": "11529691707636199835"
+      },
+      {
+        "file": "src/app/modules/user-settings/modals/login-modal/form-register/form-register.component.ts",
+        "hash": "348507259157667895"
+      },
+      {
+        "file": "src/app/modules/user-settings/modals/login-modal/login-modal.component.spec.ts",
+        "hash": "11290414192959952587"
+      },
+      {
+        "file": "src/app/modules/user-settings/modals/login-modal/login-modal.component.ts",
+        "hash": "3756948006293863544"
+      },
+      {
+        "file": "src/app/modules/user-settings/modals/login-modal/login-modal.module.ts",
+        "hash": "17819929359122310931"
+      },
+      {
+        "file": "src/app/pages/dashboard/dashboard.component.spec.ts",
+        "hash": "16897481616908130440"
+      },
+      {
+        "file": "src/app/pages/dashboard/dashboard.component.ts",
+        "hash": "14992626765084270330"
+      },
+      {
+        "file": "src/app/pages/dashboard/dashboard.module.ts",
+        "hash": "14249652104514856349"
+      },
+      {
+        "file": "src/app/pages/page-shared/header-container/header-container.component.spec.ts",
+        "hash": "7376245347001962365"
+      },
+      {
+        "file": "src/app/pages/page-shared/header-container/header-container.component.ts",
+        "hash": "16735279242408015678"
+      },
+      {
+        "file": "src/app/pages/page-shared/header-container/header-container.module.ts",
+        "hash": "15675571437003033655"
+      },
+      {
+        "file": "src/app/pages/page-shared/index.ts",
+        "hash": "5866964527970344451"
+      },
+      {
+        "file": "src/app/pages/welcome/welcome-hero.component.ts",
+        "hash": "13808212975000591668"
+      },
+      {
+        "file": "src/app/pages/welcome/welcome.component.ts",
+        "hash": "8389041132181577094"
+      },
+      {
+        "file": "src/app/shared/components/cards/index.ts",
+        "hash": "16019907303134717513"
+      },
+      {
+        "file": "src/app/shared/components/cards/mat-card-wrapper/mat-card-wrapper.component.html",
+        "hash": "14289686529670280048"
+      },
+      {
+        "file": "src/app/shared/components/cards/mat-card-wrapper/mat-card-wrapper.component.scss",
+        "hash": "16553809651714252734"
+      },
+      {
+        "file": "src/app/shared/components/cards/mat-card-wrapper/mat-card-wrapper.component.spec.ts",
+        "hash": "9068346192061496264"
+      },
+      {
+        "file": "src/app/shared/components/cards/mat-card-wrapper/mat-card-wrapper.component.ts",
+        "hash": "3314701504612185964"
+      },
+      {
+        "file": "src/app/shared/components/cards/value-presentation-card/value-presentation-card.component.html",
+        "hash": "10757120354823612116"
+      },
+      {
+        "file": "src/app/shared/components/cards/value-presentation-card/value-presentation-card.component.scss",
+        "hash": "15967995521515569017"
+      },
+      {
+        "file": "src/app/shared/components/cards/value-presentation-card/value-presentation-card.component.spec.ts",
+        "hash": "13580856299655977000"
+      },
+      {
+        "file": "src/app/shared/components/cards/value-presentation-card/value-presentation-card.component.ts",
+        "hash": "12942651493673016538"
+      },
+      {
+        "file": "src/app/shared/components/charts/expander/expander.component.ts",
+        "hash": "18435583067102698251"
+      },
+      {
+        "file": "src/app/shared/components/charts/generic-chart/generic-chart.component.html",
+        "hash": "1155001630525686101"
+      },
+      {
+        "file": "src/app/shared/components/charts/generic-chart/generic-chart.component.scss",
+        "hash": "2727092813806862958"
+      },
+      {
+        "file": "src/app/shared/components/charts/generic-chart/generic-chart.component.ts",
+        "hash": "11357158259260440655"
+      },
+      {
+        "file": "src/app/shared/components/charts/generic-chart/generic-chart.module.ts",
+        "hash": "13994961394507978417"
+      },
+      {
+        "file": "src/app/shared/components/charts/index.ts",
+        "hash": "7555695044636129760"
+      },
+      {
+        "file": "src/app/shared/components/dialog-close-header/dialog-close-header.component.ts",
+        "hash": "9324217479668560904"
+      },
+      {
+        "file": "src/app/shared/components/form-controls/color-picker/color-picker.component.spec.ts",
+        "hash": "6472343135142076623"
+      },
+      {
+        "file": "src/app/shared/components/form-controls/color-picker/color-picker.component.ts",
+        "hash": "2324345203621014267"
+      },
+      {
+        "file": "src/app/shared/components/form-controls/date-picker/date-picker.component.spec.ts",
+        "hash": "1020435460581843389"
+      },
+      {
+        "file": "src/app/shared/components/form-controls/date-picker/date-picker.component.ts",
+        "hash": "13485982270376405746"
+      },
+      {
+        "file": "src/app/shared/components/form-controls/index.ts",
+        "hash": "5389602398786352015"
+      },
+      {
+        "file": "src/app/shared/components/form-controls/number-keyboard-control/number-keyboard-control.component.spec.ts",
+        "hash": "15242336729145475647"
+      },
+      {
+        "file": "src/app/shared/components/form-controls/number-keyboard-control/number-keyboard-control.component.ts",
+        "hash": "10757386086935793164"
+      },
+      {
+        "file": "src/app/shared/components/form-controls/slider/slider.component.spec.ts",
+        "hash": "2242932789031867777"
+      },
+      {
+        "file": "src/app/shared/components/form-controls/slider/slider.component.ts",
+        "hash": "7444119193707603388"
+      },
+      {
+        "file": "src/app/shared/components/form-controls/value-presentation-button-control/value-presentation-button-control.component.spec.ts",
+        "hash": "17740586261254842814"
+      },
+      {
+        "file": "src/app/shared/components/form-controls/value-presentation-button-control/value-presentation-button-control.component.ts",
+        "hash": "7105451780276976303"
+      },
+      {
+        "file": "src/app/shared/components/form-mat-input-wrapper/form-mat-input-wrapper.component.html",
+        "hash": "18203533397003643517"
+      },
+      {
+        "file": "src/app/shared/components/form-mat-input-wrapper/form-mat-input-wrapper.component.ts",
+        "hash": "14001442115883658700"
+      },
+      {
+        "file": "src/app/shared/components/index.ts",
+        "hash": "9010852984971368919"
+      },
+      {
+        "file": "src/app/shared/components/items/index.ts",
+        "hash": "5437712784225752290"
+      },
+      {
+        "file": "src/app/shared/components/items/progress-currency/progress-currency.component.html",
+        "hash": "5300892911819515113"
+      },
+      {
+        "file": "src/app/shared/components/items/progress-currency/progress-currency.component.scss",
+        "hash": "13810061173480212257"
+      },
+      {
+        "file": "src/app/shared/components/items/progress-currency/progress-currency.component.spec.ts",
+        "hash": "10472823396109045000"
+      },
+      {
+        "file": "src/app/shared/components/items/progress-currency/progress-currency.component.ts",
+        "hash": "12313226535688112879"
+      },
+      {
+        "file": "src/app/shared/components/items/progress-item/progress-item.component.html",
+        "hash": "10497114248719522322"
+      },
+      {
+        "file": "src/app/shared/components/items/progress-item/progress-item.component.scss",
+        "hash": "7153051252702393916"
+      },
+      {
+        "file": "src/app/shared/components/items/progress-item/progress-item.component.spec.ts",
+        "hash": "9949945595387159197"
+      },
+      {
+        "file": "src/app/shared/components/items/progress-item/progress-item.component.ts",
+        "hash": "7573987498438369339"
+      },
+      {
+        "file": "src/app/shared/components/scroll-wrapper/scroll-wrapper.component.spec.ts",
+        "hash": "11689230077774238087"
+      },
+      {
+        "file": "src/app/shared/components/scroll-wrapper/scroll-wrapper.component.ts",
+        "hash": "12932814974744212270"
+      },
+      {
+        "file": "src/app/shared/components/scroll-wrapper/scroll-wrapper.module.ts",
+        "hash": "12886171055151283287"
+      },
+      {
+        "file": "src/app/shared/components/theme-toggle/theme-toggle.component.spec.ts",
+        "hash": "1606290171191604864"
+      },
+      {
+        "file": "src/app/shared/components/theme-toggle/theme-toggle.component.ts",
+        "hash": "15796574364847679399"
+      },
+      {
+        "file": "src/app/shared/decorators/confirmable.ts",
+        "hash": "5831939116053221859"
+      },
+      {
+        "file": "src/app/shared/decorators/index.ts",
+        "hash": "10246033190815677992"
+      },
+      {
+        "file": "src/app/shared/dialogs/confirm-dialog/confirm-dialog.component.html",
+        "hash": "4800799626523680523"
+      },
+      {
+        "file": "src/app/shared/dialogs/confirm-dialog/confirm-dialog.component.scss",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "src/app/shared/dialogs/confirm-dialog/confirm-dialog.component.spec.ts",
+        "hash": "14936964261102565883"
+      },
+      {
+        "file": "src/app/shared/dialogs/confirm-dialog/confirm-dialog.component.ts",
+        "hash": "4559193593978845067"
+      },
+      {
+        "file": "src/app/shared/dialogs/confirm-dialog/confirm-dialog.module.ts",
+        "hash": "4459383732013781126"
+      },
+      {
+        "file": "src/app/shared/dialogs/dialog-service.module.ts",
+        "hash": "339462238704654899"
+      },
+      {
+        "file": "src/app/shared/dialogs/dialog-service.util.ts",
+        "hash": "1112273342432053554"
+      },
+      {
+        "file": "src/app/shared/dialogs/index.ts",
+        "hash": "7565740310867821160"
+      },
+      {
+        "file": "src/app/shared/dialogs/notification-bar/index.ts",
+        "hash": "7139179447136053109"
+      },
+      {
+        "file": "src/app/shared/dialogs/notification-bar/notification-bar-confirm-dialog/notification-bar-confirm-dialog.component.html",
+        "hash": "18283484328107309130"
+      },
+      {
+        "file": "src/app/shared/dialogs/notification-bar/notification-bar-confirm-dialog/notification-bar-confirm-dialog.component.scss",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "src/app/shared/dialogs/notification-bar/notification-bar-confirm-dialog/notification-bar-confirm-dialog.component.ts",
+        "hash": "689465220855446028"
+      },
+      {
+        "file": "src/app/shared/dialogs/notification-bar/notification-bar-confirm-dialog/notification-bar-confirm-dialog.module.ts",
+        "hash": "15595489549120651428"
+      },
+      {
+        "file": "src/app/shared/dialogs/notification-bar/notification-bar.component.html",
+        "hash": "3147564670119481708"
+      },
+      {
+        "file": "src/app/shared/dialogs/notification-bar/notification-bar.component.scss",
+        "hash": "16124008047626605622"
+      },
+      {
+        "file": "src/app/shared/dialogs/notification-bar/notification-bar.component.spec.ts",
+        "hash": "16601272944720845990"
+      },
+      {
+        "file": "src/app/shared/dialogs/notification-bar/notification-bar.component.ts",
+        "hash": "13852483122260873219"
+      },
+      {
+        "file": "src/app/shared/dialogs/notification-bar/notification-bar.directive.ts",
+        "hash": "10809339531957207768"
+      },
+      {
+        "file": "src/app/shared/dialogs/notification-bar/notification-bar.module.ts",
+        "hash": "6564520539913882608"
+      },
+      {
+        "file": "src/app/shared/dialogs/notification-bar/notification-bar.service.spec.ts",
+        "hash": "1815498229365741660"
+      },
+      {
+        "file": "src/app/shared/dialogs/notification-bar/notification-bar.service.ts",
+        "hash": "6513128582804311192"
+      },
+      {
+        "file": "src/app/shared/directives/bubble-pagination.directive.ts",
+        "hash": "1402460790072932555"
+      },
+      {
+        "file": "src/app/shared/directives/default-img.directive.ts",
+        "hash": "11314835559310443266"
+      },
+      {
+        "file": "src/app/shared/directives/index.ts",
+        "hash": "11145125331171720719"
+      },
+      {
+        "file": "src/app/shared/directives/perceptage-increase.directive.ts",
+        "hash": "3002715797290814405"
+      },
+      {
+        "file": "src/app/shared/directives/range.directive.ts",
+        "hash": "16486446342210077302"
+      },
+      {
+        "file": "src/app/shared/directives/shell-render.directive.ts",
+        "hash": "15461164671904773656"
+      },
+      {
+        "file": "src/app/shared/functions/chart-creator.function.ts",
+        "hash": "8642774141037994896"
+      },
+      {
+        "file": "src/app/shared/functions/index.ts",
+        "hash": "5070310890920593444"
+      },
+      {
+        "file": "src/app/shared/models/custom-form-field-validators.ts",
+        "hash": "5784321364664740782"
+      },
+      {
+        "file": "src/app/shared/models/forms.model.ts",
+        "hash": "48701122635013028"
+      },
+      {
+        "file": "src/app/shared/models/highcharts.model.ts",
+        "hash": "14220846390362526429"
+      },
+      {
+        "file": "src/app/shared/models/index.ts",
+        "hash": "2415973913779839468"
+      },
+      {
+        "file": "src/app/shared/models/layout.model.ts",
+        "hash": "16826561422621922639"
+      },
+      {
+        "file": "src/app/shared/models/uncotegorized.model.ts",
+        "hash": "5713621649657186320"
+      },
+      {
+        "file": "src/app/shared/models/value-present-item.model.ts",
+        "hash": "12958086947369907786"
+      },
+      {
+        "file": "src/app/shared/pipes/array.pipe.ts",
+        "hash": "4697334467152486676"
+      },
+      {
+        "file": "src/app/shared/pipes/index.ts",
+        "hash": "4500802004952538778"
+      },
+      {
+        "file": "src/assets/.gitkeep",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "src/assets/icons/apple-touch-icon.png",
+        "hash": "12505638001775959538"
+      },
+      {
+        "file": "src/assets/icons/favicon.ico",
+        "hash": "5842897182273347548"
+      },
+      {
+        "file": "src/assets/icons/icon-16x16.png",
+        "hash": "11535612891399534041"
+      },
+      {
+        "file": "src/assets/icons/icon-192x192.png",
+        "hash": "4435714763008802291"
+      },
+      {
+        "file": "src/assets/icons/icon-32x32.png",
+        "hash": "3607039208305918452"
+      },
+      {
+        "file": "src/assets/icons/icon-512x512.png",
+        "hash": "12261111337320825804"
+      },
+      {
+        "file": "src/assets/image-placeholder.jpg",
+        "hash": "9757536349093007921"
+      },
+      {
+        "file": "src/assets/personal-account-tags/airplane.svg",
+        "hash": "3087781463000072874"
+      },
+      {
+        "file": "src/assets/personal-account-tags/bills.svg",
+        "hash": "12278831244287569100"
+      },
+      {
+        "file": "src/assets/personal-account-tags/cake.svg",
+        "hash": "6619062131408491033"
+      },
+      {
+        "file": "src/assets/personal-account-tags/capitol.svg",
+        "hash": "12554011559217409628"
+      },
+      {
+        "file": "src/assets/personal-account-tags/car.svg",
+        "hash": "4790303947549984004"
+      },
+      {
+        "file": "src/assets/personal-account-tags/charity.svg",
+        "hash": "11644485630988685118"
+      },
+      {
+        "file": "src/assets/personal-account-tags/child.svg",
+        "hash": "15793288749318652278"
+      },
+      {
+        "file": "src/assets/personal-account-tags/clothes.svg",
+        "hash": "4752810854707305539"
+      },
+      {
+        "file": "src/assets/personal-account-tags/coffee.svg",
+        "hash": "980691374204271623"
+      },
+      {
+        "file": "src/assets/personal-account-tags/education.svg",
+        "hash": "2958422432530814899"
+      },
+      {
+        "file": "src/assets/personal-account-tags/electronics.svg",
+        "hash": "9218282242879119421"
+      },
+      {
+        "file": "src/assets/personal-account-tags/entertainment.svg",
+        "hash": "10425362787153659626"
+      },
+      {
+        "file": "src/assets/personal-account-tags/fitness.svg",
+        "hash": "17711566871350325047"
+      },
+      {
+        "file": "src/assets/personal-account-tags/food.svg",
+        "hash": "2329698471118970428"
+      },
+      {
+        "file": "src/assets/personal-account-tags/gift.svg",
+        "hash": "12143897112000354992"
+      },
+      {
+        "file": "src/assets/personal-account-tags/health.svg",
+        "hash": "2654915323949928224"
+      },
+      {
+        "file": "src/assets/personal-account-tags/house.svg",
+        "hash": "4155205841066101747"
+      },
+      {
+        "file": "src/assets/personal-account-tags/insurance.svg",
+        "hash": "12855236674042462806"
+      },
+      {
+        "file": "src/assets/personal-account-tags/job.svg",
+        "hash": "8020626523175524993"
+      },
+      {
+        "file": "src/assets/personal-account-tags/payment.svg",
+        "hash": "6926034446295234549"
+      },
+      {
+        "file": "src/assets/personal-account-tags/pets.svg",
+        "hash": "11405155393902494425"
+      },
+      {
+        "file": "src/assets/personal-account-tags/rent.svg",
+        "hash": "14648354328603263206"
+      },
+      {
+        "file": "src/assets/personal-account-tags/restaurant.svg",
+        "hash": "8792299332483160009"
+      },
+      {
+        "file": "src/assets/personal-account-tags/retirement.svg",
+        "hash": "11569512587010289411"
+      },
+      {
+        "file": "src/assets/personal-account-tags/self_care.svg",
+        "hash": "14176525500538836957"
+      },
+      {
+        "file": "src/assets/personal-account-tags/shopping.svg",
+        "hash": "6579142927586504107"
+      },
+      {
+        "file": "src/assets/personal-account-tags/sport.svg",
+        "hash": "2085407088704012571"
+      },
+      {
+        "file": "src/assets/personal-account-tags/train.svg",
+        "hash": "15324203737502659460"
+      },
+      {
+        "file": "src/assets/personal-account-tags/transport.svg",
+        "hash": "6392910477366606225"
+      },
+      {
+        "file": "src/assets/personal-account-tags/travel.svg",
+        "hash": "632973679888553168"
+      },
+      {
+        "file": "src/environments/environment.prod.ts",
+        "hash": "15450699743505093830"
+      },
+      {
+        "file": "src/environments/environment.ts",
+        "hash": "15599043086732525373"
+      },
+      {
+        "file": "src/favicon.ico",
+        "hash": "5842897182273347548"
+      },
+      {
+        "file": "src/index.html",
+        "hash": "10349825203437068112"
+      },
+      {
+        "file": "src/main.server.ts",
+        "hash": "8835472938176493838"
+      },
+      {
+        "file": "src/main.ts",
+        "hash": "4070316077326408413"
+      },
+      {
+        "file": "src/manifest.webmanifest",
+        "hash": "4381777393717021831"
+      },
+      {
+        "file": "src/polyfills.ts",
+        "hash": "2035846685621806592"
+      },
+      {
+        "file": "src/styles.scss",
+        "hash": "5411761909040727550"
+      },
+      {
+        "file": "src/theme/custom-material.scss",
+        "hash": "15868413153542240647"
+      },
+      {
+        "file": "src/theme/custom/custom-highcharts.scss",
+        "hash": "3559320366990071549"
+      },
+      {
+        "file": "src/theme/custom/custom-page-welcome.scss",
+        "hash": "3493004293413123347"
+      },
+      {
+        "file": "src/theme/custom/custom-paginator.scss",
+        "hash": "18347013197497482854"
+      },
+      {
+        "file": "src/theme/global.scss",
+        "hash": "11984161941612399525"
+      },
+      {
+        "file": "src/theme/material/mat-button.scss",
+        "hash": "9207371400194494722"
+      },
+      {
+        "file": "src/theme/material/mat-card.scss",
+        "hash": "8978763496824151701"
+      },
+      {
+        "file": "src/theme/material/mat-checkbox.scss",
+        "hash": "5644495504600681581"
+      },
+      {
+        "file": "src/theme/material/mat-chip.scss",
+        "hash": "15659706785777305679"
+      },
+      {
+        "file": "src/theme/material/mat-custom-colors.scss",
+        "hash": "7277967932884070193"
+      },
+      {
+        "file": "src/theme/material/mat-date-picker.scss",
+        "hash": "1760872722682588967"
+      },
+      {
+        "file": "src/theme/material/mat-dialog.scss",
+        "hash": "17928226064987370692"
+      },
+      {
+        "file": "src/theme/material/mat-form-field.scss",
+        "hash": "8682274344991659662"
+      },
+      {
+        "file": "src/theme/material/mat-input.scss",
+        "hash": "15352007037312982163"
+      },
+      {
+        "file": "src/theme/material/mat-list.scss",
+        "hash": "15563161594358547900"
+      },
+      {
+        "file": "src/theme/material/mat-menu.scss",
+        "hash": "6477814210782639219"
+      },
+      {
+        "file": "src/theme/material/mat-paginator.scss",
+        "hash": "13428189999694656780"
+      },
+      {
+        "file": "src/theme/material/mat-progress-bar.scss",
+        "hash": "9433884752002242718"
+      },
+      {
+        "file": "src/theme/material/mat-radio.scss",
+        "hash": "6962618042387124669"
+      },
+      {
+        "file": "src/theme/material/mat-select.scss",
+        "hash": "12571912800912419808"
+      },
+      {
+        "file": "src/theme/material/mat-slider.scss",
+        "hash": "14256907674030518788"
+      },
+      {
+        "file": "src/theme/material/mat-tab.scss",
+        "hash": "15686836008430829881"
+      },
+      {
+        "file": "src/theme/material/mat-table.scss",
+        "hash": "12539593629237855034"
+      },
+      {
+        "file": "src/theme/material/mat-tooltip.scss",
+        "hash": "10037120714036129430"
+      },
+      {
+        "file": "src/theme/variables.scss",
+        "hash": "6118361245672184867"
+      },
+      {
+        "file": "tailwind.config.js",
+        "hash": "12348678217021094151"
+      },
+      {
+        "file": "tsconfig.app.json",
+        "hash": "9041030522571917449"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "13266728435043614600"
+      },
+      {
+        "file": "tsconfig.server.json",
+        "hash": "5896860408690188676"
+      },
+      {
+        "file": "tsconfig.spec.json",
+        "hash": "1582047496524850997"
+      }
+    ]
+  }
+}

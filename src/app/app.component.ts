@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { DialogServiceUtil } from './shared/dialogs';
 
 @Component({
@@ -6,8 +6,6 @@ import { DialogServiceUtil } from './shared/dialogs';
 	templateUrl: './app.component.html',
 	styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 	constructor(dialogServiceUtil: DialogServiceUtil) {}
-
-	ngOnInit() {}
 }

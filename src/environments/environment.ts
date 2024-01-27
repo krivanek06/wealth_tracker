@@ -6,10 +6,6 @@ export const environment = {
 	production: false,
 	version: '1.0.0',
 
-	backend_url: 'http://localhost:3000',
-	custom_graphql_backend_url: 'http://localhost:3000/graphql',
-	custom_graphql_backend_ws: 'ws://localhost:3000/graphql',
-
 	firebaseConfig: {
 		apiKey: 'AIzaSyCF5EIL2kMhlvJAR7a6qJTXUi3tTmOoA8M',
 		authDomain: 'wealth-tracker-d2757.firebaseapp.com',

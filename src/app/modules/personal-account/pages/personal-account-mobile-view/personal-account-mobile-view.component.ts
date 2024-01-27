@@ -10,7 +10,7 @@ import { map } from 'rxjs';
 import { NO_DATE_SELECTED } from '../../../../core/api';
 import { ValuePresentationCardComponent } from '../../../../shared/components';
 import { RangeDirective } from '../../../../shared/directives';
-import { ArrayReversePipe } from '../../../../shared/pipes';
+import { SortByKeyPipe } from '../../../../shared/pipes';
 import { PersonalAccountParent } from '../../classes';
 import {
 	PersonalAccountAccountStateComponent,
@@ -84,7 +84,7 @@ import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-m
 			<app-personal-account-daily-entries-table-mobile
 				class="-mt-3"
 				*ngIf="showHistoryFormControl.value"
-				[personalAccountDailyData]="dailyDataAggregation() | arrayReverse"
+				[personalAccountDailyData]="dailyDataAggregation() | sortByKey: 'date' : 'desc'"
 				(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
 			></app-personal-account-daily-entries-table-mobile>
 		</ng-container>
@@ -122,7 +122,7 @@ import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-m
 		PersonalAccountDailyEntriesFilterComponent,
 		PersonalAccountMobileViewSkeletonComponent,
 		RangeDirective,
-		ArrayReversePipe,
+		SortByKeyPipe,
 	],
 })
 export class PersonalAccountMobileViewComponent extends PersonalAccountParent implements OnInit {

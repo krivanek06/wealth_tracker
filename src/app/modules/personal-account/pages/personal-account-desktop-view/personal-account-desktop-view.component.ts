@@ -9,7 +9,7 @@ import {
 	ValuePresentationButtonControlComponent,
 } from '../../../../shared/components';
 import { RangeDirective } from '../../../../shared/directives';
-import { ArrayReversePipe } from '../../../../shared/pipes';
+import { SortByKeyPipe } from '../../../../shared/pipes';
 import { PersonalAccountParent } from '../../classes';
 import {
 	PersonalAccountAccountGrowthChartComponent,
@@ -51,7 +51,7 @@ enum ChartExpand {
 		PersonalAccountExpensesByTagComponent,
 		ExpanderComponent,
 		RangeDirective,
-		ArrayReversePipe,
+		SortByKeyPipe,
 	],
 	template: `
 		<ng-container *ngIf="personalAccountSignal() as personalAccountDetails; else showSkeleton">
@@ -126,7 +126,7 @@ enum ChartExpand {
 				<div class="relative z-10 h-full lg:col-span-2">
 					<app-personal-account-daily-entries-table
 						(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
-						[personalAccountDailyData]="filteredDailyData() | arrayReverse"
+						[personalAccountDailyData]="filteredDailyData() | sortByKey: 'date' : 'desc'"
 					></app-personal-account-daily-entries-table>
 				</div>
 
@@ -145,7 +145,7 @@ enum ChartExpand {
 				<h2 *ngIf="!isDateSourceNoDate()" class="space-x-2">
 					<span>Date:</span>
 					<span class="text-wt-gray-medium">{{
-						filterDailyDataGroup.controls.dateFilter.value | date : 'MMMM d, y'
+						filterDailyDataGroup.controls.dateFilter.value | date: 'MMMM d, y'
 					}}</span>
 				</h2>
 				<app-personal-account-expenses-by-tag

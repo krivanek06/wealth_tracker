@@ -91,11 +91,6 @@ export class PersonalAccountService {
 				this.createEmptyPersonalAccount(user.uid);
 			}
 		});
-
-		effect(() => {
-			const data = this.personalAccountSignal();
-			console.log('personal account data', data);
-		});
 	}
 
 	getPersonalAccountAvailableTagImages() {

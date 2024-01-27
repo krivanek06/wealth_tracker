@@ -21,6 +21,7 @@ import {
 	PersonalAccountExpensesByTagComponent,
 } from '../../components';
 import { PersonalAccountDailyDataEntryModule, PersonalAccountTagManagerModalModule } from '../../modals';
+import { ArrayReversePipe } from './../../../../shared/pipes';
 import { PersonalAccountDesktopViewSkeletonComponent } from './personal-account-desktop-view-skeleton/personal-account-desktop-view-skeleton.component';
 
 enum ChartExpand {
@@ -50,6 +51,7 @@ enum ChartExpand {
 		PersonalAccountExpensesByTagComponent,
 		ExpanderComponent,
 		RangeDirective,
+		ArrayReversePipe,
 	],
 	template: `
 		<ng-container *ngIf="personalAccountSignal() as personalAccountDetails; else showSkeleton">
@@ -124,7 +126,7 @@ enum ChartExpand {
 				<div class="relative z-10 h-full lg:col-span-2">
 					<app-personal-account-daily-entries-table
 						(editDailyEntryClickEmitter)="onDailyEntryClick($event)"
-						[personalAccountDailyData]="filteredDailyData()"
+						[personalAccountDailyData]="filteredDailyData() | arrayReverse"
 					></app-personal-account-daily-entries-table>
 				</div>
 

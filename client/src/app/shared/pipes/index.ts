@@ -1,1 +1,1 @@
-export * from './in-array.pipe';
+export * from './array.pipe';

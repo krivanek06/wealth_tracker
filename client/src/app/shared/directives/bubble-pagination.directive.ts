@@ -55,8 +55,8 @@ export class BubblePaginationDirective implements AfterViewInit, OnChanges {
 	 * references to DOM elements
 	 */
 	private dotsEndRef!: HTMLElement;
-	private dotsStartRef!: HTMLElement;
-	private bubbleContainerRef!: HTMLElement;
+	private dotsStartRef?: HTMLElement;
+	private bubbleContainerRef?: HTMLElement;
 
 	// remember rendered buttons on UI that we can remove them when page index change
 	private buttonsRef: HTMLElement[] = [];
@@ -91,9 +91,21 @@ export class BubblePaginationDirective implements AfterViewInit, OnChanges {
 		if (!changes?.['appCustomLength']?.firstChange) {
 			// remove buttons before creating new ones
 			this.removeButtons();
+			// remove start / end dots
+			this.clearDots();
 			// switch back to page 0
 			this.switchPage(0);
+			// rebuild UI
 			this.renderButtons();
+		}
+	}
+
+	private clearDots(): void {
+		if (this.dotsStartRef) {
+			this.ren.removeChild(this.bubbleContainerRef, this.dotsStartRef);
+		}
+		if (this.dotsEndRef) {
+			this.ren.removeChild(this.bubbleContainerRef, this.dotsEndRef);
 		}
 	}
 

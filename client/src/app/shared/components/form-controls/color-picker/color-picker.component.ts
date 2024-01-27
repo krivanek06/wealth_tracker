@@ -63,7 +63,6 @@ export class ColorPickerComponent {
 	}
 
 	setDisabledState(isDisabled: boolean): void {
-		console.log('color picket change', isDisabled);
 		this.componentDisabled.set(isDisabled);
 	}
 }

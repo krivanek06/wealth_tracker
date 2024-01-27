@@ -172,7 +172,7 @@ export class PersonalAccountDailyEntriesFilterComponent implements OnInit, Contr
 			.reduce((acc, curr) => {
 				// format to 'January, 2022'
 				const keyId = `${formatDate(new Date(curr.year, curr.month, 0), 'LLLL')}, ${curr.year}`;
-				console.log('keyId', keyId);
+				// console.log('keyId', keyId);
 
 				const lastElement: InputSourceWrapper | undefined = acc[acc.length - 1];
 

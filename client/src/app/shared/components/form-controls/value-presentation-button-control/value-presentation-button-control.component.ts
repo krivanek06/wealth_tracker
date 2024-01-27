@@ -113,7 +113,6 @@ export class ValuePresentationButtonControlComponent<T> implements OnInit, Contr
 	}
 
 	writeValue(items: T[]): void {
-		console.log('writeValue', items);
 		this.activeItems.set([...items]);
 	}
 

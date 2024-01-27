@@ -54,3 +54,6 @@ Thumbs.db
 
 # Capacitor
 android
+
+
+package-lock.json

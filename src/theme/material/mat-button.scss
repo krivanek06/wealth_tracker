@@ -1,0 +1,49 @@
+button {
+	border-radius: 12px !important;
+	min-height: 42px !important;
+	text-transform: capitalize !important;
+
+	&:disabled {
+		opacity: 0.7 !important;
+	}
+}
+
+button[mat-stroked-button] {
+	border: 1px solid !important;
+
+	&.mat-mdc-outlined-button.mat-unthemed {
+		background-color: #4044741c;
+		color: unset !important;
+		opacity: 0.7;
+
+		&:hover {
+			background-color: #40447472;
+		}
+	}
+}
+
+.mdc-button__label {
+	width: 100% !important;
+}
+
+.mat-mdc-outlined-button:disabled {
+	color: var(--gray-dark) !important;
+	background-color: #4b55636b !important;
+	pointer-events: none !important;
+}
+
+.mat-mdc-unelevated-button[disabled][disabled] {
+	background: var(--gray-dark) !important;
+	color: white !important;
+}
+
+@layer utilities {
+	.g-button-size-lg {
+		min-width: 220px !important;
+		min-height: 42px !important;
+	}
+}
+
+.mat-mdc-unelevated-button.mat-primary {
+	color: rgb(229, 229, 229) !important;
+}

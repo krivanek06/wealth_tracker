@@ -3,12 +3,6 @@ The purpose of the application is to have on system for logging personal incomes
 - https://spendmindful.com/
 - https://play.google.com/store/apps/details?id=spendmindful.com
 
-## Images
-<img width="350" alt="Screenshot 2023-06-14 at 21 09 44" src="./assets/screen1.png"> <img width="350" alt="Screenshot 2023-06-14 at 21 09 59" src="./assets/screen3.png">
-<img width="725" alt="Screenshot 2023-06-14 at 21 09 54" src="./assets/screen2.png">
-<img width="350" alt="Screenshot 2023-06-14 at 21 10 08" src="./assets/screen4.png"> <img width="350" alt="Screenshot 2023-06-14 at 21 10 13" src="./assets/screen5.png">
-
-
 ## GCP Deployment
 The `client` and the `server` part of the application are deployed into GCP via Dockerfile to the cloud-run service. 
 Each folder contains a `cloudbuild.yaml` that takes care of the build.

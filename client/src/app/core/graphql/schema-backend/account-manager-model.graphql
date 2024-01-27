@@ -1,7 +1,0 @@
-fragment AccountIdentification on AccountIdentification {
-	id
-	name
-	createdAt
-	userId
-	accountType
-}

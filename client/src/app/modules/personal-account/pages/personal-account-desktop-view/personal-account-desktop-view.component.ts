@@ -60,7 +60,10 @@ enum ChartExpand {
 					[accountState]="accountTotalState()"
 				></app-personal-account-account-state>
 
-				<app-personal-account-action-buttons />
+				<app-personal-account-action-buttons
+					(deselectTagsClickedEmitter)="onDeselectTags()"
+					[showDeselectTags]="selectedTagIds().length > 0"
+				/>
 			</div>
 
 			<!-- tag expense legend -->

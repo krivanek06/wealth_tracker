@@ -211,7 +211,8 @@ export abstract class PersonalAccountParent {
 	selectedTagIds = toSignal(
 		this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.pipe(
 			startWith(this.filterDailyDataGroup.controls.selectedTagIds.value)
-		)
+		),
+		{ initialValue: [] }
 	);
 
 	onDailyEntryClick(editingDailyData: PersonalAccountDailyData | null): void {
@@ -221,5 +222,9 @@ export abstract class PersonalAccountParent {
 			},
 			panelClass: [SCREEN_DIALOGS.DIALOG_SMALL],
 		});
+	}
+
+	onDeselectTags(): void {
+		this.filterDailyDataGroup.controls.selectedTagIds.setValue([]);
 	}
 }

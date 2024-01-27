@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, computed } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { map } from 'rxjs';
 import { ValuePresentationCardComponent } from '../../../../shared/components';
 import { RangeDirective } from '../../../../shared/directives';
 import { PersonalAccountParent } from '../../classes';
@@ -19,7 +21,6 @@ import {
 	PersonalAccountExpensesByTagComponent,
 	PersonalAccountOverviewChartMobileComponent,
 } from '../../components';
-import { GetTagByIdPipe } from '../../pipes';
 import { NO_DATE_SELECTED } from './../../../../core/api';
 import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-mobile-view-skeleton/personal-account-mobile-view-skeleton.component';
 @Component({
@@ -63,7 +64,7 @@ import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-m
 				<app-personal-account-display-toggle
 					*ngIf="!isDateSourceNoDate()"
 					[formControl]="showHistoryFormControl"
-					[selectedTag]="filterDailyDataGroup.controls.selectedTagIds.value[0] | getTagById"
+					[selectedTag]="selectedTag()"
 				></app-personal-account-display-toggle>
 			</div>
 
@@ -111,7 +112,6 @@ import { PersonalAccountMobileViewSkeletonComponent } from './personal-account-m
 		PersonalAccountExpensesByTagComponent,
 		MatButtonModule,
 		MatIconModule,
-		GetTagByIdPipe,
 		PersonalAccountExpensePieChartComponent,
 		ValuePresentationCardComponent,
 		PersonalAccountAccountStateComponent,
@@ -139,6 +139,16 @@ export class PersonalAccountMobileViewComponent extends PersonalAccountParent im
 	);
 
 	showHistoryFormControl = new FormControl<boolean>(false, { nonNullable: true });
+
+	selectedTag = toSignal(
+		this.filterDailyDataGroup.controls.selectedTagIds.valueChanges.pipe(
+			map((tagIds) =>
+				tagIds.length > 0
+					? this.personalAccountService.personalAccountSignal()?.tags.find((d) => d.id === tagIds[0])
+					: null
+			)
+		)
+	);
 
 	ngOnInit(): void {
 		// check show history when selecting a tagId

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, forwardRef, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef, Input, OnInit, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { DefaultImgDirective } from '../../../directives';
@@ -16,7 +16,7 @@ import { InArrayPipe } from '../../../pipes';
 				[ngClass]="{ 'w-max': isFlexRow }"
 				[style.--valueItemColor]="item.color"
 				[style.--valueItemColorActive]="item.color + '44'"
-				[style]="(activeItems | inArray: item.item : itemKey) ? 'background-color: ' + item.color + '44' : ''"
+				[style]="(activeItems() | inArray: item.item : itemKey) ? 'background-color: ' + item.color + '44' : ''"
 				(click)="onClick(item.item)"
 				class="h-16"
 			>
@@ -79,7 +79,7 @@ export class ValuePresentationButtonControlComponent<T> implements OnInit, Contr
 	 */
 	@Input() selectWholeItem = true;
 
-	activeItems: T[] = [];
+	activeItems = signal<T[]>([]);
 
 	/**
 	 * parent can be notified by the whole object <T[]> or by its key <T[keyof T][]>
@@ -92,28 +92,29 @@ export class ValuePresentationButtonControlComponent<T> implements OnInit, Contr
 	ngOnInit(): void {}
 
 	onClick(item: T): void {
-		const inArray = this.activeItems.find((d) => d[this.itemKey] === item[this.itemKey]);
+		const inArray = this.activeItems().find((d) => d[this.itemKey] === item[this.itemKey]);
 		if (inArray) {
-			this.activeItems = this.activeItems.filter((d) => d[this.itemKey] !== item[this.itemKey]);
+			this.activeItems.set(this.activeItems().filter((d) => d[this.itemKey] !== item[this.itemKey]));
 		} else {
 			if (!this.multiSelect) {
-				this.activeItems = [item];
+				this.activeItems.set([item]);
 			} else {
-				this.activeItems = [...this.activeItems, item];
+				this.activeItems.set([...this.activeItems(), item]);
 			}
 		}
 
 		// notify parent
 		if (this.selectWholeItem) {
-			this.onChange(this.activeItems);
+			this.onChange(this.activeItems());
 		} else {
-			const keyValue = this.activeItems.map((d) => d[this.itemKey]);
+			const keyValue = this.activeItems().map((d) => d[this.itemKey]);
 			this.onChange(keyValue);
 		}
 	}
 
 	writeValue(items: T[]): void {
-		this.activeItems = [...items];
+		console.log('writeValue', items);
+		this.activeItems.set([...items]);
 	}
 
 	/**

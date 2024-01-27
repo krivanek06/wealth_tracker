@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -35,6 +35,18 @@ import { AboutComponent } from './../../../user-settings/modals/about/about.comp
 			>
 				<mat-icon>sell</mat-icon>
 				Manage Tags
+			</button>
+
+			<button
+				*ngIf="showDeselectTags"
+				type="button"
+				mat-stroked-button
+				color="warn"
+				(click)="onDeselectTags()"
+				class="w-full max-lg:m-auto g-button-size-lg"
+			>
+				<mat-icon>disabled_by_default</mat-icon>
+				Deselect Tags
 			</button>
 
 			<!-- <button
@@ -80,6 +92,8 @@ import { AboutComponent } from './../../../user-settings/modals/about/about.comp
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalAccountActionButtonsComponent {
+	@Output() deselectTagsClickedEmitter = new EventEmitter<void>();
+	@Input() showDeselectTags = false;
 	private personalAccountTestDataService = inject(PersonalAccountTestDataService);
 	private authenticationFacadeService = inject(AuthenticationAccountService);
 	private dialog = inject(MatDialog);
@@ -106,5 +120,9 @@ export class PersonalAccountActionButtonsComponent {
 	onAddTestingData(): void {
 		console.log('do it');
 		this.personalAccountTestDataService.populateData();
+	}
+
+	onDeselectTags(): void {
+		this.deselectTagsClickedEmitter.emit();
 	}
 }

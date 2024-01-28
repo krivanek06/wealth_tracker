@@ -8,19 +8,19 @@ import { AuthenticationAccountService } from '../../services';
 import { assignTypesClient, getCurrentDateDefaultFormat, getDetailsInformationFromDate } from '../../utils';
 import { PersonalAccountAggregatorService } from './personal-account-aggregator.service';
 import {
-	PERSONAL_ACCOUNT_DEFAULT_TAGS,
-	PERSONAL_ACCOUNT_DEFAULT_TAG_DATA,
-	PersonalAccountTag,
-	PersonalAccountTagCreate,
-	personalAccountTagImageName,
+  PERSONAL_ACCOUNT_DEFAULT_TAGS,
+  PERSONAL_ACCOUNT_DEFAULT_TAG_DATA,
+  PersonalAccountTag,
+  PersonalAccountTagCreate,
+  personalAccountTagImageName,
 } from './personal-account-tags.model';
 import {
-	PersonalAccountDailyData,
-	PersonalAccountDailyDataBasic,
-	PersonalAccountDailyDataCreate,
-	PersonalAccountMonthlyDataNew,
-	PersonalAccountMonthlyDataNewBasic,
-	PersonalAccountNew,
+  PersonalAccountDailyData,
+  PersonalAccountDailyDataBasic,
+  PersonalAccountDailyDataCreate,
+  PersonalAccountMonthlyDataNew,
+  PersonalAccountMonthlyDataNewBasic,
+  PersonalAccountNew,
 } from './personal-account-types.model';
 
 @Injectable({
@@ -50,10 +50,14 @@ export class PersonalAccountService {
 								(d) =>
 									({
 										...d,
-										dailyData: d.dailyData.map((dd) => ({
-											...dd,
-											tag: tags.find((t) => t.id === dd.tagId) ?? PERSONAL_ACCOUNT_DEFAULT_TAG_DATA,
-										})),
+										dailyData: d.dailyData
+											// sort daily data by date
+											.sort((a, b) => (b.date < a.date ? 1 : -1))
+											// map daily data to include tag information
+											.map((dd) => ({
+												...dd,
+												tag: tags.find((t) => t.id === dd.tagId) ?? PERSONAL_ACCOUNT_DEFAULT_TAG_DATA,
+											})),
 									}) satisfies PersonalAccountMonthlyDataNew
 							)
 						)

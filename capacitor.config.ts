@@ -11,12 +11,9 @@ const config: CapacitorConfig = {
 		SplashScreen: {
 			launchShowDuration: 0,
 		},
-		GoogleAuth: {
-			scopes: ['profile', 'email'],
-			serverClientId: '921790580233-moqje7fjradeg9ccpugs4n28o19urhld.apps.googleusercontent.com',
-			forceCodeForRefreshToken: true,
-			// clientId: '921790580233-moqje7fjradeg9ccpugs4n28o19urhld.apps.googleusercontent.com',
-			// androidClientId: '921790580233-moqje7fjradeg9ccpugs4n28o19urhld.apps.googleusercontent.com',
+		FirebaseAuthentication: {
+			skipNativeAuth: false,
+			providers: ['google.com'],
 		},
 	},
 };

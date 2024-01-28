@@ -13,28 +13,26 @@ import { SCREEN_DIALOGS } from '../../shared/models/layout.model';
 	standalone: true,
 	imports: [CommonModule, MatButtonModule],
 	template: `
-		<section class="welcome-full h-[100vh]">
+		<section class="welcome-full h-[100vh] relative">
 			<!-- shape -->
-			<div class="absolute w-9/12 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-9/12">
+			<div
+				class="absolute lg:w-8/12 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 w-11/12 h-11/12 lg:h-8/12"
+			>
 				<ng-container *ngTemplateOutlet="shape"></ng-container>
 			</div>
 
 			<div class="c-background-shadow">
 				<!-- title -->
-				<h1 class="mb-16 space-x-2 text-4xl text-center sm:text-5xl md:text-6xl lg:text-7xl 2xl:text-8xl">
+				<h1 class="mb-10 space-x-2 text-4xl text-center sm:text-5xl md:text-6xl lg:text-7xl 2xl:text-8xl">
 					<span class="text-wt-primary-dark">Spend</span>
 					<span class="text-white">Mindful</span>
 				</h1>
 
 				<!-- description -->
-				<p class="w-10/12 mx-auto mb-8 text-center sm:w-9/12 2xl:w-7/12 welcome-body-1">{{ description }}</p>
-
-				<p class="w-10/12 mx-auto mb-8 text-base text-center sm:w-9/12 2xl:w-7/12 text-wt-gray-medium">
-					version: {{ version }}
-				</p>
+				<!--  <p class="w-10/12 mx-auto mb-8 text-center sm:w-9/12 2xl:w-7/12 welcome-body-1">{{ description }}</p> -->
 
 				<!-- button -->
-				<div class="flex justify-center">
+				<div class="flex justify-center mb-10">
 					<button
 						class="h-16 text-lg g-button-size-lg"
 						type="button"
@@ -45,6 +43,10 @@ import { SCREEN_DIALOGS } from '../../shared/models/layout.model';
 						Launch Application
 					</button>
 				</div>
+
+				<p class="w-10/12 mx-auto mb-10 text-base text-center sm:w-9/12 2xl:w-7/12 text-wt-gray-medium">
+					version: {{ version }}
+				</p>
 			</div>
 		</section>
 

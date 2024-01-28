@@ -3,22 +3,13 @@ The purpose of the application is to have on system for logging personal incomes
 - https://spendmindful.com/
 - https://play.google.com/store/apps/details?id=spendmindful.com
 
-## GCP Deployment
-The `client` and the `server` part of the application are deployed into GCP via Dockerfile to the cloud-run service. 
-Each folder contains a `cloudbuild.yaml` that takes care of the build.
-To deploy the app to GCP, follows these steps:
-- See current project:
-  - `gcloud config get-value project`
-- List all projects:
-  - `gcloud projects list`
-- Set new project as active:
-  - `gcloud config set project XXX`
-- Deploy to GCP by:
-  - `gcloud builds submit`
-
 ## Build for Android 
 - Build the app 
   - `ng build`
+- First time build (Android)
+  - `npx cap add android`
+  - Add `rgcfaIncludeGoogle = true` into `variable.grapdle` under `ext`
+  - Add `google-services.json` related to the platform from firebase
 - Copy new code into native projects
   - `npx cap copy`
   - `npx cap sync android`
@@ -31,3 +22,6 @@ To deploy the app to GCP, follows these steps:
 - Commands
   - Fingerprint Debug: `keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android`
   - Fingerprint Release: `keytool -keystore ~/Documents/generated_keys/android_signature -list -v`
+- Release version (Android)
+  - In `build.gradle` increase `versionCode` and `versionName`
+  - `build` -> `Generate Signed Bundle` -> `Android App Bundle` -> choose fingerprint from pc -> `release version` -> upload `.aab` file to Google Play

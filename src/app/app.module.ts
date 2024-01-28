@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { APP_ID, isDevMode, NgModule } from '@angular/core';
+import { isDevMode, NgModule } from '@angular/core';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
@@ -44,7 +44,7 @@ import { DialogServiceModule } from './shared/dialogs';
 		provideAuth(() => getAuth()),
 		provideFirestore(() => getFirestore()),
 	],
-	providers: [{ provide: APP_ID, useValue: 'serverApp' }],
+	providers: [],
 	bootstrap: [AppComponent],
 })
 export class AppModule {}

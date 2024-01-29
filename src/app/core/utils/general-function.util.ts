@@ -68,8 +68,8 @@ export const getRandomNumber = (min: number, max: number) => {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-export const getRandomItemFromList = <T>(list: T[]) => {
-	return list[getRandomNumber(0, list.length - 1)];
+export const getRandomItemFromList = <T>(list: T[], limit?: number) => {
+	return list[getRandomNumber(0, limit ?? list.length - 1)];
 };
 
 export const sleepSeconds = (seconds: number) => {

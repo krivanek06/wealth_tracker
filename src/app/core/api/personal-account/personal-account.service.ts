@@ -1,5 +1,5 @@
 import { Injectable, computed, effect, inject } from '@angular/core';
-import { Firestore, arrayUnion, collection, doc, setDoc } from '@angular/fire/firestore';
+import { Firestore, arrayUnion, collection, deleteDoc, doc, setDoc } from '@angular/fire/firestore';
 import { computedAsync } from 'ngxtension/computed-async';
 import { collection as rxCollection, docData as rxDocData } from 'rxfire/firestore';
 import { catchError, map, of } from 'rxjs';
@@ -211,6 +211,12 @@ export class PersonalAccountService {
 			},
 			{ merge: true }
 		);
+	}
+
+	deleteMonthlyData(monthlyData: PersonalAccountMonthlyDataNew): Promise<void> {
+		const currentUser = this.authenticationAccountService.getCurrentUserMust();
+
+		return deleteDoc(this.getPersonalAccountMonthlyDocRef(currentUser.uid, monthlyData.id));
 	}
 
 	async editPersonalAccountDailyEntry(

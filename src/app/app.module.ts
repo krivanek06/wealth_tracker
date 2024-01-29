@@ -1,8 +1,15 @@
 import { HttpClientModule } from '@angular/common/http';
-import { isDevMode, NgModule } from '@angular/core';
+import { APP_INITIALIZER, inject, isDevMode, NgModule } from '@angular/core';
 import { getApp, initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { getAuth, indexedDBLocalPersistence, initializeAuth, provideAuth } from '@angular/fire/auth';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import {
+  Auth,
+  connectAuthEmulator,
+  getAuth,
+  indexedDBLocalPersistence,
+  initializeAuth,
+  provideAuth,
+} from '@angular/fire/auth';
+import { connectFirestoreEmulator, Firestore, getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -10,6 +17,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { Capacitor } from '@capacitor/core';
+import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DialogServiceModule } from './shared/dialogs';
@@ -41,21 +49,31 @@ const getFirebaseAuth = () => {
 			// or after 30 seconds (whichever comes first).
 			registrationStrategy: 'registerImmediately',
 		}),
-		provideFirebaseApp(() =>
-			initializeApp({
-				projectId: 'wealth-tracker-d2757',
-				appId: '1:721049469654:web:cc1d0e3ccff91180607f77',
-				storageBucket: 'wealth-tracker-d2757.appspot.com',
-				apiKey: 'AIzaSyCF5EIL2kMhlvJAR7a6qJTXUi3tTmOoA8M',
-				authDomain: 'wealth-tracker-d2757.firebaseapp.com',
-				messagingSenderId: '721049469654',
-				measurementId: 'G-CM0D3TJEXS',
-			})
-		),
+		provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
 		provideAuth(() => getFirebaseAuth()),
 		provideFirestore(() => getFirestore()),
 	],
-	providers: [],
+	providers: [
+		{
+			provide: APP_INITIALIZER,
+			multi: true,
+			deps: [Firestore, Auth],
+			useFactory: () => {
+				const localhost = '127.0.0.1';
+
+				const firestore = inject(Firestore);
+				const auth = inject(Auth);
+
+				return () => {
+					if (!environment.production) {
+						console.log('%c[Firebase]: Connect to emulator', 'color: #bada55; font-size: 16px;');
+						connectFirestoreEmulator(firestore, localhost, 8080);
+						connectAuthEmulator(auth, `http://${localhost}:9099`);
+					}
+				};
+			},
+		},
+	],
 	bootstrap: [AppComponent],
 })
 export class AppModule {}

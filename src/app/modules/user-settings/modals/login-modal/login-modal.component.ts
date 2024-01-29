@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, NgZone, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FirebaseError } from '@angular/fire/app';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -118,11 +119,30 @@ export class LoginModalComponent {
 			.subscribe((e) => console.log('google', e));
 	}
 
-	onDemoLogin(): void {
-		this.loginUserInputControl.patchValue({
-			email: TEST_USER_EMAIL,
-			password: TEST_USER_PASSWORD,
-		});
+	/**
+	 * try to login with demo account or create one
+	 */
+	async onDemoLogin() {
+		try {
+			await this.authenticationFacadeService.signIn({
+				email: TEST_USER_EMAIL,
+				password: TEST_USER_PASSWORD,
+			});
+			// navigate to the app
+			this.router.navigate([TOP_LEVEL_NAV.dashboard]);
+			// close dialog
+			this.dialogRef.close();
+		} catch (err: any) {
+			const code = err?.code satisfies FirebaseError['code'];
+			// create account if user not found
+			if (code === 'auth/user-not-found') {
+				this.registerUserInputControl.patchValue({
+					email: TEST_USER_EMAIL,
+					password: TEST_USER_PASSWORD,
+					passwordRepeat: TEST_USER_PASSWORD,
+				});
+			}
+		}
 	}
 
 	onCancel(): void {

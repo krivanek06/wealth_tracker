@@ -16,6 +16,13 @@ export class PersonalAccountTestDataService {
 			console.log('Not in production, not populating data');
 			return;
 		}
+		// user monthly data
+		const userMonthlyData = this.personalAccountService.personalAccountMonthlyDataSignal();
+
+		// remove all previous data
+		for await (const data of userMonthlyData) {
+			await this.personalAccountService.deleteMonthlyData(data);
+		}
 
 		const usedDays = 140; // go back N days
 		const startingDate = format(subDays(new Date(), usedDays), 'yyyy-MM-dd');
@@ -46,7 +53,7 @@ export class PersonalAccountTestDataService {
 	private getDataForDate(usedDate: string, dataNumber: number = 5): PersonalAccountDailyDataCreate[] {
 		const result: PersonalAccountDailyDataCreate[] = [];
 		for (let i = 0; i <= dataNumber; i++) {
-			const randomTagId = getRandomItemFromList(this.personalAccountService.personalAccountTagsSignal()).id;
+			const randomTagId = getRandomItemFromList(this.personalAccountService.personalAccountTagsSignal(), 8).id;
 			const value = getRandomNumber(12, 75);
 
 			const data: PersonalAccountDailyDataCreate = {

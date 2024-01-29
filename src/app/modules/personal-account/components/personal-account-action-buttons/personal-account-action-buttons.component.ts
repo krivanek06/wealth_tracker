@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { Confirmable } from 'src/app/shared/decorators';
-import { PersonalAccountTestDataService } from '../../../../core/api';
+import { environment } from 'src/environments/environment';
+import { PersonalAccountService, PersonalAccountTestDataService } from '../../../../core/api';
 import { TOP_LEVEL_NAV } from '../../../../core/models/navigation.model';
 import { AuthenticationAccountService } from '../../../../core/services/authentication-account.service';
 import { SCREEN_DIALOGS } from '../../../../shared/models/layout.model';
@@ -26,6 +27,7 @@ import { PersonalAccountTagManagerModalComponent, PersonalAccountTagManagerModal
 	],
 	template: `
 		<div class="hidden sm:flex flex-col max-lg:justify-center gap-4">
+			<!-- manage tags -->
 			<button
 				type="button"
 				mat-stroked-button
@@ -37,6 +39,7 @@ import { PersonalAccountTagManagerModalComponent, PersonalAccountTagManagerModal
 				Manage Tags
 			</button>
 
+			<!-- remove clicked tags -->
 			<button
 				*ngIf="showDeselectTags"
 				type="button"
@@ -49,16 +52,18 @@ import { PersonalAccountTagManagerModalComponent, PersonalAccountTagManagerModal
 				Deselect Tags
 			</button>
 
-			<!-- <button
+			<!-- testing data button -->
+			<button
+				*ngIf="displayTestingDataButton()"
 				type="button"
 				mat-flat-button
 				color="warn"
 				(click)="onAddTestingData()"
-				class="hidden xl:block max-lg:m-auto g-button-size-lg"
+				class="hidden lg:block max-lg:m-auto g-button-size-lg"
 			>
 				<mat-icon>bug_report</mat-icon>
 				Add Testing Data
-			</button> -->
+			</button>
 		</div>
 
 		<div class="block sm:hidden">
@@ -96,8 +101,15 @@ export class PersonalAccountActionButtonsComponent {
 	@Input() showDeselectTags = false;
 	private personalAccountTestDataService = inject(PersonalAccountTestDataService);
 	private authenticationFacadeService = inject(AuthenticationAccountService);
+	private personalAccountService = inject(PersonalAccountService);
 	private dialog = inject(MatDialog);
 	private router = inject(Router);
+
+	displayTestingDataButton = computed(
+		() =>
+			!environment.production &&
+			this.personalAccountService.personalAccountMonthlyDataSignal().every((d) => d.dailyData.length === 0)
+	);
 
 	onManageTags(): void {
 		this.dialog.open(PersonalAccountTagManagerModalComponent, {
@@ -118,7 +130,6 @@ export class PersonalAccountActionButtonsComponent {
 
 	@Confirmable('Are you sure you want to add testing data?')
 	onAddTestingData(): void {
-		console.log('do it');
 		this.personalAccountTestDataService.populateData();
 	}
 

@@ -4,15 +4,21 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Allow users to read and write their own document in the personal-accounts collection
     match /personal-accounts/{userId}/{document=**} {
-      allow read, write: if request.auth.uid == userId;
+      allow read, write: if isOwner(userId);
 
-      // Specifically allow create if the document doesn't exist yet
-      allow create: if request.auth.uid == userId && !exists(/databases/$(database)/documents/personal-accounts/$(userId));
+      // Allow creating documents in subcollections
+      allow create: if isOwner(userId);
     }
 
     // Deny access to everything else
     match /{document=**} {
-      allow read, write: if false;
+      allow read: if false;
+      allow write: if false;
     }
+  }
+
+
+  function isOwner(userId) {
+    return request.auth != null && request.auth.uid == userId;
   }
 }

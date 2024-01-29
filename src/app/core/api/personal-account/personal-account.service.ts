@@ -2,7 +2,7 @@ import { Injectable, computed, effect, inject } from '@angular/core';
 import { Firestore, arrayUnion, collection, doc, setDoc } from '@angular/fire/firestore';
 import { computedAsync } from 'ngxtension/computed-async';
 import { collection as rxCollection, docData as rxDocData } from 'rxfire/firestore';
-import { map } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { AuthenticationAccountService } from '../../services';
 import { assignTypesClient, getCurrentDateDefaultFormat, getDetailsInformationFromDate } from '../../utils';
@@ -33,7 +33,7 @@ export class PersonalAccountService {
 
 	personalAccountSignal = computedAsync(() => {
 		const user = this.authenticationAccountService.getCurrentUser();
-		return !user ? undefined : rxDocData(this.getPersonalAccountDocRef(user.uid), { idField: 'userId' });
+		return !user ? of(undefined) : rxDocData(this.getPersonalAccountDocRef(user.uid), { idField: 'userId' });
 	});
 
 	personalAccountMonthlyDataSignal = computedAsync(
@@ -60,7 +60,8 @@ export class PersonalAccountService {
 											})),
 									}) satisfies PersonalAccountMonthlyDataNew
 							)
-						)
+						),
+						catchError(() => of([]))
 					);
 		},
 		{ initialValue: [] }
@@ -69,6 +70,7 @@ export class PersonalAccountService {
 	yearlyAggregatedSignal = computed(() => {
 		const data = this.personalAccountMonthlyDataSignal();
 		const availableTags = this.personalAccountTagsSignal();
+		console.log('availableTagsavailableTags', availableTags);
 		return this.personalAccountAggregatorService.getAllYearlyAggregatedData(availableTags, data);
 	});
 	weeklyAggregatedSignal = computed(() => {

@@ -1,7 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { isDevMode, NgModule } from '@angular/core';
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getApp, initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getAuth, indexedDBLocalPersistence, initializeAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -9,9 +9,20 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { Capacitor } from '@capacitor/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DialogServiceModule } from './shared/dialogs';
+
+const getFirebaseAuth = () => {
+	if (Capacitor.isNativePlatform()) {
+		return initializeAuth(getApp(), {
+			persistence: indexedDBLocalPersistence,
+		});
+	} else {
+		return getAuth();
+	}
+};
 
 @NgModule({
 	declarations: [AppComponent],
@@ -41,7 +52,7 @@ import { DialogServiceModule } from './shared/dialogs';
 				measurementId: 'G-CM0D3TJEXS',
 			})
 		),
-		provideAuth(() => getAuth()),
+		provideAuth(() => getFirebaseAuth()),
 		provideFirestore(() => getFirestore()),
 	],
 	providers: [],

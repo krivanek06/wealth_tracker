@@ -70,7 +70,6 @@ export class PersonalAccountService {
 	yearlyAggregatedSignal = computed(() => {
 		const data = this.personalAccountMonthlyDataSignal();
 		const availableTags = this.personalAccountTagsSignal();
-		console.log('availableTagsavailableTags', availableTags);
 		return this.personalAccountAggregatorService.getAllYearlyAggregatedData(availableTags, data);
 	});
 	weeklyAggregatedSignal = computed(() => {

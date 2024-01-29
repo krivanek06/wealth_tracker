@@ -5,11 +5,11 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { EMPTY, catchError, filter, from, switchMap, take, tap } from 'rxjs';
 import {
-	LoginUserInput,
-	RegisterUserInput,
-	TEST_USER_EMAIL,
-	TEST_USER_PASSWORD,
-	TOP_LEVEL_NAV,
+  LoginUserInput,
+  RegisterUserInput,
+  TEST_USER_EMAIL,
+  TEST_USER_PASSWORD,
+  TOP_LEVEL_NAV,
 } from '../../../../core/models';
 import { AuthenticationAccountService } from '../../../../core/services';
 import { DialogServiceUtil } from '../../../../shared/dialogs';

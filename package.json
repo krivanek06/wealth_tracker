@@ -4,7 +4,7 @@
 	"scripts": {
 		"ng": "ng",
 		"start:client": "ng serve",
-    "start:firebase": "npm run kill-ports && firebase emulators:start",
+		"start:firebase": "npm run kill-ports && firebase emulators:start",
 		"build": "ng build",
 		"build:android": "npm run build && npx cap copy && npx cap sync android && npx cap update",
 		"watch": "ng build --watch --configuration development",

@@ -10,7 +10,9 @@
 					"style": "scss",
 					"changeDetection": "OnPush",
 					"displayBlock": true,
-					"standalone": true
+					"standalone": true,
+          "inlineTemplate": true,
+          "inlineStyle": true
 				}
 			},
 			"root": "",

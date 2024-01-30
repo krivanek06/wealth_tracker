@@ -1,15 +1,15 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import {
-  Auth,
-  EmailAuthProvider,
-  GoogleAuthProvider,
-  User,
-  UserCredential,
-  createUserWithEmailAndPassword,
-  reauthenticateWithCredential,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  updatePassword,
+	Auth,
+	EmailAuthProvider,
+	GoogleAuthProvider,
+	User,
+	UserCredential,
+	createUserWithEmailAndPassword,
+	reauthenticateWithCredential,
+	signInWithEmailAndPassword,
+	signInWithPopup,
+	updatePassword,
 } from '@angular/fire/auth';
 import { Observable, Subject } from 'rxjs';
 import { LoginUserInput, RegisterUserInput } from '../models/authentication.model';

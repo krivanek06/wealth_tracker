@@ -8,19 +8,19 @@ import { AuthenticationAccountService } from '../../services';
 import { assignTypesClient, getCurrentDateDefaultFormat, getDetailsInformationFromDate } from '../../utils';
 import { PersonalAccountAggregatorService } from './personal-account-aggregator.service';
 import {
-  PERSONAL_ACCOUNT_DEFAULT_TAGS,
-  PERSONAL_ACCOUNT_DEFAULT_TAG_DATA,
-  PersonalAccountTag,
-  PersonalAccountTagCreate,
-  personalAccountTagImageName,
+	PERSONAL_ACCOUNT_DEFAULT_TAGS,
+	PERSONAL_ACCOUNT_DEFAULT_TAG_DATA,
+	PersonalAccountTag,
+	PersonalAccountTagCreate,
+	personalAccountTagImageName,
 } from './personal-account-tags.model';
 import {
-  PersonalAccountDailyData,
-  PersonalAccountDailyDataBasic,
-  PersonalAccountDailyDataCreate,
-  PersonalAccountMonthlyDataNew,
-  PersonalAccountMonthlyDataNewBasic,
-  PersonalAccountNew,
+	PersonalAccountDailyData,
+	PersonalAccountDailyDataBasic,
+	PersonalAccountDailyDataCreate,
+	PersonalAccountMonthlyDataNew,
+	PersonalAccountMonthlyDataNewBasic,
+	PersonalAccountNew,
 } from './personal-account-types.model';
 
 @Injectable({

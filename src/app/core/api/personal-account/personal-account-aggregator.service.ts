@@ -4,13 +4,13 @@ import { flatMapDeep, groupBy } from 'lodash';
 import { dateSplitter, getDetailsInformationFromDate, getObjectEntries } from '../../utils';
 import { PERSONAL_ACCOUNT_DEFAULT_TAG_DATA, PersonalAccountTag } from './personal-account-tags.model';
 import {
-  AccountState,
-  PersonalAccountAggregationDataOutput,
-  PersonalAccountDailyData,
-  PersonalAccountDailyDataAggregation,
-  PersonalAccountMonthlyDataNew,
-  PersonalAccountTagAggregation,
-  PersonalAccountWeeklyAggregationOutput,
+	AccountState,
+	PersonalAccountAggregationDataOutput,
+	PersonalAccountDailyData,
+	PersonalAccountDailyDataAggregation,
+	PersonalAccountMonthlyDataNew,
+	PersonalAccountTagAggregation,
+	PersonalAccountWeeklyAggregationOutput,
 } from './personal-account-types.model';
 
 @Injectable({

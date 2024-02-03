@@ -6,11 +6,11 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { EMPTY, catchError, filter, from, switchMap, take, tap } from 'rxjs';
 import {
-  LoginUserInput,
-  RegisterUserInput,
-  TEST_USER_EMAIL,
-  TEST_USER_PASSWORD,
-  TOP_LEVEL_NAV,
+	LoginUserInput,
+	RegisterUserInput,
+	TEST_USER_EMAIL,
+	TEST_USER_PASSWORD,
+	TOP_LEVEL_NAV,
 } from '../../../../core/models';
 import { AuthenticationAccountService } from '../../../../core/services';
 import { DialogServiceUtil } from '../../../../shared/dialogs';
@@ -111,12 +111,15 @@ export class LoginModalComponent {
 					});
 				}),
 				take(1),
-				catchError(() => {
+				catchError((e) => {
+					const error = e as FirebaseError;
+					console.log('Code:', error.code);
+					console.log('Message:', error.message);
 					this.loading.set(false);
 					return EMPTY;
 				})
 			)
-			.subscribe((e) => console.log('google', e));
+			.subscribe();
 	}
 
 	/**

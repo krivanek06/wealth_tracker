@@ -1,14 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, inject, isDevMode, NgModule } from '@angular/core';
-import { getApp, initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import {
-  Auth,
-  connectAuthEmulator,
-  getAuth,
-  indexedDBLocalPersistence,
-  initializeAuth,
-  provideAuth,
-} from '@angular/fire/auth';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { Auth, connectAuthEmulator, getAuth, provideAuth } from '@angular/fire/auth';
 import { connectFirestoreEmulator, Firestore, getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -22,16 +15,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DialogServiceModule } from './shared/dialogs';
 
-const getFirebaseAuth = () => {
-	if (Capacitor.isNativePlatform()) {
-		return initializeAuth(getApp(), {
-			persistence: indexedDBLocalPersistence,
-		});
-	} else {
-		return getAuth();
-	}
-};
-
 @NgModule({
 	declarations: [AppComponent],
 	imports: [
@@ -44,14 +27,13 @@ const getFirebaseAuth = () => {
 		MatNativeDateModule,
 		MatDatepickerModule,
 		ServiceWorkerModule.register('ngsw-worker.js', {
-			enabled: !isDevMode(),
+			enabled: !isDevMode() && !Capacitor.isNativePlatform(),
 			// Register the ServiceWorker as soon as the application is stable
-			// or after 30 seconds (whichever comes first).
 			registrationStrategy: 'registerImmediately',
 		}),
 		provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
-		provideAuth(() => getFirebaseAuth()),
 		provideFirestore(() => getFirestore()),
+		provideAuth(() => getAuth()),
 	],
 	providers: [
 		{

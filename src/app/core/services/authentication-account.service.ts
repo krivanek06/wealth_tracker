@@ -1,16 +1,5 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
-import {
-	Auth,
-	EmailAuthProvider,
-	GoogleAuthProvider,
-	User,
-	UserCredential,
-	createUserWithEmailAndPassword,
-	reauthenticateWithCredential,
-	signInWithEmailAndPassword,
-	signInWithPopup,
-	updatePassword,
-} from '@angular/fire/auth';
+import { Injectable, computed, signal } from '@angular/core';
+import { FirebaseAuthentication, User } from '@capacitor-firebase/authentication';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LoginUserInput, RegisterUserInput } from '../models/authentication.model';
 
@@ -18,7 +7,6 @@ import { LoginUserInput, RegisterUserInput } from '../models/authentication.mode
 	providedIn: 'root',
 })
 export class AuthenticationAccountService {
-	private auth = inject(Auth);
 	private authUserSignal = signal<User | null>(null);
 	private loadedAuthentication$ = new BehaviorSubject<boolean>(false);
 
@@ -29,62 +17,66 @@ export class AuthenticationAccountService {
 	getCurrentUserMust = computed(() => this.authUserSignal()!);
 
 	constructor() {
-		this.auth.onAuthStateChanged((user) => {
-			console.log('Auth change', user);
-			this.authUserSignal.set(user);
+		FirebaseAuthentication.addListener('authStateChange', (change) => {
+			console.log('Auth state change', change);
+			this.authUserSignal.set(change.user);
 			this.loadedAuthentication$.next(true);
 		});
+
+		// fallback if user goes to the app but not logged in
+		setTimeout(() => {
+			this.loadedAuthentication$.next(true);
+		}, 1000);
 	}
 
 	getLoadedAuthentication(): Observable<boolean> {
 		return this.loadedAuthentication$.asObservable();
 	}
 
-	signIn(input: LoginUserInput): Promise<UserCredential> {
-		return signInWithEmailAndPassword(this.auth, input.email, input.password);
+	async signIn(input: LoginUserInput): Promise<void> {
+		await FirebaseAuthentication.signInWithEmailAndPassword({
+			email: input.email,
+			password: input.password,
+		});
 	}
 
-	register(input: RegisterUserInput): Promise<UserCredential> {
-		return createUserWithEmailAndPassword(this.auth, input.email, input.password);
+	async register(input: RegisterUserInput): Promise<void> {
+		await FirebaseAuthentication.createUserWithEmailAndPassword({
+			email: input.email,
+			password: input.password,
+		});
 	}
 
-	removeAccount(): void {
-		if (this.auth.currentUser) {
-			this.auth.currentUser.delete();
+	async removeAccount(): Promise<void> {
+		const user = await FirebaseAuthentication.getCurrentUser();
+		if (user) {
+			FirebaseAuthentication.deleteUser();
 		}
 	}
 
-	signInGoogle(): Promise<UserCredential> {
-		const provider = new GoogleAuthProvider();
-		return signInWithPopup(this.auth, provider);
+	async signInGoogle(): Promise<void> {
+		const result = await FirebaseAuthentication.signInWithGoogle();
+		console.log('result', result);
 	}
 
-	signOut() {
-		this.auth.signOut();
+	async signOut(): Promise<void> {
+		await FirebaseAuthentication.signOut();
 	}
 
 	async changePassword(oldPassword: string, newPassword: string): Promise<void> {
 		const currentUser = this.getCurrentUser();
+
 		if (!currentUser?.email) {
 			throw new Error('User is not authenticated');
 		}
 
 		try {
-			// check if old password is correct
-			const credentials = EmailAuthProvider.credential(currentUser.email, oldPassword);
-			console.log('credentials', credentials);
-			const reauth = await reauthenticateWithCredential(currentUser, credentials);
-			console.log('reauth', reauth);
+			await FirebaseAuthentication.updatePassword({
+				newPassword: newPassword,
+			});
 		} catch (error) {
 			console.error(error);
 			throw new Error('Old password is incorrect');
-		}
-
-		try {
-			await updatePassword(currentUser, newPassword);
-		} catch (error) {
-			console.error(error);
-			throw new Error('Password change failed');
 		}
 	}
 }

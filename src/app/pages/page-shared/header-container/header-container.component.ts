@@ -48,8 +48,8 @@ export class HeaderContainerComponent {
 	) {}
 
 	onUserLogout(): void {
-		this.authenticationFacadeService.signOut();
 		this.router.navigate([TOP_LEVEL_NAV.welcome]);
+		this.authenticationFacadeService.signOut();
 	}
 
 	onAboutProjectClick(): void {

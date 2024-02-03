@@ -1,6 +1,6 @@
 import { NgModule, inject } from '@angular/core';
-import { ActivatedRouteSnapshot, PreloadAllModules, Router, RouterModule, Routes } from '@angular/router';
-import { map, take, tap } from 'rxjs';
+import { PreloadAllModules, Router, RouterModule, Routes } from '@angular/router';
+import { filter, map, take, tap } from 'rxjs';
 import { AppComponent } from './app.component';
 import { TOP_LEVEL_NAV } from './core/models';
 import { AuthenticationAccountService } from './core/services';
@@ -14,7 +14,7 @@ const routes: Routes = [
 				path: '',
 				pathMatch: 'full',
 				canActivate: [
-					(route: ActivatedRouteSnapshot) => {
+					() => {
 						const authenticationFacadeService = inject(AuthenticationAccountService);
 						const router = inject(Router);
 
@@ -25,8 +25,11 @@ const routes: Routes = [
 						// listen on user loaded
 						return authenticationFacadeService.getLoadedAuthentication().pipe(
 							tap(() => console.log('CHECK REDIRECT DASHBOARD')),
+							filter((isLoaded) => isLoaded),
 							take(1),
-							map((isLoaded) => (isLoaded ? true : router.navigate([TOP_LEVEL_NAV.welcome])))
+							map(() =>
+								authenticationFacadeService.getCurrentUser() ? true : router.navigate([TOP_LEVEL_NAV.welcome])
+							)
 						);
 					},
 				],

@@ -26,7 +26,7 @@ export class AuthenticationAccountService {
 		// fallback if user goes to the app but not logged in
 		setTimeout(() => {
 			this.loadedAuthentication$.next(true);
-		}, 1000);
+		}, 1500);
 	}
 
 	getLoadedAuthentication(): Observable<boolean> {

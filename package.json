@@ -6,7 +6,7 @@
 		"start:client": "ng serve",
 		"start:firebase": "npm run kill-ports && firebase emulators:start",
 		"build": "ng build",
-		"build:android": "npm run build && npx cap copy && npx cap sync android && npx cap update",
+		"build:android": "npm run build && npx cap sync",
 		"watch": "ng build --watch --configuration development",
 		"deploy": "firebase deploy --only hosting",
 		"test": "jest",
